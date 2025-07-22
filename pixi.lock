@@ -1530,7 +1530,7 @@ packages:
 - pypi: ./
   name: mge-detect
   version: 0.1.0
-  sha256: 9b36c9d2d73cba85dea913b547e97c1998757ee8fd5c9716ab749dca6b3a7714
+  sha256: 6dffd0eea08360f5e1745f6d980198974cde4b04b0661738406ae0a6ad854a0f
   requires_python: '>=3.11'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/ml_dtypes-0.4.0-py312hf9745cd_2.conda
