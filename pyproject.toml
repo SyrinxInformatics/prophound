@@ -1,6 +1,5 @@
 [project]
 authors = [{name = "Syrinx55", email = "jalford0000@gmail.com"}, {name = "Ssolar5", email = "ssolar5.dev@gmail.com"}]
-dependencies = []
 name = "mge-detect"
 requires-python = ">= 3.11"
 version = "0.1.0"
@@ -24,3 +23,4 @@ mge-detect = "python3 src/mge_detect/mge_detect.py"
 
 [tool.pixi.dependencies]
 tensorflow-cpu = ">=2.18.0,<3"
+biopython = ">=1.85,<2"
