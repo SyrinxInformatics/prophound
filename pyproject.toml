@@ -23,4 +23,4 @@ mge_detect = { path = ".", editable = true }
 mge-detect = "python3 src/mge_detect/mge_detect.py"
 
 [tool.pixi.dependencies]
-tensorflow-cpu = ">=2.18.0,<3.0a0"
+tensorflow-cpu = ">=2.18.0,<3"
