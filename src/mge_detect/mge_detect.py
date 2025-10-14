@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2025 Jacob Alford <jalford0000@gmail.com>
+# SPDX-FileCopyrightText: 2025 Benjamin Alford <ssolar5.dev@gmail.com>
+# SPDX-License-Identifier: MPL-2.0
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 def main():
     print("Hello world! (mge-detect)")
 
