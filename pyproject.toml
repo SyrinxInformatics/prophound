@@ -6,7 +6,7 @@ version = "0.1.0"
 description = "Database-independent tool using machine learning to detect known mobile genetic elements and predict novel ones"
 readme = "README.md"
 license = "MPL-2.0"
-license-files = ["LICENSES/MPL-2.0.txt"]
+license-files = ["LICENSE.txt"]
 
 [build-system]
 build-backend = "hatchling.build"
