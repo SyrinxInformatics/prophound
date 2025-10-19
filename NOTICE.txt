@@ -1,0 +1,7 @@
+mge-detect
+Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+               and Benjamin Alford <ssolar5.dev@gmail.com>
+
+This work derives from mge-detect.
+The Source form of mge-detect may be obtained from
+https://github.com/SyrinxInformatics/mge-detect

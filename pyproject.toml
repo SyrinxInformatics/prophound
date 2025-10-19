@@ -1,11 +1,14 @@
 [project]
-authors = [{name = "Syrinx55", email = "jalford0000@gmail.com"}, {name = "Ssolar5", email = "ssolar5.dev@gmail.com"}]
+authors = [
+    {name = "Jacob Alford", email = "jalford0000@gmail.com"},
+    {name = "Benjamin Alford", email = "ssolar5.dev@gmail.com"},
+]
 name = "mge-detect"
 requires-python = ">= 3.11"
 version = "0.1.0"
 description = "Database-independent tool using machine learning to detect known mobile genetic elements and predict novel ones"
 readme = "README.md"
-license = "MPL-2.0"
+license = "Apache-2.0"
 license-files = ["LICENSE.txt"]
 
 [build-system]
