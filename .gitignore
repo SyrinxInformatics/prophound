@@ -208,7 +208,7 @@ __marimo__/
 # pixi environments
 .pixi
 
-# R 
+# R
 .Rhistory
 
 #.DS_Store
