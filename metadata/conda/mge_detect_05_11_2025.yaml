@@ -1,4 +1,4 @@
-name: mge_explorer
+name: mge_detect
 channels:
   - conda-forge
   - bioconda
