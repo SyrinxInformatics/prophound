@@ -28,7 +28,7 @@ mge-detect = "python3 src/mge_detect/mge_detect.py"
 [tool.pixi.dependencies]
 tensorflow = ">=2.18.0,<3"
 biopython = ">=1.86,<2"
-pytest = ">=8.4.2,<9"
+pytest = ">=9.0.0,<10"
 sphinx = ">=8.2.3,<9"
 mypy = ">=1.18.2,<2"
 scikit-learn = ">=1.7.2,<2"
