@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -97,9 +97,11 @@ class RCCNN(nn.Module):
         combine: CombineMode = "max",
         pooling: PoolingMode = "global_max",
         pool_bins: int = 1,
+        predict_boundary: bool = False,
     ):
         super().__init__()
         self.combine = combine
+        self.predict_boundary = predict_boundary
         self.encoder = CNNEncoder1D(
             in_channels=in_channels,
             channels=channels,
@@ -116,6 +118,25 @@ class RCCNN(nn.Module):
             nn.Linear(fc_dim, 1),
         )
 
+        if predict_boundary:
+            # Auxiliary head: predicts a normalized [0, 1] distance to the
+            # nearest true region edge (0 = at an edge, 1 = at or beyond
+            # `boundary_max_dist_bp`, see train_prophage.py). Deliberately an
+            # UNSIGNED magnitude, not a signed offset: this model combines
+            # the forward and reverse-complement embeddings symmetrically
+            # (max/mean) for strand-invariant classification, but a signed
+            # "which direction is the edge" target would flip meaning under
+            # that reverse-complement view and get scrambled by the
+            # symmetric combine. Magnitude is invariant to that flip.
+            # softplus in the loss (not here) keeps the raw output usable as
+            # a real-valued regression target during training.
+            self.boundary_head = nn.Sequential(
+                nn.Linear(self.encoder.emb_dim, fc_dim),
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=dropout) if dropout and dropout > 0 else nn.Identity(),
+                nn.Linear(fc_dim, 1),
+            )
+
     @staticmethod
     def reverse_complement_onehot(x: torch.Tensor) -> torch.Tensor:
         """Reverse-complement a batch of one-hot encoded DNA windows."""
@@ -123,7 +144,9 @@ class RCCNN(nn.Module):
         channel_order = torch.tensor([3, 2, 1, 0, 4], device=x.device)
         return reversed_x.index_select(dim=1, index=channel_order)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, x: torch.Tensor
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         forward_embedding = self.encoder(x)
         reverse_embedding = self.encoder(self.reverse_complement_onehot(x))
 
@@ -134,4 +157,8 @@ class RCCNN(nn.Module):
         else:
             raise ValueError(f"Unknown combine mode: {self.combine}")
 
-        return self.head(combined_embedding).squeeze(-1)
+        classification_logit = self.head(combined_embedding).squeeze(-1)
+        if not self.predict_boundary:
+            return classification_logit
+        boundary_raw = self.boundary_head(combined_embedding).squeeze(-1)
+        return classification_logit, boundary_raw

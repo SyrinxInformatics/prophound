@@ -88,7 +88,12 @@ def predict_probs(
     all_logits: List[np.ndarray] = []
     for batch_x, _ in tqdm(loader, desc="predict", leave=False):
         batch_x = batch_x.to(device, non_blocking=True)
-        logits = model(batch_x).view(-1)
+        output = model(batch_x)
+        # A checkpoint trained with model.predict_boundary=True returns a
+        # (classification_logit, boundary_raw) tuple; the boundary head isn't
+        # wired into inference yet (see docs/boundary-refinement.md), so only
+        # the classification output is used here for now.
+        logits = (output[0] if isinstance(output, tuple) else output).view(-1)
         all_logits.append(logits.detach().cpu().numpy())
     if not all_logits:
         return np.array([], dtype=np.float32)

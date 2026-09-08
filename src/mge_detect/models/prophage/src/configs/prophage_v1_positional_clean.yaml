@@ -1,0 +1,58 @@
+run_name: prophage_v1_positional_clean
+
+# Isolated re-run of the positional-pooling architecture change (adaptive_max
+# pooling, pool_bins=16) against the v1 baseline (global_max pooling). Every
+# other hyperparameter is matched to v1's own config_snapshot.yaml exactly,
+# so pooling is the only deliberate difference -- unlike the original
+# prophage_v1_positional run, which also changed pos_weight (auto -> 20.0)
+# and amp (true -> false) at the same time, confounding the comparison.
+# See docs/model-quality-baseline.md and SESSIONS.md (2026-09-08).
+#
+# init_mode: encoder_only is NOT a confound to remove -- it's mechanically
+# required. pool_bins=16 makes the head's first Linear layer expect an input
+# of channels[-1]*pool_bins = 256*16 = 4096 features, vs. v0's checkpoint
+# (pool_bins=1, 256 features). Loading v0's checkpoint "strict" (v1's mode)
+# would fail on that shape mismatch, so the encoder-only warm start has to be
+# kept for any pool_bins != 1 run, including this one.
+
+data:
+  manifest_csv: data/manifest_windows.filtered.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: true
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  init_mode: encoder_only
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256
+  pooling: "adaptive_max"
+  pool_bins: 16

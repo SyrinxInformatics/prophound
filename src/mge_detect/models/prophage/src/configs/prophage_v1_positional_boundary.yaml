@@ -1,0 +1,64 @@
+run_name: prophage_v1_positional_boundary
+
+# Same as prophage_v1_positional_clean.yaml (isolated positional-pooling
+# rerun), plus the auxiliary boundary-regression head (RCCNN.boundary_head,
+# see model_rc_cnn.py). Comparison ladder this gives:
+#   prophage_v1                       baseline (global_max pooling)
+#   prophage_v1_positional_clean      + adaptive_max pooling only
+#   prophage_v1_positional_boundary   + adaptive_max pooling + boundary head
+#
+# Requires the augmented manifest with a boundary_dist_bp column -- generate
+# it first with 01_scripts/add_boundary_distance.py (see
+# 01_scripts/add_boundary_distance.slurm), pointed at
+# positives/by_genome/<genome_id>.bed for ground-truth intervals.
+#
+# boundary_weight=0.5 is an untested initial guess, not a tuned value -- the
+# two loss terms (BCE on ~[0,~few], smooth-L1 on a [0,1]-normalized target)
+# aren't on inherently comparable scales. Watch the printed per-epoch loss
+# breakdown once training starts and adjust if the boundary term dominates or
+# is negligible relative to the classification term.
+
+data:
+  manifest_csv: data/manifest_windows.filtered.with_boundary.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: true
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  init_mode: encoder_only
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+  boundary_weight: 0.5
+  boundary_max_dist_bp: 10000
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256
+  pooling: "adaptive_max"
+  pool_bins: 16
+  predict_boundary: true
