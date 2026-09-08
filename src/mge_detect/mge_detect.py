@@ -16,8 +16,86 @@
 # limitations under the License.
 
 
-def main():
-    print("Hello world! (mge-detect)")
+import argparse
+import sys
+
+
+# Must match mge_detect.models.prophage.src.predict_genome.MODE_THRESHOLDS.
+# Kept as a local constant so `--help` doesn't have to import torch.
+PROPHAGE_MODES = ("conservative", "default", "exploratory")
+
+
+def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
+    parser = subparsers.add_parser(
+        "predict",
+        help="Detect prophage-like regions in a nucleotide FASTA.",
+        description=(
+            "Score sliding windows of a genome FASTA with the DNA-only prophage "
+            "model and emit windows.tsv, regions.tsv, and run_metadata.json."
+        ),
+    )
+    parser.add_argument(
+        "--input", required=True, dest="input_fasta", help="Nucleotide FASTA to scan."
+    )
+    parser.add_argument("--outdir", required=True, help="Directory to write outputs into.")
+    parser.add_argument(
+        "--mode",
+        choices=PROPHAGE_MODES,
+        default="default",
+        help="Confidence mode (controls the default score threshold).",
+    )
+    parser.add_argument(
+        "--config",
+        required=True,
+        help="Training config YAML for the checkpoint (defines model/window architecture).",
+    )
+    parser.add_argument("--checkpoint", required=True, help="Path to a trained model checkpoint.")
+    parser.add_argument("--threshold", type=float, default=None, help="Override the mode's score threshold.")
+    parser.add_argument("--seed-threshold", type=float, default=None)
+    parser.add_argument("--extend-threshold", type=float, default=None)
+    parser.add_argument(
+        "--device",
+        default="auto",
+        choices=["auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel"],
+    )
+    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument(
+        "--num-tiles",
+        type=int,
+        default=1,
+        help=(
+            "Score this many phase-shifted window tilings and merge them for "
+            "finer region boundaries (default 1 = single grid, matches the "
+            "frozen v1 behavior). Cost scales ~linearly with this value; also "
+            "writes an extra bins.tsv diagnostic file when > 1."
+        ),
+    )
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="mge-detect",
+        description=(
+            "Database-independent detection of mobile genetic elements in "
+            "prokaryotic sequences."
+        ),
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    _add_predict_subparser(subparsers)
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
+
+    if args.command == "predict":
+        from mge_detect.models.prophage.src.predict_genome import run_predict
+
+        run_predict(args)
+    else:  # pragma: no cover - argparse enforces valid choices
+        print(f"Unknown command: {args.command}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

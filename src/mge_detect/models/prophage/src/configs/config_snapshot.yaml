@@ -1,0 +1,38 @@
+run_name: prophage_v0
+
+data:
+  manifest_csv: data/manifest_windows.filtered.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0003
+  weight_decay: 0.01
+  grad_clip: 1.0
+  amp: false
+  auto_resume: true
+  save_every_sec: 1800
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256

@@ -11,24 +11,31 @@ readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE.txt"]
 
+[project.scripts]
+mge-detect = "mge_detect.mge_detect:main"
+
 [build-system]
 build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge", "bioconda"]
-platforms = ["linux-64", "osx-arm64"]
+platforms = ["linux-64", "osx-arm64", "osx-64"]
 
 [tool.pixi.pypi-dependencies]
 mge_detect = { path = ".", editable = true }
 
 [tool.pixi.tasks]
-mge-detect = "python3 src/mge_detect/mge_detect.py"
+mge-detect = "mge-detect"
 
 [tool.pixi.dependencies]
-tensorflow = ">=2.18.0,<3"
+pytorch = ">=2.4.0,<3"
 biopython = ">=1.86,<2"
 pytest = ">=9.0.0,<10"
 sphinx = ">=8.2.3,<9"
 mypy = ">=1.18.2,<2"
 scikit-learn = ">=1.7.2,<2"
+pandas = ">=2.2,<3"
+pyfaidx = ">=0.8,<1"
+tqdm = ">=4.66,<5"
+pyyaml = ">=6.0,<7"

@@ -1,0 +1,129 @@
+from __future__ import annotations
+
+import argparse
+import os
+import random
+from typing import List, Tuple
+
+
+def stem(filename: str) -> str:
+    base = os.path.basename(filename)
+    # remove common extensions
+    for ext in [".bed", ".tsv", ".txt", ".fasta", ".fa", ".fna", ".fas"]:
+        if base.endswith(ext):
+            base = base[: -len(ext)]
+    return base
+
+
+def bed_has_positive(bed_path: str) -> bool:
+    with open(bed_path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split()
+            if len(parts) < 4:
+                continue
+            seg_type = parts[3]
+            if seg_type == "positive":
+                return True
+    return False
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--beds_dir",
+        required=True,
+        help="Directory containing BED maps with far_neg/near_neg/positive",
+    )
+    parser.add_argument(
+        "--out_dir", default="splits", help="Output directory for train/val/test.txt"
+    )
+    parser.add_argument("--seed", type=int, default=13)
+    parser.add_argument("--train_frac", type=float, default=0.70)
+    parser.add_argument("--val_frac", type=float, default=0.15)
+    parser.add_argument("--test_frac", type=float, default=0.15)
+    args = parser.parse_args()
+
+    if abs((args.train_frac + args.val_frac + args.test_frac) - 1.0) > 1e-6:
+        raise SystemExit("Fractions must sum to 1.0")
+
+    bed_files = [
+        os.path.join(args.beds_dir, f)
+        for f in os.listdir(args.beds_dir)
+        if f.endswith((".bed", ".tsv", ".txt"))
+    ]
+    if not bed_files:
+        raise SystemExit(f"No BED files found in {args.beds_dir}")
+
+    pos_genomes: List[str] = []
+    negonly_genomes: List[str] = []
+
+    for bed in sorted(bed_files):
+        gid = stem(bed)
+        if bed_has_positive(bed):
+            pos_genomes.append(gid)
+        else:
+            negonly_genomes.append(gid)
+
+    rng = random.Random(args.seed)
+    rng.shuffle(pos_genomes)
+    rng.shuffle(negonly_genomes)
+
+    def split_list(genome_ids: List[str]) -> Tuple[List[str], List[str], List[str]]:
+        n_genomes = len(genome_ids)
+        n_train = int(round(n_genomes * args.train_frac))
+        n_val = int(round(n_genomes * args.val_frac))
+        n_train = min(n_train, n_genomes)
+        n_val = min(n_val, max(0, n_genomes - n_train))
+        train = genome_ids[:n_train]
+        val = genome_ids[n_train : n_train + n_val]
+        test = genome_ids[n_train + n_val :]
+        return train, val, test
+
+    pos_tr, pos_va, pos_te = split_list(pos_genomes)
+    neg_tr, neg_va, neg_te = split_list(negonly_genomes)
+
+    train = pos_tr + neg_tr
+    val = pos_va + neg_va
+    test = pos_te + neg_te
+
+    # Shuffle within each split to avoid grouping
+    rng.shuffle(train)
+    rng.shuffle(val)
+    rng.shuffle(test)
+
+    os.makedirs(args.out_dir, exist_ok=True)
+
+    def write(path: str, genome_ids: List[str]) -> None:
+        with open(path, "w") as handle:
+            for genome_id in genome_ids:
+                handle.write(genome_id + "\n")
+
+    write(os.path.join(args.out_dir, "train.txt"), train)
+    write(os.path.join(args.out_dir, "val.txt"), val)
+    write(os.path.join(args.out_dir, "test.txt"), test)
+
+    def pct(a: int, b: int) -> str:
+        return "0.0%" if b == 0 else f"{100.0 * a / b:.1f}%"
+
+    print("Split summary:")
+    print(f"  total genomes: {len(pos_genomes) + len(negonly_genomes)}")
+    print(f"  genomes w/ positives: {len(pos_genomes)}")
+    print(f"  negative-only genomes: {len(negonly_genomes)}")
+    print("  train:", len(train), f"(pos {len(pos_tr)} / neg-only {len(neg_tr)})")
+    print("  val:  ", len(val), f"(pos {len(pos_va)} / neg-only {len(neg_va)})")
+    print("  test: ", len(test), f"(pos {len(pos_te)} / neg-only {len(neg_te)})")
+
+    # Leakage check
+    dup = set(train) & set(val) | set(train) & set(test) | set(val) & set(test)
+    if dup:
+        raise SystemExit(
+            f"ERROR: genome IDs overlap between splits: {sorted(list(dup))[:10]}"
+        )
+    print("  leakage check: OK (no overlapping genome IDs)")
+
+
+if __name__ == "__main__":
+    main()
