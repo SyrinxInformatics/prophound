@@ -348,43 +348,55 @@ def build_region_table_multi_tile(
     seed_threshold: float,
     extend_threshold: float,
     window_len: int,
+    stride: int,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Region construction from possibly-overlapping multi-tile window scores.
+    """Hybrid region construction: seed on the trusted single grid, refine
+    boundaries on the finer multi-tile score track.
 
-    Unlike `build_region_table`, this does not assume windows sit on one
-    regular single-phase grid: each window's [start, end) span is scattered
-    into fixed `bin_size` bins directly, so it works for windows merged from
-    several offset tilings (`build_multi_tile_windows`). Boundary resolution
-    improves with more tiles, down to `bin_size`.
+    Two earlier approaches were tried and both failed at scale (see
+    docs/boundary-refinement.md and docs/model-quality-baseline.md):
+    - Seeding directly from the *mean* multi-tile bin score under-detects:
+      more tiles means more overlapping windows averaged into each bin
+      (~10 per tile), which dilutes a single well-aligned strong window's
+      score toward its worse-aligned neighbors. Measured region recall
+      dropped from 76.9% (single-grid) to 67.3% (mean multi-tile) on an
+      18-genome eval.
+    - Seeding from the *max* multi-tile bin score over-detects badly: with
+      ~4x more overlapping windows contributing to each bin, the chance that
+      at least one of them exceeds a strict threshold by pure noise goes up
+      accordingly (classic multiple-comparisons peak inflation). This
+      hallucinated a dozen spurious regions in a genome with exactly one true
+      region in a quick 3-genome check.
 
-    `seed_threshold`/`extend_threshold` still decide which bins connect into
-    one region (as in `build_region_table`), but the *reported* start/end are
-    then refined separately by walking outward to where each region's score
-    crosses a calibrated fraction (`RAMP_MIDPOINT_FRACTION`) of the way from
-    the contig's local background level up to that region's own plateau, not
-    by where it crosses `extend_threshold`.
+    So seeding and boundary refinement are deliberately decoupled here:
+    - WHICH regions exist is decided using only the tile-0 windows (`tile`
+      column == 0), i.e. exactly the same single regular grid and mean-based
+      bin aggregation `build_region_table` would use. This carries over the
+      frozen v1 detection behavior with no new false positives and no new
+      dilution -- seeding is not where the finer tiling should help anyway.
+    - HOW PRECISELY each already-seeded region's boundaries are drawn uses
+      the full multi-tile mean-based fine-grained bin track (`bin_size` =
+      `stride / num_tiles`), walking outward from the seed to where the score
+      crosses a calibrated fraction (`RAMP_MIDPOINT_FRACTION`) of the way from
+      local background up to the region's plateau, rather than where it
+      crosses `extend_threshold`.
 
-    Why: empirically the model's score does not jump sharply at a true
-    biological boundary -- a window straddling the edge sees a mix of
-    positive/negative sequence and scores roughly in proportion, so the score
-    ramps smoothly over about one `window_len` on each side. Requiring the
-    score to stay above a strict threshold like 0.99 before extending only
-    claims the saturated middle of that ramp, which lands the reported
-    boundary roughly `window_len / 2` inside the true edge -- exactly the
-    truncation seen in practice. A naive 50%-of-the-way midpoint overcorrects
-    the other way (verified on 5 hand-checked E. coli K-12 regions against
-    geNomad's calls: every region ended up bracketing the true call instead of
-    sitting inside it). `RAMP_MIDPOINT_FRACTION` (0.77) was calibrated from
-    those same 10 boundary crossings (5 regions x 2 edges) to split the
-    difference -- a small, single-genome sample, not a proven general
-    constant. Revisit with more genomes before relying on it heavily.
+    Why a ramp-crossing fraction instead of `extend_threshold` at all: the
+    model's score does not jump sharply at a true biological boundary -- a
+    window straddling the edge sees a mix of positive/negative sequence and
+    scores roughly in proportion, so the score ramps smoothly over about one
+    `window_len` on each side. Requiring the score to stay above a strict
+    threshold like 0.99 before extending only claims the saturated middle of
+    that ramp, landing the boundary roughly `window_len / 2` inside the true
+    edge. A naive 50%-of-the-way midpoint overcorrects the other way (every
+    region ends up bracketing the true call instead of sitting inside it).
+    `RAMP_MIDPOINT_FRACTION` (0.77) was calibrated from 10 boundary crossings
+    in one genome (E. coli K-12) -- a small sample, not a proven constant.
 
     Also returns a per-bin diagnostic track (`bins_df`) with a `bin_stability`
     heuristic (1 - stdev of per-window scores landing in that bin): closer to
     1 means tiles agreed on that position's score, closer to 0 means they
-    disagreed -- a cheap signal for which boundaries are actually shaky versus
-    just weakly supported. This is a heuristic, not a calibrated confidence
-    interval.
+    disagreed. This is a heuristic, not a calibrated confidence interval.
     """
     region_rows: List[Dict[str, object]] = []
     bin_frames: List[pd.DataFrame] = []
@@ -396,6 +408,7 @@ def build_region_table_multi_tile(
         contig_end = int(contig_df["end"].max())
         n_bins = int(math.ceil(contig_end / bin_size))
 
+        # --- Fine-grained mean-based track from ALL tiles (refinement only) ---
         bin_score_sum = np.zeros(n_bins, dtype=np.float64)
         bin_score_sq_sum = np.zeros(n_bins, dtype=np.float64)
         bin_score_count = np.zeros(n_bins, dtype=np.int32)
@@ -421,36 +434,60 @@ def build_region_table_multi_tile(
         bin_stability = np.full(n_bins, np.nan, dtype=np.float64)
         bin_stability[covered_bins] = 1.0 - np.sqrt(bin_variance[covered_bins])
 
-        seed_bin_mask = covered_bins & (bin_scores >= seed_threshold)
-        extend_bin_mask = covered_bins & (bin_scores >= extend_threshold)
+        # --- Coarse single-grid (tile 0) track: decides WHICH regions exist ---
+        tile0_df = contig_df[contig_df["tile"] == 0] if "tile" in contig_df.columns else contig_df
+        coarse_n_bins = int(math.ceil(contig_end / stride))
+        coarse_sum = np.zeros(coarse_n_bins, dtype=np.float64)
+        coarse_count = np.zeros(coarse_n_bins, dtype=np.int32)
+        for row in tile0_df.itertuples(index=False):
+            cb_start = int(row.start // stride)
+            cb_end = min(coarse_n_bins, int(math.ceil(row.end / stride)))
+            coarse_sum[cb_start:cb_end] += float(row.prob)
+            coarse_count[cb_start:cb_end] += 1
+        coarse_covered = coarse_count > 0
+        coarse_scores = np.zeros(coarse_n_bins, dtype=np.float64)
+        coarse_scores[coarse_covered] = coarse_sum[coarse_covered] / coarse_count[coarse_covered]
 
-        background_candidates = bin_scores[covered_bins & ~seed_bin_mask]
+        coarse_seed_mask = coarse_covered & (coarse_scores >= seed_threshold)
+        coarse_extend_mask = coarse_covered & (coarse_scores >= extend_threshold)
+
+        seed_region_ranges_bp: List[Tuple[int, int]] = []
+        used_coarse = np.zeros(coarse_n_bins, dtype=bool)
+        for coarse_index in range(coarse_n_bins):
+            if (
+                used_coarse[coarse_index]
+                or not coarse_seed_mask[coarse_index]
+                or not coarse_extend_mask[coarse_index]
+            ):
+                continue
+            left = coarse_index
+            while left - 1 >= 0 and coarse_extend_mask[left - 1]:
+                left -= 1
+            right = coarse_index
+            while right + 1 < coarse_n_bins and coarse_extend_mask[right + 1]:
+                right += 1
+            used_coarse[left : right + 1] = True
+            seed_region_ranges_bp.append((left * stride, min(contig_end, (right + 1) * stride)))
+
+        # Background for the ramp-crossing fraction: fine bins outside every
+        # seeded region (not "not seeded" at the fine level, since seeding now
+        # happens on the coarse grid).
+        in_any_seed_region = np.zeros(n_bins, dtype=bool)
+        for seed_start_bp, seed_end_bp in seed_region_ranges_bp:
+            in_any_seed_region[int(seed_start_bp // bin_size) : int(math.ceil(seed_end_bp / bin_size))] = True
+        background_candidates = bin_scores[covered_bins & ~in_any_seed_region]
         background_level = (
             float(np.median(background_candidates)) if background_candidates.size else 0.0
         )
-        # Cap the midpoint walk generously past one window's width, since the
+        # Cap the ramp walk generously past one window's width, since the
         # score ramp around a true edge is expected to span roughly window_len.
         max_walk_steps = max(1, int(math.ceil((2 * window_len) / bin_size)))
 
-        region_bin_ranges: List[Tuple[int, int]] = []
-        used_bins = np.zeros(n_bins, dtype=bool)
-        for bin_index in range(n_bins):
-            if used_bins[bin_index] or not seed_bin_mask[bin_index] or not extend_bin_mask[bin_index]:
-                continue
-
-            left_bin = bin_index
-            while left_bin - 1 >= 0 and extend_bin_mask[left_bin - 1]:
-                left_bin -= 1
-
-            right_bin = bin_index
-            while right_bin + 1 < n_bins and extend_bin_mask[right_bin + 1]:
-                right_bin += 1
-
-            used_bins[left_bin : right_bin + 1] = True
-            region_bin_ranges.append((left_bin, right_bin))
-
         previous_end = 0
-        for left_bin, right_bin in region_bin_ranges:
+        for seed_start_bp, seed_end_bp in seed_region_ranges_bp:
+            left_bin = int(seed_start_bp // bin_size)
+            right_bin = min(n_bins - 1, int(math.ceil(seed_end_bp / bin_size)) - 1)
+
             plateau = float(bin_scores[left_bin : right_bin + 1].max())
             crossing_threshold = background_level + RAMP_MIDPOINT_FRACTION * (
                 plateau - background_level
@@ -615,10 +652,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         type=int,
         default=1,
         help=(
-            "Score this many phase-shifted window tilings and merge them for "
-            "finer region boundaries (default 1 = frozen v1 behavior, single "
-            "grid). Cost scales ~linearly with this value. See "
-            "POST_V1_BACKLOG.md."
+            "EXPERIMENTAL, not recommended: score this many phase-shifted "
+            "window tilings and merge them for finer region boundaries "
+            "(default 1 = frozen v1 behavior, single grid). See "
+            "docs/boundary-refinement.md for known issues before using this "
+            "for anything but further investigation."
         ),
     )
     return parser
@@ -678,6 +716,7 @@ def run_predict(args: argparse.Namespace) -> None:
             seed_threshold=seed_threshold,
             extend_threshold=extend_threshold,
             window_len=cfg.data.window_len,
+            stride=cfg.data.stride,
         )
     else:
         windows_df, regions_df = build_region_table(

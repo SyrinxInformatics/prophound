@@ -65,10 +65,15 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         type=int,
         default=1,
         help=(
-            "Score this many phase-shifted window tilings and merge them for "
-            "finer region boundaries (default 1 = single grid, matches the "
-            "frozen v1 behavior). Cost scales ~linearly with this value; also "
-            "writes an extra bins.tsv diagnostic file when > 1."
+            "EXPERIMENTAL, not recommended: score this many phase-shifted "
+            "window tilings and merge them for finer region boundaries "
+            "(default 1 = single grid, matches the frozen v1 behavior). Has "
+            "shown real boundary-accuracy gains but also an unexplained "
+            "region-recall regression and at least one unresolved seeding "
+            "discrepancy vs. the single-grid baseline -- see "
+            "docs/boundary-refinement.md before using this for anything but "
+            "further investigation. Cost scales ~linearly with this value; "
+            "also writes an extra bins.tsv diagnostic file when > 1."
         ),
     )
 
