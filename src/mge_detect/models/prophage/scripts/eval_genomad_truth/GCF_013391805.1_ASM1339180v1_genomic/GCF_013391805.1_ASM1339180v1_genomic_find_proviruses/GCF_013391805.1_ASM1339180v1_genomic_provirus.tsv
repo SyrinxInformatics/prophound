@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NZ_CP058364.1|provirus_3515121_3545134	NZ_CP058364.1	3515121	3545134	30014	47	32.5142	False	NZ_CP058364.1|provirus_3515121_3545134_3112

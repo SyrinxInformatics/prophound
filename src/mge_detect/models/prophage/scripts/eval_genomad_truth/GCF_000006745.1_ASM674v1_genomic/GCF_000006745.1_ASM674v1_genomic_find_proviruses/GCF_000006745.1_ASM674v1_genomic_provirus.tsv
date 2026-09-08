@@ -1,0 +1,3 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NC_002505.1|provirus_1564152_1583513	NC_002505.1	1564152	1583513	19362	27	22.0631	False	NA
+NC_002505.1|provirus_1935801_1948022	NC_002505.1	1935801	1948022	12222	20	14.3647	False	NA

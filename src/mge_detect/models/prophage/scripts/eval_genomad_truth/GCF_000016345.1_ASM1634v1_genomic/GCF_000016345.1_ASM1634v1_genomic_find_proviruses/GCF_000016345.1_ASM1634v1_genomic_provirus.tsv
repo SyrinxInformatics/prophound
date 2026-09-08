@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NC_009379.1|provirus_1160914_1186848	NC_009379.1	1160914	1186848	25935	28	18.3586	False	NC_009379.1|provirus_1160914_1186848_1134

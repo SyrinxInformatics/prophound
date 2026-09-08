@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NC_007503.1|provirus_1484619_1519182	NC_007503.1	1484619	1519182	34564	53	42.7166	False	NC_007503.1|provirus_1484619_1519182_1592

@@ -1,0 +1,3 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NZ_OZ246980.1|provirus_2370034_2393760	NZ_OZ246980.1	2370034	2393760	23727	34	26.4067	False	NA
+NZ_OZ246980.1|provirus_3840368_3853767	NZ_OZ246980.1	3840368	3853767	13400	18	17.5683	False	NA

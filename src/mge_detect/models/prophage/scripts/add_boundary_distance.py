@@ -13,6 +13,15 @@ def load_positive_edges(positives_dir: str, genome_id: str) -> dict:
     Reads a plain BED file (chrom, start, end, ...) of the genome's true
     positive intervals only -- e.g. positives/by_genome/<genome_id>.bed on the
     HPCC. Each interval contributes both its start and end as an "edge".
+
+    The chrom column in these files is "<genome_id>|<contig_id>" (verified
+    2026-09-08 against positives/by_genome/GCF_000005845.2_ASM584v2_genomic.bed),
+    not the bare contig_id the manifest uses -- strip the genome_id prefix so
+    lookups actually match. Getting this wrong silently produces the "no
+    positive interval" sentinel for every window instead of an error: an
+    earlier run of this script did exactly that for all 1,567 genomes that do
+    have positives (boundary_dist_bp came out constant at the sentinel value
+    for all ~10.4M rows), and it still exited 0.
     """
     bed_path = Path(positives_dir) / f"{genome_id}.bed"
     edges_by_contig: dict = {}
@@ -26,7 +35,8 @@ def load_positive_edges(positives_dir: str, genome_id: str) -> dict:
             parts = line.split()
             if len(parts) < 3:
                 continue
-            contig, start, end = parts[0], int(parts[1]), int(parts[2])
+            chrom, start, end = parts[0], int(parts[1]), int(parts[2])
+            contig = chrom.split("|", 1)[1] if "|" in chrom else chrom
             edges_by_contig.setdefault(contig, []).extend([start, end])
     return {contig: np.array(sorted(v), dtype=np.int64) for contig, v in edges_by_contig.items()}
 

@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NC_014033.1|provirus_1063424_1123510	NC_014033.1	1063424	1123510	60087	67	43.3061	False	NC_014033.1|provirus_1063424_1123510_933

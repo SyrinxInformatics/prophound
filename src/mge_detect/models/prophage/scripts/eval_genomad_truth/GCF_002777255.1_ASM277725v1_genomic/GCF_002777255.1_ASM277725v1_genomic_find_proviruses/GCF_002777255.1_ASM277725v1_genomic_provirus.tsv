@@ -1,0 +1,3 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NZ_CP017634.1|provirus_961027_1026383	NZ_CP017634.1	961027	1026383	65357	86	45.6382	False	NZ_CP017634.1|provirus_961027_1026383_886
+NZ_CP017634.1|provirus_6039674_6052375	NZ_CP017634.1	6039674	6052375	12702	18	21.5362	False	NA
