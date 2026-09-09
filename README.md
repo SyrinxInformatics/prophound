@@ -6,11 +6,12 @@
 
 This is research software under active development. The first (and currently only) detector targets **prophages**:
 
-- a reverse-complement CNN scored over sliding windows of nucleotide sequence
-- validated on held-out test data with three user-selectable confidence modes (`Exploratory`, `Default`, `Conservative`)
-- not yet wired into the `mge-detect` CLI — see [`src/mge_detect/models/prophage/notes/V1_INFERENCE_CONTRACT.md`](src/mge_detect/models/prophage/notes/V1_INFERENCE_CONTRACT.md) for the target interface and [`SESSIONS.md`](SESSIONS.md) for current progress
+- a reverse-complement CNN scored over sliding windows of nucleotide sequence, with three user-selectable confidence modes (`Exploratory`, `Default`, `Conservative`)
+- wired into a working CLI: `mge-detect predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt>`
+- evaluated against independent geNomad ground truth (not just held-out window-level metrics): region-level recall/precision are currently ~77%/~70%, with region boundaries typically truncated inside the true extent — both are real, open limitations, not yet a finished detector
+- model-side re-engineering (an isolated architecture ablation, plus a new boundary-regression head aimed at the truncation problem) is implemented and training on the HPCC as of this writing
 
-Model training and large-scale evaluation run on the University of Texas at San Antonio's HPC cluster (ARC); this repository is where the CLI, packaging, and portable inference path are developed.
+Model training and large-scale evaluation run on the University of Texas at San Antonio's HPC cluster (ARC); this repository is where the CLI, packaging, and portable inference path are developed. See [`SESSIONS.md`](SESSIONS.md) for current progress and [`CLAUDE.md`](CLAUDE.md) for where everything is documented.
 
 ## Repository layout
 

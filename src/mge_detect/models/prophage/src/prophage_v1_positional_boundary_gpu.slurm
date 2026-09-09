@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J prophage_v1_positional_boundary
-#SBATCH -p gpu1v100
+#SBATCH -p gpu2v100
 #SBATCH -n 1
 #SBATCH -c 8
 #SBATCH --gres=gpu:1
