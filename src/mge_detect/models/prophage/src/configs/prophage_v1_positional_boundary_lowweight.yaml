@@ -1,0 +1,63 @@
+run_name: prophage_v1_positional_boundary_lowweight
+
+# Same as prophage_v1_positional_boundary.yaml, but with boundary_weight
+# lowered 10x (0.5 -> 0.05). Follow-up to the 807594 result (see
+# docs/model-reengineering.md): region precision dropped further with the
+# boundary loss active (37.3%) than with pooling alone (51.8%, 807593), even
+# though the raw (pre-weight) boundary SmoothL1 loss was already small
+# (~0.002 by epoch 2, per 807594's training log) -- so boundary_weight=0.5
+# was already only contributing ~0.001 to the total loss, not obviously
+# dominant by magnitude alone. This config tests whether a further 10x cut
+# (~0.0002 contribution) removes the extra precision cost, to help decide
+# between "boundary_weight itself is the lever to pull" vs. "the auxiliary
+# task changes shared-encoder behavior regardless of its loss weight" (the
+# latter would mean lowering boundary_weight further doesn't help and the
+# head should be shelved instead -- see docs/model-reengineering.md's
+# "Resume here" section for the decision this run is meant to inform).
+#
+# Everything else identical to prophage_v1_positional_boundary.yaml.
+
+data:
+  manifest_csv: data/manifest_windows.filtered.with_boundary.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: true
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  init_mode: encoder_only
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+  boundary_weight: 0.05
+  boundary_max_dist_bp: 10000
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256
+  pooling: "adaptive_max"
+  pool_bins: 16
+  predict_boundary: true
