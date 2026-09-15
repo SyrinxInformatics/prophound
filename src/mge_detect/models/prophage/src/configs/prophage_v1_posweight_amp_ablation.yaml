@@ -1,0 +1,61 @@
+run_name: prophage_v1_posweight_amp_ablation
+
+# Isolated re-run of the pos_weight/amp change (auto->20.0, true->false) against
+# the TRUE v1 baseline (global_max pooling, no pooling override) -- mirrors
+# prophage_v1_positional_clean.yaml's methodology exactly, but isolates the
+# OTHER two confounds from the original prophage_v1_positional run instead of
+# pooling. Every other hyperparameter matches true v1's own config_snapshot.yaml
+# exactly, so pos_weight+amp are the only deliberate difference from v1.
+#
+# Background (see docs/model-reengineering.md's 2026-09-15 correction): every
+# "v1 baseline" number this project has cited (76.9% recall / 70.2% precision)
+# was actually prophage_v1_positional (adaptive_max + pos_weight=20 + amp=false),
+# not true global_max v1. True v1 actually scores 82.7% recall / 38.7% precision.
+# Isolating pooling alone (807593, this config's sibling) showed pooling is a
+# clean precision WIN (38.7%->51.8%) at zero recall cost -- the real tradeoff
+# lives in pos_weight/amp (807593->prophage_v1_positional: 51.8%->70.2%
+# precision, 82.7%->76.9% recall). This run tests whether that pos_weight/amp
+# effect holds on its own (no pooling change) or requires the combination.
+#
+# epochs=20 (not the embedded-checkpoint value of 30 that both true v1 and
+# prophage_v1_positional actually used) to match 807593's precedent for direct
+# comparability -- early stopping (patience=5) means this cap rarely binds.
+
+data:
+  manifest_csv: data/manifest_windows.filtered.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: false
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: 20.0
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256

@@ -1,0 +1,99 @@
+#!/bin/bash
+#SBATCH -J prophage_v1_posweight_amp_ablation
+#SBATCH -p gpu1v100
+#SBATCH -n 1
+#SBATCH -c 8
+#SBATCH --gres=gpu:1
+#SBATCH -t 2-00:00:00
+#SBATCH -o runs/prophage_v1_posweight_amp_ablation/logs/slurm_%j.out
+#SBATCH -e runs/prophage_v1_posweight_amp_ablation/logs/slurm_%j.err
+
+set -euo pipefail
+
+echo "=== job start ==="
+date
+hostname
+pwd
+
+module load miniconda
+conda activate /home/$USER/.conda/envs/mge_explorer_gpu
+
+cd /work/$USER/mge_explorer/data_refactored
+CONFIG_PATH="${CONFIG_PATH:-runs/prophage_v1_posweight_amp_ablation/config_snapshot.yaml}"
+
+echo "=== after cd ==="
+pwd
+which python
+python -V
+echo "=== ulimit (nofile) ==="
+ulimit -n || true
+ulimit -n 65535 || true
+echo "nofile now: $(ulimit -n || true)"
+
+echo "=== GPU ==="
+nvidia-smi
+
+echo "=== files ==="
+ls -lh data/manifest_windows.filtered.csv
+ls -lh splits/train.txt splits/val.txt splits/test.txt
+ls -lh "$CONFIG_PATH"
+ls -lh runs/prophage_v0/checkpoints/best.pt
+
+echo "=== torch ==="
+python - << 'PY'
+import torch
+print("torch:", torch.__version__)
+print("cuda available:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("gpu:", torch.cuda.get_device_name(0))
+PY
+
+echo "=== config preflight ==="
+echo "CONFIG_PATH=$CONFIG_PATH"
+python - << PY
+import yaml
+p = "$CONFIG_PATH"
+cfg = yaml.safe_load(open(p))
+t = cfg.get("training", {})
+d = cfg.get("data", {})
+m = cfg.get("model", {})
+l = cfg.get("loss", {})
+print("run_name:", cfg.get("run_name"))
+print("epochs:", t.get("epochs"))
+print("amp:", t.get("amp"))
+print("init_checkpoint:", t.get("init_checkpoint"))
+print("pos_weight:", l.get("pos_weight"))
+print("pooling:", m.get("pooling"), "pool_bins:", m.get("pool_bins"))
+if m.get("pooling") is not None:
+    raise SystemExit(
+        "ERROR: this ablation is meant to isolate pos_weight/amp with NO pooling "
+        f"change -- expected no 'pooling' key (global_max default), got {m.get('pooling')!r}"
+    )
+# Sanity check this matches v1's on-disk config_snapshot.yaml except pos_weight/amp.
+v1_cfg = yaml.safe_load(open("runs/prophage_v1/config_snapshot.yaml"))
+expected_diffs = {("loss", "pos_weight"), ("training", "amp")}
+mismatches = []
+for section in ("training", "loss", "model"):
+    for key, v1_val in v1_cfg.get(section, {}).items():
+        this_val = cfg.get(section, {}).get(key)
+        if (section, key) in expected_diffs:
+            continue
+        if this_val != v1_val:
+            mismatches.append((section, key, v1_val, this_val))
+if mismatches:
+    print("WARNING: unexpected differences from v1's on-disk config:")
+    for section, key, v1_val, this_val in mismatches:
+        print(f"  {section}.{key}: v1={v1_val!r} this={this_val!r}")
+else:
+    print("OK: training/loss/model hyperparameters match v1's on-disk config exactly (besides pos_weight/amp).")
+if l.get("pos_weight") != 20.0:
+    raise SystemExit(f"ERROR: expected pos_weight=20.0 for this ablation, got {l.get('pos_weight')}")
+if t.get("amp") != False:
+    raise SystemExit(f"ERROR: expected amp=false for this ablation, got {t.get('amp')}")
+PY
+
+echo "=== training ==="
+python -m src.train_prophage --config "$CONFIG_PATH"
+
+echo "=== job end ==="
+date
