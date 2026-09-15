@@ -375,10 +375,14 @@ def build_region_table_multi_tile(
 
     So seeding and boundary refinement are deliberately decoupled here:
     - WHICH regions exist is decided using only the tile-0 windows (`tile`
-      column == 0), i.e. exactly the same single regular grid and mean-based
-      bin aggregation `build_region_table` would use. This carries over the
-      frozen v1 detection behavior with no new false positives and no new
-      dilution -- seeding is not where the finer tiling should help anyway.
+      column == 0), replicating `build_region_table`'s seeding rule exactly:
+      a bin is a seed if ANY single covering window clears `seed_threshold`,
+      and extends while the bin MEAN clears `extend_threshold`. This carries
+      over the frozen v1 detection behavior with no new false positives and
+      no new dilution -- seeding is not where the finer tiling should help
+      anyway. (Until 2026-09-15 this tested the bin mean against
+      `seed_threshold`, which is stricter than the frozen path and dropped
+      regions -- see docs/boundary-refinement.md "Discrepancy resolved".)
     - HOW PRECISELY each already-seeded region's boundaries are drawn uses
       the full multi-tile mean-based fine-grained bin track (`bin_size` =
       `stride / num_tiles`), walking outward from the seed to where the score
@@ -444,16 +448,26 @@ def build_region_table_multi_tile(
         coarse_n_bins = int(math.ceil(contig_end / stride))
         coarse_sum = np.zeros(coarse_n_bins, dtype=np.float64)
         coarse_count = np.zeros(coarse_n_bins, dtype=np.int32)
+        # Seeding must mirror `build_region_table` exactly: a bin is a seed
+        # candidate if ANY single window covering it clears `seed_threshold`
+        # (per-window max), while extension uses the bin MEAN against
+        # `extend_threshold`. An earlier version tested the bin mean against
+        # `seed_threshold` too, which is strictly stricter and silently
+        # dropped regions the frozen single-tile path emits (one 0.996 window
+        # among 0.99x neighbours seeds there but never averaged to 0.995).
+        coarse_seed_mask = np.zeros(coarse_n_bins, dtype=bool)
         for row in tile0_df.itertuples(index=False):
             cb_start = int(row.start // stride)
             cb_end = min(coarse_n_bins, int(math.ceil(row.end / stride)))
-            coarse_sum[cb_start:cb_end] += float(row.prob)
+            prob = float(row.prob)
+            coarse_sum[cb_start:cb_end] += prob
             coarse_count[cb_start:cb_end] += 1
+            if prob >= seed_threshold:
+                coarse_seed_mask[cb_start:cb_end] = True
         coarse_covered = coarse_count > 0
         coarse_scores = np.zeros(coarse_n_bins, dtype=np.float64)
         coarse_scores[coarse_covered] = coarse_sum[coarse_covered] / coarse_count[coarse_covered]
 
-        coarse_seed_mask = coarse_covered & (coarse_scores >= seed_threshold)
         coarse_extend_mask = coarse_covered & (coarse_scores >= extend_threshold)
 
         seed_region_ranges_bp: List[Tuple[int, int]] = []

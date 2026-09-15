@@ -8,8 +8,8 @@ This is research software under active development. The first (and currently onl
 
 - a reverse-complement CNN scored over sliding windows of nucleotide sequence, with three user-selectable confidence modes (`Exploratory`, `Default`, `Conservative`)
 - wired into a working CLI: `mge-detect predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt>`
-- evaluated against independent geNomad ground truth (not just held-out window-level metrics): region-level recall/precision are currently ~77%/~70%, with region boundaries typically truncated inside the true extent — both are real, open limitations, not yet a finished detector
-- model-side re-engineering (an isolated architecture ablation, plus a new boundary-regression head aimed at the truncation problem) is implemented and training on the HPCC as of this writing
+- evaluated against independent geNomad ground truth (not just held-out window-level metrics) on an 18-genome stratified set: the shipped `v1` checkpoint reaches ~83% region recall / ~39% precision, and the best-precision checkpoint measured so far (~77% / ~70%) came from a confounded run whose gains are being isolated — see `docs/model-reengineering.md`. Region boundaries are typically truncated inside the true extent. These are real, open limitations, not yet a finished detector
+- model-side re-engineering is ongoing on the HPCC: an isolated `pos_weight`/`amp` ablation is training as of this writing; a boundary-regression head was tried and shelved. Downstream post-processing (boundary truncation, gap-filling, anti-overextension) is scoped in `docs/downstream-postprocessing.md` and developed in parallel
 
 Model training and large-scale evaluation run on the University of Texas at San Antonio's HPC cluster (ARC); this repository is where the CLI, packaging, and portable inference path are developed. See [`SESSIONS.md`](SESSIONS.md) for current progress and [`CLAUDE.md`](CLAUDE.md) for where everything is documented.
 

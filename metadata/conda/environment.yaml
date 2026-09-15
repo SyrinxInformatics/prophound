@@ -1,0 +1,31 @@
+# Conda environment for mge-detect (mirrors [tool.pixi.dependencies] in
+# pyproject.toml — keep the two in sync). Loosely pinned on purpose so it
+# solves on linux-64 and macOS alike; `pixi install` is the preferred local
+# setup (see docs/environment.md), this file is for plain conda/mamba users.
+#
+# Replaced the old `mge_detect_05_11_2025.yaml` (2026-09-15): that was a fully
+# build-string-pinned export of the TF-era `mge_explorer` HPCC env and still
+# declared tensorflow/keras, which nothing in this codebase imports — every
+# model file needs torch. The HPCC training env (`mge_explorer_gpu`, activated
+# by the SLURM launchers) is a separate GPU env not captured here.
+name: mge_detect
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.11
+  - pytorch>=2.4.0,<3
+  - numpy
+  - pandas>=2.2,<3
+  - biopython>=1.86,<2
+  - pyfaidx>=0.8,<1
+  - scikit-learn>=1.7.2,<2
+  - tqdm>=4.66,<5
+  - pyyaml>=6.0,<7
+  # dev / tooling
+  - pytest>=9.0.0,<10
+  - mypy>=1.18.2,<2
+  - sphinx>=8.2.3,<9
+  - pip
+  - pip:
+      - -e ../..  # repo root, relative to this file

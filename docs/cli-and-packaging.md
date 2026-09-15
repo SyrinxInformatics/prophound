@@ -30,7 +30,7 @@ Console script: `[project.scripts] mge-detect = "mge_detect.mge_detect:main"` in
 
 `pyproject.toml` previously declared `tensorflow` (nothing in the codebase imports it) and was missing `torch`, which every model file actually needs. Fixed: now declares `pytorch`, `pandas`, `pyfaidx`, `tqdm`, `pyyaml` (plus the pre-existing `biopython`, `scikit-learn`, `pytest`, `sphinx`, `mypy`).
 
-**Not yet fixed**: `metadata/conda/mge_detect_05_11_2025.yaml` is a separate, older conda env snapshot that still lists `tensorflow`/`keras`, not `pytorch`. Needs the same correction whenever that file is next touched — not yet done as of 2026-09-08.
+**Fixed 2026-09-15**: `metadata/conda/mge_detect_05_11_2025.yaml` (a fully build-string-pinned, linux-64-only export of the TF-era `mge_explorer` HPCC env, still listing `tensorflow`/`keras` plus unrelated tooling like geNomad/xgboost/mmseqs2) was replaced by `metadata/conda/environment.yaml` — a clean, loosely-pinned spec mirroring `[tool.pixi.dependencies]` (torch, pandas, pyfaidx, tqdm, pyyaml, biopython, scikit-learn, plus dev tools) with an editable `pip: -e ../..` install. Keep it in sync with `pyproject.toml` when deps change. **Status (user, 2026-09-15): pixi is the supported dev/local setup; the conda yaml is an optional backup only, stored but not actively solve-tested. Eventual release distribution will be via bioconda, so neither file is the release artifact — a bioconda recipe will be.** Nothing referenced the old file; the HPCC SLURM launchers activate a separate `mge_explorer_gpu` env that neither file ever described.
 
 ## Positional-pooling experiment (found, evaluated, not yet promoted)
 
