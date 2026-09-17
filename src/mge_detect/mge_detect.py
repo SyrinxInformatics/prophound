@@ -23,6 +23,9 @@ import sys
 # Must match mge_detect.models.prophage.src.predict_genome.MODE_THRESHOLDS.
 # Kept as a local constant so `--help` doesn't have to import torch.
 PROPHAGE_MODES = ("conservative", "default", "exploratory")
+# Must match predict_genome.REGION_BUILDERS / DEFAULT_COVERAGE_FRAC, same reason.
+REGION_BUILDERS = ("strict", "coverage")
+DEFAULT_COVERAGE_FRAC = 0.3
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -74,6 +77,31 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "docs/boundary-refinement.md before using this for anything but "
             "further investigation. Cost scales ~linearly with this value; "
             "also writes an extra bins.tsv diagnostic file when > 1."
+        ),
+    )
+    parser.add_argument(
+        "--region-builder",
+        choices=REGION_BUILDERS,
+        default="strict",
+        help=(
+            "How per-window scores become regions. 'strict' (default) is the "
+            "frozen v1 builder: a bin is inside only if the mean of all windows "
+            "covering it >= the extend threshold, which truncates regions and drops "
+            "sparse-signal elements. 'coverage' marks a bin inside if at least "
+            "--coverage-frac of its covering windows individually score >= the "
+            "extend threshold -- much higher recall and boundary accuracy, more "
+            "calls per genome. See docs/multi-model-architecture.md. Not combinable "
+            "with --num-tiles > 1."
+        ),
+    )
+    parser.add_argument(
+        "--coverage-frac",
+        type=float,
+        default=DEFAULT_COVERAGE_FRAC,
+        help=(
+            "For --region-builder coverage: minimum fraction of covering windows "
+            "that must be high for a bin to count as inside (0 -> union of high "
+            "windows, 1 -> intersection). Default %(default)s."
         ),
     )
 

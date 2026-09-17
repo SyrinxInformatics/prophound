@@ -10,11 +10,14 @@ Living doc — update in place, don't append a history here (that's `SESSIONS.md
 mge-detect predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> \
   [--mode exploratory|default|conservative] [--threshold F] [--seed-threshold F] [--extend-threshold F] \
   [--device auto|cpu|cuda|rocm|mps|xpu|intel] [--batch-size N] [--num-workers N] [--num-tiles N]
+  [--region-builder strict|coverage] [--coverage-frac F]
 ```
 
 Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json` (+ `bins.tsv` when `--num-tiles > 1`). This matches `src/mge_detect/models/prophage/notes/V1_INFERENCE_CONTRACT.md`.
 
 `--config`/`--checkpoint` are required, with no bundled default weights — model-weight bundling is an open packaging question upstream (`notes/V1_PACKAGE_BOUNDARY.md`) that hasn't been decided, so this doesn't guess at an answer.
+
+`--region-builder` (added 2026-09-17; default `strict` = the frozen v1 builder, byte-identical output to before the flag existed — verified) selects how window scores become regions. `coverage` uses `predict_genome.build_region_table_coverage`: a stride bin is inside if ≥ `--coverage-frac` (default 0.3) of its covering windows individually score ≥ the extend threshold, instead of the strict builder's "mean of all covering windows ≥ extend". On the 18-genome eval set that lifts region recall 76.9%→88.5% (frac 0.3) / 94.2% (frac ≤0.1) and median IoU 0.56→0.75, at 2–4× the calls per genome; `run_metadata.json` records `region_builder: coverage_fraction` and `coverage_frac`. Not combinable with `--num-tiles > 1` (hard error). **Still opt-in, not the shipped default**: frac was chosen on the same 52 regions it was scored on — pending a held-out, size-stratified check (`docs/multi-model-architecture.md` "Cheap checks"). The flags are mirrored in `mge_detect.py` rather than imported so `--help` stays torch-free.
 
 `--num-tiles` (default 1 = original frozen v1 behavior, unchanged) controls the multi-tile boundary-refinement mode — **now marked experimental/not-recommended** in its own `--help` text after 3 failed fix attempts; see `docs/boundary-refinement.md` ("Status: paused") before using it for anything but further investigation.
 

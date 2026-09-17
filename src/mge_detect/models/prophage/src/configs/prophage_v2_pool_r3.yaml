@@ -1,0 +1,52 @@
+# prophage_v2_pool_r3: replicate 3/3 (seed 15) of the pooling-only (807593 / prophage_v1_positional_clean) config.
+#
+# One of the 2x3 replicate runs decided 2026-09-17 (docs/model-reengineering.md,
+# docs/multi-model-architecture.md): both candidate base-model configs, three
+# seeds each, distinct run_name per replicate so each gets its own runs/ dir
+# (the 812125/812131 duplicate submission shared one dir and overwrote itself).
+# Identical to prophage_v1_positional_clean.yaml except run_name, seed.
+# Launcher: src/prophage_v2_replicates_gpu.slurm (job array, 3-day walltime).
+
+run_name: prophage_v2_pool_r3
+
+data:
+  manifest_csv: data/manifest_windows.filtered.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 15
+  batch_size: 128
+  num_workers: 2
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: true
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  init_mode: encoder_only
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256
+  pooling: "adaptive_max"
+  pool_bins: 16
