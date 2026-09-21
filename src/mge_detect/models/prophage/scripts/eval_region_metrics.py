@@ -62,11 +62,12 @@ def iou(a_start, a_end, b_start, b_end) -> float:
     return inter / union if union > 0 else 0.0
 
 
-def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str) -> None:
+def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str, strata: list | None = None) -> None:
     n_true_total = 0
     n_pred_total = 0
     n_true_matched = 0
     n_pred_matched = 0
+    true_region_rows: list = []
     start_errors: list = []
     end_errors: list = []
     ious: list = []
@@ -106,6 +107,15 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
 
         n_true_matched += sum(true_matched_flags)
         n_pred_matched += sum(pred_matched_flags)
+
+        for ti, trow in true_df.reset_index(drop=True).iterrows():
+            true_region_rows.append(
+                {
+                    "accession": accession,
+                    "len_bp": trow["end"] - trow["start"],
+                    "matched": bool(true_matched_flags[ti]),
+                }
+            )
 
         per_genome_rows.append(
             {
@@ -149,6 +159,19 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             f"{(end_errors_arr > 0).sum()} overshoot(+) / {(end_errors_arr == 0).sum()} exact"
         )
 
+    if strata and true_region_rows:
+        tr = pd.DataFrame(true_region_rows)
+        tr["kb"] = tr.len_bp / 1000.0
+        print("\nrecall by element size class:")
+        print(f"{'stratum':>10}{'n_true':>8}{'matched':>9}{'recall':>9}")
+        for lo, hi in strata:
+            sub = tr[(tr.kb >= lo) & (tr.kb < hi)]
+            if sub.empty:
+                continue
+            lab = f"{lo:g}-{hi:g}kb" if hi != float("inf") else f"{lo:g}kb+"
+            print(f"{lab:>10}{len(sub):>8}{int(sub.matched.sum()):>9}"
+                  f"{sub.matched.sum() / len(sub) * 100:>8.1f}%")
+
     per_genome_df = pd.DataFrame(per_genome_rows)
     print("\nper-genome breakdown:")
     print(per_genome_df.to_string(index=False))
@@ -164,10 +187,25 @@ def main() -> None:
     parser.add_argument("--genomad_dir", required=True)
     parser.add_argument("--predict_dir", required=True)
     parser.add_argument("--label", default="eval run")
+    parser.add_argument(
+        "--strata",
+        default="",
+        help=(
+            "Comma-separated element-length breakpoints in kb (e.g. '5,8,10,15,30,60') to "
+            "additionally report recall per size class. Use with the held-out size-stratified "
+            "sample from build_eval_sample.py; the pooled recall above hides exactly the "
+            "small-element behaviour that sample exists to measure."
+        ),
+    )
     args = parser.parse_args()
 
+    strata = None
+    if args.strata:
+        edges = [float(x) for x in args.strata.split(",")]
+        strata = list(zip(edges, edges[1:] + [float("inf")]))
+
     genome_list = load_genome_list(Path(args.genome_list))
-    evaluate(genome_list, Path(args.genomad_dir), Path(args.predict_dir), args.label)
+    evaluate(genome_list, Path(args.genomad_dir), Path(args.predict_dir), args.label, strata)
 
 
 if __name__ == "__main__":

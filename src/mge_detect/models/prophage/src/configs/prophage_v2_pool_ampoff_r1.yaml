@@ -1,0 +1,65 @@
+# prophage_v2_pool_ampoff_r1: replicate 1/3 (seed 13) of the pooling-only config with
+# amp disabled -- the arm that separates the two levers confounded in the 2x3
+# prophage_v2 comparison (docs/model-reengineering.md).
+#
+# prophage_v2_pool      = pos_weight auto (70.98) + amp true
+# prophage_v2_pool_pw20 = pos_weight 20.0        + amp false
+# prophage_v2_pool_ampoff (this) = pos_weight auto (70.98) + amp false
+# ...so ampoff vs pool isolates amp, and ampoff vs pw20 isolates pos_weight.
+#
+# Also the first config to carry the 2026-09-20 defaults: amp false (AMP measured
+# at +1.1% wall-clock while discarding ~3% of batches to nan loss) and
+# num_workers 6 (up from 2, against #SBATCH -c 8; the job looks input-bound).
+# See docs/environment.md SLURM section.
+#
+# STAGED, DO NOT SUBMIT as of 2026-09-20. The region eval landed the same day and
+# killed the reason for this arm: pool and pw20 do not separate (recall +1.3 pts
+# against a pooled sd of 5.3), and seed variance alone spans 13.5 pts of recall,
+# so three replicates cannot resolve an amp effect bounded at ~0.005 window AUPRC.
+# Kept only as the template carrying the 2026-09-20 defaults (amp false,
+# num_workers 6) for whatever the next real config turns out to be.
+# See docs/model-reengineering.md "813733/813736 results".
+# Launcher: src/prophage_v2_replicates_gpu.slurm (BASE=prophage_v2_pool_ampoff).
+run_name: prophage_v2_pool_ampoff_r1
+
+data:
+  manifest_csv: data/manifest_windows.filtered.csv
+  splits_dir: splits
+  window_len: 10000
+  stride: 1000
+  use_neg_types_in_train: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_val: ["far_neg", "near_neg", "positive"]
+  use_neg_types_in_test: ["far_neg", "near_neg", "positive"]
+
+training:
+  seed: 13
+  batch_size: 128
+  num_workers: 6
+  epochs: 20
+  lr: 0.0001
+  weight_decay: 0.01
+  grad_clip: 0.5
+  amp: false
+  auto_resume: true
+  init_checkpoint: runs/prophage_v0/checkpoints/best.pt
+  init_mode: encoder_only
+  save_every_sec: 1800
+  save_every_steps: 500
+  slurm_margin_sec: 600
+  early_stopping:
+    metric: val_auprc
+    patience: 5
+    mode: max
+
+loss:
+  pos_weight: "auto"
+
+model:
+  type: rc_cnn
+  combine: "max"
+  channels: [64, 128, 256]
+  kernel_sizes: [15, 11, 7]
+  dropout: 0.2
+  fc_dim: 256
+  pooling: "adaptive_max"
+  pool_bins: 16

@@ -1,0 +1,3 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NZ_CP018095.1|provirus_1003634_1045092	NZ_CP018095.1	1003634	1045092	41459	48	50.0356	False	NZ_CP018095.1|provirus_1003634_1045092_978
+NZ_CP018095.1|provirus_1381260_1390098	NZ_CP018095.1	1381260	1390098	8839	11	14.2012	False	NA

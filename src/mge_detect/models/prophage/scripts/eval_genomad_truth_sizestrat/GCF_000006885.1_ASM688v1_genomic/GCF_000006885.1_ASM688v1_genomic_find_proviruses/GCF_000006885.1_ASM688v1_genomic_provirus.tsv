@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NC_003028.3|provirus_1063231_1071933	NC_003028.3	1063231	1071933	8703	15	9.9454	False	NC_003028.3|provirus_1063231_1071933_1097

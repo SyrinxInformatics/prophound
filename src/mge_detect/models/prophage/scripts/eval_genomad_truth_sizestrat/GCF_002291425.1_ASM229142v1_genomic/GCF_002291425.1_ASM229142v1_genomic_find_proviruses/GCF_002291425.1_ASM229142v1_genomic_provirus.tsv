@@ -1,0 +1,2 @@
+seq_name	source_seq	start	end	length	n_genes	v_vs_c_score	in_seq_edge	integrases
+NZ_CP014136.1|provirus_4970701_4980150	NZ_CP014136.1	4970701	4980150	9450	14	10.8636	False	NZ_CP014136.1|provirus_4970701_4980150_4395

@@ -71,6 +71,7 @@ def main() -> None:
     ap.add_argument("--fracs", default="0.01,0.1,0.3,0.5")
     ap.add_argument("--modes", default="default")
     ap.add_argument("--min_len", type=int, default=0, help="Also emit each variant filtered to regions >= this many bp (0 = off)")
+    ap.add_argument("--strata", default="", help="Passed through to eval_region_metrics.py: kb breakpoints for per-size-class recall (e.g. '5,8,10,15,30,60').")
     args = ap.parse_args()
 
     genomes = [l.strip() for l in open(args.genome_list) if l.strip()]
@@ -106,13 +107,15 @@ def main() -> None:
             t.to_csv(d / "regions.tsv", sep="\t", index=False)
             variants[k] = True
 
+    strata_rows: dict = {}
     print(f"{'variant':34s} {'recall':>14s} {'precision':>15s} {'medIoU':>7s} {'start -/+':>10s} {'end -/+':>9s}")
     for k in variants:
-        res = subprocess.run(
-            [sys.executable, str(HERE / "eval_region_metrics.py"), "--genome_list", args.genome_list,
-             "--genomad_dir", args.genomad_dir, "--predict_dir", str(out / k), "--label", k],
-            capture_output=True, text=True,
-        ).stdout.splitlines()
+        cmd = [sys.executable, str(HERE / "eval_region_metrics.py"), "--genome_list", args.genome_list,
+               "--genomad_dir", args.genomad_dir, "--predict_dir", str(out / k), "--label", k]
+        if args.strata:
+            cmd += ["--strata", args.strata]
+        res = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+        strata_rows[k] = [l for l in res if l.strip().endswith("%") and "kb" in l]
         first = lambda p: next(l for l in res if l.startswith(p))  # noqa: E731
         ss = first("start error sign").split(":")[1].split("/")
         es = first("end error sign").split(":")[1].split("/")
@@ -120,6 +123,15 @@ def main() -> None:
               f"{first('region-level precision').split(':')[1].strip():>15s} "
               f"{first('IoU:').split('median=')[1].split()[0]:>7s} "
               f"{ss[0].split()[0]}/{ss[1].split()[0]:>6s} {es[0].split()[0]}/{es[1].split()[0]:>5s}")
+
+
+    if args.strata:
+        print("\n=== recall by element size class, per variant ===")
+        for k, rows in strata_rows.items():
+            if not rows:
+                continue
+            compact = "  ".join(r.split()[0] + "=" + r.split()[-1] for r in rows)
+            print(f"{k:34s} {compact}")
 
 
 if __name__ == "__main__":
