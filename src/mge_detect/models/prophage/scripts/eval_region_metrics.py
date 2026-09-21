@@ -177,6 +177,15 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
 
     if true_region_rows:
         _tr = pd.DataFrame(true_region_rows)
+        # Detection recall: a true element that is fully inside a bigger call is
+        # "covered" but loses its 1-1 match to a neighbour under greedy pairing.
+        # Merging (docs/gap-filling.md) trades the second for the first, so both
+        # are reported -- the acceptance criterion is about not missing elements.
+        _cov = int((_tr.n_overlapping_pred > 0).sum())
+        print(
+            f"covered recall: {_cov / len(_tr):.3f}  ({_cov}/{len(_tr)}) "
+            f"true regions overlapped by >=1 predicted region"
+        )
         _hit = _tr[_tr.matched]
         if len(_hit):
             print(
