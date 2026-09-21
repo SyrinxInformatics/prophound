@@ -44,10 +44,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+# Module scope on purpose: the HPCC login node cannot load miniconda, so a
+# missing library is only discoverable inside a job -- fail in seconds, not
+# after the sketch pass (docs/environment.md).
+from pyfaidx import Fasta, IndexNotFoundError
 
 BASES = np.full(256, 255, dtype=np.uint8)
 for i, b in enumerate(b"ACGT"):
@@ -92,6 +98,24 @@ def jaccard(a: np.ndarray, b: np.ndarray, s: int) -> float:
     return shared / union.size
 
 
+def open_fasta(path: str, retries: int = 5, wait_s: float = 2.0) -> Fasta:
+    """pyfaidx open that tolerates another process rewriting the .fai.
+
+    pyfaidx rewrites a .fai in place when it is missing or older than its FASTA;
+    two jobs opening the same sequences/ on one node can collide on that write
+    (composition_baseline job 815767 died this way, 2026-09-21). Retry briefly;
+    a persistent failure still raises.
+    """
+    for attempt in range(retries):
+        try:
+            return Fasta(path, as_raw=True, sequence_always_upper=True)
+        except IndexNotFoundError as e:  # a missing/unreadable FASTA raises differently
+            if attempt == retries - 1:
+                raise
+            print(f"[fasta] {path}: {e}; retry {attempt + 1}/{retries - 1}", flush=True)
+            time.sleep(wait_s * (attempt + 1))
+
+
 def read_bed_positives(bed_path: Path):
     out = []
     for line in open(bed_path):
@@ -118,7 +142,6 @@ def main() -> None:
 
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    from pyfaidx import Fasta
 
     beds = sorted(Path(args.beds_dir).glob("*"))
     print(f"[data] {len(beds)} bed files in {args.beds_dir}", flush=True)
@@ -137,7 +160,7 @@ def main() -> None:
         positives = read_bed_positives(bed)
         if not positives:
             continue
-        fa = Fasta(str(fa_path), as_raw=True, sequence_always_upper=True)
+        fa = open_fasta(str(fa_path))
         for contig, start, end in positives:
             try:
                 seq = fa[contig][start:end]

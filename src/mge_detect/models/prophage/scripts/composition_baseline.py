@@ -45,6 +45,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -52,9 +53,10 @@ import pandas as pd
 
 # Imported at module scope on purpose. The HPCC login node cannot load the
 # miniconda module at all ("available on the job nodes" -- docs/environment.md),
-# so whether sklearn exists in the env is only discoverable inside a job. Import
-# it here and the job dies in seconds with a clear error instead of after ~an
-# hour of featurization.
+# so whether sklearn/pyfaidx exist in the env is only discoverable inside a job.
+# Import them here and the job dies in seconds with a clear error instead of
+# after ~an hour of featurization.
+from pyfaidx import Fasta, IndexNotFoundError
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, roc_auc_score
@@ -109,9 +111,26 @@ def load_split_ids(splits_dir: Path, name: str) -> set:
     return {l.strip() for l in open(splits_dir / f"{name}.txt") if l.strip()}
 
 
-def build_matrix(df: pd.DataFrame, k: int, canon: dict, label: str):
-    from pyfaidx import Fasta
+def open_fasta(path: str, retries: int = 5, wait_s: float = 2.0) -> Fasta:
+    """pyfaidx open that tolerates another process rewriting the .fai.
 
+    Job 815767 (2026-09-21) died with IndexNotFoundError on one genome's .fai
+    while the clade-clustering job was opening the same sequences/ FASTAs on the
+    same node -- pyfaidx rewrites a .fai in place whenever it is missing or older
+    than its FASTA, and a concurrent open() of that half-written file fails. A
+    short retry rides out the rewrite; a persistent failure still raises.
+    """
+    for attempt in range(retries):
+        try:
+            return Fasta(path, as_raw=True, sequence_always_upper=True)
+        except IndexNotFoundError as e:  # a missing/unreadable FASTA raises differently
+            if attempt == retries - 1:
+                raise
+            print(f"[fasta] {path}: {e}; retry {attempt + 1}/{retries - 1}", flush=True)
+            time.sleep(wait_s * (attempt + 1))
+
+
+def build_matrix(df: pd.DataFrame, k: int, canon: dict, label: str):
     cache: dict = {}
     X, y, skipped = [], [], 0
     for i, row in enumerate(df.itertuples()):
@@ -119,7 +138,7 @@ def build_matrix(df: pd.DataFrame, k: int, canon: dict, label: str):
         if fa is None:
             if len(cache) > 8:
                 cache.pop(next(iter(cache)))
-            fa = Fasta(row.fasta_path, as_raw=True, sequence_always_upper=True)
+            fa = open_fasta(row.fasta_path)
             cache[row.fasta_path] = fa
         try:
             seq = fa[row.contig_id][int(row.start) : int(row.end)]
