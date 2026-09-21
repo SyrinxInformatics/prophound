@@ -82,6 +82,17 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
         true_matched_flags = [False] * len(true_df)
         pred_matched_flags = [False] * len(pred_df)
 
+        n_overlapping = {}
+        for ti, trow in true_df.reset_index(drop=True).iterrows():
+            n_overlapping[ti] = int(
+                sum(
+                    1
+                    for _, prow in pred_df.iterrows()
+                    if trow["contig_id"] == prow["contig_id"]
+                    and overlap(trow["start"], trow["end"], prow["start"], prow["end"]) > 0
+                )
+            )
+
         pairs = []
         for ti, trow in true_df.reset_index(drop=True).iterrows():
             for pi, prow in pred_df.reset_index(drop=True).iterrows():
@@ -92,6 +103,7 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
                     pairs.append((iou(trow["start"], trow["end"], prow["start"], prow["end"]), ti, pi))
         pairs.sort(reverse=True)
         used_true, used_pred = set(), set()
+        matched_info: dict = {}
         for iou_val, ti, pi in pairs:
             if ti in used_true or pi in used_pred:
                 continue
@@ -104,6 +116,7 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             start_errors.append(prow["start"] - trow["start"])
             end_errors.append(prow["end"] - trow["end"])
             ious.append(iou_val)
+            matched_info[ti] = (iou_val, int(prow["end"] - prow["start"]))
 
         n_true_matched += sum(true_matched_flags)
         n_pred_matched += sum(pred_matched_flags)
@@ -114,6 +127,9 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
                     "accession": accession,
                     "len_bp": trow["end"] - trow["start"],
                     "matched": bool(true_matched_flags[ti]),
+                    "iou": matched_info.get(ti, (float("nan"), None))[0],
+                    "pred_len_bp": matched_info.get(ti, (None, float("nan")))[1],
+                    "n_overlapping_pred": n_overlapping[ti],
                 }
             )
 
@@ -159,18 +175,36 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             f"{(end_errors_arr > 0).sum()} overshoot(+) / {(end_errors_arr == 0).sum()} exact"
         )
 
+    if true_region_rows:
+        _tr = pd.DataFrame(true_region_rows)
+        _hit = _tr[_tr.matched]
+        if len(_hit):
+            print(
+                f"fragmentation: {int((_hit.n_overlapping_pred > 1).sum())}/{len(_hit)} matched true "
+                f"regions overlap >1 predicted region (max {int(_hit.n_overlapping_pred.max())})"
+            )
+
     if strata and true_region_rows:
         tr = pd.DataFrame(true_region_rows)
         tr["kb"] = tr.len_bp / 1000.0
-        print("\nrecall by element size class:")
-        print(f"{'stratum':>10}{'n_true':>8}{'matched':>9}{'recall':>9}")
+        print("\nrecall and localization by element size class:")
+        print(f"{'stratum':>10}{'n_true':>8}{'matched':>9}{'recall':>9}"
+              f"{'medIoU':>9}{'IoU>=.5':>9}{'medPredKb':>11}{'medTrueKb':>11}{'fragmented':>12}")
         for lo, hi in strata:
             sub = tr[(tr.kb >= lo) & (tr.kb < hi)]
             if sub.empty:
                 continue
             lab = f"{lo:g}-{hi:g}kb" if hi != float("inf") else f"{lo:g}kb+"
+            hit = sub[sub.matched]
+            med_iou = f"{hit.iou.median():.3f}" if len(hit) else "-"
+            ge_half = f"{int((hit.iou >= 0.5).sum())}/{len(hit)}" if len(hit) else "-"
+            med_pred = f"{hit.pred_len_bp.median() / 1000:.1f}" if len(hit) else "-"
+            frag = (
+                f"{int((hit.n_overlapping_pred > 1).sum())}/{len(hit)}" if len(hit) else "-"
+            )
             print(f"{lab:>10}{len(sub):>8}{int(sub.matched.sum()):>9}"
-                  f"{sub.matched.sum() / len(sub) * 100:>8.1f}%")
+                  f"{sub.matched.sum() / len(sub) * 100:>8.1f}%"
+                  f"{med_iou:>9}{ge_half:>9}{med_pred:>11}{sub.kb.median():>11.1f}{frag:>12}")
 
     per_genome_df = pd.DataFrame(per_genome_rows)
     print("\nper-genome breakdown:")

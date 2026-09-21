@@ -57,8 +57,13 @@ from src.predict_genome import build_region_table, build_region_table_coverage  
 MODES = {"conservative": (0.999, 0.99), "default": (0.995, 0.99), "exploratory": (0.95, 0.95)}
 
 
-def coverage_builder(w: pd.DataFrame, frac: float, seed: float, ext: float) -> pd.DataFrame:
-    _, regions = build_region_table_coverage(w, seed_threshold=seed, extend_threshold=ext, min_coverage_frac=frac)
+def coverage_builder(
+    w: pd.DataFrame, frac: float, seed: float, ext: float, gap: int = 0, bridge: float = 0.0
+) -> pd.DataFrame:
+    _, regions = build_region_table_coverage(
+        w, seed_threshold=seed, extend_threshold=ext, min_coverage_frac=frac,
+        max_gap_bp=gap, bridge_prob=bridge,
+    )
     return regions
 
 
@@ -70,6 +75,8 @@ def main() -> None:
     ap.add_argument("--genomad_dir", default=str(HERE / "eval_genomad_truth"))
     ap.add_argument("--fracs", default="0.01,0.1,0.3,0.5")
     ap.add_argument("--modes", default="default")
+    ap.add_argument("--gaps", default="", help="Fragment-merge sweep: comma-separated max gap sizes in bp (e.g. '5000,20000,50000'). Empty = no merge variants (docs/gap-filling.md).")
+    ap.add_argument("--bridges", default="0", help="With --gaps: comma-separated bridge_prob gates (mean covering-window prob required across the gap). 0 = distance-only merge.")
     ap.add_argument("--min_len", type=int, default=0, help="Also emit each variant filtered to regions >= this many bp (0 = off)")
     ap.add_argument("--strata", default="", help="Passed through to eval_region_metrics.py: kb breakpoints for per-size-class recall (e.g. '5,8,10,15,30,60').")
     args = ap.parse_args()
@@ -78,6 +85,8 @@ def main() -> None:
     inputs = dict(e.split("=", 1) for e in args.predict_dirs)
     fracs = [float(f) for f in args.fracs.split(",")]
     modes = args.modes.split(",")
+    gaps = [int(g) for g in args.gaps.split(",") if g.strip()]
+    bridges = [float(b) for b in args.bridges.split(",") if b.strip()]
     out = Path(args.out_dir)
     variants: dict = {}
 
@@ -98,6 +107,12 @@ def main() -> None:
                 tables[f"{name}_frozen_{mode}"] = frozen
                 for f in fracs:
                     tables[f"{name}_cov{f}_{mode}"] = coverage_builder(w, f, seed, ext)
+                    for gap in gaps:
+                        for br in bridges:
+                            key = f"{name}_cov{f}_{mode}_gap{gap // 1000}k"
+                            if br > 0:
+                                key += f"br{br:g}"
+                            tables[key] = coverage_builder(w, f, seed, ext, gap=gap, bridge=br)
         if args.min_len > 0:
             for k, t in list(tables.items()):
                 tables[f"{k}_min{args.min_len}"] = t[t.region_len_bp >= args.min_len] if len(t) else t
@@ -108,18 +123,18 @@ def main() -> None:
             variants[k] = True
 
     strata_rows: dict = {}
-    print(f"{'variant':34s} {'recall':>14s} {'precision':>15s} {'medIoU':>7s} {'start -/+':>10s} {'end -/+':>9s}")
+    print(f"{'variant':40s} {'recall':>14s} {'precision':>15s} {'medIoU':>7s} {'start -/+':>10s} {'end -/+':>9s}")
     for k in variants:
         cmd = [sys.executable, str(HERE / "eval_region_metrics.py"), "--genome_list", args.genome_list,
                "--genomad_dir", args.genomad_dir, "--predict_dir", str(out / k), "--label", k]
         if args.strata:
             cmd += ["--strata", args.strata]
         res = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
-        strata_rows[k] = [l for l in res if l.strip().endswith("%") and "kb" in l]
+        strata_rows[k] = [l for l in res if l.split() and l.split()[0].endswith("kb") and "%" in l]
         first = lambda p: next(l for l in res if l.startswith(p))  # noqa: E731
         ss = first("start error sign").split(":")[1].split("/")
         es = first("end error sign").split(":")[1].split("/")
-        print(f"{k:34s} {first('region-level recall').split(':')[1].strip():>14s} "
+        print(f"{k:40s} {first('region-level recall').split(':')[1].strip():>14s} "
               f"{first('region-level precision').split(':')[1].strip():>15s} "
               f"{first('IoU:').split('median=')[1].split()[0]:>7s} "
               f"{ss[0].split()[0]}/{ss[1].split()[0]:>6s} {es[0].split()[0]}/{es[1].split()[0]:>5s}")
@@ -130,8 +145,10 @@ def main() -> None:
         for k, rows in strata_rows.items():
             if not rows:
                 continue
-            compact = "  ".join(r.split()[0] + "=" + r.split()[-1] for r in rows)
-            print(f"{k:34s} {compact}")
+            compact = "  ".join(
+                f"{r.split()[0]}={r.split()[3]}/IoU{r.split()[4]}" for r in rows
+            )
+            print(f"{k:40s} {compact}")
 
 
 if __name__ == "__main__":

@@ -26,6 +26,9 @@ PROPHAGE_MODES = ("conservative", "default", "exploratory")
 # Must match predict_genome.REGION_BUILDERS / DEFAULT_COVERAGE_FRAC, same reason.
 REGION_BUILDERS = ("strict", "coverage")
 DEFAULT_COVERAGE_FRAC = 0.3
+# Must match predict_genome.DEFAULT_MAX_GAP_BP / DEFAULT_BRIDGE_PROB.
+DEFAULT_MAX_GAP_BP = 0
+DEFAULT_BRIDGE_PROB = 0.0
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -102,6 +105,30 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "For --region-builder coverage: minimum fraction of covering windows "
             "that must be high for a bin to count as inside (0 -> union of high "
             "windows, 1 -> intersection). Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--max-gap-bp",
+        type=int,
+        default=DEFAULT_MAX_GAP_BP,
+        help=(
+            "EXPERIMENTAL: for --region-builder coverage, merge two calls "
+            "separated by at most this many bp into one, to repair elements "
+            "fragmented by an internal dip in the score track (worst for 60 kb+ "
+            "elements). Default %(default)s = off. Use with --bridge-prob: an "
+            "ungated merge also bridges genuinely separate neighbouring elements. "
+            "See docs/gap-filling.md."
+        ),
+    )
+    parser.add_argument(
+        "--bridge-prob",
+        type=float,
+        default=DEFAULT_BRIDGE_PROB,
+        help=(
+            "For --max-gap-bp: only merge across a gap whose every bin has mean "
+            "covering-window probability >= this (0 = distance-only). The "
+            "anti-overextension guard -- docs/anti-overextension.md. "
+            "Default %(default)s."
         ),
     )
 

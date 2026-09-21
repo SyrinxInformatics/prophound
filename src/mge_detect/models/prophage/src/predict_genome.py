@@ -317,6 +317,78 @@ def build_region_table(
 
 REGION_BUILDERS = ("strict", "coverage")
 DEFAULT_COVERAGE_FRAC = 0.3
+# Fragment merging (docs/gap-filling.md). 0 = off, which is the shipped default
+# until a held-out sweep picks a value -- see `_close_gaps`.
+DEFAULT_MAX_GAP_BP = 0
+DEFAULT_BRIDGE_PROB = 0.0
+
+
+def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
+    """`boundary_kind` string for the coverage builder, encoding the merge
+    settings when fragment merging is on (so a regions.tsv is self-describing).
+    Unchanged from the pre-merge format when it is off."""
+    kind = f"coverage_frac_{frac:g}"
+    if max_gap_bp > 0:
+        kind += f"_gap{max_gap_bp:d}"
+        if bridge_prob > 0:
+            kind += f"_br{bridge_prob:g}"
+    return kind
+
+
+def _close_gaps(
+    inside: np.ndarray,
+    bin_mean: np.ndarray,
+    covered: np.ndarray,
+    max_gap_bins: int,
+    bridge_prob: float,
+) -> np.ndarray:
+    """Merge inside-runs separated by a short, optionally still-elevated gap.
+
+    The fragmentation failure mode (docs/gap-filling.md, measured 2026-09-20 in
+    docs/model-quality-baseline.md): 60 kb+ elements are matched 86-100% of the
+    time but at median IoU 0.218 and median predicted length 22 kb, because the
+    score track dips below `extend_threshold` partway through and the builder
+    closes the region there. This is a morphological closing on the per-bin
+    `inside` mask: a run of outside bins is filled if it is at most
+    `max_gap_bins` long AND every covered bin in it has mean covering-window
+    probability >= `bridge_prob`.
+
+    `bridge_prob` is the anti-overextension guard (docs/anti-overextension.md):
+    at 0 the merge is distance-only and will happily bridge two genuinely
+    separate nearby elements; raising it requires the intervening sequence to
+    still look somewhat element-like, well below `extend_threshold`. Gaps at a
+    contig edge (leading/trailing) are never filled -- there is no second run to
+    merge with. Uncovered bins inside a gap cannot be judged, so they never
+    satisfy a `bridge_prob > 0` gate.
+    """
+    if max_gap_bins <= 0:
+        return inside
+
+    out = inside.copy()
+    n = out.shape[0]
+    idx = 0
+    # Skip a leading outside run: nothing to its left to merge with.
+    while idx < n and not out[idx]:
+        idx += 1
+    while idx < n:
+        while idx < n and out[idx]:
+            idx += 1
+        if idx >= n:
+            break
+        gap_start = idx
+        while idx < n and not out[idx]:
+            idx += 1
+        if idx >= n:
+            break  # trailing outside run, no right-hand neighbour
+        gap_end = idx  # exclusive
+        if gap_end - gap_start <= max_gap_bins:
+            if bridge_prob <= 0:
+                out[gap_start:gap_end] = True
+            else:
+                span = slice(gap_start, gap_end)
+                if covered[span].all() and (bin_mean[span] >= bridge_prob).all():
+                    out[span] = True
+    return out
 
 
 def build_region_table_coverage(
@@ -324,6 +396,8 @@ def build_region_table_coverage(
     seed_threshold: float,
     extend_threshold: float,
     min_coverage_frac: float = DEFAULT_COVERAGE_FRAC,
+    max_gap_bp: int = DEFAULT_MAX_GAP_BP,
+    bridge_prob: float = DEFAULT_BRIDGE_PROB,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Coverage-fraction region builder (2026-09-17, docs/multi-model-architecture.md).
 
@@ -344,9 +418,19 @@ def build_region_table_coverage(
     symmetric; the union brackets true edges by ~4.5 kb a side. Same output
     contract as `build_region_table`; `region_pred_label` marks windows that
     overlap a called region.
+
+    `max_gap_bp` / `bridge_prob` (both default off) additionally merge calls
+    separated by a short gap, to repair elements fragmented by an internal dip
+    in the score track -- see `_close_gaps` and docs/gap-filling.md. With
+    `max_gap_bp=0` this function's output is identical to its pre-2026-09-21
+    behavior.
     """
     if not 0.0 <= min_coverage_frac <= 1.0:
         raise ValueError("min_coverage_frac must be in [0, 1]")
+    if max_gap_bp < 0:
+        raise ValueError("max_gap_bp must be >= 0")
+    if not 0.0 <= bridge_prob <= 1.0:
+        raise ValueError("bridge_prob must be in [0, 1]")
 
     annotated_parts: List[pd.DataFrame] = []
     region_rows: List[Dict[str, object]] = []
@@ -369,6 +453,7 @@ def build_region_table_coverage(
 
         high_count = np.zeros(n_bins, dtype=np.int32)
         cover_count = np.zeros(n_bins, dtype=np.int32)
+        prob_sum = np.zeros(n_bins, dtype=np.float64)
         seed_bin_mask = np.zeros(n_bins, dtype=bool)
         starts = contig_df["start"].astype(int).to_numpy()
         probs = contig_df["prob"].astype(float).to_numpy()
@@ -376,6 +461,7 @@ def build_region_table_coverage(
             start_bin = int(start // stride)
             end_bin = min(n_bins, start_bin + bins_per_window)
             cover_count[start_bin:end_bin] += 1
+            prob_sum[start_bin:end_bin] += prob
             if prob >= extend_threshold:
                 high_count[start_bin:end_bin] += 1
             if prob >= seed_threshold:
@@ -385,6 +471,17 @@ def build_region_table_coverage(
         frac = np.zeros(n_bins, dtype=np.float64)
         frac[covered] = high_count[covered] / cover_count[covered]
         inside = covered & (high_count > 0) & (frac >= min_coverage_frac)
+
+        if max_gap_bp > 0:
+            bin_mean = np.zeros(n_bins, dtype=np.float64)
+            bin_mean[covered] = prob_sum[covered] / cover_count[covered]
+            inside = _close_gaps(
+                inside,
+                bin_mean=bin_mean,
+                covered=covered,
+                max_gap_bins=int(max_gap_bp // stride),
+                bridge_prob=bridge_prob,
+            )
 
         bin_index = 0
         while bin_index < n_bins:
@@ -412,7 +509,9 @@ def build_region_table_coverage(
                         "region_len_bp": int(region_end - region_start),
                         "mean_prob": float(overlapping["prob"].astype(float).mean()),
                         "max_prob": float(overlapping["prob"].astype(float).max()),
-                        "boundary_kind": f"coverage_frac_{min_coverage_frac:g}",
+                        "boundary_kind": _coverage_boundary_kind(
+                            min_coverage_frac, max_gap_bp, bridge_prob
+                        ),
                     }
                 )
             bin_index = right_bin + 1
@@ -738,6 +837,8 @@ def write_metadata(
     num_tiles: int = 1,
     region_builder: str = "strict",
     coverage_frac: float = DEFAULT_COVERAGE_FRAC,
+    max_gap_bp: int = DEFAULT_MAX_GAP_BP,
+    bridge_prob: float = DEFAULT_BRIDGE_PROB,
 ) -> None:
     metadata = {
         "run_name": cfg.run_name,
@@ -762,6 +863,8 @@ def write_metadata(
         metadata["region_builder"] = "coverage_fraction"
         metadata["boundary_refinement"] = "none_bin_edges"
         metadata["coverage_frac"] = coverage_frac
+        if max_gap_bp > 0:
+            metadata["fragment_merge"] = {"max_gap_bp": max_gap_bp, "bridge_prob": bridge_prob}
     else:
         metadata["region_builder"] = "strict_hysteresis_stride_support"
         metadata["boundary_refinement"] = "interpolated_from_stride_support_track"
@@ -830,6 +933,30 @@ def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
             "windows, 1 -> intersection). Default %(default)s."
         ),
     )
+    parser.add_argument(
+        "--max-gap-bp",
+        type=int,
+        default=DEFAULT_MAX_GAP_BP,
+        help=(
+            "EXPERIMENTAL: for --region-builder coverage, merge two calls "
+            "separated by at most this many bp into one, to repair elements "
+            "fragmented by an internal dip in the score track (worst for 60 kb+ "
+            "elements). Default %(default)s = off. Use with --bridge-prob: an "
+            "ungated merge also bridges genuinely separate neighbouring elements. "
+            "See docs/gap-filling.md."
+        ),
+    )
+    parser.add_argument(
+        "--bridge-prob",
+        type=float,
+        default=DEFAULT_BRIDGE_PROB,
+        help=(
+            "For --max-gap-bp: only merge across a gap whose every bin has mean "
+            "covering-window probability >= this (0 = distance-only). The "
+            "anti-overextension guard -- docs/anti-overextension.md. "
+            "Default %(default)s."
+        ),
+    )
 
 
 def run_predict(args: argparse.Namespace) -> None:
@@ -850,6 +977,8 @@ def run_predict(args: argparse.Namespace) -> None:
     num_tiles = max(1, getattr(args, "num_tiles", 1))
     region_builder = getattr(args, "region_builder", "strict")
     coverage_frac = float(getattr(args, "coverage_frac", DEFAULT_COVERAGE_FRAC))
+    max_gap_bp = int(getattr(args, "max_gap_bp", DEFAULT_MAX_GAP_BP))
+    bridge_prob = float(getattr(args, "bridge_prob", DEFAULT_BRIDGE_PROB))
     if region_builder != "strict" and num_tiles > 1:
         raise SystemExit("--region-builder coverage cannot be combined with --num-tiles > 1")
 
@@ -898,6 +1027,8 @@ def run_predict(args: argparse.Namespace) -> None:
             seed_threshold=seed_threshold,
             extend_threshold=extend_threshold,
             min_coverage_frac=coverage_frac,
+            max_gap_bp=max_gap_bp,
+            bridge_prob=bridge_prob,
         )
     else:
         windows_df, regions_df = build_region_table(
@@ -929,6 +1060,8 @@ def run_predict(args: argparse.Namespace) -> None:
         num_tiles=num_tiles,
         region_builder=region_builder,
         coverage_frac=coverage_frac,
+        max_gap_bp=max_gap_bp,
+        bridge_prob=bridge_prob,
     )
 
     print(f"[done] wrote {windows_out}")
