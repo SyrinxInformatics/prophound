@@ -25,10 +25,14 @@ import sys
 PROPHAGE_MODES = ("conservative", "default", "exploratory")
 # Must match predict_genome.REGION_BUILDERS / DEFAULT_COVERAGE_FRAC, same reason.
 REGION_BUILDERS = ("strict", "coverage")
-DEFAULT_COVERAGE_FRAC = 0.3
-# Must match predict_genome.DEFAULT_MAX_GAP_BP / DEFAULT_BRIDGE_PROB.
-DEFAULT_MAX_GAP_BP = 0
-DEFAULT_BRIDGE_PROB = 0.0
+ENSEMBLE_MODES = ("max", "mean")
+DEFAULT_ENSEMBLE = "max"
+# Must match predict_genome's DEFAULT_* block. Defaults changed 2026-09-21 to
+# the measured operating point -- docs/model-quality-baseline.md.
+DEFAULT_REGION_BUILDER = "coverage"
+DEFAULT_COVERAGE_FRAC = 0.1
+DEFAULT_MAX_GAP_BP = 50000
+DEFAULT_BRIDGE_PROB = 0.1
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -55,7 +59,26 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         required=True,
         help="Training config YAML for the checkpoint (defines model/window architecture).",
     )
-    parser.add_argument("--checkpoint", required=True, help="Path to a trained model checkpoint.")
+    parser.add_argument(
+        "--checkpoint",
+        required=True,
+        nargs="+",
+        help=(
+            "Trained checkpoint(s). Passing more than one runs a seed ensemble "
+            "over them (see --ensemble) -- recommended, since it removes the "
+            "dependence of recall on which replicate was packaged."
+        ),
+    )
+    parser.add_argument(
+        "--ensemble",
+        choices=ENSEMBLE_MODES,
+        default=DEFAULT_ENSEMBLE,
+        help=(
+            "How to combine multiple --checkpoint score tracks. 'max' "
+            "(default) preserves borderline detections; 'mean' dilutes them "
+            "below the seed threshold and measurably costs recall."
+        ),
+    )
     parser.add_argument("--threshold", type=float, default=None, help="Override the mode's score threshold.")
     parser.add_argument("--seed-threshold", type=float, default=None)
     parser.add_argument("--extend-threshold", type=float, default=None)
@@ -85,7 +108,7 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     parser.add_argument(
         "--region-builder",
         choices=REGION_BUILDERS,
-        default="strict",
+        default=DEFAULT_REGION_BUILDER,
         help=(
             "How per-window scores become regions. 'strict' (default) is the "
             "frozen v1 builder: a bin is inside only if the mean of all windows "

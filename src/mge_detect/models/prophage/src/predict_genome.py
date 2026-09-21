@@ -316,11 +316,18 @@ def build_region_table(
 
 
 REGION_BUILDERS = ("strict", "coverage")
-DEFAULT_COVERAGE_FRAC = 0.3
+ENSEMBLE_MODES = ("max", "mean")
+DEFAULT_ENSEMBLE = "max"
+# Defaults changed 2026-09-21 to the measured operating point for the ">=95%
+# recall on known regions" contract -- docs/model-quality-baseline.md
+# "Operating point". `strict` remains fully supported as the conservative,
+# database-agreement path; `coverage` + merging is the discovery path.
+DEFAULT_REGION_BUILDER = "coverage"
+DEFAULT_COVERAGE_FRAC = 0.1
 # Fragment merging (docs/gap-filling.md). 0 = off, which is the shipped default
 # until a held-out sweep picks a value -- see `_close_gaps`.
-DEFAULT_MAX_GAP_BP = 0
-DEFAULT_BRIDGE_PROB = 0.0
+DEFAULT_MAX_GAP_BP = 50000
+DEFAULT_BRIDGE_PROB = 0.1
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -824,7 +831,7 @@ def resolve_thresholds(
 
 def write_metadata(
     cfg: ProphageTrainConfig,
-    checkpoint_path: str,
+    checkpoint_path,
     fasta_path: str,
     mode: str,
     threshold: float,
@@ -835,14 +842,16 @@ def write_metadata(
     regions_df: pd.DataFrame,
     out_path: Path,
     num_tiles: int = 1,
-    region_builder: str = "strict",
+    region_builder: str = DEFAULT_REGION_BUILDER,
     coverage_frac: float = DEFAULT_COVERAGE_FRAC,
+    ensemble_mode: str = "single",
     max_gap_bp: int = DEFAULT_MAX_GAP_BP,
     bridge_prob: float = DEFAULT_BRIDGE_PROB,
 ) -> None:
     metadata = {
         "run_name": cfg.run_name,
         "checkpoint": checkpoint_path,
+        "ensemble": ensemble_mode,
         "input_fasta": fasta_path,
         "mode": mode,
         "threshold": threshold,
@@ -876,7 +885,26 @@ def build_arg_parser() -> argparse.ArgumentParser:
         description="Run frozen MGE-Explorer inference on a genome FASTA."
     )
     parser.add_argument("--config", required=True)
-    parser.add_argument("--checkpoint", required=True)
+    parser.add_argument(
+        "--checkpoint",
+        required=True,
+        nargs="+",
+        help=(
+            "Trained checkpoint(s). Passing more than one runs a seed ensemble "
+            "over them (see --ensemble); recommended, since it removes the "
+            "dependence of recall on which replicate was packaged."
+        ),
+    )
+    parser.add_argument(
+        "--ensemble",
+        choices=ENSEMBLE_MODES,
+        default=DEFAULT_ENSEMBLE,
+        help=(
+            "How to combine multiple --checkpoint score tracks. 'max' "
+            "(default) preserves borderline detections; 'mean' dilutes them "
+            "below the seed threshold and measurably costs recall."
+        ),
+    )
     parser.add_argument("--input_fasta", required=True)
     parser.add_argument("--outdir", required=True)
     parser.add_argument(
@@ -911,7 +939,7 @@ def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--region-builder",
         choices=REGION_BUILDERS,
-        default="strict",
+        default=DEFAULT_REGION_BUILDER,
         help=(
             "How per-window scores become regions. 'strict' (default) is the "
             "frozen v1 builder: a bin is inside only if the mean of all windows "
@@ -975,7 +1003,7 @@ def run_predict(args: argparse.Namespace) -> None:
     )
 
     num_tiles = max(1, getattr(args, "num_tiles", 1))
-    region_builder = getattr(args, "region_builder", "strict")
+    region_builder = getattr(args, "region_builder", DEFAULT_REGION_BUILDER)
     coverage_frac = float(getattr(args, "coverage_frac", DEFAULT_COVERAGE_FRAC))
     max_gap_bp = int(getattr(args, "max_gap_bp", DEFAULT_MAX_GAP_BP))
     bridge_prob = float(getattr(args, "bridge_prob", DEFAULT_BRIDGE_PROB))
@@ -1000,11 +1028,29 @@ def run_predict(args: argparse.Namespace) -> None:
         pin_memory=(device.type == "cuda"),
     )
 
+    checkpoints = args.checkpoint if isinstance(args.checkpoint, list) else [args.checkpoint]
+    ensemble = getattr(args, "ensemble", DEFAULT_ENSEMBLE)
+    if ensemble not in ENSEMBLE_MODES:
+        raise SystemExit(f"--ensemble must be one of {ENSEMBLE_MODES}")
+
     model = build_model(cfg, device)
-    checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
-    model.load_state_dict(checkpoint["model"])
-    probs = predict_probs(model, loader, device)
+    per_checkpoint = []
+    for ckpt_path in checkpoints:
+        checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
+        model.load_state_dict(checkpoint["model"])
+        per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
     dataset.close()
+
+    if len(per_checkpoint) == 1:
+        probs = per_checkpoint[0]
+    else:
+        stacked = np.stack(per_checkpoint)
+        # max, not mean: averaging dilutes borderline seeds below the seed
+        # threshold -- the same effect that sank multi-tile averaging
+        # (docs/boundary-refinement.md) and mean-ensembling in the 2026-09-17
+        # checks. Measured 2026-09-21: max reaches .978/.994 covered recall
+        # (Default/Exploratory) against .950/.978 for mean.
+        probs = stacked.max(axis=0) if ensemble == "max" else stacked.mean(axis=0)
 
     windows_df = windows_df.copy()
     windows_df["prob"] = probs
@@ -1047,7 +1093,8 @@ def run_predict(args: argparse.Namespace) -> None:
     regions_df.to_csv(regions_out, sep="\t", index=False)
     write_metadata(
         cfg=cfg,
-        checkpoint_path=args.checkpoint,
+        checkpoint_path=checkpoints if len(checkpoints) > 1 else checkpoints[0],
+        ensemble_mode=(ensemble if len(checkpoints) > 1 else "single"),
         fasta_path=str(input_path),
         mode=args.mode,
         threshold=threshold,

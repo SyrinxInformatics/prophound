@@ -53,3 +53,22 @@ Checkpoint confirmed to exist on HPCC: `runs/prophage_v1_positional/checkpoints/
 **Not yet decided**: whether to promote this as the new default checkpoint/config. No `RESULTS.md` has been written for this run yet (unlike `prophage_v0`/`prophage_v1`, which have one under `runs/<name>/RESULTS.md` on the HPCC).
 
 **Follow-on work**: this experiment's ambiguity (real gain, but confounded with `pos_weight`/`amp` changes) motivated an isolated pooling-only rerun, now training on the HPCC alongside a new boundary-regression head — see `docs/model-reengineering.md`.
+
+## Defaults changed + seed ensembling added (2026-09-21)
+
+**`predict` defaults are now the measured operating point** (`docs/model-quality-baseline.md` "Operating point"), not the frozen v1 behavior:
+
+| flag | was | now |
+|---|---|---|
+| `--region-builder` | `strict` | `coverage` |
+| `--coverage-frac` | 0.3 | 0.1 |
+| `--max-gap-bp` | 0 (off) | 50000 |
+| `--bridge-prob` | 0.0 | 0.1 |
+
+Rationale (user, 2026-09-21): both builders stay first-class and are measured separately, but the coverage+merge path carries more weight because **`strict` largely reproduces what geNomad already knows**, while the discovery path is the product. `strict` remains fully supported for the conservative, database-agreement comparison and is verified byte-identical to the pre-change frozen path.
+
+**`--checkpoint` now accepts multiple paths**, with `--ensemble {max,mean}` (default `max`) combining their per-window score tracks. Passing the three `prophage_v2_pool` replicates is the recommended inference path: it removes the dependence of recall on which replicate happened to be packaged, and lands at the top of the seed range rather than a random draw from it (.978 covered recall in Default vs .961-.972 single-seed; .994 vs .989 in Exploratory). Cost is 3x inference time and ~30% more calls.
+
+`max` rather than `mean` is deliberate and measured: mean-ensembling dilutes borderline detections below the seed threshold (.950/.978 vs .978/.994), the same failure that sank multi-tile averaging (`docs/boundary-refinement.md`).
+
+Verified: a CLI run with three checkpoints and no other flags reproduces the sweep harness's `ensmax` variant coordinates exactly; single-checkpoint runs still record `ensemble: single`; `--region-builder strict` is unchanged.
