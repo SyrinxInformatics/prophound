@@ -72,3 +72,5 @@ Rationale (user, 2026-09-21): both builders stay first-class and are measured se
 `max` rather than `mean` is deliberate and measured: mean-ensembling dilutes borderline detections below the seed threshold (.950/.978 vs .978/.994), the same failure that sank multi-tile averaging (`docs/boundary-refinement.md`).
 
 Verified: a CLI run with three checkpoints and no other flags reproduces the sweep harness's `ensmax` variant coordinates exactly; single-checkpoint runs still record `ensemble: single`; `--region-builder strict` is unchanged.
+
+**Loose end**: `notes/V1_INFERENCE_CONTRACT.md`, `notes/V1_OUTPUT_FILES.md` and `notes/V1_OPERATING_MODES.md` describe the pre-2026-09-21 CLI — single `--checkpoint`, `strict` builder as default, no merging, no `ensemble` field in `run_metadata.json`. Those notes are a frozen historical snapshot and are deliberately not being edited (`CLAUDE.md`), but anyone reading them for the *current* contract will be misled. This doc is the current contract; if a release note or package description is ever generated from the `notes/` files, regenerate it from here instead.

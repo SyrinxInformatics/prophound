@@ -110,14 +110,17 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         choices=REGION_BUILDERS,
         default=DEFAULT_REGION_BUILDER,
         help=(
-            "How per-window scores become regions. 'strict' (default) is the "
-            "frozen v1 builder: a bin is inside only if the mean of all windows "
-            "covering it >= the extend threshold, which truncates regions and drops "
-            "sparse-signal elements. 'coverage' marks a bin inside if at least "
-            "--coverage-frac of its covering windows individually score >= the "
-            "extend threshold -- much higher recall and boundary accuracy, more "
-            "calls per genome. See docs/multi-model-architecture.md. Not combinable "
-            "with --num-tiles > 1."
+            "How per-window scores become regions. 'coverage' (default since "
+            "2026-09-21) marks a bin inside if at least --coverage-frac of its "
+            "covering windows individually score >= the extend threshold; with "
+            "--max-gap-bp merging it is the measured operating point for >=95% "
+            "recall on known regions, and it is the discovery path. 'strict' is "
+            "the frozen v1 builder: a bin is inside only if the MEAN of all "
+            "windows covering it >= the extend threshold, which truncates "
+            "regions and drops sparse-signal elements -- kept as the "
+            "conservative, database-agreement comparison. See "
+            "docs/model-quality-baseline.md 'Operating point'. 'coverage' is "
+            "not combinable with --num-tiles > 1."
         ),
     )
     parser.add_argument(
@@ -135,12 +138,14 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         type=int,
         default=DEFAULT_MAX_GAP_BP,
         help=(
-            "EXPERIMENTAL: for --region-builder coverage, merge two calls "
-            "separated by at most this many bp into one, to repair elements "
-            "fragmented by an internal dip in the score track (worst for 60 kb+ "
-            "elements). Default %(default)s = off. Use with --bridge-prob: an "
-            "ungated merge also bridges genuinely separate neighbouring elements. "
-            "See docs/gap-filling.md."
+            "For --region-builder coverage: merge two calls separated by at "
+            "most this many bp into one, repairing elements fragmented by an "
+            "internal dip in the score track (worst for 60 kb+ elements, where "
+            "it lifts median IoU from ~0.38 to ~0.85). Default %(default)s; 0 "
+            "disables merging. Always pair with --bridge-prob -- an ungated "
+            "merge bridges genuinely separate neighbouring elements. Above "
+            "~50000 the gate binds before the distance budget does. See "
+            "docs/gap-filling.md."
         ),
     )
     parser.add_argument(
