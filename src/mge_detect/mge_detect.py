@@ -87,6 +87,29 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         default="auto",
         choices=["auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel"],
     )
+    parser.add_argument(
+        "--ambiguity-policy",
+        choices=("n-channel", "uniform"),
+        default="n-channel",
+        help=(
+            "How IUPAC ambiguity codes (N, R, Y, ...) are encoded. 'n-channel' (default) "
+            "is the training-time encoding and is what every published number used. "
+            "'uniform' spreads each ambiguous base as 0.25 across A/C/G/T instead. "
+            "EXPERIMENTAL: under 'n-channel' two contiguous ambiguity codes can take a "
+            "confident window from 1.000 to 0.000; 'uniform' avoids that and is a no-op "
+            "on ambiguity-free sequence, but it changes scores wherever such codes occur."
+        ),
+    )
+    parser.add_argument(
+        "--grid-offset",
+        type=int,
+        default=0,
+        help=(
+            "Shift the inference window grid by this many bp. Default 0. For measuring "
+            "phase sensitivity: marginal calls can appear or vanish when the grid moves "
+            "(see docs/scientific-validity.md 'Input-robustness standing check')."
+        ),
+    )
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument(

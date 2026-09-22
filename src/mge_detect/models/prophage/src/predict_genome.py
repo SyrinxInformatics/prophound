@@ -41,12 +41,42 @@ MODE_THRESHOLDS = {
 }
 
 
+AMBIGUITY_POLICIES = ("n-channel", "uniform")
+
+
+def encode_window(sequence: str, policy: str = "n-channel") -> torch.Tensor:
+    """One-hot encode a window, choosing how IUPAC ambiguity codes are represented.
+
+    `n-channel` (default) is the training-time encoding: every non-ACGT base
+    sets the dedicated N channel. It is kept as the default because changing
+    it changes every score the tool produces.
+
+    `uniform` instead spreads each ambiguous base as 0.25 across A/C/G/T and
+    leaves the N channel empty. Measured 2026-09-22: under `n-channel`, two
+    contiguous ambiguity codes take a confident window from p=1.000 to exactly
+    0.000, and a real 37 kb prophage in EDL933 scores ~0 because of 2-7 stray
+    IUPAC bases per window; `uniform` restores p~1.000 there and is an exact
+    no-op on ambiguity-free sequence. See docs/scientific-validity.md "1a".
+    """
+    x = onehot_encode(sequence)
+    if policy == "n-channel":
+        return x
+    if policy != "uniform":
+        raise ValueError(f"unknown ambiguity policy {policy!r}; expected one of {AMBIGUITY_POLICIES}")
+    ambiguous = x[4] > 0
+    if bool(ambiguous.any()):
+        x[4][ambiguous] = 0.0
+        x[:4, ambiguous] = 0.25
+    return x
+
+
 class GenomeWindowDataset(Dataset):
     """Window dataset for direct inference on a FASTA file."""
 
-    def __init__(self, windows_df: pd.DataFrame, window_len: int):
+    def __init__(self, windows_df: pd.DataFrame, window_len: int, ambiguity_policy: str = "n-channel"):
         self.windows_df = windows_df.reset_index(drop=True)
         self.window_len = window_len
+        self.ambiguity_policy = ambiguity_policy
         fasta_paths = self.windows_df["fasta_path"].drop_duplicates().tolist()
         if len(fasta_paths) != 1:
             raise ValueError("GenomeWindowDataset expects exactly one FASTA path.")
@@ -63,10 +93,17 @@ class GenomeWindowDataset(Dataset):
         end = int(row["end"])
         sequence = self.fasta[contig_id][start:end]
         if len(sequence) < self.window_len:
-            sequence = sequence + ("N" * (self.window_len - len(sequence)))
+            # Unreachable via `build_windows`, which emits only full-length
+            # windows -- but padding with N would silently zero the score
+            # (ambiguity codes saturate the model; see
+            # docs/scientific-validity.md "1a"), so fail rather than pad.
+            raise RuntimeError(
+                f"short window {contig_id}:{start}-{end} ({len(sequence)} < {self.window_len} bp); "
+                "padding with N would silently zero its score"
+            )
         elif len(sequence) > self.window_len:
             sequence = sequence[: self.window_len]
-        return onehot_encode(sequence), torch.tensor(0.0, dtype=torch.float32)
+        return encode_window(sequence, self.ambiguity_policy), torch.tensor(0.0, dtype=torch.float32)
 
     def close(self) -> None:
         try:
@@ -141,6 +178,7 @@ def build_multi_tile_windows(
     genome_id: str,
     data_config: DataConfig,
     num_tiles: int,
+    grid_offset: int = 0,
 ) -> pd.DataFrame:
     """Generate windows from `num_tiles` phase-shifted grids over the same stride.
 
@@ -154,13 +192,13 @@ def build_multi_tile_windows(
     must never change output when num_tiles <= 1.
     """
     if num_tiles <= 1:
-        return build_windows(fasta_path, genome_id, data_config)
+        return build_windows(fasta_path, genome_id, data_config, offset=grid_offset)
 
     tile_stride = max(1, data_config.stride // num_tiles)
     tiles = []
     for tile_index in range(num_tiles):
         tile_df = build_windows(
-            fasta_path, genome_id, data_config, offset=tile_index * tile_stride
+            fasta_path, genome_id, data_config, offset=grid_offset + tile_index * tile_stride
         )
         tile_df["tile"] = tile_index
         tiles.append(tile_df)
@@ -842,6 +880,8 @@ def write_metadata(
     regions_df: pd.DataFrame,
     out_path: Path,
     num_tiles: int = 1,
+    ambiguity_policy: str = "n-channel",
+    grid_offset: int = 0,
     region_builder: str = DEFAULT_REGION_BUILDER,
     coverage_frac: float = DEFAULT_COVERAGE_FRAC,
     ensemble_mode: str = "single",
@@ -861,6 +901,8 @@ def write_metadata(
         "window_len": cfg.data.window_len,
         "stride": cfg.data.stride,
         "num_tiles": num_tiles,
+        "ambiguity_policy": ambiguity_policy,
+        "grid_offset": grid_offset,
         "n_windows": int(len(windows_df)),
         "n_regions": int(len(regions_df)),
     }
@@ -918,6 +960,23 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument(
+        "--ambiguity-policy",
+        choices=AMBIGUITY_POLICIES,
+        default="n-channel",
+        help=(
+            "How IUPAC ambiguity codes are encoded. 'n-channel' (default) is the "
+            "training-time encoding and reproduces every published number. 'uniform' "
+            "spreads each ambiguous base as 0.25 across A/C/G/T; see "
+            "docs/scientific-validity.md '1a'."
+        ),
+    )
+    parser.add_argument(
+        "--grid-offset",
+        type=int,
+        default=0,
+        help="Shift the inference window grid by this many bp (default 0).",
+    )
     parser.add_argument(
         "--num-tiles",
         type=int,
@@ -1018,12 +1077,19 @@ def run_predict(args: argparse.Namespace) -> None:
     input_path = Path(args.input_fasta)
     genome_id = input_path.stem
     windows_df = build_multi_tile_windows(
-        str(input_path), genome_id=genome_id, data_config=cfg.data, num_tiles=num_tiles
+        str(input_path),
+        genome_id=genome_id,
+        data_config=cfg.data,
+        num_tiles=num_tiles,
+        grid_offset=max(0, int(getattr(args, "grid_offset", 0) or 0)),
     )
     if windows_df.empty:
         raise RuntimeError("No inference windows were generated from the input FASTA.")
 
-    dataset = GenomeWindowDataset(windows_df, window_len=cfg.data.window_len)
+    ambiguity_policy = getattr(args, "ambiguity_policy", "n-channel") or "n-channel"
+    dataset = GenomeWindowDataset(
+        windows_df, window_len=cfg.data.window_len, ambiguity_policy=ambiguity_policy
+    )
     loader = DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -1110,6 +1176,8 @@ def run_predict(args: argparse.Namespace) -> None:
         regions_df=regions_df,
         out_path=metadata_out,
         num_tiles=num_tiles,
+        ambiguity_policy=ambiguity_policy,
+        grid_offset=max(0, int(getattr(args, "grid_offset", 0) or 0)),
         region_builder=region_builder,
         coverage_frac=coverage_frac,
         max_gap_bp=max_gap_bp,
