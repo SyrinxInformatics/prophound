@@ -74,3 +74,13 @@ Rationale (user, 2026-09-21): both builders stay first-class and are measured se
 Verified: a CLI run with three checkpoints and no other flags reproduces the sweep harness's `ensmax` variant coordinates exactly; single-checkpoint runs still record `ensemble: single`; `--region-builder strict` is unchanged.
 
 **Loose end**: `notes/V1_INFERENCE_CONTRACT.md`, `notes/V1_OUTPUT_FILES.md` and `notes/V1_OPERATING_MODES.md` describe the pre-2026-09-21 CLI — single `--checkpoint`, `strict` builder as default, no merging, no `ensemble` field in `run_metadata.json`. Those notes are a frozen historical snapshot and are deliberately not being edited (`CLAUDE.md`), but anyone reading them for the *current* contract will be misled. This doc is the current contract; if a release note or package description is ever generated from the `notes/` files, regenerate it from here instead.
+
+## Input robustness (2026-09-22)
+
+Measured under the standing RC/N check (`docs/scientific-validity.md`, "Input-robustness standing check"). Three findings that affect what the CLI does with real assemblies:
+
+- **Contigs shorter than `window_len` (10 kb) are silently skipped** by `build_windows`, with no warning. A mixed assembly returns a normal-looking `regions.tsv` while whole contigs went unexamined; an all-short input fails loudly instead. Fix direction: report skipped contigs and skipped base count.
+- **IUPAC ambiguity codes collapse window scores to zero** (two contiguous N bases take p=1.000 to 0.000). Affects draft assemblies, MAGs and environmental data. Two equivalent fixes are measured; neither is adopted yet because either changes every score.
+- **Calls depend on window-grid phase** — shifting a contig's start by 777 bp turned 3 regions into 5 (marginal calls only; confident ones are stable).
+
+Reverse-complement handling is *not* a concern: window scores and whole-contig region calls are both exactly invariant.
