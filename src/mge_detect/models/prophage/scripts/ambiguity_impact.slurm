@@ -24,8 +24,37 @@ conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
 LIST=scripts/eval_genome_list_sizestrat.txt
+ELEMENTS=scripts/eval_sizestrat_elements.csv
 OUT=analysis/ambiguity_impact
+CKPT_ALL="runs/prophage_v2_pool_r1/checkpoints/best.pt runs/prophage_v2_pool_r2/checkpoints/best.pt runs/prophage_v2_pool_r3/checkpoints/best.pt"
 mkdir -p analysis/_slurm_logs "$OUT"
+
+# ---- preflight: fail loudly before burning a queue slot -------------------
+# 816440/816441 (2026-09-22) both "COMPLETED" in 3 seconds having done nothing:
+# the genome list had never been pushed, so `while read < $LIST` looped zero
+# times, and without this block the job still exited 0. Check every input.
+GENOMES=../raw/genomes        # NOT raw/genomes -- it is a sibling of
+                              # data_refactored, not inside it (docs/environment.md)
+fail=0
+for f in "$LIST" "$ELEMENTS"; do
+  [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }
+done
+[ -d "$GENOMES" ] || { echo "PREFLIGHT FAIL: no genome dir $GENOMES" >&2; fail=1; }
+for C in $CKPT_ALL; do
+  [ -s "$C" ] || { echo "PREFLIGHT FAIL: missing checkpoint $C" >&2; fail=1; }
+done
+if [ -s "$LIST" ]; then
+  n=$(wc -l < "$LIST"); echo "[preflight] $n genomes listed"
+  miss=0
+  while read -r G; do
+    [ -z "$G" ] && continue
+    [ -s "$GENOMES/$G.fna" ] || { miss=$((miss+1)); [ $miss -le 3 ] && echo "PREFLIGHT: no FASTA $GENOMES/$G.fna" >&2; }
+  done < "$LIST"
+  [ $miss -eq 0 ] || { echo "PREFLIGHT FAIL: $miss listed genomes have no FASTA" >&2; fail=1; }
+fi
+[ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
+echo "[preflight] all inputs present"
+# --------------------------------------------------------------------------
 
 # default policy first: these runs must reproduce the committed numbers exactly,
 # which is the regression check that the new flags changed nothing by default
@@ -39,7 +68,7 @@ for POL in n-channel impute uniform; do
       D="$OUT/$TAG/$G"
       [ -s "$D/regions.tsv" ] && continue          # resumable: skip finished genomes
       python -m src.predict_genome \
-        --input_fasta raw/genomes/$G.fna --outdir "$D" \
+        --input_fasta "$GENOMES/$G.fna" --outdir "$D" \
         --config "$CFG" --checkpoint "$CKPT" \
         --mode default --device cuda \
         --ambiguity-policy "$POL" \
@@ -54,7 +83,7 @@ for POL in n-channel impute uniform; do
   for R in r1 r2 r3; do ARGS="$ARGS --variant ${POL}_${R}=$OUT/${POL}_${R}"; done
 done
 python scripts/compare_variants.py \
-  --elements scripts/eval_sizestrat_elements.csv \
+  --elements "$ELEMENTS" \
   $ARGS --strata --out $OUT/results.json
 
 echo "=== job end ==="; date

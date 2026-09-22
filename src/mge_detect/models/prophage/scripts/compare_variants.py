@@ -63,11 +63,14 @@ def load_regions(d: str) -> pd.DataFrame:
 
 def score_variant(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
     covered, ious, n_overlaps = [], [], []
+    per_call: dict = {}
     for r in ev.itertuples():
         g = reg[(reg.genome_id == r.accession) & (reg.contig_id == r.contig)]
         o = g[(g.end > r.start) & (g.start < r.end)]
         covered.append(len(o) > 0)
         n_overlaps.append(len(o))
+        for c in o.itertuples():
+            per_call.setdefault((c.genome_id, c.contig_id, c.start, c.end), []).append(float(r.kb) if hasattr(r, "kb") else 0.0)
         if len(o):
             inter = np.minimum(o.end, r.end) - np.maximum(o.start, r.start)
             union = np.maximum(o.end, r.end) - np.minimum(o.start, r.start)
@@ -75,15 +78,26 @@ def score_variant(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
         else:
             ious.append(0.0)
     n_genomes = ev.accession.nunique()
+    # Conflation: one call claiming several distinct elements. Covered recall is
+    # blind to this by construction (3 elements under 1 call score 3/3), so it is
+    # reported explicitly -- see docs/downstream-postprocessing.md "Conflation".
+    conflated = {k: v for k, v in per_call.items() if len(v) >= 2}
+    absorbed = sum(len(v) for v in conflated.values())
+    n_covered = int(np.sum(covered))
     return {
         "covered_recall": float(np.mean(covered)),
-        "n_covered": int(np.sum(covered)),
+        "n_covered": n_covered,
+        # matched recall: covered, minus elements that merely share a call with
+        # another. The 1-1 achievable ceiling; the metric that *does* see conflation.
+        "matched_recall": float((n_covered - (absorbed - len(conflated))) / max(1, len(ev))),
         "n_elements": int(len(ev)),
         "n_calls": int(len(reg)),
         "calls_per_genome": float(len(reg) / max(1, n_genomes)),
         "median_iou": float(np.median(ious)),
         "iou_ge_50": float(np.mean(np.asarray(ious) >= 0.5)),
         "fragmented_elements": int(np.sum(np.asarray(n_overlaps) > 1)),
+        "conflated_calls": len(conflated),
+        "absorbed_elements": absorbed,
         "_covered_vec": [bool(c) for c in covered],
     }
 
@@ -117,9 +131,10 @@ def main() -> None:
                 byst[str(st)] = {k: sm[k] for k in ("covered_recall", "n_elements", "median_iou")}
             m["by_stratum"] = byst
         res["variants"][label] = m
-        print(f"[{label}] covered recall {m['covered_recall']:.3f} "
+        print(f"[{label}] covered {m['covered_recall']:.3f} / matched {m['matched_recall']:.3f} "
               f"({m['n_covered']}/{m['n_elements']}), {m['calls_per_genome']:.1f} calls/genome, "
-              f"median IoU {m['median_iou']:.3f}", flush=True)
+              f"median IoU {m['median_iou']:.3f}, conflated {m['conflated_calls']} calls "
+              f"absorbing {m['absorbed_elements']}", flush=True)
 
     if args.group_by_phase and len(cov_by_variant) > 1:
         labels = list(cov_by_variant)

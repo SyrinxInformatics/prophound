@@ -16,7 +16,7 @@
 # limitations under the License.
 
 
-"""Corpus-wide audit of contigs too short to be scored (docs/cli-and-packaging.md).
+"""Corpus-wide input-quality audit: short contigs and ambiguity codes (docs/cli-and-packaging.md).
 
 `predict_genome.build_windows` skips any contig shorter than `window_len`
 (10 kb) and nothing warns, so an assembly's short contigs are silently never
@@ -33,6 +33,14 @@ Reports per genome and in aggregate:
   * positive elements (from `--beds_dir`) inside a skipped contig -- these are
     unreachable recall, not model error
   * the worst-affected genomes, which is where fragmented/MAG assemblies show up
+
+It also counts **IUPAC ambiguity codes** on the same pass, since it is the same
+scan and ambiguity is the other half of the input-quality axis (`docs/v1-scope.md`
+gating audit A.2). Ambiguity codes collapse a window's score to zero
+(`docs/scientific-validity.md` "1a"), so how common they are across the corpus,
+and at what per-genome rate, decides whether the encoding fix is a headline
+correctness issue or an edge case. Job `816446` could not answer this: only 3 of
+its 42 eval genomes carry any codes at all.
 """
 
 from __future__ import annotations
@@ -46,10 +54,25 @@ import pandas as pd
 from pyfaidx import Fasta
 
 
-def contig_lengths(path: str) -> dict:
+def contig_lengths(path: str, count_ambiguity: bool = False):
+    """Return ({contig: length}, ambiguity_bases, contigs_with_ambiguity).
+
+    Ambiguity is counted on the same pass -- reading every FASTA twice for two
+    cheap statistics would double a corpus-wide scan for no reason.
+    """
     fa = Fasta(path, as_raw=True, sequence_always_upper=True)
     try:
-        return {k: len(fa[k]) for k in fa.keys()}
+        lens, n_amb, amb_contigs = {}, 0, 0
+        for k in fa.keys():
+            if count_ambiguity:
+                seq = str(fa[k][:])
+                lens[k] = len(seq)
+                c = sum(1 for b in seq if b not in "ACGT")
+                n_amb += c
+                amb_contigs += 1 if c else 0
+            else:
+                lens[k] = len(fa[k])
+        return lens, n_amb, amb_contigs
     finally:
         fa.close()  # one descriptor per genome otherwise leaks (docs/environment.md)
 
@@ -75,6 +98,8 @@ def main() -> None:
     ap.add_argument("--window_len", type=int, default=10000)
     ap.add_argument("--fasta_suffix", default=".fna")
     ap.add_argument("--limit", type=int, default=0, help="cap genomes scanned (0 = all)")
+    ap.add_argument("--no_ambiguity", action="store_true",
+                    help="skip the ambiguity count (faster: lengths then come from the .fai)")
     args = ap.parse_args()
 
     out = Path(args.out_dir)
@@ -88,7 +113,7 @@ def main() -> None:
     for i, fp in enumerate(fastas):
         genome = fp.name[: -len(args.fasta_suffix)]
         try:
-            lens = contig_lengths(str(fp))
+            lens, n_amb, amb_contigs = contig_lengths(str(fp), count_ambiguity=not args.no_ambiguity)
         except Exception as e:
             print(f"[skip] {genome}: {e}", flush=True)
             continue
@@ -96,7 +121,9 @@ def main() -> None:
         total_bp = sum(lens.values())
         row = dict(genome_id=genome, n_contigs=len(lens), n_short_contigs=len(short),
                    total_bp=total_bp, short_bp=sum(short.values()),
-                   frac_bp_skipped=sum(short.values()) / max(1, total_bp))
+                   frac_bp_skipped=sum(short.values()) / max(1, total_bp),
+                   n_ambiguity=n_amb, ambiguity_ppm=n_amb / max(1, total_bp) * 1e6,
+                   contigs_with_ambiguity=amb_contigs)
         if args.beds_dir:
             bed = Path(args.beds_dir) / f"{genome}.bed"
             # an element lives on exactly one contig, so it is either reachable
@@ -131,6 +158,22 @@ def main() -> None:
         agg["elements_in_skipped_contigs"] = int(df.elements_in_skipped_contigs.sum())
         agg["frac_elements_unreachable"] = float(
             df.elements_in_skipped_contigs.sum() / max(1, df.n_elements.sum()))
+    if "n_ambiguity" in df and (df.n_ambiguity > 0).any():
+        aff = df[df.n_ambiguity > 0]
+        agg["ambiguity"] = {
+            "genomes_with_any": int(len(aff)),
+            "frac_genomes_with_any": float((df.n_ambiguity > 0).mean()),
+            "total_ambiguity_bases": int(df.n_ambiguity.sum()),
+            "overall_ppm": float(df.n_ambiguity.sum() / max(1, df.total_bp.sum()) * 1e6),
+            "median_ppm_among_affected": float(aff.ambiguity_ppm.median()),
+            "max_ppm": float(df.ambiguity_ppm.max()),
+            "genomes_over_100ppm": int((df.ambiguity_ppm > 100).sum()),
+            "genomes_over_1000ppm": int((df.ambiguity_ppm > 1000).sum()),
+            "note": ("A window is ~10 kb, so even 100 ppm puts ~1 ambiguous base in a typical "
+                     "window, and two contiguous codes take a confident window from 1.000 to "
+                     "0.000. genomes_over_100ppm is the count at material risk under the "
+                     "n-channel default. EDL933, the known failure, is 1,182 ppm."),
+        }
     agg["interpretation"] = (
         "frac_elements_unreachable is recall the tool cannot achieve at any threshold "
         "or operating point, because the sequence is never examined. If it is non-trivial "
