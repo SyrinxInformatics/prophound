@@ -1,0 +1,16 @@
+{
+  "n_elements": 3970,
+  "n_genomes_with_elements": 1567,
+  "n_clades": 3549,
+  "largest_clade": 29,
+  "singleton_clades": 3342,
+  "median_clade_size": 1.0,
+  "genomes_with_multiple_clades": 933,
+  "max_clades_in_one_genome": 21,
+  "params": {
+    "k": 21,
+    "sketch": 2000,
+    "min_jaccard": 0.2
+  },
+  "next_step": "Inspect n_clades and genomes_with_multiple_clades before submitting any retraining. A clade-held-out split strands every genome that hosts elements on both sides; if that is most of the corpus, the design needs rethinking (e.g. hold out clades that co-occur least) rather than 3 GPU-days."
+}

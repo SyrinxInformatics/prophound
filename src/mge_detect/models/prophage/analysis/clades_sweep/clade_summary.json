@@ -1,0 +1,115 @@
+{
+  "n_elements": 3970,
+  "n_genomes_with_elements": 1567,
+  "params": {
+    "k": 21,
+    "sketch": 2000,
+    "min_jaccard": 0.2,
+    "thresholds": [
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ]
+  },
+  "n_pairs_kept": 8801,
+  "n_clades": 3549,
+  "largest_clade": 29,
+  "singleton_clades": 3342,
+  "median_clade_size": 1.0,
+  "genomes_with_multiple_clades": 933,
+  "max_clades_in_one_genome": 21,
+  "n_components": 1434,
+  "largest_component_elements": 216,
+  "largest_component_genomes": 32,
+  "per_threshold": {
+    "0.005": {
+      "column": "clade_0.005",
+      "n_clades": 2515,
+      "largest_clade": 298,
+      "singleton_clades": 2091,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 804,
+      "max_clades_in_one_genome": 8,
+      "n_components": 1166,
+      "largest_component_elements": 508,
+      "largest_component_genomes": 110
+    },
+    "0.01": {
+      "column": "clade_0.01",
+      "n_clades": 2737,
+      "largest_clade": 217,
+      "singleton_clades": 2326,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 828,
+      "max_clades_in_one_genome": 8,
+      "n_components": 1269,
+      "largest_component_elements": 313,
+      "largest_component_genomes": 54
+    },
+    "0.02": {
+      "column": "clade_0.02",
+      "n_clades": 2921,
+      "largest_clade": 205,
+      "singleton_clades": 2560,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 849,
+      "max_clades_in_one_genome": 11,
+      "n_components": 1317,
+      "largest_component_elements": 273,
+      "largest_component_genomes": 44
+    },
+    "0.05": {
+      "column": "clade_0.05",
+      "n_clades": 3166,
+      "largest_clade": 149,
+      "singleton_clades": 2869,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 897,
+      "max_clades_in_one_genome": 13,
+      "n_components": 1366,
+      "largest_component_elements": 216,
+      "largest_component_genomes": 32
+    },
+    "0.1": {
+      "column": "clade_0.1",
+      "n_clades": 3346,
+      "largest_clade": 119,
+      "singleton_clades": 3090,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 925,
+      "max_clades_in_one_genome": 18,
+      "n_components": 1402,
+      "largest_component_elements": 216,
+      "largest_component_genomes": 32
+    },
+    "0.15": {
+      "column": "clade_0.15",
+      "n_clades": 3467,
+      "largest_clade": 32,
+      "singleton_clades": 3247,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 931,
+      "max_clades_in_one_genome": 21,
+      "n_components": 1419,
+      "largest_component_elements": 216,
+      "largest_component_genomes": 32
+    },
+    "0.2": {
+      "column": "clade",
+      "n_clades": 3549,
+      "largest_clade": 29,
+      "singleton_clades": 3342,
+      "median_clade_size": 1.0,
+      "genomes_with_multiple_clades": 933,
+      "max_clades_in_one_genome": 21,
+      "n_components": 1434,
+      "largest_component_elements": 216,
+      "largest_component_genomes": 32
+    }
+  },
+  "next_step": "Affordability of a clade-held-out split is set by largest_component_* (hold out whole genome-clade components: zero stranding), not by genomes_with_multiple_clades. Then run scripts/clade_holdout_checks.py recall --clade_col clade_<t> on an already-scored eval sample at each threshold before proposing any retraining."
+}

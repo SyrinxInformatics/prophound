@@ -114,11 +114,17 @@ def load_split_ids(splits_dir: Path, name: str) -> set:
 def open_fasta(path: str, retries: int = 5, wait_s: float = 2.0) -> Fasta:
     """pyfaidx open that tolerates another process rewriting the .fai.
 
-    Job 815767 (2026-09-21) died with IndexNotFoundError on one genome's .fai
-    while the clade-clustering job was opening the same sequences/ FASTAs on the
-    same node -- pyfaidx rewrites a .fai in place whenever it is missing or older
-    than its FASTA, and a concurrent open() of that half-written file fails. A
-    short retry rides out the rewrite; a persistent failure still raises.
+    pyfaidx rewrites a .fai in place whenever it is missing or older than its
+    FASTA, and a concurrent open() of that half-written file surfaces as
+    IndexNotFoundError. A short retry rides out the rewrite; a persistent
+    failure still raises.
+
+    Note: pyfaidx also wraps *any* OSError from opening the .fai in
+    IndexNotFoundError -- including EMFILE (too many open files). Jobs 815767
+    and 816009 (2026-09-21) died that way, not from a race: build_matrix was
+    evicting cached Fasta objects without closing them, leaking one descriptor
+    per cache miss. Retrying cannot recover from that, which is why the loop
+    below now opens each genome exactly once and closes it.
     """
     for attempt in range(retries):
         try:
@@ -131,28 +137,39 @@ def open_fasta(path: str, retries: int = 5, wait_s: float = 2.0) -> Fasta:
 
 
 def build_matrix(df: pd.DataFrame, k: int, canon: dict, label: str):
-    cache: dict = {}
-    X, y, skipped = [], [], 0
-    for i, row in enumerate(df.itertuples()):
-        fa = cache.get(row.fasta_path)
-        if fa is None:
-            if len(cache) > 8:
-                cache.pop(next(iter(cache)))
-            fa = open_fasta(row.fasta_path)
-            cache[row.fasta_path] = fa
-        try:
-            seq = fa[row.contig_id][int(row.start) : int(row.end)]
-        except Exception:
-            skipped += 1
-            continue
-        f = window_features(seq, k, canon)
-        if f is None:
-            skipped += 1
-            continue
-        X.append(f)
-        y.append(int(row.label))
-        if (i + 1) % 25000 == 0:
-            print(f"[{label}] {i + 1}/{len(df)} windows featurized", flush=True)
+    # Group windows by genome so each FASTA is opened once and closed before
+    # the next -- the sampled windows arrive in random genome order, and an
+    # LRU of open Fasta objects that evicts without close() leaks a file
+    # descriptor per miss (~1 per window at 1.8k genomes), which is how the
+    # first two runs hit EMFILE. Row order is irrelevant to the model: labels
+    # travel with their rows and the classifiers see a shuffled sample anyway.
+    X, y, skipped, done = [], [], 0, 0
+    fa = None
+    cur_path = None
+    try:
+        for row in df.sort_values("fasta_path", kind="stable").itertuples():
+            if row.fasta_path != cur_path:
+                if fa is not None:
+                    fa.close()
+                fa = open_fasta(row.fasta_path)
+                cur_path = row.fasta_path
+            try:
+                seq = fa[row.contig_id][int(row.start) : int(row.end)]
+            except Exception:
+                skipped += 1
+                continue
+            f = window_features(seq, k, canon)
+            if f is None:
+                skipped += 1
+                continue
+            X.append(f)
+            y.append(int(row.label))
+            done += 1
+            if done % 25000 == 0:
+                print(f"[{label}] {done}/{len(df)} windows featurized", flush=True)
+    finally:
+        if fa is not None:
+            fa.close()
     print(f"[{label}] done: {len(X)} windows, {skipped} skipped", flush=True)
     return np.vstack(X), np.asarray(y)
 

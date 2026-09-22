@@ -136,7 +136,13 @@ def main() -> None:
     ap.add_argument("--out_dir", required=True)
     ap.add_argument("--k", type=int, default=21)
     ap.add_argument("--sketch", type=int, default=2000)
-    ap.add_argument("--min_jaccard", type=float, default=0.2)
+    ap.add_argument("--min_jaccard", type=float, default=0.2,
+                    help="threshold for the `clade` column (kept for downstream scripts)")
+    ap.add_argument("--thresholds", default="",
+                    help="comma-separated extra thresholds, e.g. 0.02,0.05,0.1,0.15 -- one "
+                         "`clade_<t>` column each from a single sketch pass, plus a "
+                         "`pairs_jaccard.csv` of every pair >= min(thresholds) so any "
+                         "further threshold can be applied locally without re-running")
     ap.add_argument("--fasta_suffix", default=".fna")
     args = ap.parse_args()
 
@@ -161,17 +167,20 @@ def main() -> None:
         if not positives:
             continue
         fa = open_fasta(str(fa_path))
-        for contig, start, end in positives:
-            try:
-                seq = fa[contig][start:end]
-            except Exception:
-                continue
-            sk = sketch(seq, args.k, args.sketch)
-            if sk.size == 0:
-                continue
-            rows.append({"genome_id": genome, "contig_id": contig, "start": start,
-                         "end": end, "len_bp": end - start, "n_hashes": int(sk.size)})
-            sketches.append(sk)
+        try:
+            for contig, start, end in positives:
+                try:
+                    seq = fa[contig][start:end]
+                except Exception:
+                    continue
+                sk = sketch(seq, args.k, args.sketch)
+                if sk.size == 0:
+                    continue
+                rows.append({"genome_id": genome, "contig_id": contig, "start": start,
+                             "end": end, "len_bp": end - start, "n_hashes": int(sk.size)})
+                sketches.append(sk)
+        finally:
+            fa.close()  # one descriptor per genome otherwise leaks until exit
         if (bi + 1) % 200 == 0:
             print(f"[sketch] {bi + 1}/{len(beds)} genomes, {len(rows)} elements", flush=True)
 
@@ -180,54 +189,96 @@ def main() -> None:
         raise SystemExit("No elements found -- check --beds_dir/--sequences_dir and --fasta_suffix")
     df = pd.DataFrame(rows)
 
-    # single-linkage over pairs above the threshold, via union-find
+    thresholds = sorted({args.min_jaccard, *(float(t) for t in args.thresholds.split(",") if t.strip())})
+    floor = min(thresholds)
+
+    # Score every pair once and keep the sparse list above the lowest threshold;
+    # clades at each threshold are then a union-find over the kept pairs.
+    # (The 2026-09-21 run short-circuited jaccard() for pairs already in one
+    # clade; with 94% singletons that saved almost nothing, so scoring all
+    # pairs costs about the same ~1 h and makes the thresholds free.)
     n = len(sketches)
-    parent = list(range(n))
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    def union(a, b):
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[rb] = ra
-
-    print(f"[cluster] {n * (n - 1) // 2} pairs to score", flush=True)
+    print(f"[cluster] {n * (n - 1) // 2} pairs to score, keeping jaccard >= {floor}", flush=True)
+    pairs_i, pairs_j, pairs_s = [], [], []
     for i in range(n):
         for j in range(i + 1, n):
-            if find(i) != find(j) and jaccard(sketches[i], sketches[j], args.sketch) >= args.min_jaccard:
-                union(i, j)
+            sc = jaccard(sketches[i], sketches[j], args.sketch)
+            if sc >= floor:
+                pairs_i.append(i); pairs_j.append(j); pairs_s.append(sc)
         if (i + 1) % 250 == 0:
-            print(f"[cluster] {i + 1}/{n}", flush=True)
+            print(f"[cluster] {i + 1}/{n}, {len(pairs_s)} pairs kept", flush=True)
+    pairs = pd.DataFrame({"i": pairs_i, "j": pairs_j, "jaccard": pairs_s})
+    pairs.to_csv(out / "pairs_jaccard.csv", index=False)
+    print(f"[cluster] {len(pairs)} pairs >= {floor} written to pairs_jaccard.csv", flush=True)
 
-    df["clade"] = [find(i) for i in range(n)]
-    df["clade"] = df.groupby("clade").ngroup()
+    def clades_at(t: float) -> np.ndarray:
+        parent = list(range(n))
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for i, j in zip(pairs.i[pairs.jaccard >= t], pairs.j[pairs.jaccard >= t]):
+            ri, rj = find(i), find(j)
+            if ri != rj:
+                parent[rj] = ri
+        return pd.Series([find(i) for i in range(n)]).pipe(lambda s: s.groupby(s).ngroup().to_numpy())
+
+    def component_stats(clade: np.ndarray) -> dict:
+        # genome-clade bipartite components: holding out whole components strands
+        # nothing, so the largest component (not genomes_with_multiple_clades,
+        # which singleton clades inflate) is what decides affordability
+        parent: dict = {}
+
+        def find(x):
+            while parent.setdefault(x, x) != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for g, c in zip(df.genome_id, clade):
+            parent[find(("g", g))] = find(("c", int(c)))
+        comp = pd.Series([find(("g", g)) for g in df.genome_id])
+        sizes_el = comp.value_counts()
+        sizes_gen = df.groupby(comp).genome_id.nunique()
+        return {"n_components": int(comp.nunique()),
+                "largest_component_elements": int(sizes_el.iloc[0]),
+                "largest_component_genomes": int(sizes_gen.max())}
+
+    per_threshold = {}
+    for t in thresholds:
+        col = "clade" if t == args.min_jaccard else f"clade_{t:g}"
+        df[col] = clades_at(t)
+        sizes = df[col].value_counts()
+        per_genome_clades = df.groupby("genome_id")[col].nunique()
+        per_threshold[f"{t:g}"] = {
+            "column": col,
+            "n_clades": int(df[col].nunique()),
+            "largest_clade": int(sizes.iloc[0]),
+            "singleton_clades": int((sizes == 1).sum()),
+            "median_clade_size": float(sizes.median()),
+            "genomes_with_multiple_clades": int((per_genome_clades > 1).sum()),
+            "max_clades_in_one_genome": int(per_genome_clades.max()),
+            **component_stats(df[col].to_numpy()),
+        }
     df.to_csv(out / "elements_clades.csv", index=False)
 
-    sizes = df.clade.value_counts()
-    # A genome is usable for a clade-held-out split only if all of its elements
-    # fall on the same side of the split; genomes spanning both sides have to be
-    # dropped. This is the number that decides whether 2a is affordable.
-    per_genome_clades = df.groupby("genome_id").clade.nunique()
     summary = {
         "n_elements": int(len(df)),
         "n_genomes_with_elements": int(df.genome_id.nunique()),
-        "n_clades": int(df.clade.nunique()),
-        "largest_clade": int(sizes.iloc[0]),
-        "singleton_clades": int((sizes == 1).sum()),
-        "median_clade_size": float(sizes.median()),
-        "genomes_with_multiple_clades": int((per_genome_clades > 1).sum()),
-        "max_clades_in_one_genome": int(per_genome_clades.max()),
-        "params": {"k": args.k, "sketch": args.sketch, "min_jaccard": args.min_jaccard},
+        "params": {"k": args.k, "sketch": args.sketch, "min_jaccard": args.min_jaccard,
+                   "thresholds": thresholds},
+        "n_pairs_kept": int(len(pairs)),
+        **{k: v for k, v in per_threshold[f"{args.min_jaccard:g}"].items() if k != "column"},
+        "per_threshold": per_threshold,
         "next_step": (
-            "Inspect n_clades and genomes_with_multiple_clades before submitting "
-            "any retraining. A clade-held-out split strands every genome that "
-            "hosts elements on both sides; if that is most of the corpus, the "
-            "design needs rethinking (e.g. hold out clades that co-occur least) "
-            "rather than 3 GPU-days."
+            "Affordability of a clade-held-out split is set by largest_component_* "
+            "(hold out whole genome-clade components: zero stranding), not by "
+            "genomes_with_multiple_clades. Then run scripts/clade_holdout_checks.py "
+            "recall --clade_col clade_<t> on an already-scored eval sample at each "
+            "threshold before proposing any retraining."
         ),
     }
     (out / "clade_summary.json").write_text(json.dumps(summary, indent=2) + "\n")

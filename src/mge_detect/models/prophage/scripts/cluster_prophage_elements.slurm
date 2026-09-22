@@ -8,7 +8,8 @@
 #SBATCH -J cluster_elements
 # Walltime kept short on purpose: compute1 showed 0 idle nodes at submission
 # time, and a short request backfills far sooner than a padded one.
-# ~4k elements sketched + ~8M sketch comparisons: under an hour expected, 4h is generous.
+# 815766 (2026-09-21) took 1h04 for ~4k elements / 7.9M pairs; --thresholds scores
+# every pair (no union short-circuit) so budget the same, 4h stays generous.
 #SBATCH -p compute1
 #SBATCH -n 1
 #SBATCH -c 4
@@ -22,7 +23,9 @@ echo "=== job start ==="; date; hostname
 module load miniconda
 conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
-mkdir -p analysis/_slurm_logs analysis/clades
+# analysis/clades/ holds 815766's single-threshold output; the sweep writes
+# beside it so that file stays as pulled/analysed.
+mkdir -p analysis/_slurm_logs analysis/clades_sweep
 
 echo "=== inputs ==="
 echo "beds_pos: $(ls beds_pos | wc -l) files"; ls -d sequences
@@ -32,7 +35,12 @@ echo "beds_pos: $(ls beds_pos | wc -l) files"; ls -d sequences
 python scripts/cluster_prophage_elements.py \
   --beds_dir beds_pos \
   --sequences_dir sequences \
-  --out_dir analysis/clades \
-  --k 21 --sketch 2000 --min_jaccard 0.2
+  --out_dir analysis/clades_sweep \
+  --k 21 --sketch 2000 --min_jaccard 0.2 \
+  --thresholds 0.005,0.01,0.02,0.05,0.1,0.15
+# k=21 makes Jaccard a steep function of divergence (J ~ p^21/(2-p^21)):
+# 0.2 ~ 3.5% divergent, 0.1 ~ 7%, 0.05 ~ 10%, 0.02 ~ 14%, 0.01 ~ 17%, 0.005 ~ 20%.
+# pairs_jaccard.csv keeps every pair >= 0.005, so lower thresholds than that
+# need a re-run; anything above is free locally.
 
 echo "=== job end ==="; date

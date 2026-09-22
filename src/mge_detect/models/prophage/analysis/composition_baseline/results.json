@@ -1,0 +1,17 @@
+{
+  "n_train": 150000,
+  "n_test": 50000,
+  "test_positive_rate": 0.01358,
+  "k": 4,
+  "n_features": 184,
+  "logreg": {
+    "auprc": 0.0709401395162652,
+    "auroc": 0.8062111455898047
+  },
+  "hist_gbm": {
+    "auprc": 0.15693981372461918,
+    "auroc": 0.8560648003421067
+  },
+  "cnn_reference_auprc": "0.63-0.65 (docs/model-reengineering.md)",
+  "interpretation": "If either baseline AUPRC approaches 0.63-0.65, composition alone explains the CNN and docs/scientific-validity.md claim 2 fails. If both land well below, the CNN uses signal beyond nucleotide composition."
+}
