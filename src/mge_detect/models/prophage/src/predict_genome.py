@@ -41,7 +41,7 @@ MODE_THRESHOLDS = {
 }
 
 
-AMBIGUITY_POLICIES = ("n-channel", "uniform")
+AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
 
 
 def encode_window(sequence: str, policy: str = "n-channel") -> torch.Tensor:
@@ -51,22 +51,46 @@ def encode_window(sequence: str, policy: str = "n-channel") -> torch.Tensor:
     sets the dedicated N channel. It is kept as the default because changing
     it changes every score the tool produces.
 
-    `uniform` instead spreads each ambiguous base as 0.25 across A/C/G/T and
-    leaves the N channel empty. Measured 2026-09-22: under `n-channel`, two
-    contiguous ambiguity codes take a confident window from p=1.000 to exactly
-    0.000, and a real 37 kb prophage in EDL933 scores ~0 because of 2-7 stray
-    IUPAC bases per window; `uniform` restores p~1.000 there and is an exact
-    no-op on ambiguity-free sequence. See docs/scientific-validity.md "1a".
+    Measured 2026-09-22: under `n-channel`, two contiguous ambiguity codes take
+    a confident window from p=1.000 to exactly 0.000, and a real 37 kb prophage
+    in EDL933 scores ~0 because of 2-7 stray IUPAC bases per window. Both
+    alternatives below restore p~1.000 there and are exact no-ops on
+    ambiguity-free sequence. See docs/scientific-validity.md "1a".
+
+    `impute` replaces each ambiguous base with a concrete A/C/G/T, chosen
+    deterministically from the window's own content so repeated runs agree.
+    This is the only option that keeps the input *in distribution*: the model
+    was trained on one-hot vectors, and the N channel is effectively untrained
+    (ambiguity codes appear in ~0.2% of training windows, equally in both
+    classes, and the first-layer N-channel weights stay ~2.1x larger than the
+    ACGT ones across all three seeds -- i.e. near initialization). Under max
+    pooling a single such activation can dominate the pooled embedding, which
+    is why one or two bases suffice.
+
+    `uniform` instead spreads each ambiguous base as 0.25 across A/C/G/T. It is
+    deterministic and invents no specific base, but fractional inputs are
+    themselves out of distribution, so prefer `impute` unless measurement says
+    otherwise.
     """
     x = onehot_encode(sequence)
     if policy == "n-channel":
         return x
-    if policy != "uniform":
+    if policy not in AMBIGUITY_POLICIES:
         raise ValueError(f"unknown ambiguity policy {policy!r}; expected one of {AMBIGUITY_POLICIES}")
     ambiguous = x[4] > 0
-    if bool(ambiguous.any()):
-        x[4][ambiguous] = 0.0
+    if not bool(ambiguous.any()):
+        return x
+    x[4][ambiguous] = 0.0
+    if policy == "uniform":
         x[:4, ambiguous] = 0.25
+        return x
+    # impute: deterministic per window -- seed from the unambiguous content so
+    # the same window always yields the same substitution, across runs and hosts
+    idx = torch.nonzero(ambiguous, as_tuple=False).flatten()
+    seed = (int(x[:4].sum().item()) * 1000003 + int(idx.sum().item())) & 0x7FFFFFFF
+    gen = torch.Generator().manual_seed(seed)
+    picks = torch.randint(0, 4, (idx.numel(),), generator=gen)
+    x[picks, idx] = 1.0
     return x
 
 

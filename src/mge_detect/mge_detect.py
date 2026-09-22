@@ -89,7 +89,7 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     )
     parser.add_argument(
         "--ambiguity-policy",
-        choices=("n-channel", "uniform"),
+        choices=("n-channel", "uniform", "impute"),
         default="n-channel",
         help=(
             "How IUPAC ambiguity codes (N, R, Y, ...) are encoded. 'n-channel' (default) "
