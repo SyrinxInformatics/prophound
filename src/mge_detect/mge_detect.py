@@ -33,6 +33,12 @@ DEFAULT_REGION_BUILDER = "coverage"
 DEFAULT_COVERAGE_FRAC = 0.1
 DEFAULT_MAX_GAP_BP = 50000
 DEFAULT_BRIDGE_PROB = 0.1
+# mirrors predict_genome's DEFAULT_REFINE_* / DEFAULT_EDGE_ALPHA / DEFAULT_SPLIT_*
+DEFAULT_REFINE_WINDOW_LEN = 0
+DEFAULT_REFINE_STRIDE = 250
+DEFAULT_EDGE_ALPHA = 1.0
+DEFAULT_SPLIT_MIN_GAP_BP = 2000
+DEFAULT_SPLIT_MAX_PROB = 0.1
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -179,6 +185,76 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "For --max-gap-bp: only merge across a gap whose every bin has mean "
             "covering-window probability >= this (0 = distance-only). The "
             "anti-overextension guard -- docs/anti-overextension.md. "
+            "Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--window-len",
+        type=int,
+        default=None,
+        help=(
+            "Inference window length in bp (default: the checkpoint's trained "
+            "length, 10000). The model's max pooling accepts any length, so this "
+            "trades resolution for context. EXPERIMENTAL away from the trained "
+            "length: mode thresholds were calibrated at it, and negative scores "
+            "drift upward as windows shrink."
+        ),
+    )
+    parser.add_argument(
+        "--stride",
+        type=int,
+        default=None,
+        help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
+    )
+    parser.add_argument(
+        "--refine-window-len",
+        type=int,
+        default=DEFAULT_REFINE_WINDOW_LEN,
+        help=(
+            "EXPERIMENTAL fine-scale pass (default 0 = off). Re-score each call "
+            "+/- --refine-margin at this window length, then split calls whose fine "
+            "track shows a background gap (conflated elements) and place edges "
+            "between the fine core and the coarse edge (--edge-alpha). Never drops "
+            "a call. Requires --region-builder coverage. See "
+            "docs/adaptive-multiscale-detection.md."
+        ),
+    )
+    parser.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
+                        help="Fine-pass stride in bp. Default %(default)s.")
+    parser.add_argument(
+        "--refine-threshold",
+        type=float,
+        default=None,
+        help=(
+            "Fine-pass score threshold (default: the mode's extend threshold). "
+            "Not yet calibrated per scale."
+        ),
+    )
+    parser.add_argument("--refine-margin", type=int, default=None,
+                        help="bp re-scored either side of each call (default: --window-len).")
+    parser.add_argument(
+        "--edge-alpha",
+        type=float,
+        default=DEFAULT_EDGE_ALPHA,
+        help=(
+            "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
+            "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
+            "the fine core (truncates). Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--split-min-gap-bp",
+        type=int,
+        default=DEFAULT_SPLIT_MIN_GAP_BP,
+        help="Minimum fine-track gap (bp) that can split a call. Default %(default)s.",
+    )
+    parser.add_argument(
+        "--split-max-prob",
+        type=float,
+        default=DEFAULT_SPLIT_MAX_PROB,
+        help=(
+            "Split only across a gap whose fine windows average below this -- the "
+            "mirror of --bridge-prob, so splitting cannot undo gap-filling. "
             "Default %(default)s."
         ),
     )

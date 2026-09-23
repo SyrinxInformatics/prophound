@@ -84,3 +84,10 @@ Measured under the standing RC/N check (`docs/scientific-validity.md`, "Input-ro
 - **Calls depend on window-grid phase** — shifting a contig's start by 777 bp turned 3 regions into 5 (marginal calls only; confident ones are stable).
 
 Reverse-complement handling is *not* a concern: window scores and whole-contig region calls are both exactly invariant.
+
+## Window size and fine refinement flags (added 2026-09-23, experimental, off by default)
+
+- `--window-len` / `--stride`: override the checkpoint's trained 10 kb / 1 kb at inference. The pooling accepts any length, but the mode thresholds were calibrated at 10 kb, so a warning is printed whenever the length differs. `run_metadata.json` records both the used and the trained values.
+- `--refine-window-len W` (0 = off), plus `--refine-stride`, `--refine-threshold`, `--refine-margin`, `--edge-alpha`, `--split-min-gap-bp` and `--split-max-prob`: the fine pass that splits conflated calls and places edges. It needs `--region-builder coverage`. It writes an extra `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four".
+- The flags are defined twice, in `predict_genome.add_multiscale_args` and in `mge_detect.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
+

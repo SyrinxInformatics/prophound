@@ -1,0 +1,67 @@
+{
+  "split": "train",
+  "n_windows": 7303953,
+  "n_positive_windows": 101477,
+  "n_elements": 2742,
+  "unmatched_positive_windows": 0,
+  "elements_with_zero_positive_windows": 2,
+  "by_stratum": {
+    "<5kb": {
+      "n_elements": 2,
+      "elements_with_zero_windows": 2,
+      "n_positive_windows": 0,
+      "windows_per_element": 0.0,
+      "median_element_content": 0.0,
+      "frac_windows_content_ge_0.9": 0.0
+    },
+    "5-8kb": {
+      "n_elements": 22,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 144,
+      "windows_per_element": 6.545454545454546,
+      "median_element_content": 0.6187,
+      "frac_windows_content_ge_0.9": 0.0
+    },
+    "8-10kb": {
+      "n_elements": 52,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 446,
+      "windows_per_element": 8.576923076923077,
+      "median_element_content": 0.72995,
+      "frac_windows_content_ge_0.9": 0.08520179372197309
+    },
+    "10-15kb": {
+      "n_elements": 246,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 3117,
+      "windows_per_element": 12.670731707317072,
+      "median_element_content": 0.8166,
+      "frac_windows_content_ge_0.9": 0.3727943535450754
+    },
+    "15-30kb": {
+      "n_elements": 654,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 13739,
+      "windows_per_element": 21.007645259938837,
+      "median_element_content": 1.0,
+      "frac_windows_content_ge_0.9": 0.6241356721741029
+    },
+    "30-60kb": {
+      "n_elements": 1515,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 63997,
+      "windows_per_element": 42.24224422442244,
+      "median_element_content": 1.0,
+      "frac_windows_content_ge_0.9": 0.811944309889526
+    },
+    "60kb+": {
+      "n_elements": 251,
+      "elements_with_zero_windows": 0,
+      "n_positive_windows": 20034,
+      "windows_per_element": 79.81673306772909,
+      "median_element_content": 1.0,
+      "frac_windows_content_ge_0.9": 0.9018668263951283
+    }
+  },
+  "interpretation": "median_element_content is the fraction of a positive training window that is actually element. Where it is low, the model learned that size class from mostly-host examples, which predicts weak smeared signal -- the observed 0.857 recall / 0.334 IoU at 5-8 kb. elements_with_zero_windows counts elements that generated no positive training example at all. Either finding argues for variable-length training windows so a short window can sit inside a short element; a high-content, well-populated small stratum would instead point at an architectural cause and make downstream multi-scale the right fix."
+}

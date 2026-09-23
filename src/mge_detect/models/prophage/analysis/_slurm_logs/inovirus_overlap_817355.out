@@ -1,0 +1,16 @@
+=== job start ===
+Wed Sep 23 12:36:13 CDT 2026
+c023
+[preflight] 2676 genomad dirs, 2674 with annotate genes.tsv
+[preflight] pI HMM + /home/pke835/.conda/envs/mge_explorer_gpu/bin/hmmsearch
+[scan] 2676 genomad_out genomes, pI HMM: True
+[scan] 200/2676  loci so far 306
+[scan] 400/2676  loci so far 595
+[scan] 600/2676  loci so far 902
+[scan] 800/2676  loci so far 1176
+[scan] 1000/2676  loci so far 1479
+[scan] 1200/2676  loci so far 1768
+[scan] 1400/2676  loci so far 2103
+[scan] 1600/2676  loci so far 2424
+=== job end ===
+Wed Sep 23 12:44:56 CDT 2026

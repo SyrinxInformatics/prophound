@@ -1,0 +1,100 @@
+=== job start ===
+Wed Sep 23 12:50:12 CDT 2026
+c037
+[preflight] 2676 genomad dirs, 2674 with annotate genes.tsv
+[preflight] pI HMM + /home/pke835/.conda/envs/mge_explorer_gpu/bin/hmmsearch
+[scan] 2676 genomad_out genomes, pI HMM: True
+[scan] 200/2676  loci so far 306
+[scan] 400/2676  loci so far 595
+[scan] 600/2676  loci so far 902
+[scan] 800/2676  loci so far 1176
+[scan] 1000/2676  loci so far 1479
+[scan] 1200/2676  loci so far 1768
+[scan] 1400/2676  loci so far 2103
+[scan] 1600/2676  loci so far 2424
+[scan] 1800/2676  loci so far 2751
+[scan] 2200/2676  loci so far 3361
+[scan] 2600/2676  loci so far 4006
+{
+  "n_genomes_scanned": 2676,
+  "missing_annotate": 2,
+  "no_bed": 0,
+  "contigs_unmatched_to_bed": 0,
+  "pI_hmm_used": true,
+  "pI_skipped_genomes": {
+    "n": 1,
+    "list": [
+      "GCF_021654575.1_ASM2165457v1_genomic:empty_or_missing_faa"
+    ]
+  },
+  "merge_gap": 10000,
+  "n_loci": 4094,
+  "genomes_with_loci": 2264,
+  "by_evidence": {
+    "tax_only": 2679,
+    "pI_only": 1229,
+    "both": 186
+  },
+  "split_x_label[all]": {
+    "test/far_neg": 606,
+    "test/near_neg": 1,
+    "test/positive": 13,
+    "train/far_neg": 2820,
+    "train/near_neg": 8,
+    "train/positive": 60,
+    "val/far_neg": 569,
+    "val/near_neg": 1,
+    "val/positive": 16
+  },
+  "split_x_label[both]": {
+    "test/far_neg": 21,
+    "test/positive": 11,
+    "train/far_neg": 92,
+    "train/near_neg": 1,
+    "train/positive": 37,
+    "val/far_neg": 12,
+    "val/positive": 12
+  },
+  "split_x_label[tax_only]": {
+    "test/far_neg": 393,
+    "test/positive": 1,
+    "train/far_neg": 1888,
+    "train/near_neg": 2,
+    "train/positive": 6,
+    "val/far_neg": 387,
+    "val/positive": 2
+  },
+  "split_x_label[pI_only]": {
+    "test/far_neg": 192,
+    "test/near_neg": 1,
+    "test/positive": 1,
+    "train/far_neg": 840,
+    "train/near_neg": 5,
+    "train/positive": 17,
+    "val/far_neg": 170,
+    "val/near_neg": 1,
+    "val/positive": 2
+  },
+  "train_conflicts": {
+    "n": 2828,
+    "by_evidence": {
+      "tax_only": 1890,
+      "pI_only": 845,
+      "both": 93
+    }
+  },
+  "loci_in_test_or_eval": 620,
+  "positive_element_len_quantiles": {
+    "0.1": 9423.4,
+    "0.25": 11910.0,
+    "0.5": 19431.0,
+    "0.75": 34024.0,
+    "0.9": 57080.00000000001
+  },
+  "inovirus_positive_elements_under_10kb": 15,
+  "interpretation": "train_conflicts are inovirus loci inside training genomes that the current labels call negative: adding inoviruses as positives without relabelling these puts the same kind of sequence in both classes. Read by evidence level -- 'both' is the confident count, 'pI_only' is Roux's step-1 seed and includes non-inovirus Zot-like ATPases. loci_in_test_or_eval must be excluded from any training source and kept homology-disjoint from it."
+}
+
+[done] wrote analysis/inovirus_overlap/results.json
+=== job end (python exit 0) ===
+Wed Sep 23 13:01:34 CDT 2026

@@ -13,6 +13,7 @@ from pyfaidx import Fasta
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
+from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
 from .train_prophage import (
     DataConfig,
     ProphageTrainConfig,
@@ -390,6 +391,13 @@ DEFAULT_COVERAGE_FRAC = 0.1
 # until a held-out sweep picks a value -- see `_close_gaps`.
 DEFAULT_MAX_GAP_BP = 50000
 DEFAULT_BRIDGE_PROB = 0.1
+# Fine-scale refinement, pass B (multiscale.py; docs/adaptive-multiscale-detection.md).
+# Off by default: 0 = no refinement, and with it off output is byte-identical.
+DEFAULT_REFINE_WINDOW_LEN = 0
+DEFAULT_REFINE_STRIDE = 250
+DEFAULT_EDGE_ALPHA = 1.0        # 1 = keep coarse edges; calibrate before lowering
+DEFAULT_SPLIT_MIN_GAP_BP = 2000
+DEFAULT_SPLIT_MAX_PROB = 0.1    # mirrors DEFAULT_BRIDGE_PROB: merge above it, split below
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -911,6 +919,9 @@ def write_metadata(
     ensemble_mode: str = "single",
     max_gap_bp: int = DEFAULT_MAX_GAP_BP,
     bridge_prob: float = DEFAULT_BRIDGE_PROB,
+    trained_window_len: int | None = None,
+    trained_stride: int | None = None,
+    refine: dict | None = None,
 ) -> None:
     metadata = {
         "run_name": cfg.run_name,
@@ -924,6 +935,8 @@ def write_metadata(
         "device": device,
         "window_len": cfg.data.window_len,
         "stride": cfg.data.stride,
+        "trained_window_len": trained_window_len if trained_window_len is not None else cfg.data.window_len,
+        "trained_stride": trained_stride if trained_stride is not None else cfg.data.stride,
         "num_tiles": num_tiles,
         "ambiguity_policy": ambiguity_policy,
         "grid_offset": grid_offset,
@@ -940,6 +953,8 @@ def write_metadata(
         metadata["coverage_frac"] = coverage_frac
         if max_gap_bp > 0:
             metadata["fragment_merge"] = {"max_gap_bp": max_gap_bp, "bridge_prob": bridge_prob}
+        if refine:
+            metadata["refine"] = refine
     else:
         metadata["region_builder"] = "strict_hysteresis_stride_support"
         metadata["boundary_refinement"] = "interpolated_from_stride_support_track"
@@ -1014,7 +1029,82 @@ def build_arg_parser() -> argparse.ArgumentParser:
         ),
     )
     add_region_builder_args(parser)
+    add_multiscale_args(parser)
     return parser
+
+
+def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
+    """Window-size overrides and the fine refinement pass; mirrored in `mge_detect`."""
+    parser.add_argument(
+        "--window-len",
+        type=int,
+        default=None,
+        help=(
+            "Inference window length in bp (default: the checkpoint's trained "
+            "length, 10000). The model's max pooling accepts any length, so this "
+            "trades resolution for context. EXPERIMENTAL away from the trained "
+            "length: mode thresholds were calibrated at it, and negative scores "
+            "drift upward as windows shrink."
+        ),
+    )
+    parser.add_argument(
+        "--stride",
+        type=int,
+        default=None,
+        help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
+    )
+    parser.add_argument(
+        "--refine-window-len",
+        type=int,
+        default=DEFAULT_REFINE_WINDOW_LEN,
+        help=(
+            "EXPERIMENTAL fine-scale pass (default 0 = off). Re-score each call "
+            "+/- --refine-margin at this window length, then split calls whose fine "
+            "track shows a background gap (conflated elements) and place edges "
+            "between the fine core and the coarse edge (--edge-alpha). Never drops "
+            "a call. Requires --region-builder coverage. See "
+            "docs/adaptive-multiscale-detection.md."
+        ),
+    )
+    parser.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
+                        help="Fine-pass stride in bp. Default %(default)s.")
+    parser.add_argument(
+        "--refine-threshold",
+        type=float,
+        default=None,
+        help=(
+            "Fine-pass score threshold (default: the mode's extend threshold). "
+            "Not yet calibrated per scale."
+        ),
+    )
+    parser.add_argument("--refine-margin", type=int, default=None,
+                        help="bp re-scored either side of each call (default: --window-len).")
+    parser.add_argument(
+        "--edge-alpha",
+        type=float,
+        default=DEFAULT_EDGE_ALPHA,
+        help=(
+            "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
+            "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
+            "the fine core (truncates). Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--split-min-gap-bp",
+        type=int,
+        default=DEFAULT_SPLIT_MIN_GAP_BP,
+        help="Minimum fine-track gap (bp) that can split a call. Default %(default)s.",
+    )
+    parser.add_argument(
+        "--split-max-prob",
+        type=float,
+        default=DEFAULT_SPLIT_MAX_PROB,
+        help=(
+            "Split only across a gap whose fine windows average below this -- the "
+            "mirror of --bridge-prob, so splitting cannot undo gap-filling. "
+            "Default %(default)s."
+        ),
+    )
 
 
 def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
@@ -1075,6 +1165,49 @@ def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def score_windows(
+    model: torch.nn.Module,
+    checkpoints: List[str],
+    windows_df: pd.DataFrame,
+    window_len: int,
+    ambiguity_policy: str,
+    ensemble: str,
+    device: torch.device,
+    batch_size: int,
+    num_workers: int,
+) -> np.ndarray:
+    """Score `windows_df` with every checkpoint and combine per `ensemble`.
+
+    Shared by the coarse pass and the fine refinement pass so both use the same
+    ensemble rule.
+    """
+    dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=ambiguity_policy)
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        collate_fn=collate_batch,
+        pin_memory=(device.type == "cuda"),
+    )
+    per_checkpoint = []
+    for ckpt_path in checkpoints:
+        checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
+        model.load_state_dict(checkpoint["model"])
+        per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
+    dataset.close()
+
+    if len(per_checkpoint) == 1:
+        return per_checkpoint[0]
+    stacked = np.stack(per_checkpoint)
+    # max, not mean: averaging dilutes borderline seeds below the seed
+    # threshold -- the same effect that sank multi-tile averaging
+    # (docs/boundary-refinement.md) and mean-ensembling in the 2026-09-17
+    # checks. Measured 2026-09-21: max reaches .978/.994 covered recall
+    # (Default/Exploratory) against .950/.978 for mean.
+    return stacked.max(axis=0) if ensemble == "max" else stacked.mean(axis=0)
+
+
 def run_predict(args: argparse.Namespace) -> None:
     """Run inference end to end from a parsed argument namespace.
 
@@ -1090,6 +1223,25 @@ def run_predict(args: argparse.Namespace) -> None:
         extend_threshold=args.extend_threshold,
     )
 
+    trained_window_len, trained_stride = cfg.data.window_len, cfg.data.stride
+    window_len_arg = getattr(args, "window_len", None)
+    stride_arg = getattr(args, "stride", None)
+    if window_len_arg:
+        cfg.data.window_len = int(window_len_arg)
+    if stride_arg:
+        cfg.data.stride = int(stride_arg)
+    if cfg.data.window_len <= 0 or cfg.data.stride <= 0:
+        raise SystemExit("--window-len and --stride must be positive")
+    if cfg.data.window_len != trained_window_len:
+        # adaptive/global max pooling accepts any length, but score calibration
+        # does not transfer: negatives drift up as windows shrink (median 0.003
+        # at 10 kb -> 0.065 at 3 kb; docs/adaptive-multiscale-detection.md).
+        print(
+            f"[warn] --window-len {cfg.data.window_len} differs from the trained "
+            f"{trained_window_len}; the mode thresholds were calibrated at "
+            f"{trained_window_len} bp and are not validated at this length."
+        )
+
     num_tiles = max(1, getattr(args, "num_tiles", 1))
     region_builder = getattr(args, "region_builder", DEFAULT_REGION_BUILDER)
     coverage_frac = float(getattr(args, "coverage_frac", DEFAULT_COVERAGE_FRAC))
@@ -1097,6 +1249,22 @@ def run_predict(args: argparse.Namespace) -> None:
     bridge_prob = float(getattr(args, "bridge_prob", DEFAULT_BRIDGE_PROB))
     if region_builder != "strict" and num_tiles > 1:
         raise SystemExit("--region-builder coverage cannot be combined with --num-tiles > 1")
+    refine_window_len = int(getattr(args, "refine_window_len", DEFAULT_REFINE_WINDOW_LEN) or 0)
+    refine_stride = int(getattr(args, "refine_stride", DEFAULT_REFINE_STRIDE))
+    edge_alpha = float(getattr(args, "edge_alpha", DEFAULT_EDGE_ALPHA))
+    split_min_gap_bp = int(getattr(args, "split_min_gap_bp", DEFAULT_SPLIT_MIN_GAP_BP))
+    split_max_prob = float(getattr(args, "split_max_prob", DEFAULT_SPLIT_MAX_PROB))
+    refine_threshold = getattr(args, "refine_threshold", None)
+    refine_threshold = extend_threshold if refine_threshold is None else float(refine_threshold)
+    refine_margin = getattr(args, "refine_margin", None)
+    refine_margin = cfg.data.window_len if refine_margin is None else int(refine_margin)
+    if refine_window_len:
+        if region_builder != "coverage" or num_tiles > 1:
+            raise SystemExit("--refine-window-len requires --region-builder coverage and --num-tiles 1")
+        if refine_window_len >= cfg.data.window_len:
+            raise SystemExit("--refine-window-len must be smaller than --window-len")
+        if refine_stride <= 0 or not 0.0 <= edge_alpha <= 1.0 or refine_margin < 0:
+            raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
 
     input_path = Path(args.input_fasta)
     genome_id = input_path.stem
@@ -1111,41 +1279,15 @@ def run_predict(args: argparse.Namespace) -> None:
         raise RuntimeError("No inference windows were generated from the input FASTA.")
 
     ambiguity_policy = getattr(args, "ambiguity_policy", "n-channel") or "n-channel"
-    dataset = GenomeWindowDataset(
-        windows_df, window_len=cfg.data.window_len, ambiguity_policy=ambiguity_policy
-    )
-    loader = DataLoader(
-        dataset,
-        batch_size=args.batch_size,
-        shuffle=False,
-        num_workers=args.num_workers,
-        collate_fn=collate_batch,
-        pin_memory=(device.type == "cuda"),
-    )
-
     checkpoints = args.checkpoint if isinstance(args.checkpoint, list) else [args.checkpoint]
     ensemble = getattr(args, "ensemble", DEFAULT_ENSEMBLE)
     if ensemble not in ENSEMBLE_MODES:
         raise SystemExit(f"--ensemble must be one of {ENSEMBLE_MODES}")
 
     model = build_model(cfg, device)
-    per_checkpoint = []
-    for ckpt_path in checkpoints:
-        checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
-        model.load_state_dict(checkpoint["model"])
-        per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
-    dataset.close()
-
-    if len(per_checkpoint) == 1:
-        probs = per_checkpoint[0]
-    else:
-        stacked = np.stack(per_checkpoint)
-        # max, not mean: averaging dilutes borderline seeds below the seed
-        # threshold -- the same effect that sank multi-tile averaging
-        # (docs/boundary-refinement.md) and mean-ensembling in the 2026-09-17
-        # checks. Measured 2026-09-21: max reaches .978/.994 covered recall
-        # (Default/Exploratory) against .950/.978 for mean.
-        probs = stacked.max(axis=0) if ensemble == "max" else stacked.mean(axis=0)
+    score_kw = dict(ambiguity_policy=ambiguity_policy, ensemble=ensemble, device=device,
+                    batch_size=args.batch_size, num_workers=args.num_workers)
+    probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len, **score_kw)
 
     windows_df = windows_df.copy()
     windows_df["prob"] = probs
@@ -1178,6 +1320,48 @@ def run_predict(args: argparse.Namespace) -> None:
             extend_threshold=extend_threshold,
         )
 
+    fine_windows_df = None
+    refine_counts = None
+    if refine_window_len and not regions_df.empty:
+        contig_lengths = dict(iter_fasta_lengths(str(input_path)))
+        neighborhoods = plan_neighborhoods(regions_df, contig_lengths, refine_margin)
+        fine_windows_df = plan_fine_windows(
+            neighborhoods, contig_lengths, genome_id, str(input_path),
+            window_len=refine_window_len, stride=refine_stride,
+        )
+        if not fine_windows_df.empty:
+            fine_windows_df = fine_windows_df.copy()
+            fine_windows_df["prob"] = score_windows(
+                model, checkpoints, fine_windows_df, window_len=refine_window_len, **score_kw
+            )
+            # one threshold for seed and extend at the fine scale; no merging
+            # here -- merging belongs to the coarse track (merge coarse, split fine)
+            fine_windows_df, fine_regions_df = build_region_table_coverage(
+                fine_windows_df,
+                seed_threshold=refine_threshold,
+                extend_threshold=refine_threshold,
+                min_coverage_frac=coverage_frac,
+                max_gap_bp=0,
+            )
+        else:
+            fine_regions_df = pd.DataFrame(columns=["contig_id", "start", "end"])
+        regions_df = refine_regions(
+            regions_df,
+            fine_windows_df,
+            fine_regions_df,
+            edge_alpha=edge_alpha,
+            split_min_gap_bp=split_min_gap_bp,
+            split_max_prob=split_max_prob,
+            kind_suffix=f"_refine{refine_window_len}_a{edge_alpha:g}",
+        )
+        refine_counts = {k: int(v) for k, v in regions_df["refine_status"].value_counts().items()}
+        # region_pred_label must describe the refined calls, not the coarse ones
+        windows_df["region_pred_label"] = 0
+        for r in regions_df.itertuples(index=False):
+            m = ((windows_df["contig_id"] == r.contig_id)
+                 & (windows_df["end"].astype(int) > r.start) & (windows_df["start"].astype(int) < r.end))
+            windows_df.loc[m, "region_pred_label"] = 1
+
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     windows_out = outdir / "windows.tsv"
@@ -1206,9 +1390,22 @@ def run_predict(args: argparse.Namespace) -> None:
         coverage_frac=coverage_frac,
         max_gap_bp=max_gap_bp,
         bridge_prob=bridge_prob,
+        trained_window_len=trained_window_len,
+        trained_stride=trained_stride,
+        refine=(None if not refine_window_len else {
+            "window_len": refine_window_len, "stride": refine_stride,
+            "threshold": refine_threshold, "margin_bp": refine_margin,
+            "edge_alpha": edge_alpha, "split_min_gap_bp": split_min_gap_bp,
+            "split_max_prob": split_max_prob, "n_fine_windows": int(0 if fine_windows_df is None else len(fine_windows_df)),
+            "status_counts": refine_counts or {},
+        }),
     )
 
     print(f"[done] wrote {windows_out}")
+    if fine_windows_df is not None:
+        fine_out = outdir / "fine_windows.tsv"
+        fine_windows_df.to_csv(fine_out, sep="\t", index=False)
+        print(f"[done] wrote {fine_out}")
     print(f"[done] wrote {regions_out}")
     print(f"[done] wrote {metadata_out}")
 

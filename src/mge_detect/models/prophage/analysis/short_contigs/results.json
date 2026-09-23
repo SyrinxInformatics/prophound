@@ -1,0 +1,27 @@
+{
+  "n_genomes": 2674,
+  "window_len": 10000,
+  "genomes_with_short_contigs": 168,
+  "total_contigs": 4523,
+  "total_short_contigs": 280,
+  "total_bp": 10527323273,
+  "total_bp_skipped": 1396090,
+  "frac_bp_skipped_overall": 0.00013261585721231037,
+  "genomes_losing_over_1pct": 11,
+  "genomes_losing_over_10pct": 0,
+  "total_elements": 3970,
+  "elements_in_skipped_contigs": 0,
+  "frac_elements_unreachable": 0.0,
+  "ambiguity": {
+    "genomes_with_any": 98,
+    "frac_genomes_with_any": 0.03664921465968586,
+    "total_ambiguity_bases": 49870,
+    "overall_ppm": 4.73719659848428,
+    "median_ppm_among_affected": 2.1073542477848686,
+    "max_ppm": 3601.283444919781,
+    "genomes_over_100ppm": 8,
+    "genomes_over_1000ppm": 4,
+    "note": "A window is ~10 kb, so even 100 ppm puts ~1 ambiguous base in a typical window, and two contiguous codes take a confident window from 1.000 to 0.000. genomes_over_100ppm is the count at material risk under the n-channel default. EDL933, the known failure, is 1,182 ppm."
+  },
+  "interpretation": "frac_elements_unreachable is recall the tool cannot achieve at any threshold or operating point, because the sequence is never examined. If it is non-trivial the short-contig path needs fixing before any recall figure is quoted for fragmented assemblies; if it is ~0 on this corpus, the risk is specific to MAG and draft input rather than to the benchmark, and a warning suffices."
+}

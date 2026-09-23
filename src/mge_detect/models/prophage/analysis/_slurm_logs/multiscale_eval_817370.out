@@ -1,0 +1,41 @@
+=== job start ===
+Wed Sep 23 13:21:30 CDT 2026
+gpu007
+Tesla V100S-PCIE-32GB
+[preflight] 42 genomes listed
+[preflight] all inputs present
+[done] r1_3000: 42 genomes
+Wed Sep 23 13:31:26 CDT 2026
+[done] r2_3000: 42 genomes
+Wed Sep 23 13:41:11 CDT 2026
+[done] r3_3000: 42 genomes
+Wed Sep 23 13:50:46 CDT 2026
+[done] ens_3000: 42 genomes
+Wed Sep 23 14:14:37 CDT 2026
+[done] r1_5000: 42 genomes
+Wed Sep 23 14:24:48 CDT 2026
+[done] r2_5000: 42 genomes
+Wed Sep 23 14:35:10 CDT 2026
+[done] r3_5000: 42 genomes
+Wed Sep 23 14:45:20 CDT 2026
+[done] ens_5000: 42 genomes
+Wed Sep 23 15:10:56 CDT 2026
+[r1_3000] baseline covered 0.955 matched 0.939 absorbed 5 over 7057.0 under 0.0
+[r1_3000] 135 variants done
+[r2_3000] baseline covered 0.972 matched 0.939 absorbed 11 over 8074.5 under 0.0
+[r2_3000] 135 variants done
+[r3_3000] baseline covered 0.961 matched 0.933 absorbed 9 over 7213.5 under 0.0
+[r3_3000] 135 variants done
+[ens_3000] baseline covered 0.978 matched 0.939 absorbed 13 over 9450.0 under 0.0
+[ens_3000] 135 variants done
+[r1_5000] baseline covered 0.955 matched 0.939 absorbed 5 over 7057.0 under 0.0
+[r1_5000] 135 variants done
+[r2_5000] baseline covered 0.972 matched 0.939 absorbed 11 over 8074.5 under 0.0
+[r2_5000] 135 variants done
+[r3_5000] baseline covered 0.961 matched 0.933 absorbed 9 over 7213.5 under 0.0
+[r3_5000] 135 variants done
+[ens_5000] baseline covered 0.978 matched 0.939 absorbed 13 over 9450.0 under 0.0
+[ens_5000] 135 variants done
+[done] wrote analysis/multiscale/sweep.json and analysis/multiscale/sweep.csv
+=== job end (exit 0) ===
+Wed Sep 23 15:51:15 CDT 2026

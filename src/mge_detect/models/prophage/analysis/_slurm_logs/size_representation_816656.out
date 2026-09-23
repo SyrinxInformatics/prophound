@@ -1,0 +1,20 @@
+=== job start ===
+Tue Sep 22 19:44:20 CDT 2026
+c011
+[preflight] manifest, 1567 BED files, splits present
+[data] reading manifest
+[data] 7303953 train windows, 101477 positive (1.39%)
+[data] 2742 elements from BEDs (774 genomes had no BED)
+
+stratum     elements  zero-win  pos windows  win/elem  median content  content>=0.9
+<5kb               2         2            0       0.0           0.000         0.000
+5-8kb             22         0          144       6.5           0.619         0.000
+8-10kb            52         0          446       8.6           0.730         0.085
+10-15kb          246         0         3117      12.7           0.817         0.373
+15-30kb          654         0        13739      21.0           1.000         0.624
+30-60kb         1515         0        63997      42.2           1.000         0.812
+60kb+            251         0        20034      79.8           1.000         0.902
+
+[done] wrote analysis/size_representation/results.json
+=== job end ===
+Tue Sep 22 19:44:49 CDT 2026

@@ -1,0 +1,14 @@
+
+Error: Sequence file ../genomad_out/GCF_021654575.1_ASM2165457v1_genomic/GCF_021654575.1_ASM2165457v1_genomic_annotate/GCF_021654575.1_ASM2165457v1_genomic_proteins.faa is empty or misformatted
+
+Traceback (most recent call last):
+  File "/work/pke835/mge_explorer/data_refactored/scripts/inovirus_overlap_audit.py", line 226, in <module>
+    main()
+  File "/work/pke835/mge_explorer/data_refactored/scripts/inovirus_overlap_audit.py", line 138, in main
+    pi_ids = run_hmmsearch(Path(args.pi_hmm), faa, tmp, args.evalue, args.cpus) if args.pi_hmm else set()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/pke835/mge_explorer/data_refactored/scripts/inovirus_overlap_audit.py", line 82, in run_hmmsearch
+    subprocess.run(["hmmsearch", "--cpu", str(cpus), "-E", str(evalue), "--noali",
+  File "/home/pke835/.conda/envs/mge_explorer_gpu/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['hmmsearch', '--cpu', '8', '-E', '1e-05', '--noali', '--tblout', 'analysis/inovirus_overlap/_tmp/GCF_021654575.1_ASM2165457v1_genomic_proteins.tbl', '-o', '/dev/null', 'analysis/inovirus_overlap/Final_marker_morph.hmm', '../genomad_out/GCF_021654575.1_ASM2165457v1_genomic/GCF_021654575.1_ASM2165457v1_genomic_annotate/GCF_021654575.1_ASM2165457v1_genomic_proteins.faa']' returned non-zero exit status 1.
