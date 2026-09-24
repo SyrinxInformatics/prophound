@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Short contigs (< --window-len): tiled at the largest scale that fits, never
+silently dropped from the report."""
+
+from mge_detect.models.prophage.src.predict_genome import build_short_contig_windows
+
+
+def write_fasta(path, lengths):
+    with open(path, "w") as fh:
+        for name, n in lengths.items():
+            fh.write(f">{name}\n{'ACGT' * (n // 4)}\n")
+
+
+def test_short_contigs_get_largest_fitting_scale_and_are_reported(tmp_path):
+    fa = tmp_path / "g.fna"
+    write_fasta(fa, {"long": 12_000, "c7k": 7_000, "c4k": 4_000, "c2k": 2_000})
+    w, rep = build_short_contig_windows(str(fa), "g", window_len=10_000)
+    assert set(w.contig_id) == {"c7k", "c4k"}                       # long is the coarse pass's
+    assert (w[w.contig_id == "c7k"].scale == 5000).all()
+    assert (w[w.contig_id == "c4k"].scale == 3000).all()
+    assert list(w[w.contig_id == "c7k"].start) == [0, 500, 1000, 1500, 2000]
+    assert ((w.end - w.start) == w.scale).all()
+    c7 = w[w.contig_id == "c7k"]
+    assert (c7.end <= 7_000).all()
+    assert rep == {"n_short": 3, "bp_short": 13_000, "n_scannable": 2,
+                   "n_too_short": 1, "bp_too_short": 2_000}
+
+
+def test_no_short_contigs_gives_empty_frame(tmp_path):
+    fa = tmp_path / "g.fna"
+    write_fasta(fa, {"long": 20_000})
+    w, rep = build_short_contig_windows(str(fa), "g", window_len=10_000)
+    assert w.empty and rep["n_short"] == 0

@@ -47,6 +47,15 @@ AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
 # scores on ambiguity codes; impute is in-distribution and a no-op on clean
 # sequence (816446: covered recall identical to 3 dp on the 42-genome sample).
 DEFAULT_AMBIGUITY_POLICY = "impute"
+# Contigs shorter than --window-len (docs/adaptive-multiscale-detection.md Part 4).
+# 'skip' (default until per-scale thresholds are calibrated) leaves them unscanned
+# but always reports them; 'scan' tiles each with the largest scale that fits.
+SHORT_CONTIG_MODES = ("skip", "scan")
+DEFAULT_SHORT_CONTIGS = "skip"
+SHORT_CONTIG_SCALES = (5000, 3000)   # below ~3 kb a window cannot judge (spike-in floor)
+SHORT_CONTIG_STRIDE = 500
+REGION_COLUMNS = ["genome_id", "contig_id", "start", "end", "n_windows",
+                  "region_len_bp", "mean_prob", "max_prob", "boundary_kind"]
 
 
 def encode_window(sequence: str, policy: str = DEFAULT_AMBIGUITY_POLICY) -> torch.Tensor:
@@ -200,6 +209,41 @@ def build_windows(
                 }
             )
     return pd.DataFrame(rows)
+
+
+def build_short_contig_windows(
+    fasta_path: str,
+    genome_id: str,
+    window_len: int,
+    scales: Tuple[int, ...] = SHORT_CONTIG_SCALES,
+    stride: int = SHORT_CONTIG_STRIDE,
+) -> Tuple[pd.DataFrame, Dict[str, object]]:
+    """Windows for contigs shorter than `window_len`, plus a report of them all.
+
+    `build_windows` skips these contigs. Each one at least as long as the
+    smallest scale is tiled with the largest scale that fits (column `scale`);
+    shorter ones stay unscanned. The report always covers every short contig, so
+    the caller can warn even when scanning is off.
+    """
+    rows: List[Dict[str, object]] = []
+    report = {"n_short": 0, "bp_short": 0, "n_scannable": 0, "n_too_short": 0, "bp_too_short": 0}
+    for contig_id, length in iter_fasta_lengths(fasta_path):
+        if length >= window_len:
+            continue
+        report["n_short"] += 1
+        report["bp_short"] += int(length)
+        fitting = [sc for sc in scales if sc <= length and sc < window_len]
+        if not fitting:
+            report["n_too_short"] += 1
+            report["bp_too_short"] += int(length)
+            continue
+        report["n_scannable"] += 1
+        scale = max(fitting)
+        for start in range(0, length - scale + 1, stride):
+            rows.append({"genome_id": genome_id, "contig_id": contig_id, "start": int(start),
+                         "end": int(start + scale), "fasta_path": fasta_path, "scale": int(scale)})
+    cols = ["genome_id", "contig_id", "start", "end", "fasta_path", "scale"]
+    return pd.DataFrame(rows, columns=cols), report
 
 
 def build_multi_tile_windows(
@@ -926,6 +970,7 @@ def write_metadata(
     trained_window_len: int | None = None,
     trained_stride: int | None = None,
     refine: dict | None = None,
+    short_contigs: dict | None = None,
 ) -> None:
     metadata = {
         "run_name": cfg.run_name,
@@ -947,6 +992,8 @@ def write_metadata(
         "n_windows": int(len(windows_df)),
         "n_regions": int(len(regions_df)),
     }
+    if short_contigs:
+        metadata["short_contigs"] = short_contigs
     if num_tiles > 1:
         metadata["region_builder"] = "multi_tile_hysteresis"
         metadata["boundary_refinement"] = "multi_tile_ramp_midpoint_crossing"
@@ -1058,6 +1105,23 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
         type=int,
         default=None,
         help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
+    )
+    parser.add_argument(
+        "--short-contigs",
+        choices=SHORT_CONTIG_MODES,
+        default=DEFAULT_SHORT_CONTIGS,
+        help=(
+            "Contigs shorter than --window-len: 'skip' (default) leaves them unscanned; "
+            "'scan' tiles each with a 5 kb or 3 kb window, whichever fits (contigs under "
+            "3 kb are never scanned). Either way a warning reports them. EXPERIMENTAL: "
+            "reduced-scale thresholds are not yet calibrated."
+        ),
+    )
+    parser.add_argument(
+        "--short-contig-threshold",
+        type=float,
+        default=None,
+        help="Seed/extend threshold for --short-contigs scan (default: the mode's).",
     )
     parser.add_argument(
         "--refine-window-len",
@@ -1298,7 +1362,22 @@ def run_predict(args: argparse.Namespace) -> None:
         num_tiles=num_tiles,
         grid_offset=max(0, int(getattr(args, "grid_offset", 0) or 0)),
     )
-    if windows_df.empty:
+    short_contigs = getattr(args, "short_contigs", DEFAULT_SHORT_CONTIGS) or DEFAULT_SHORT_CONTIGS
+    if short_contigs not in SHORT_CONTIG_MODES:
+        raise SystemExit(f"--short-contigs must be one of {SHORT_CONTIG_MODES}")
+    short_windows_df, short_report = build_short_contig_windows(
+        str(input_path), genome_id, window_len=cfg.data.window_len,
+    )
+    if short_report["n_short"]:
+        # never silent: this was the failure mode (docs/cli-and-packaging.md "Input robustness")
+        verb = "scanned at reduced scale" if short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
+        print(
+            f"[warn] {short_report['n_short']} contig(s) shorter than {cfg.data.window_len} bp "
+            f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
+            f"{short_report['n_too_short']} under {min(SHORT_CONTIG_SCALES)} bp never scanned "
+            f"({short_report['bp_too_short']} bp)."
+        )
+    if windows_df.empty and (short_contigs == "skip" or short_windows_df.empty):
         raise RuntimeError("No inference windows were generated from the input FASTA.")
 
     ambiguity_policy = getattr(args, "ambiguity_policy", DEFAULT_AMBIGUITY_POLICY) or DEFAULT_AMBIGUITY_POLICY
@@ -1310,14 +1389,20 @@ def run_predict(args: argparse.Namespace) -> None:
     model = build_model(cfg, device)
     score_kw = dict(ambiguity_policy=ambiguity_policy, ensemble=ensemble, device=device,
                     batch_size=args.batch_size, num_workers=args.num_workers)
-    probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len, **score_kw)
-
-    windows_df = windows_df.copy()
-    windows_df["prob"] = probs
-    windows_df["pred_label"] = (windows_df["prob"] >= threshold).astype(int)
-
     bins_df = None
-    if num_tiles > 1:
+    if windows_df.empty:  # every contig is short: nothing for the coarse pass
+        windows_df = pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "fasta_path",
+                                           "prob", "pred_label", "region_pred_label"])
+        regions_df = pd.DataFrame(columns=REGION_COLUMNS)
+    else:
+        probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len, **score_kw)
+        windows_df = windows_df.copy()
+        windows_df["prob"] = probs
+        windows_df["pred_label"] = (windows_df["prob"] >= threshold).astype(int)
+
+    if windows_df.empty:
+        pass
+    elif num_tiles > 1:
         bin_size = max(1, cfg.data.stride // num_tiles)
         bins_df, regions_df = build_region_table_multi_tile(
             windows_df,
@@ -1387,6 +1472,42 @@ def run_predict(args: argparse.Namespace) -> None:
                  & (windows_df["end"].astype(int) > r.start) & (windows_df["start"].astype(int) < r.end))
             windows_df.loc[m, "region_pred_label"] = 1
 
+    short_meta = {"mode": short_contigs, **short_report}
+    if short_contigs == "scan" and not short_windows_df.empty:
+        st = getattr(args, "short_contig_threshold", None)
+        short_seed = seed_threshold if st is None else float(st)
+        short_extend = extend_threshold if st is None else float(st)
+        print(
+            f"[warn] short contigs scored with seed/extend {short_seed:g}/{short_extend:g}; "
+            "thresholds at reduced window scales are not yet calibrated."
+        )
+        short_regions, short_windows = [], []
+        for scale, sw in short_windows_df.groupby("scale"):
+            sw = sw.drop(columns="scale").reset_index(drop=True)
+            sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale), **score_kw)
+            sw["pred_label"] = (sw["prob"] >= short_seed).astype(int)
+            # per-contig windows share one length, so the coverage builder's
+            # per-contig window_len/stride inference holds; no merging on short contigs
+            sw, sr = build_region_table_coverage(
+                sw, seed_threshold=short_seed, extend_threshold=short_extend,
+                min_coverage_frac=coverage_frac, max_gap_bp=0,
+            )
+            sr["boundary_kind"] = sr["boundary_kind"].astype(str) + f"_short{int(scale)}"
+            short_regions.append(sr)
+            short_windows.append(sw)
+        short_regions_df = pd.concat(short_regions, ignore_index=True)
+        if "refine_status" in regions_df.columns:
+            short_regions_df = short_regions_df.assign(
+                refine_status="short_contig", coarse_start=short_regions_df["start"],
+                coarse_end=short_regions_df["end"], n_pieces=1)
+        regions_df = pd.concat([regions_df, short_regions_df], ignore_index=True) \
+            if not regions_df.empty else short_regions_df
+        windows_df = pd.concat([windows_df, *short_windows], ignore_index=True) \
+            if not windows_df.empty else pd.concat(short_windows, ignore_index=True)
+        short_meta.update({"threshold_seed": short_seed, "threshold_extend": short_extend,
+                           "scales": list(SHORT_CONTIG_SCALES), "stride": SHORT_CONTIG_STRIDE,
+                           "n_regions": int(len(short_regions_df)), "calibrated": False})
+
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     windows_out = outdir / "windows.tsv"
@@ -1417,6 +1538,7 @@ def run_predict(args: argparse.Namespace) -> None:
         bridge_prob=bridge_prob,
         trained_window_len=trained_window_len,
         trained_stride=trained_stride,
+        short_contigs=short_meta,
         refine=(None if not refine_window_len else {
             "window_len": refine_window_len, "stride": refine_stride,
             "threshold": refine_threshold, "margin_bp": refine_margin,

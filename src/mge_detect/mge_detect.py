@@ -207,6 +207,23 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
     )
     parser.add_argument(
+        "--short-contigs",
+        choices=("skip", "scan"),
+        default="skip",
+        help=(
+            "Contigs shorter than --window-len: 'skip' (default) leaves them unscanned; "
+            "'scan' tiles each with a 5 kb or 3 kb window, whichever fits (contigs under "
+            "3 kb are never scanned). Either way a warning reports them. EXPERIMENTAL: "
+            "reduced-scale thresholds are not yet calibrated."
+        ),
+    )
+    parser.add_argument(
+        "--short-contig-threshold",
+        type=float,
+        default=None,
+        help="Seed/extend threshold for --short-contigs scan (default: the mode's).",
+    )
+    parser.add_argument(
         "--refine-window-len",
         type=int,
         default=DEFAULT_REFINE_WINDOW_LEN,

@@ -95,7 +95,7 @@ Reverse-complement handling is *not* a concern: window scores and whole-contig r
 
 - **`--ambiguity-policy` defaults to `impute`** in both CLIs and in the library (`predict_genome.DEFAULT_AMBIGUITY_POLICY`). It is a no-op on ambiguity-free sequence: checked end to end byte-for-byte against the prior commit, and unit-tested in `tests/test_encoding.py` (816446 also showed covered recall identical to 3 dp on the eval sample). Numbers published before 2026-09-24 are reproduced with `--ambiguity-policy n-channel`. Note: `scripts/spikein_harness.py` keeps its own explicit `n-channel` default so its recorded curves stay reproducible.
 - **Distribution**: the model will be bundled through **bioconda**; install and quickstart docs are written at the very end, not now.
-- **Short contigs** (contigs under 10 kb are skipped): in progress.
+- **Short contigs**: `--short-contigs {skip,scan}` built 2026-09-24. Default `skip` until calibrated; a warning is always printed now. Design and calibration: `docs/adaptive-multiscale-detection.md` Part 4.
 - **Flagged for later evaluation** (not v1 blockers):
   1. Per-call confidence or ranking for wet-lab prioritisation (today only raw mean/max probability, which per-genome thresholds would make non-comparable across genomes).
   2. Recall claims must name their overlap rule. ≥1 bp credits grazes; see `docs/downstream-postprocessing.md` "Per-element dig" for covered50.
