@@ -62,6 +62,19 @@ def iou(a_start, a_end, b_start, b_end) -> float:
     return inter / union if union > 0 else 0.0
 
 
+def covered_bp(t_start: int, t_end: int, calls) -> int:
+    """bp of [t_start, t_end) under the union of `calls` (start, end pairs)."""
+    ivs = sorted((max(t_start, s), min(t_end, e)) for s, e in calls if min(t_end, e) > max(t_start, s))
+    bp, cur_s, cur_e = 0, None, None
+    for s, e in ivs:
+        if cur_e is None or s > cur_e:
+            bp += 0 if cur_e is None else cur_e - cur_s
+            cur_s, cur_e = s, e
+        else:
+            cur_e = max(cur_e, e)
+    return bp + (0 if cur_e is None else cur_e - cur_s)
+
+
 def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str, strata: list | None = None) -> None:
     n_true_total = 0
     n_pred_total = 0
@@ -72,6 +85,8 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
     end_errors: list = []
     ious: list = []
     per_genome_rows = []
+    n_conflated_calls = 0
+    n_absorbed = 0
 
     for accession in genome_list:
         true_df = load_true_regions(genomad_dir, accession)
@@ -121,6 +136,16 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
         n_true_matched += sum(true_matched_flags)
         n_pred_matched += sum(pred_matched_flags)
 
+        # Conflation: one call overlapping >=2 true regions. Covered recall is
+        # blind to it (docs/downstream-postprocessing.md "Conflation").
+        for _, prow in pred_df.iterrows():
+            k = int(sum(1 for _, trow in true_df.iterrows()
+                        if trow["contig_id"] == prow["contig_id"]
+                        and overlap(trow["start"], trow["end"], prow["start"], prow["end"]) > 0))
+            if k >= 2:
+                n_conflated_calls += 1
+                n_absorbed += k
+
         for ti, trow in true_df.reset_index(drop=True).iterrows():
             true_region_rows.append(
                 {
@@ -130,6 +155,11 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
                     "iou": matched_info.get(ti, (float("nan"), None))[0],
                     "pred_len_bp": matched_info.get(ti, (None, float("nan")))[1],
                     "n_overlapping_pred": n_overlapping[ti],
+                    "covered_frac": covered_bp(
+                        int(trow["start"]), int(trow["end"]),
+                        [(int(p["start"]), int(p["end"])) for _, p in pred_df.iterrows()
+                         if p["contig_id"] == trow["contig_id"]],
+                    ) / max(1, int(trow["end"] - trow["start"])),
                 }
             )
 
@@ -186,6 +216,18 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             f"covered recall: {_cov / len(_tr):.3f}  ({_cov}/{len(_tr)}) "
             f"true regions overlapped by >=1 predicted region"
         )
+        # covered50: >=50% of the element's bp under calls. Covered recall
+        # credits grazes -- a neighbour's overshoot clipping an element's edge
+        # (docs/downstream-postprocessing.md "Per-element dig").
+        _c50 = int((_tr.covered_frac >= 0.5).sum())
+        print(
+            f"covered50 recall: {_c50 / len(_tr):.3f}  ({_c50}/{len(_tr)}) "
+            f"true regions with >=50% of their bp under predicted regions"
+        )
+        print(
+            f"conflation: {n_conflated_calls} predicted regions overlap >=2 true regions, "
+            f"absorbing {n_absorbed} true regions"
+        )
         _hit = _tr[_tr.matched]
         if len(_hit):
             print(
@@ -198,7 +240,8 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
         tr["kb"] = tr.len_bp / 1000.0
         print("\nrecall and localization by element size class:")
         print(f"{'stratum':>10}{'n_true':>8}{'matched':>9}{'recall':>9}"
-              f"{'medIoU':>9}{'IoU>=.5':>9}{'medPredKb':>11}{'medTrueKb':>11}{'fragmented':>12}")
+              f"{'medIoU':>9}{'IoU>=.5':>9}{'medPredKb':>11}{'medTrueKb':>11}{'fragmented':>12}"
+              f"{'covered':>9}{'cov50':>8}")
         for lo, hi in strata:
             sub = tr[(tr.kb >= lo) & (tr.kb < hi)]
             if sub.empty:
@@ -213,7 +256,9 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             )
             print(f"{lab:>10}{len(sub):>8}{int(sub.matched.sum()):>9}"
                   f"{sub.matched.sum() / len(sub) * 100:>8.1f}%"
-                  f"{med_iou:>9}{ge_half:>9}{med_pred:>11}{sub.kb.median():>11.1f}{frag:>12}")
+                  f"{med_iou:>9}{ge_half:>9}{med_pred:>11}{sub.kb.median():>11.1f}{frag:>12}"
+                  f"{(sub.n_overlapping_pred > 0).mean() * 100:>8.1f}%"
+                  f"{(sub.covered_frac >= 0.5).mean() * 100:>7.1f}%")
 
     per_genome_df = pd.DataFrame(per_genome_rows)
     print("\nper-genome breakdown:")
