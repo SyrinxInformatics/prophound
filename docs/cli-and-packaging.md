@@ -91,3 +91,14 @@ Reverse-complement handling is *not* a concern: window scores and whole-contig r
 - `--refine-window-len W` (0 = off), plus `--refine-stride`, `--refine-threshold`, `--refine-margin`, `--edge-alpha`, `--split-min-gap-bp` and `--split-max-prob`: the fine pass that splits conflated calls and places edges. It needs `--region-builder coverage`. It writes an extra `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four".
 - The flags are defined twice, in `predict_genome.add_multiscale_args` and in `mge_detect.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
 
+## Decisions 2026-09-24 (user)
+
+- **`--ambiguity-policy` defaults to `impute`** in both CLIs and in the library (`predict_genome.DEFAULT_AMBIGUITY_POLICY`). It is a no-op on ambiguity-free sequence: checked end to end byte-for-byte against the prior commit, and unit-tested in `tests/test_encoding.py` (816446 also showed covered recall identical to 3 dp on the eval sample). Numbers published before 2026-09-24 are reproduced with `--ambiguity-policy n-channel`. Note: `scripts/spikein_harness.py` keeps its own explicit `n-channel` default so its recorded curves stay reproducible.
+- **Distribution**: the model will be bundled through **bioconda**; install and quickstart docs are written at the very end, not now.
+- **Short contigs** (contigs under 10 kb are skipped): in progress.
+- **Flagged for later evaluation** (not v1 blockers):
+  1. Per-call confidence or ranking for wet-lab prioritisation (today only raw mean/max probability, which per-genome thresholds would make non-comparable across genomes).
+  2. Recall claims must name their overlap rule. ≥1 bp credits grazes; see `docs/downstream-postprocessing.md` "Per-element dig" for covered50.
+  3. The duplicated flag definitions in `mge_detect.py` and `predict_genome.py` (kept so the top-level CLI parses without importing torch; checked equal, but a maintenance hazard).
+- CLI surface as of today: one subcommand (`predict`), 29 options, most of them research knobs; `--help` does not yet separate user-facing from experimental options.
+

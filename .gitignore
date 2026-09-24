@@ -213,3 +213,6 @@ __marimo__/
 
 #.DS_Store
 .DS_Store
+
+# per-genome score tracks from multiscale_eval (~300 MB); sweep.{json,csv} stay tracked
+src/mge_detect/models/prophage/analysis/multiscale/*/

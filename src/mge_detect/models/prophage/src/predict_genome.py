@@ -43,14 +43,18 @@ MODE_THRESHOLDS = {
 
 
 AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
+# Default flipped to impute 2026-09-24 (user decision): n-channel silently zeroes
+# scores on ambiguity codes; impute is in-distribution and a no-op on clean
+# sequence (816446: covered recall identical to 3 dp on the 42-genome sample).
+DEFAULT_AMBIGUITY_POLICY = "impute"
 
 
-def encode_window(sequence: str, policy: str = "n-channel") -> torch.Tensor:
+def encode_window(sequence: str, policy: str = DEFAULT_AMBIGUITY_POLICY) -> torch.Tensor:
     """One-hot encode a window, choosing how IUPAC ambiguity codes are represented.
 
-    `n-channel` (default) is the training-time encoding: every non-ACGT base
-    sets the dedicated N channel. It is kept as the default because changing
-    it changes every score the tool produces.
+    `n-channel` is the training-time encoding: every non-ACGT base sets the
+    dedicated N channel. It was the default until 2026-09-24 and reproduces
+    every number published before then; `impute` is now the default.
 
     Measured 2026-09-22: under `n-channel`, two contiguous ambiguity codes take
     a confident window from p=1.000 to exactly 0.000, and a real 37 kb prophage
@@ -98,7 +102,7 @@ def encode_window(sequence: str, policy: str = "n-channel") -> torch.Tensor:
 class GenomeWindowDataset(Dataset):
     """Window dataset for direct inference on a FASTA file."""
 
-    def __init__(self, windows_df: pd.DataFrame, window_len: int, ambiguity_policy: str = "n-channel"):
+    def __init__(self, windows_df: pd.DataFrame, window_len: int, ambiguity_policy: str = DEFAULT_AMBIGUITY_POLICY):
         self.windows_df = windows_df.reset_index(drop=True)
         self.window_len = window_len
         self.ambiguity_policy = ambiguity_policy
@@ -912,7 +916,7 @@ def write_metadata(
     regions_df: pd.DataFrame,
     out_path: Path,
     num_tiles: int = 1,
-    ambiguity_policy: str = "n-channel",
+    ambiguity_policy: str = DEFAULT_AMBIGUITY_POLICY,
     grid_offset: int = 0,
     region_builder: str = DEFAULT_REGION_BUILDER,
     coverage_frac: float = DEFAULT_COVERAGE_FRAC,
@@ -1002,11 +1006,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--ambiguity-policy",
         choices=AMBIGUITY_POLICIES,
-        default="n-channel",
+        default=DEFAULT_AMBIGUITY_POLICY,
         help=(
-            "How IUPAC ambiguity codes are encoded. 'n-channel' (default) is the "
-            "training-time encoding and reproduces every published number. 'uniform' "
-            "spreads each ambiguous base as 0.25 across A/C/G/T; see "
+            "How IUPAC ambiguity codes are encoded. 'impute' (default) replaces each "
+            "with a deterministic concrete base; a no-op on ambiguity-free sequence. "
+            "'n-channel' is the training-time encoding and reproduces numbers "
+            "published before 2026-09-24, but two contiguous codes can zero a "
+            "window's score. 'uniform' spreads each as 0.25 across A/C/G/T. See "
             "docs/scientific-validity.md '1a'."
         ),
     )
@@ -1087,6 +1093,19 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
             "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
             "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
             "the fine core (truncates). Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--edge-alpha-ramp",
+        type=int,
+        nargs=2,
+        metavar=("LO_BP", "HI_BP"),
+        default=None,
+        help=(
+            "Make --edge-alpha size-dependent: 0 for pieces whose fine core is at "
+            "most LO_BP, --edge-alpha at HI_BP and above, linear in log length "
+            "between. Small elements are best served by the fine core and large "
+            "ones by edges near the coarse call. Default off (constant alpha)."
         ),
     )
     parser.add_argument(
@@ -1252,6 +1271,10 @@ def run_predict(args: argparse.Namespace) -> None:
     refine_window_len = int(getattr(args, "refine_window_len", DEFAULT_REFINE_WINDOW_LEN) or 0)
     refine_stride = int(getattr(args, "refine_stride", DEFAULT_REFINE_STRIDE))
     edge_alpha = float(getattr(args, "edge_alpha", DEFAULT_EDGE_ALPHA))
+    alpha_ramp = getattr(args, "edge_alpha_ramp", None)
+    alpha_ramp = tuple(int(x) for x in alpha_ramp) if alpha_ramp else None
+    if alpha_ramp and not 0 < alpha_ramp[0] < alpha_ramp[1]:
+        raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
     split_min_gap_bp = int(getattr(args, "split_min_gap_bp", DEFAULT_SPLIT_MIN_GAP_BP))
     split_max_prob = float(getattr(args, "split_max_prob", DEFAULT_SPLIT_MAX_PROB))
     refine_threshold = getattr(args, "refine_threshold", None)
@@ -1278,7 +1301,7 @@ def run_predict(args: argparse.Namespace) -> None:
     if windows_df.empty:
         raise RuntimeError("No inference windows were generated from the input FASTA.")
 
-    ambiguity_policy = getattr(args, "ambiguity_policy", "n-channel") or "n-channel"
+    ambiguity_policy = getattr(args, "ambiguity_policy", DEFAULT_AMBIGUITY_POLICY) or DEFAULT_AMBIGUITY_POLICY
     checkpoints = args.checkpoint if isinstance(args.checkpoint, list) else [args.checkpoint]
     ensemble = getattr(args, "ensemble", DEFAULT_ENSEMBLE)
     if ensemble not in ENSEMBLE_MODES:
@@ -1352,7 +1375,9 @@ def run_predict(args: argparse.Namespace) -> None:
             edge_alpha=edge_alpha,
             split_min_gap_bp=split_min_gap_bp,
             split_max_prob=split_max_prob,
-            kind_suffix=f"_refine{refine_window_len}_a{edge_alpha:g}",
+            kind_suffix=f"_refine{refine_window_len}_a{edge_alpha:g}"
+            + (f"_ramp{alpha_ramp[0]}-{alpha_ramp[1]}" if alpha_ramp else ""),
+            alpha_ramp_bp=alpha_ramp,
         )
         refine_counts = {k: int(v) for k, v in regions_df["refine_status"].value_counts().items()}
         # region_pred_label must describe the refined calls, not the coarse ones
@@ -1395,7 +1420,8 @@ def run_predict(args: argparse.Namespace) -> None:
         refine=(None if not refine_window_len else {
             "window_len": refine_window_len, "stride": refine_stride,
             "threshold": refine_threshold, "margin_bp": refine_margin,
-            "edge_alpha": edge_alpha, "split_min_gap_bp": split_min_gap_bp,
+            "edge_alpha": edge_alpha, "edge_alpha_ramp_bp": list(alpha_ramp) if alpha_ramp else None,
+            "split_min_gap_bp": split_min_gap_bp,
             "split_max_prob": split_max_prob, "n_fine_windows": int(0 if fine_windows_df is None else len(fine_windows_df)),
             "status_counts": refine_counts or {},
         }),

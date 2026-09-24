@@ -80,17 +80,44 @@ def edge_errors(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
             "median_undershoot_bp": float(np.median(under)) if under else None}
 
 
-KEEP = ("covered_recall", "matched_recall", "median_iou", "conflated_calls", "absorbed_elements",
-        "fragmented_elements", "calls_per_genome", "n_elements")
+KEEP = ("covered_recall", "covered50_recall", "matched_recall", "median_iou", "conflated_calls",
+        "absorbed_elements", "fragmented_elements", "calls_per_genome", "n_elements")
+
+
+def covered50(ev: pd.DataFrame, reg: pd.DataFrame) -> float:
+    """Fraction of elements with >= 50% of their bp under some call.
+
+    Covered recall (>= 1 bp) credits grazes -- a neighbouring call's overshoot
+    clipping an element's edge. Both losses 817370's refinement showed were
+    grazes (docs/downstream-postprocessing.md "Per-element dig"), so every
+    variant is also scored on this graze-proof version.
+    """
+    ok = 0
+    for r in ev.itertuples():
+        g = reg[(reg.genome_id == r.accession) & (reg.contig_id == r.contig)
+                & (reg.end > r.start) & (reg.start < r.end)].sort_values("start")
+        bp, cur_s, cur_e = 0, None, None
+        for c in g.itertuples():  # union of overlapping calls, clipped to the element
+            s, e = max(int(c.start), r.start), min(int(c.end), r.end)
+            if cur_e is None or s > cur_e:
+                bp += 0 if cur_e is None else cur_e - cur_s
+                cur_s, cur_e = s, e
+            else:
+                cur_e = max(cur_e, e)
+        bp += 0 if cur_e is None else cur_e - cur_s
+        ok += bp >= 0.5 * (r.end - r.start)
+    return ok / max(1, len(ev))
 
 
 def score(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
     m = score_variant(ev, reg)
+    m["covered50_recall"] = covered50(ev, reg)
     out = {k: m[k] for k in KEEP}
     out.update(edge_errors(ev, reg))
     out["by_stratum"] = {}
     for st, sub in ev.groupby("stratum"):
         sm = score_variant(sub, reg)
+        sm["covered50_recall"] = covered50(sub, reg)
         row = {k: sm[k] for k in KEEP if k != "calls_per_genome"}
         row.update(edge_errors(sub, reg))
         out["by_stratum"][str(st)] = row
@@ -132,7 +159,7 @@ def fine_regions_by_genome(fine: pd.DataFrame, thr: float, frac: float) -> dict:
 
 
 def refine_all(coarse: pd.DataFrame, fine_by_genome: dict, alpha: float, gap: int,
-               maxp: float) -> pd.DataFrame:
+               maxp: float, ramp=None) -> pd.DataFrame:
     out = []
     for g, cg in coarse.groupby("genome_id", sort=False):
         if g not in fine_by_genome:
@@ -140,12 +167,24 @@ def refine_all(coarse: pd.DataFrame, fine_by_genome: dict, alpha: float, gap: in
             continue
         fg, fr = fine_by_genome[g]
         out.append(refine_regions(cg, fg, fr, edge_alpha=alpha, split_min_gap_bp=gap,
-                                  split_max_prob=maxp))
+                                  split_max_prob=maxp, alpha_ramp_bp=ramp))
     return pd.concat(out, ignore_index=True)
 
 
 def floats(s: str):
     return [float(x) for x in s.split(",") if x]
+
+
+def ramps(s: str):
+    """'none,10000:60000' -> [None, (10000, 60000)]"""
+    out = []
+    for x in s.split(","):
+        if x == "none":
+            out.append(None)
+        elif x:
+            lo, hi = x.split(":")
+            out.append((int(lo), int(hi)))
+    return out
 
 
 def main() -> None:
@@ -156,6 +195,8 @@ def main() -> None:
     ap.add_argument("--alphas", default="1,0.75,0.5,0.25,0")
     ap.add_argument("--split_gaps", default="1000,2000,4000")
     ap.add_argument("--split_max_probs", default="0.05,0.1,0.2")
+    ap.add_argument("--ramps", default="none",
+                    help="alpha ramps over fine-core length, e.g. none,10000:60000 (alpha = --alphas value at HI)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -177,11 +218,11 @@ def main() -> None:
         flat.append({"run": label, "variant": "baseline", **{k: b[k] for k in KEEP},
                      "overshoot": b["median_overshoot_bp"], "undershoot": b["median_undershoot_bp"]})
         fine_cache = {thr: fine_regions_by_genome(fine, thr, frac) for thr in floats(args.refine_thresholds)}
-        for thr, alpha, gap, maxp in itertools.product(
+        for thr, alpha, gap, maxp, ramp in itertools.product(
                 floats(args.refine_thresholds), floats(args.alphas),
-                floats(args.split_gaps), floats(args.split_max_probs)):
-            key = f"t{thr:g}_a{alpha:g}_g{int(gap)}_p{maxp:g}"
-            reg = refine_all(coarse, fine_cache[thr], alpha, int(gap), maxp)
+                floats(args.split_gaps), floats(args.split_max_probs), ramps(args.ramps)):
+            key = f"t{thr:g}_a{alpha:g}_g{int(gap)}_p{maxp:g}" + (f"_r{ramp[0]}-{ramp[1]}" if ramp else "")
+            reg = refine_all(coarse, fine_cache[thr], alpha, int(gap), maxp, ramp)
             m = score(ev, reg)
             m["refine_status"] = {k: int(v) for k, v in reg.get(
                 "refine_status", pd.Series(dtype=str)).value_counts().items()}

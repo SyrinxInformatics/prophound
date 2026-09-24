@@ -26,6 +26,7 @@ import pytest
 from mge_detect.models.prophage.src.multiscale import (
     plan_fine_windows,
     plan_neighborhoods,
+    ramp_alpha,
     refine_regions,
 )
 from mge_detect.models.prophage.src.predict_genome import build_region_table_coverage
@@ -52,11 +53,11 @@ def fine_track(elements, lo, hi, gap_prob=0.01, min_frac=0.5):
     return pd.DataFrame(rows)
 
 
-def run(coarse_df, fine_df, alpha=1.0, gap=2000, max_prob=0.1):
+def run(coarse_df, fine_df, alpha=1.0, gap=2000, max_prob=0.1, ramp=None):
     fine_df, fine_regions = build_region_table_coverage(
         fine_df, seed_threshold=0.995, extend_threshold=0.995, min_coverage_frac=0.1, max_gap_bp=0)
     return refine_regions(coarse_df, fine_df, fine_regions, edge_alpha=alpha,
-                          split_min_gap_bp=gap, split_max_prob=max_prob)
+                          split_min_gap_bp=gap, split_max_prob=max_prob, alpha_ramp_bp=ramp)
 
 
 def overlaps(row, a, b):
@@ -115,6 +116,35 @@ def test_alpha_tightens_small_element_iou():
         return inter / (max(r.end, el[1]) - min(r.start, el[0]))
 
     assert iou(run(c, f, alpha=0.3).iloc[0]) > iou(run(c, f, alpha=1.0).iloc[0])
+
+
+# --- size-dependent alpha --------------------------------------------------
+
+def test_ramp_alpha_is_log_linear_between_bounds():
+    assert ramp_alpha(5_000, 0.8, (10_000, 60_000)) == 0.0
+    assert ramp_alpha(60_000, 0.8, (10_000, 60_000)) == 0.8
+    assert ramp_alpha(200_000, 0.8, (10_000, 60_000)) == 0.8
+    mid = ramp_alpha(int((10_000 * 60_000) ** 0.5), 0.8, (10_000, 60_000))   # geometric midpoint
+    assert mid == pytest.approx(0.4, abs=1e-3)
+    assert ramp_alpha(5_000, 0.8, None) == 0.8                            # no ramp: constant
+
+
+def test_ramp_uses_fine_core_for_small_calls_and_coarse_side_for_large():
+    small, large = (50_000, 56_000), (100_000, 170_000)
+    f = fine_track([small, large], 35_000, 185_000)
+    c = pd.concat([coarse(44_000, 62_000), coarse(98_000, 172_000)])
+    ramped = run(c, f, alpha=0.8, ramp=(10_000, 60_000))
+    core = run(c, f, alpha=0.0)
+    flat = run(c, f, alpha=0.8)
+    # small piece: fine core exactly (alpha 0)
+    assert (ramped.iloc[0].start, ramped.iloc[0].end) == (core.iloc[0].start, core.iloc[0].end)
+    # large piece: full alpha_max, same as the constant setting
+    assert (ramped.iloc[1].start, ramped.iloc[1].end) == (flat.iloc[1].start, flat.iloc[1].end)
+
+
+def test_ramp_bounds_validated():
+    with pytest.raises(ValueError):
+        run(coarse(45_000, 65_000), fine_track([(50_000, 60_000)], 35_000, 75_000), ramp=(60_000, 10_000))
 
 
 # --- recall: nothing is ever dropped ---------------------------------------

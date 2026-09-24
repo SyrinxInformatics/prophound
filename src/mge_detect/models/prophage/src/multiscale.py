@@ -32,6 +32,12 @@ at a finer window size and addresses the other three downstream problems:
     alpha=1 reproduces the coarse call exactly; alpha=0 is the fine core. So a
     refined piece is never wider than its coarse call nor narrower than its
     fine core -- neither failure mode can exceed its current bound.
+    alpha may ramp with the piece's fine-core length (`alpha_ramp_bp`): measured
+    on 817370's tracks, the fine core is about right for elements under ~10 kb
+    and truncates large ones by several kb, while the coarse edge overshoots
+    small elements by ~6 kb per side but large ones by only ~1.5 kb. So the
+    best alpha rises from ~0 (small) to ~0.8 (60 kb+); one global value cannot
+    serve both (docs/downstream-postprocessing.md "Per-element dig").
   - recall: a coarse call with no fine support is kept unchanged and flagged,
     never dropped.
 
@@ -42,7 +48,8 @@ coverage builder over them and hands the result here.
 
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
+import math
+from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -132,6 +139,24 @@ def _group_runs(runs: List[Tuple[int, int]], fine_df: pd.DataFrame,
     return [(a, b) for a, b in pieces]
 
 
+def ramp_alpha(core_len: int, alpha_max: float, ramp_bp: Optional[Tuple[int, int]]) -> float:
+    """alpha for a piece whose fine core spans `core_len` bp.
+
+    Without a ramp, `alpha_max` everywhere (the constant --edge-alpha). With
+    ramp (lo, hi): 0 at or below lo, `alpha_max` at or above hi, linear in
+    log(length) between -- element sizes span two orders of magnitude, so the
+    ramp is set in log space.
+    """
+    if ramp_bp is None:
+        return alpha_max
+    lo, hi = ramp_bp
+    if core_len <= lo:
+        return 0.0
+    if core_len >= hi:
+        return alpha_max
+    return alpha_max * math.log(core_len / lo) / math.log(hi / lo)
+
+
 def refine_regions(
     coarse_df: pd.DataFrame,
     fine_windows_df: pd.DataFrame,
@@ -140,10 +165,13 @@ def refine_regions(
     split_min_gap_bp: int,
     split_max_prob: float,
     kind_suffix: str = "",
+    alpha_ramp_bp: Optional[Tuple[int, int]] = None,
 ) -> pd.DataFrame:
     """Split and re-edge each coarse call using fine runs. See module docstring."""
     if not 0.0 <= edge_alpha <= 1.0:
         raise ValueError("edge_alpha must be in [0, 1]")
+    if alpha_ramp_bp is not None and not 0 < alpha_ramp_bp[0] < alpha_ramp_bp[1]:
+        raise ValueError("alpha_ramp_bp must be (lo, hi) with 0 < lo < hi")
     rows = []
     for r in coarse_df.itertuples(index=False):
         cs, ce = int(r.start), int(r.end)
@@ -169,8 +197,9 @@ def refine_regions(
         for i, (fs, fe) in enumerate(pieces):
             lo = cs if i == 0 else (pieces[i - 1][1] + fs) // 2
             hi = ce if i == n - 1 else (fe + pieces[i + 1][0]) // 2
-            start = int(round(fs - edge_alpha * (fs - lo)))
-            end = int(round(fe + edge_alpha * (hi - fe)))
+            alpha = ramp_alpha(fe - fs, edge_alpha, alpha_ramp_bp)
+            start = int(round(fs - alpha * (fs - lo)))
+            end = int(round(fe + alpha * (hi - fe)))
             inside = c_fine[(c_fine["end"] > start) & (c_fine["start"] < end)]
             rows.append({**base, "start": start, "end": end, "n_windows": int(len(inside)),
                          "region_len_bp": end - start,

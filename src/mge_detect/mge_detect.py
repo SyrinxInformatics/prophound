@@ -96,14 +96,14 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     parser.add_argument(
         "--ambiguity-policy",
         choices=("n-channel", "uniform", "impute"),
-        default="n-channel",
+        default="impute",
         help=(
-            "How IUPAC ambiguity codes (N, R, Y, ...) are encoded. 'n-channel' (default) "
-            "is the training-time encoding and is what every published number used. "
-            "'uniform' spreads each ambiguous base as 0.25 across A/C/G/T instead. "
-            "EXPERIMENTAL: under 'n-channel' two contiguous ambiguity codes can take a "
-            "confident window from 1.000 to 0.000; 'uniform' avoids that and is a no-op "
-            "on ambiguity-free sequence, but it changes scores wherever such codes occur."
+            "How IUPAC ambiguity codes (N, R, Y, ...) are encoded. 'impute' (default "
+            "since 2026-09-24) replaces each with a deterministic concrete base and is "
+            "a no-op on ambiguity-free sequence. 'n-channel' is the training-time "
+            "encoding and reproduces numbers published before then, but two contiguous "
+            "ambiguity codes can take a confident window from 1.000 to 0.000. 'uniform' "
+            "spreads each ambiguous base as 0.25 across A/C/G/T."
         ),
     )
     parser.add_argument(
@@ -240,6 +240,19 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
             "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
             "the fine core (truncates). Default %(default)s."
+        ),
+    )
+    parser.add_argument(
+        "--edge-alpha-ramp",
+        type=int,
+        nargs=2,
+        metavar=("LO_BP", "HI_BP"),
+        default=None,
+        help=(
+            "Make --edge-alpha size-dependent: 0 for pieces whose fine core is at "
+            "most LO_BP, --edge-alpha at HI_BP and above, linear in log length "
+            "between. Small elements are best served by the fine core and large "
+            "ones by edges near the coarse call. Default off (constant alpha)."
         ),
     )
     parser.add_argument(
