@@ -17,7 +17,12 @@
 """Short contigs (< --window-len): tiled at the largest scale that fits, never
 silently dropped from the report."""
 
-from mge_detect.models.prophage.src.predict_genome import build_short_contig_windows
+from mge_detect.models.prophage.src.predict_genome import (
+    MODE_THRESHOLDS,
+    SHORT_CONTIG_SCALES,
+    SHORT_CONTIG_THRESHOLDS,
+    build_short_contig_windows,
+)
 
 
 def write_fasta(path, lengths):
@@ -46,3 +51,10 @@ def test_no_short_contigs_gives_empty_frame(tmp_path):
     write_fasta(fa, {"long": 20_000})
     w, rep = build_short_contig_windows(str(fa), "g", window_len=10_000)
     assert w.empty and rep["n_short"] == 0
+
+
+def test_short_contig_thresholds_cover_every_mode_and_scale_and_keep_mode_order():
+    assert set(SHORT_CONTIG_THRESHOLDS) == set(MODE_THRESHOLDS)
+    for scale in SHORT_CONTIG_SCALES:
+        by_mode = [SHORT_CONTIG_THRESHOLDS[m][scale] for m in ("exploratory", "default", "conservative")]
+        assert by_mode == sorted(by_mode)

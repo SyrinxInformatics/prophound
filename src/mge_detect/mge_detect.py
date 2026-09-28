@@ -209,19 +209,20 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     parser.add_argument(
         "--short-contigs",
         choices=("skip", "scan"),
-        default="skip",
+        default="scan",
         help=(
-            "Contigs shorter than --window-len: 'skip' (default) leaves them unscanned; "
-            "'scan' tiles each with a 5 kb or 3 kb window, whichever fits (contigs under "
-            "3 kb are never scanned). Either way a warning reports them. EXPERIMENTAL: "
-            "reduced-scale thresholds are not yet calibrated."
+            "Contigs shorter than --window-len: 'scan' (default) tiles each with a 5 kb or "
+            "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
+            "leaves them unscanned. Either way a warning reports them. Reduced-scale "
+            "thresholds are calibrated per mode to the 10 kb false-positive load "
+            "(0.95 / 0.99 / 0.998)."
         ),
     )
     parser.add_argument(
         "--short-contig-threshold",
         type=float,
         default=None,
-        help="Seed/extend threshold for --short-contigs scan (default: the mode's).",
+        help="Override the calibrated seed/extend threshold for --short-contigs scan.",
     )
     parser.add_argument(
         "--refine-window-len",

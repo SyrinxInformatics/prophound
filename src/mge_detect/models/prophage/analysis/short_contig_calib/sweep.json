@@ -1,0 +1,1806 @@
+{
+  "n_fragments": 27719,
+  "fragment_kinds": {
+    "neg": 26612,
+    "pos": 926,
+    "mixed": 181
+  },
+  "total_bp": 180139696.0,
+  "element_free_bp": 174121200.0,
+  "reference": {
+    "r1": {
+      "covered_recall": 0.9553072625698324,
+      "covered50_recall": 0.9273743016759777,
+      "false_calls_per_mb": 1.6655065552040764,
+      "frac_free_bp_called": 0.04191496497841733
+    },
+    "r2": {
+      "covered_recall": 0.9720670391061452,
+      "covered50_recall": 0.9385474860335196,
+      "false_calls_per_mb": 2.033066622559459,
+      "frac_free_bp_called": 0.050653751524799964
+    },
+    "r3": {
+      "covered_recall": 0.9608938547486033,
+      "covered50_recall": 0.9217877094972067,
+      "false_calls_per_mb": 1.7344240678332106,
+      "frac_free_bp_called": 0.043711966147717794
+    },
+    "ens": {
+      "covered_recall": 0.9776536312849162,
+      "covered50_recall": 0.9608938547486033,
+      "false_calls_per_mb": 2.521232337015826,
+      "frac_free_bp_called": 0.06670697766842866
+    }
+  },
+  "runs": {
+    "r1": {
+      "0.9": {
+        "covered_recall": 0.9664804469273743,
+        "covered50_recall": 0.7318435754189944,
+        "false_calls_per_mb": 6.483989313191042,
+        "frac_free_bp_called": 0.03659570460116287,
+        "pos_fragment_detect": 0.642548596112311,
+        "neg_fragment_called": 0.04227416203216594,
+        "calls_per_genome": 41.88095238095238,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9666666666666667,
+            "covered50_recall": 0.7666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.9512195121951219,
+            "covered50_recall": 0.8048780487804879
+          },
+          "30-60kb": {
+            "covered_recall": 0.9855072463768116,
+            "covered50_recall": 0.7971014492753623
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.38095238095238093
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.47547169811320755,
+            "neg_fragment_called": 0.024625976433205347,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.7116843702579666,
+            "neg_fragment_called": 0.04936648966931286,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.95": {
+        "covered_recall": 0.9441340782122905,
+        "covered50_recall": 0.6759776536312849,
+        "false_calls_per_mb": 4.129307631695624,
+        "frac_free_bp_called": 0.02374930221018463,
+        "pos_fragment_detect": 0.5885529157667386,
+        "neg_fragment_called": 0.02690515556891628,
+        "calls_per_genome": 30.738095238095237,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.7
+          },
+          "15-30kb": {
+            "covered_recall": 0.926829268292683,
+            "covered50_recall": 0.6829268292682927
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.7681159420289855
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.38095238095238093
+          },
+          "8-10kb": {
+            "covered_recall": 0.9090909090909091,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.4037735849056604,
+            "neg_fragment_called": 0.014034158612471866,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6646433990895296,
+            "neg_fragment_called": 0.03206981757005415,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.98": {
+        "covered_recall": 0.9162011173184358,
+        "covered50_recall": 0.5754189944134078,
+        "false_calls_per_mb": 2.412112942019697,
+        "frac_free_bp_called": 0.014119917620599904,
+        "pos_fragment_detect": 0.5075593952483801,
+        "neg_fragment_called": 0.015744776792424472,
+        "calls_per_genome": 21.69047619047619,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9,
+            "covered50_recall": 0.6666666666666666
+          },
+          "15-30kb": {
+            "covered_recall": 0.926829268292683,
+            "covered50_recall": 0.5121951219512195
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.6376811594202898
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.9523809523809523,
+            "covered50_recall": 0.3333333333333333
+          },
+          "8-10kb": {
+            "covered_recall": 0.6363636363636364,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.3018867924528302,
+            "neg_fragment_called": 0.0074142724745134385,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5918057663125948,
+            "neg_fragment_called": 0.019084170127753534,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.99": {
+        "covered_recall": 0.8603351955307262,
+        "covered50_recall": 0.49162011173184356,
+        "false_calls_per_mb": 1.5678734123128029,
+        "frac_free_bp_called": 0.009206943209672342,
+        "pos_fragment_detect": 0.4503239740820734,
+        "neg_fragment_called": 0.010220952953554787,
+        "calls_per_genome": 16.69047619047619,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7666666666666667,
+            "covered50_recall": 0.5666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.8536585365853658,
+            "covered50_recall": 0.4878048780487805
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.5217391304347826
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.8571428571428571,
+            "covered50_recall": 0.23809523809523808
+          },
+          "8-10kb": {
+            "covered_recall": 0.5454545454545454,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.2641509433962264,
+            "neg_fragment_called": 0.004501522573811731,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5265553869499241,
+            "neg_fragment_called": 0.01251248619946375,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.995": {
+        "covered_recall": 0.8212290502793296,
+        "covered50_recall": 0.4022346368715084,
+        "false_calls_per_mb": 0.9993039331224458,
+        "frac_free_bp_called": 0.006001566724787103,
+        "pos_fragment_detect": 0.3930885529157667,
+        "neg_fragment_called": 0.006500826694724185,
+        "calls_per_genome": 13.0,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.5
+          },
+          "15-30kb": {
+            "covered_recall": 0.8292682926829268,
+            "covered50_recall": 0.4146341463414634
+          },
+          "30-60kb": {
+            "covered_recall": 0.9420289855072463,
+            "covered50_recall": 0.4057971014492754
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.8571428571428571,
+            "covered50_recall": 0.14285714285714285
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.2,
+            "neg_fragment_called": 0.0022507612869058654,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.47192716236722304,
+            "neg_fragment_called": 0.008201461542505652,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.998": {
+        "covered_recall": 0.7430167597765364,
+        "covered50_recall": 0.3240223463687151,
+        "false_calls_per_mb": 0.6260007397146355,
+        "frac_free_bp_called": 0.0038239169038577726,
+        "pos_fragment_detect": 0.326133909287257,
+        "neg_fragment_called": 0.004095896588005411,
+        "calls_per_genome": 9.904761904761905,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.4666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.6829268292682927,
+            "covered50_recall": 0.36585365853658536
+          },
+          "30-60kb": {
+            "covered_recall": 0.8695652173913043,
+            "covered50_recall": 0.2753623188405797
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.047619047619047616
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.13584905660377358,
+            "neg_fragment_called": 0.0013239772275916854,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.40364188163884673,
+            "neg_fragment_called": 0.00520477367120551,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.999": {
+        "covered_recall": 0.664804469273743,
+        "covered50_recall": 0.2681564245810056,
+        "false_calls_per_mb": 0.39053257156509374,
+        "frac_free_bp_called": 0.0023743231725947213,
+        "pos_fragment_detect": 0.28077753779697623,
+        "neg_fragment_called": 0.002555238238388697,
+        "calls_per_genome": 7.857142857142857,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.5666666666666667,
+            "covered50_recall": 0.43333333333333335
+          },
+          "15-30kb": {
+            "covered_recall": 0.6097560975609756,
+            "covered50_recall": 0.3170731707317073
+          },
+          "30-60kb": {
+            "covered_recall": 0.7971014492753623,
+            "covered50_recall": 0.2028985507246377
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.6666666666666666,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.10943396226415095,
+            "neg_fragment_called": 0.0009267840593141798,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.3505311077389985,
+            "neg_fragment_called": 0.003206981757005415,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.9995": {
+        "covered_recall": 0.6201117318435754,
+        "covered50_recall": 0.2122905027932961,
+        "false_calls_per_mb": 0.2584406723592532,
+        "frac_free_bp_called": 0.0015871818021010653,
+        "pos_fragment_detect": 0.2386609071274298,
+        "neg_fragment_called": 0.0016909664812866376,
+        "calls_per_genome": 6.357142857142857,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.5333333333333333,
+            "covered50_recall": 0.26666666666666666
+          },
+          "15-30kb": {
+            "covered_recall": 0.5365853658536586,
+            "covered50_recall": 0.2682926829268293
+          },
+          "30-60kb": {
+            "covered_recall": 0.7681159420289855,
+            "covered50_recall": 0.15942028985507245
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.08679245283018867,
+            "neg_fragment_called": 0.0005295908910366742,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.30045523520485584,
+            "neg_fragment_called": 0.0021555123284790496,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      }
+    },
+    "r2": {
+      "0.9": {
+        "covered_recall": 0.9608938547486033,
+        "covered50_recall": 0.7150837988826816,
+        "false_calls_per_mb": 6.202576136622078,
+        "frac_free_bp_called": 0.03582918105319743,
+        "pos_fragment_detect": 0.6285097192224622,
+        "neg_fragment_called": 0.0405831955508793,
+        "calls_per_genome": 40.476190476190474,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9666666666666667,
+            "covered50_recall": 0.8
+          },
+          "15-30kb": {
+            "covered_recall": 0.9512195121951219,
+            "covered50_recall": 0.7317073170731707
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.7681159420289855
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.38095238095238093
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.7272727272727273
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.46037735849056605,
+            "neg_fragment_called": 0.017741294849728584,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6980273141122914,
+            "neg_fragment_called": 0.04973450396929709,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.95": {
+        "covered_recall": 0.9553072625698324,
+        "covered50_recall": 0.6368715083798883,
+        "false_calls_per_mb": 4.163766388010191,
+        "frac_free_bp_called": 0.024256793543807418,
+        "pos_fragment_detect": 0.5669546436285097,
+        "neg_fragment_called": 0.027205771832256125,
+        "calls_per_genome": 30.38095238095238,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9666666666666667,
+            "covered50_recall": 0.7
+          },
+          "15-30kb": {
+            "covered_recall": 0.9512195121951219,
+            "covered50_recall": 0.6829268292682927
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.6666666666666666
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.3333333333333333
+          },
+          "8-10kb": {
+            "covered_recall": 0.9090909090909091,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.3660377358490566,
+            "neg_fragment_called": 0.012048192771084338,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6494688922610015,
+            "neg_fragment_called": 0.03327900741285947,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.98": {
+        "covered_recall": 0.9217877094972067,
+        "covered50_recall": 0.5754189944134078,
+        "false_calls_per_mb": 2.5269754630682537,
+        "frac_free_bp_called": 0.015033315874230135,
+        "pos_fragment_detect": 0.490280777537797,
+        "neg_fragment_called": 0.016533894483691566,
+        "calls_per_genome": 21.833333333333332,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9,
+            "covered50_recall": 0.6
+          },
+          "15-30kb": {
+            "covered_recall": 0.9024390243902439,
+            "covered50_recall": 0.6097560975609756
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.6376811594202898
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.9523809523809523,
+            "covered50_recall": 0.23809523809523808
+          },
+          "8-10kb": {
+            "covered_recall": 0.8181818181818182,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.29056603773584905,
+            "neg_fragment_called": 0.0058254998014034155,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5720789074355084,
+            "neg_fragment_called": 0.02081909468482204,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.99": {
+        "covered_recall": 0.8994413407821229,
+        "covered50_recall": 0.5139664804469274,
+        "false_calls_per_mb": 1.7286809417807827,
+        "frac_free_bp_called": 0.010390888645380344,
+        "pos_fragment_detect": 0.4524838012958963,
+        "neg_fragment_called": 0.01127310987524425,
+        "calls_per_genome": 17.571428571428573,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.8333333333333334,
+            "covered50_recall": 0.5
+          },
+          "15-30kb": {
+            "covered_recall": 0.9024390243902439,
+            "covered50_recall": 0.5609756097560976
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.5652173913043478
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.8571428571428571,
+            "covered50_recall": 0.19047619047619047
+          },
+          "8-10kb": {
+            "covered_recall": 0.8181818181818182,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.24528301886792453,
+            "neg_fragment_called": 0.0035747385144975505,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5371775417298937,
+            "neg_fragment_called": 0.01435255769938489,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.995": {
+        "covered_recall": 0.8547486033519553,
+        "covered50_recall": 0.43575418994413406,
+        "false_calls_per_mb": 1.2060564710098485,
+        "frac_free_bp_called": 0.007218701685952084,
+        "pos_fragment_detect": 0.398488120950324,
+        "neg_fragment_called": 0.007778445813918533,
+        "calls_per_genome": 14.071428571428571,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7666666666666667,
+            "covered50_recall": 0.43333333333333335
+          },
+          "15-30kb": {
+            "covered_recall": 0.8536585365853658,
+            "covered50_recall": 0.4634146341463415
+          },
+          "30-60kb": {
+            "covered_recall": 0.927536231884058,
+            "covered50_recall": 0.463768115942029
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.8571428571428571,
+            "covered50_recall": 0.19047619047619047
+          },
+          "8-10kb": {
+            "covered_recall": 0.7272727272727273,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.19245283018867926,
+            "neg_fragment_called": 0.0029127499007017077,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.48254931714719274,
+            "neg_fragment_called": 0.009726092213868881,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.998": {
+        "covered_recall": 0.7597765363128491,
+        "covered50_recall": 0.3463687150837989,
+        "false_calls_per_mb": 0.7466063868156204,
+        "frac_free_bp_called": 0.0044263995423877165,
+        "pos_fragment_detect": 0.3369330453563715,
+        "neg_fragment_called": 0.004885014279272509,
+        "calls_per_genome": 10.666666666666666,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.43333333333333335
+          },
+          "15-30kb": {
+            "covered_recall": 0.7560975609756098,
+            "covered50_recall": 0.3902439024390244
+          },
+          "30-60kb": {
+            "covered_recall": 0.8695652173913043,
+            "covered50_recall": 0.34782608695652173
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.6666666666666666,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.36363636363636365
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.12452830188679245,
+            "neg_fragment_called": 0.001985965841387528,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.4233687405159332,
+            "neg_fragment_called": 0.006045949214026602,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.999": {
+        "covered_recall": 0.7094972067039106,
+        "covered50_recall": 0.2569832402234637,
+        "false_calls_per_mb": 0.48242258840393937,
+        "frac_free_bp_called": 0.0029450233515505293,
+        "pos_fragment_detect": 0.29049676025917925,
+        "neg_fragment_called": 0.0031564707650683903,
+        "calls_per_genome": 8.547619047619047,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.36666666666666664
+          },
+          "15-30kb": {
+            "covered_recall": 0.7073170731707317,
+            "covered50_recall": 0.34146341463414637
+          },
+          "30-60kb": {
+            "covered_recall": 0.8115942028985508,
+            "covered50_recall": 0.2028985507246377
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.6190476190476191,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.36363636363636365
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.09811320754716982,
+            "neg_fragment_called": 0.0010591817820733483,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.36874051593323215,
+            "neg_fragment_called": 0.003995583828400189,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.9995": {
+        "covered_recall": 0.6424581005586593,
+        "covered50_recall": 0.2122905027932961,
+        "false_calls_per_mb": 0.35033068919809884,
+        "frac_free_bp_called": 0.0021541834078791094,
+        "pos_fragment_detect": 0.2505399568034557,
+        "neg_fragment_called": 0.002292199007966331,
+        "calls_per_genome": 7.071428571428571,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.6,
+            "covered50_recall": 0.36666666666666664
+          },
+          "15-30kb": {
+            "covered_recall": 0.6097560975609756,
+            "covered50_recall": 0.2926829268292683
+          },
+          "30-60kb": {
+            "covered_recall": 0.7681159420289855,
+            "covered50_recall": 0.11594202898550725
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.36363636363636365,
+            "covered50_recall": 0.36363636363636365
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.07924528301886792,
+            "neg_fragment_called": 0.0006619886137958427,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.3201820940819423,
+            "neg_fragment_called": 0.0029441143998738236,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      }
+    },
+    "r3": {
+      "0.9": {
+        "covered_recall": 0.9497206703910615,
+        "covered50_recall": 0.7150837988826816,
+        "false_calls_per_mb": 5.7086672961132825,
+        "frac_free_bp_called": 0.03235631272929431,
+        "pos_fragment_detect": 0.6295896328293736,
+        "neg_fragment_called": 0.037238839621223506,
+        "calls_per_genome": 38.38095238095238,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.7666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.926829268292683,
+            "covered50_recall": 0.7560975609756098
+          },
+          "30-60kb": {
+            "covered_recall": 0.9855072463768116,
+            "covered50_recall": 0.7536231884057971
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.42857142857142855
+          },
+          "8-10kb": {
+            "covered_recall": 0.9090909090909091,
+            "covered50_recall": 0.7272727272727273
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.46037735849056605,
+            "neg_fragment_called": 0.02264001059181782,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6995447647951442,
+            "neg_fragment_called": 0.04311024656958099,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.95": {
+        "covered_recall": 0.9385474860335196,
+        "covered50_recall": 0.664804469273743,
+        "false_calls_per_mb": 3.9455275980179327,
+        "frac_free_bp_called": 0.022782010461678416,
+        "pos_fragment_detect": 0.5831533477321814,
+        "neg_fragment_called": 0.02574026754847437,
+        "calls_per_genome": 29.833333333333332,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.7666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.9024390243902439,
+            "covered50_recall": 0.7073170731707317
+          },
+          "30-60kb": {
+            "covered_recall": 0.9855072463768116,
+            "covered50_recall": 0.6956521739130435
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.3333333333333333
+          },
+          "8-10kb": {
+            "covered_recall": 0.8181818181818182,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.41509433962264153,
+            "neg_fragment_called": 0.013769363166953529,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6525037936267072,
+            "neg_fragment_called": 0.030545186898690922,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.98": {
+        "covered_recall": 0.9106145251396648,
+        "covered50_recall": 0.547486033519553,
+        "false_calls_per_mb": 2.354681681495418,
+        "frac_free_bp_called": 0.013759645580205053,
+        "pos_fragment_detect": 0.509719222462203,
+        "neg_fragment_called": 0.01533142943033218,
+        "calls_per_genome": 21.357142857142858,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.6333333333333333
+          },
+          "15-30kb": {
+            "covered_recall": 0.8780487804878049,
+            "covered50_recall": 0.5853658536585366
+          },
+          "30-60kb": {
+            "covered_recall": 0.9565217391304348,
+            "covered50_recall": 0.5362318840579711
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.9523809523809523,
+            "covered50_recall": 0.2857142857142857
+          },
+          "8-10kb": {
+            "covered_recall": 0.7272727272727273,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.32452830188679244,
+            "neg_fragment_called": 0.006619886137958427,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5857359635811836,
+            "neg_fragment_called": 0.018821302770621943,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.99": {
+        "covered_recall": 0.88268156424581,
+        "covered50_recall": 0.4581005586592179,
+        "false_calls_per_mb": 1.636790924941937,
+        "frac_free_bp_called": 0.009631440628711496,
+        "pos_fragment_detect": 0.4611231101511879,
+        "neg_fragment_called": 0.010671877348564557,
+        "calls_per_genome": 17.261904761904763,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.8666666666666667,
+            "covered50_recall": 0.5333333333333333
+          },
+          "15-30kb": {
+            "covered_recall": 0.8536585365853658,
+            "covered50_recall": 0.5121951219512195
+          },
+          "30-60kb": {
+            "covered_recall": 0.9565217391304348,
+            "covered50_recall": 0.43478260869565216
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.9523809523809523,
+            "covered50_recall": 0.19047619047619047
+          },
+          "8-10kb": {
+            "covered_recall": 0.6363636363636364,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.27547169811320754,
+            "neg_fragment_called": 0.004898715742089236,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5371775417298937,
+            "neg_fragment_called": 0.012985647442300616,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.995": {
+        "covered_recall": 0.8212290502793296,
+        "covered50_recall": 0.4245810055865922,
+        "false_calls_per_mb": 1.1888270928525648,
+        "frac_free_bp_called": 0.006934549038256111,
+        "pos_fragment_detect": 0.41576673866090713,
+        "neg_fragment_called": 0.007740868781001052,
+        "calls_per_genome": 14.357142857142858,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.5333333333333333
+          },
+          "15-30kb": {
+            "covered_recall": 0.8048780487804879,
+            "covered50_recall": 0.4878048780487805
+          },
+          "30-60kb": {
+            "covered_recall": 0.927536231884058,
+            "covered50_recall": 0.391304347826087
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.9047619047619048,
+            "covered50_recall": 0.14285714285714285
+          },
+          "8-10kb": {
+            "covered_recall": 0.5454545454545454,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.21509433962264152,
+            "neg_fragment_called": 0.0038395339600158875,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.4977238239757208,
+            "neg_fragment_called": 0.009305504442458335,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.998": {
+        "covered_recall": 0.770949720670391,
+        "covered50_recall": 0.3463687150837989,
+        "false_calls_per_mb": 0.723633882605909,
+        "frac_free_bp_called": 0.004252503428646253,
+        "pos_fragment_detect": 0.3509719222462203,
+        "neg_fragment_called": 0.004697129114685105,
+        "calls_per_genome": 10.904761904761905,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.6333333333333333,
+            "covered50_recall": 0.5
+          },
+          "15-30kb": {
+            "covered_recall": 0.7073170731707317,
+            "covered50_recall": 0.4146341463414634
+          },
+          "30-60kb": {
+            "covered_recall": 0.927536231884058,
+            "covered50_recall": 0.2753623188405797
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.7619047619047619,
+            "covered50_recall": 0.09523809523809523
+          },
+          "8-10kb": {
+            "covered_recall": 0.5454545454545454,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.13962264150943396,
+            "neg_fragment_called": 0.0023831590096650337,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.4370257966616085,
+            "neg_fragment_called": 0.0056253614426160555,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.999": {
+        "covered_recall": 0.7094972067039106,
+        "covered50_recall": 0.3016759776536313,
+        "false_calls_per_mb": 0.4422207060369444,
+        "frac_free_bp_called": 0.0026967939573124926,
+        "pos_fragment_detect": 0.3099352051835853,
+        "neg_fragment_called": 0.002893431534646024,
+        "calls_per_genome": 8.761904761904763,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.5666666666666667,
+            "covered50_recall": 0.4666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.6585365853658537,
+            "covered50_recall": 0.34146341463414637
+          },
+          "30-60kb": {
+            "covered_recall": 0.8405797101449275,
+            "covered50_recall": 0.2318840579710145
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.7619047619047619,
+            "covered50_recall": 0.047619047619047616
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.12075471698113208,
+            "neg_fragment_called": 0.0010591817820733483,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.38694992412746587,
+            "neg_fragment_called": 0.0036275695284159614,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.9995": {
+        "covered_recall": 0.6759776536312849,
+        "covered50_recall": 0.26256983240223464,
+        "false_calls_per_mb": 0.3158719328835317,
+        "frac_free_bp_called": 0.0019564303485158615,
+        "pos_fragment_detect": 0.2732181425485961,
+        "neg_fragment_called": 0.002066736810461446,
+        "calls_per_genome": 7.404761904761905,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.5666666666666667,
+            "covered50_recall": 0.36666666666666664
+          },
+          "15-30kb": {
+            "covered_recall": 0.6097560975609756,
+            "covered50_recall": 0.3170731707317073
+          },
+          "30-60kb": {
+            "covered_recall": 0.8115942028985508,
+            "covered50_recall": 0.21739130434782608
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.10566037735849057,
+            "neg_fragment_called": 0.0007943863365550113,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.34142640364188165,
+            "neg_fragment_called": 0.0025761000998895957,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      }
+    },
+    "ens": {
+      "0.9": {
+        "covered_recall": 0.9720670391061452,
+        "covered50_recall": 0.8268156424581006,
+        "false_calls_per_mb": 9.682910524393355,
+        "frac_free_bp_called": 0.05497896292926996,
+        "pos_fragment_detect": 0.7084233261339092,
+        "neg_fragment_called": 0.06324214640012024,
+        "calls_per_genome": 56.904761904761905,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9666666666666667,
+            "covered50_recall": 0.8666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.975609756097561,
+            "covered50_recall": 0.8292682926829268
+          },
+          "30-60kb": {
+            "covered_recall": 0.9855072463768116,
+            "covered50_recall": 0.8840579710144928
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.6190476190476191
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.8181818181818182
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.5584905660377358,
+            "neg_fragment_called": 0.03654177148153052,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.7708649468892261,
+            "neg_fragment_called": 0.07397087429682982,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.95": {
+        "covered_recall": 0.9664804469273743,
+        "covered50_recall": 0.7486033519553073,
+        "false_calls_per_mb": 6.547163699767748,
+        "frac_free_bp_called": 0.037774004543961334,
+        "pos_fragment_detect": 0.6565874730021598,
+        "neg_fragment_called": 0.04272508642717571,
+        "calls_per_genome": 42.42857142857143,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9666666666666667,
+            "covered50_recall": 0.8333333333333334
+          },
+          "15-30kb": {
+            "covered_recall": 0.9512195121951219,
+            "covered50_recall": 0.7560975609756098
+          },
+          "30-60kb": {
+            "covered_recall": 0.9855072463768116,
+            "covered50_recall": 0.8260869565217391
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.42857142857142855
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.49433962264150944,
+            "neg_fragment_called": 0.02171322653250364,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.723823975720789,
+            "neg_fragment_called": 0.051153987697807685,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.98": {
+        "covered_recall": 0.9497206703910615,
+        "covered50_recall": 0.6927374301675978,
+        "false_calls_per_mb": 3.9455275980179327,
+        "frac_free_bp_called": 0.02310689910246426,
+        "pos_fragment_detect": 0.5788336933045356,
+        "neg_fragment_called": 0.025777844581391852,
+        "calls_per_genome": 29.80952380952381,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.8
+          },
+          "15-30kb": {
+            "covered_recall": 0.9512195121951219,
+            "covered50_recall": 0.6829268292682927
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.7536231884057971
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.38095238095238093
+          },
+          "8-10kb": {
+            "covered_recall": 0.9090909090909091,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.38113207547169814,
+            "neg_fragment_called": 0.01098901098901099,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6600910470409712,
+            "neg_fragment_called": 0.031701803270069925,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.99": {
+        "covered_recall": 0.9385474860335196,
+        "covered50_recall": 0.5921787709497207,
+        "false_calls_per_mb": 2.636094858064383,
+        "frac_free_bp_called": 0.015621928863343465,
+        "pos_fragment_detect": 0.5259179265658748,
+        "neg_fragment_called": 0.017247858109123704,
+        "calls_per_genome": 23.095238095238095,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.9333333333333333,
+            "covered50_recall": 0.6333333333333333
+          },
+          "15-30kb": {
+            "covered_recall": 0.926829268292683,
+            "covered50_recall": 0.6097560975609756
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.6376811594202898
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.2857142857142857
+          },
+          "8-10kb": {
+            "covered_recall": 0.8181818181818182,
+            "covered50_recall": 0.6363636363636364
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.32452830188679244,
+            "neg_fragment_called": 0.007017079306235933,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.6084977238239757,
+            "neg_fragment_called": 0.021344829399085222,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.995": {
+        "covered_recall": 0.8938547486033519,
+        "covered50_recall": 0.5195530726256983,
+        "false_calls_per_mb": 1.8435434628293397,
+        "frac_free_bp_called": 0.01092221969524676,
+        "pos_fragment_detect": 0.4838012958963283,
+        "neg_fragment_called": 0.011987073500676387,
+        "calls_per_genome": 18.69047619047619,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7666666666666667,
+            "covered50_recall": 0.5333333333333333
+          },
+          "15-30kb": {
+            "covered_recall": 0.9024390243902439,
+            "covered50_recall": 0.5365853658536586
+          },
+          "30-60kb": {
+            "covered_recall": 0.9710144927536232,
+            "covered50_recall": 0.5507246376811594
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.9523809523809523,
+            "covered50_recall": 0.2857142857142857
+          },
+          "8-10kb": {
+            "covered_recall": 0.7272727272727273,
+            "covered50_recall": 0.5454545454545454
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.2830188679245283,
+            "neg_fragment_called": 0.0051635111876075735,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.5660091047040972,
+            "neg_fragment_called": 0.014720571999369119,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.998": {
+        "covered_recall": 0.8268156424581006,
+        "covered50_recall": 0.441340782122905,
+        "false_calls_per_mb": 1.1256527062758586,
+        "frac_free_bp_called": 0.0066140309163961655,
+        "pos_fragment_detect": 0.40280777537796975,
+        "neg_fragment_called": 0.007327521418908763,
+        "calls_per_genome": 13.785714285714286,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7333333333333333,
+            "covered50_recall": 0.5
+          },
+          "15-30kb": {
+            "covered_recall": 0.7804878048780488,
+            "covered50_recall": 0.4878048780487805
+          },
+          "30-60kb": {
+            "covered_recall": 0.9565217391304348,
+            "covered50_recall": 0.4492753623188406
+          },
+          "5-8kb": {
+            "covered_recall": 0.7142857142857143,
+            "covered50_recall": 0.7142857142857143
+          },
+          "60kb+": {
+            "covered_recall": 0.7619047619047619,
+            "covered50_recall": 0.14285714285714285
+          },
+          "8-10kb": {
+            "covered_recall": 0.6363636363636364,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.18867924528301888,
+            "neg_fragment_called": 0.0033099430689792135,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.49013657056145676,
+            "neg_fragment_called": 0.008937490142474108,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.999": {
+        "covered_recall": 0.7821229050279329,
+        "covered50_recall": 0.37988826815642457,
+        "false_calls_per_mb": 0.6776888741864863,
+        "frac_free_bp_called": 0.004105410484191471,
+        "pos_fragment_detect": 0.3563714902807775,
+        "neg_fragment_called": 0.004434089884262739,
+        "calls_per_genome": 10.833333333333334,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.7,
+            "covered50_recall": 0.4666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.7317073170731707,
+            "covered50_recall": 0.4146341463414634
+          },
+          "30-60kb": {
+            "covered_recall": 0.9130434782608695,
+            "covered50_recall": 0.391304347826087
+          },
+          "5-8kb": {
+            "covered_recall": 0.5714285714285714,
+            "covered50_recall": 0.5714285714285714
+          },
+          "60kb+": {
+            "covered_recall": 0.7619047619047619,
+            "covered50_recall": 0.047619047619047616
+          },
+          "8-10kb": {
+            "covered_recall": 0.5454545454545454,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.1471698113207547,
+            "neg_fragment_called": 0.0017211703958691911,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.44157814871016693,
+            "neg_fragment_called": 0.00552021449976342,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      },
+      "0.9995": {
+        "covered_recall": 0.7206703910614525,
+        "covered50_recall": 0.3240223463687151,
+        "false_calls_per_mb": 0.4996519665612229,
+        "frac_free_bp_called": 0.003066852284500681,
+        "pos_fragment_detect": 0.31641468682505397,
+        "neg_fragment_called": 0.003269201863820833,
+        "calls_per_genome": 9.166666666666666,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 0.6333333333333333,
+            "covered50_recall": 0.4666666666666667
+          },
+          "15-30kb": {
+            "covered_recall": 0.6585365853658537,
+            "covered50_recall": 0.3902439024390244
+          },
+          "30-60kb": {
+            "covered_recall": 0.855072463768116,
+            "covered50_recall": 0.2898550724637681
+          },
+          "5-8kb": {
+            "covered_recall": 0.42857142857142855,
+            "covered50_recall": 0.42857142857142855
+          },
+          "60kb+": {
+            "covered_recall": 0.7619047619047619,
+            "covered50_recall": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 0.45454545454545453,
+            "covered50_recall": 0.45454545454545453
+          }
+        },
+        "by_scale": {
+          "0": {
+            "pos_fragment_detect": 0.0,
+            "neg_fragment_called": 0.0,
+            "n_pos": 2,
+            "n_neg": 38
+          },
+          "3000": {
+            "pos_fragment_detect": 0.12452830188679245,
+            "neg_fragment_called": 0.0010591817820733483,
+            "n_pos": 265,
+            "n_neg": 7553
+          },
+          "5000": {
+            "pos_fragment_detect": 0.3945371775417299,
+            "neg_fragment_called": 0.004153304242679144,
+            "n_pos": 659,
+            "n_neg": 19021
+          }
+        }
+      }
+    }
+  }
+}

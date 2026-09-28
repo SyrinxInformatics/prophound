@@ -48,12 +48,27 @@ AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
 # sequence (816446: covered recall identical to 3 dp on the 42-genome sample).
 DEFAULT_AMBIGUITY_POLICY = "impute"
 # Contigs shorter than --window-len (docs/adaptive-multiscale-detection.md Part 4).
-# 'skip' (default until per-scale thresholds are calibrated) leaves them unscanned
-# but always reports them; 'scan' tiles each with the largest scale that fits.
+# 'scan' (default since 2026-09-28, user decision) tiles each with the largest
+# scale that fits; 'skip' leaves them unscanned. Either way they are reported.
 SHORT_CONTIG_MODES = ("skip", "scan")
-DEFAULT_SHORT_CONTIGS = "skip"
+DEFAULT_SHORT_CONTIGS = "scan"
 SHORT_CONTIG_SCALES = (5000, 3000)   # below ~3 kb a window cannot judge (spike-in floor)
 SHORT_CONTIG_STRIDE = 500
+# Seed/extend threshold per mode and short-contig scale. Calibrated 2026-09-28
+# (818235, scripts/short_contig_sweep.py): the 42-genome size-stratified sample
+# shredded into 27,719 fragments of 3-10 kb; each threshold is the one whose false
+# calls per Mb of element-free sequence match the intact-genome 10 kb pipeline in
+# the same mode (shipped merging). Ensemble, short vs 10 kb reference (false/Mb):
+# exploratory 0.95 -> 6.55 vs 6.04; default 0.99 -> 2.64 vs 2.52; conservative
+# 0.998 -> 1.13 vs 1.33 (0.995 overshoots at 1.84). Single seeds agree. The sweep
+# applied one threshold to both scales, so they share a value; a
+# fragment-length-normalised split puts 5 kb ~13% above the reference and 3 kb
+# below it, inside the reference's own seed spread.
+SHORT_CONTIG_THRESHOLDS = {
+    "exploratory": {5000: 0.95, 3000: 0.95},
+    "default": {5000: 0.99, 3000: 0.99},
+    "conservative": {5000: 0.998, 3000: 0.998},
+}
 REGION_COLUMNS = ["genome_id", "contig_id", "start", "end", "n_windows",
                   "region_len_bp", "mean_prob", "max_prob", "boundary_kind"]
 
@@ -1111,17 +1126,18 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
         choices=SHORT_CONTIG_MODES,
         default=DEFAULT_SHORT_CONTIGS,
         help=(
-            "Contigs shorter than --window-len: 'skip' (default) leaves them unscanned; "
-            "'scan' tiles each with a 5 kb or 3 kb window, whichever fits (contigs under "
-            "3 kb are never scanned). Either way a warning reports them. EXPERIMENTAL: "
-            "reduced-scale thresholds are not yet calibrated."
+            "Contigs shorter than --window-len: 'scan' (default) tiles each with a 5 kb or "
+            "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
+            "leaves them unscanned. Either way a warning reports them. Reduced-scale "
+            "thresholds are calibrated per mode to the 10 kb false-positive load "
+            "(0.95 / 0.99 / 0.998)."
         ),
     )
     parser.add_argument(
         "--short-contig-threshold",
         type=float,
         default=None,
-        help="Seed/extend threshold for --short-contigs scan (default: the mode's).",
+        help="Override the calibrated seed/extend threshold for --short-contigs scan.",
     )
     parser.add_argument(
         "--refine-window-len",
@@ -1475,14 +1491,19 @@ def run_predict(args: argparse.Namespace) -> None:
     short_meta = {"mode": short_contigs, **short_report}
     if short_contigs == "scan" and not short_windows_df.empty:
         st = getattr(args, "short_contig_threshold", None)
-        short_seed = seed_threshold if st is None else float(st)
-        short_extend = extend_threshold if st is None else float(st)
-        print(
-            f"[warn] short contigs scored with seed/extend {short_seed:g}/{short_extend:g}; "
-            "thresholds at reduced window scales are not yet calibrated."
-        )
-        short_regions, short_windows = [], []
+        calibrated = st is None
+
+        def short_thresholds(scale: int) -> Tuple[float, float]:
+            t = float(st) if st is not None else SHORT_CONTIG_THRESHOLDS[args.mode][scale]
+            return t, t
+
+        if not calibrated:
+            print(f"[warn] --short-contig-threshold {float(st):g} overrides the calibrated "
+                  "short-contig thresholds.")
+        short_regions, short_windows, used = [], [], {}
         for scale, sw in short_windows_df.groupby("scale"):
+            short_seed, short_extend = short_thresholds(int(scale))
+            used[str(int(scale))] = {"seed": short_seed, "extend": short_extend}
             sw = sw.drop(columns="scale").reset_index(drop=True)
             sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale), **score_kw)
             sw["pred_label"] = (sw["prob"] >= short_seed).astype(int)
@@ -1504,9 +1525,9 @@ def run_predict(args: argparse.Namespace) -> None:
             if not regions_df.empty else short_regions_df
         windows_df = pd.concat([windows_df, *short_windows], ignore_index=True) \
             if not windows_df.empty else pd.concat(short_windows, ignore_index=True)
-        short_meta.update({"threshold_seed": short_seed, "threshold_extend": short_extend,
+        short_meta.update({"thresholds": used,
                            "scales": list(SHORT_CONTIG_SCALES), "stride": SHORT_CONTIG_STRIDE,
-                           "n_regions": int(len(short_regions_df)), "calibrated": False})
+                           "n_regions": int(len(short_regions_df)), "calibrated": calibrated})
 
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)

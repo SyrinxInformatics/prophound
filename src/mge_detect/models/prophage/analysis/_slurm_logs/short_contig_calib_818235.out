@@ -1,0 +1,53 @@
+=== job start ===
+Thu Sep 24 15:31:27 CDT 2026
+gpu006
+Tesla V100S-PCIE-32GB
+[preflight] all inputs present
+[done] 42 genomes -> 27719 fragments in analysis/short_contig_calib/fasta
+[done] r1: 42 genomes
+Thu Sep 24 15:37:11 CDT 2026
+[done] r2: 42 genomes
+Thu Sep 24 15:42:42 CDT 2026
+[done] r3: 42 genomes
+Thu Sep 24 15:48:13 CDT 2026
+[done] ens: 42 genomes
+Thu Sep 24 15:58:02 CDT 2026
+[reference r1] {'covered_recall': 0.9553072625698324, 'covered50_recall': 0.9273743016759777, 'false_calls_per_mb': 1.6655065552040764, 'frac_free_bp_called': 0.04191496497841733}
+[reference r2] {'covered_recall': 0.9720670391061452, 'covered50_recall': 0.9385474860335196, 'false_calls_per_mb': 2.033066622559459, 'frac_free_bp_called': 0.050653751524799964}
+[reference r3] {'covered_recall': 0.9608938547486033, 'covered50_recall': 0.9217877094972067, 'false_calls_per_mb': 1.7344240678332106, 'frac_free_bp_called': 0.043711966147717794}
+[reference ens] {'covered_recall': 0.9776536312849162, 'covered50_recall': 0.9608938547486033, 'false_calls_per_mb': 2.521232337015826, 'frac_free_bp_called': 0.06670697766842866}
+[r1 t=0.9] covered 0.966 c50 0.732 pos-frag 0.643 neg-frag 0.042 false/Mb 6.48 free-bp 0.0366
+[r1 t=0.95] covered 0.944 c50 0.676 pos-frag 0.589 neg-frag 0.027 false/Mb 4.13 free-bp 0.0237
+[r1 t=0.98] covered 0.916 c50 0.575 pos-frag 0.508 neg-frag 0.016 false/Mb 2.41 free-bp 0.0141
+[r1 t=0.99] covered 0.860 c50 0.492 pos-frag 0.450 neg-frag 0.010 false/Mb 1.57 free-bp 0.0092
+[r1 t=0.995] covered 0.821 c50 0.402 pos-frag 0.393 neg-frag 0.007 false/Mb 1.00 free-bp 0.0060
+[r1 t=0.998] covered 0.743 c50 0.324 pos-frag 0.326 neg-frag 0.004 false/Mb 0.63 free-bp 0.0038
+[r1 t=0.999] covered 0.665 c50 0.268 pos-frag 0.281 neg-frag 0.003 false/Mb 0.39 free-bp 0.0024
+[r1 t=0.9995] covered 0.620 c50 0.212 pos-frag 0.239 neg-frag 0.002 false/Mb 0.26 free-bp 0.0016
+[r2 t=0.9] covered 0.961 c50 0.715 pos-frag 0.629 neg-frag 0.041 false/Mb 6.20 free-bp 0.0358
+[r2 t=0.95] covered 0.955 c50 0.637 pos-frag 0.567 neg-frag 0.027 false/Mb 4.16 free-bp 0.0243
+[r2 t=0.98] covered 0.922 c50 0.575 pos-frag 0.490 neg-frag 0.017 false/Mb 2.53 free-bp 0.0150
+[r2 t=0.99] covered 0.899 c50 0.514 pos-frag 0.452 neg-frag 0.011 false/Mb 1.73 free-bp 0.0104
+[r2 t=0.995] covered 0.855 c50 0.436 pos-frag 0.398 neg-frag 0.008 false/Mb 1.21 free-bp 0.0072
+[r2 t=0.998] covered 0.760 c50 0.346 pos-frag 0.337 neg-frag 0.005 false/Mb 0.75 free-bp 0.0044
+[r2 t=0.999] covered 0.709 c50 0.257 pos-frag 0.290 neg-frag 0.003 false/Mb 0.48 free-bp 0.0029
+[r2 t=0.9995] covered 0.642 c50 0.212 pos-frag 0.251 neg-frag 0.002 false/Mb 0.35 free-bp 0.0022
+[r3 t=0.9] covered 0.950 c50 0.715 pos-frag 0.630 neg-frag 0.037 false/Mb 5.71 free-bp 0.0324
+[r3 t=0.95] covered 0.939 c50 0.665 pos-frag 0.583 neg-frag 0.026 false/Mb 3.95 free-bp 0.0228
+[r3 t=0.98] covered 0.911 c50 0.547 pos-frag 0.510 neg-frag 0.015 false/Mb 2.35 free-bp 0.0138
+[r3 t=0.99] covered 0.883 c50 0.458 pos-frag 0.461 neg-frag 0.011 false/Mb 1.64 free-bp 0.0096
+[r3 t=0.995] covered 0.821 c50 0.425 pos-frag 0.416 neg-frag 0.008 false/Mb 1.19 free-bp 0.0069
+[r3 t=0.998] covered 0.771 c50 0.346 pos-frag 0.351 neg-frag 0.005 false/Mb 0.72 free-bp 0.0043
+[r3 t=0.999] covered 0.709 c50 0.302 pos-frag 0.310 neg-frag 0.003 false/Mb 0.44 free-bp 0.0027
+[r3 t=0.9995] covered 0.676 c50 0.263 pos-frag 0.273 neg-frag 0.002 false/Mb 0.32 free-bp 0.0020
+[ens t=0.9] covered 0.972 c50 0.827 pos-frag 0.708 neg-frag 0.063 false/Mb 9.68 free-bp 0.0550
+[ens t=0.95] covered 0.966 c50 0.749 pos-frag 0.657 neg-frag 0.043 false/Mb 6.55 free-bp 0.0378
+[ens t=0.98] covered 0.950 c50 0.693 pos-frag 0.579 neg-frag 0.026 false/Mb 3.95 free-bp 0.0231
+[ens t=0.99] covered 0.939 c50 0.592 pos-frag 0.526 neg-frag 0.017 false/Mb 2.64 free-bp 0.0156
+[ens t=0.995] covered 0.894 c50 0.520 pos-frag 0.484 neg-frag 0.012 false/Mb 1.84 free-bp 0.0109
+[ens t=0.998] covered 0.827 c50 0.441 pos-frag 0.403 neg-frag 0.007 false/Mb 1.13 free-bp 0.0066
+[ens t=0.999] covered 0.782 c50 0.380 pos-frag 0.356 neg-frag 0.004 false/Mb 0.68 free-bp 0.0041
+[ens t=0.9995] covered 0.721 c50 0.324 pos-frag 0.316 neg-frag 0.003 false/Mb 0.50 free-bp 0.0031
+[done] wrote analysis/short_contig_calib/sweep.json
+=== job end (exit 0) ===
+Thu Sep 24 16:19:01 CDT 2026
