@@ -1,0 +1,251 @@
+element	name	len_bp	gc	has_integrase	source	cluster_size	cluster_members	size_bin
+PQ006185.1	MAG: Bajarodino virus 12 isolate BGG_01_12	9828	0.4483	False	metagenome	1	PQ006185.1	8-10kb
+OR148983.1	Inovirus D_HF35_23	9747	0.4733	False	isolate	1	OR148983.1	8-10kb
+NC_104951.1	Vibrio phage vB_Vipa36	9721	0.4475	True	isolate	4	NC_104951.1;MT188663.1;NC_104949.1;MT188666.1	8-10kb
+NC_104952.1	Vibrio phage vB_Vipa4291	9663	0.4501	True	isolate	2	NC_104952.1;MT188665.1	8-10kb
+OQ709403.1	MAG: Inoviridae sp. isolate SHuIno3-2	9351	0.5058	False	metagenome	1	OQ709403.1	8-10kb
+PQ006184.1	MAG: Bajarodino virus 13 isolate BGG_01_14	9273	0.5309	False	metagenome	1	PQ006184.1	8-10kb
+NC_008574.2	Ralstonia phage RSM1	9004	0.5995	False	isolate	5	NC_008574.2;AB259123.2;AB981170.1;NC_011399.1;AB434711.1	8-10kb
+OR148982.1	Inovirus D_HF3_8	8997	0.4846	False	isolate	1	OR148982.1	8-10kb
+OR148981.1	Inovirus D_HF2_82	8954	0.3575	False	isolate	1	OR148981.1	8-10kb
+NC_002362.1	Vibrio phage VfO3K6	8784	0.4516	False	isolate	4	NC_002362.1;AB043678.1;NC_002363.1;AB043679.1	8-10kb
+PQ006119.1	MAG: Bajarodino virus 76 isolate BGG_11_9	8774	0.3816	False	metagenome	1	PQ006119.1	8-10kb
+MH552519.1	MAG: Inoviridae sp. isolate ctbe117	8707	0.4223	False	metagenome	1	MH552519.1	8-10kb
+NC_001956.1	Vibrio phage fs2	8651	0.4453	False	isolate	4	NC_001956.1;AB002632.1;NC_021562.1;KC357596.1	8-10kb
+OR148980.1	Inovirus D_HF5_49	8614	0.4564	False	isolate	1	OR148980.1	8-10kb
+NC_021862.1	Ralstonia phage RSS30 DNA	8576	0.6172	False	isolate	14	NC_021862.1;AB828698.1;NC_073757.1;MT495635.1;OR088903.1;NC_019548.1;JQ408219.1;NC_055053.1;LC066596.1;NC_021866.1;NC_008575.1;AB259124.1;NC_055054.1;AB931172.1	8-10kb
+PQ006166.1	MAG: Bajarodino virus 29 isolate BGG_04_29	8561	0.4581	False	metagenome	1	PQ006166.1	8-10kb
+NC_073759.1	Vibrio phage VALG_phi6	8529	0.4434	False	isolate	2	NC_073759.1;MN719123.1	8-10kb
+PQ006183.1	MAG: Bajarodino virus 15 isolate BGG_01_18	8519	0.4397	False	metagenome	1	PQ006183.1	8-10kb
+PQ006182.1	MAG: Bajarodino virus 16 isolate BGG_01_19	8505	0.3804	False	metagenome	1	PQ006182.1	8-10kb
+PQ490701.1	MAG: Ariapisin virus 2 isolate ASU_vp_5311	8485	0.3103	False	metagenome	1	PQ490701.1	8-10kb
+NC_023586.1	Ralstonia phage 1 NP-2014	8460	0.5849	True	isolate	2	NC_023586.1;KF887906.1	8-10kb
+PP511607.1	Dulem virus 50 isolate Duke_24SS_5	8458	0.5167	False	metagenome	1	PP511607.1	8-10kb
+NC_001954.1	Enterobacteria phage If1	8454	0.4371	False	isolate	2	NC_001954.1;U02303.1	8-10kb
+OR148979.1	Inovirus D_HF3_10	8340	0.4453	False	isolate	1	OR148979.1	8-10kb
+NC_055055.1	Xanthomonas phage Xf409	8280	0.5975	False	isolate	4	NC_055055.1;KY853667.1;NC_043028.1;KX181651.1	8-10kb
+OR148978.1	Inovirus D_HF5_61	8205	0.3612	False	isolate	1	OR148978.1	8-10kb
+OP867012.1	Shewanella phage Dolos	8146	0.3845	False	isolate	1	OP867012.1	8-10kb
+OR148977.1	Inovirus D_HF32_91	8131	0.3391	False	isolate	1	OR148977.1	8-10kb
+PP511381.1	Dulem virus 51 isolate Duke_21_16	8109	0.4086	False	metagenome	1	PP511381.1	8-10kb
+PP511687.1	Dulem virus 52 isolate Duke_25SF_55	8032	0.339	False	metagenome	1	PP511687.1	8-10kb
+PQ006155.1	MAG: Bajarodino virus 43 isolate BGG_05_26	8022	0.3068	False	metagenome	1	PQ006155.1	8-10kb
+NC_005948.1	Vibrio phage Vf33	7965	0.4566	False	isolate	4	NC_005948.1;NC_005949.1;AB012573.1;AB012574.1	5-8kb
+NC_047765.1	Ralstonia phage Rs551	7929	0.6083	True	isolate	4	NC_047765.1;KX179905.1;NC_055052.1;MF716957.1	5-8kb
+PP511688.1	Dulem virus 53 isolate Duke_25SF_59	7899	0.3637	False	metagenome	1	PP511688.1	5-8kb
+OR148976.1	Inovirus D_HF34_8	7810	0.4754	False	isolate	1	OR148976.1	5-8kb
+PQ006165.1	MAG: Bajarodino virus 30 isolate BGG_04_32	7777	0.4065	False	metagenome	1	PQ006165.1	5-8kb
+MH617040.1	MAG: Inoviridae sp. isolate ctce6	7769	0.4016	False	metagenome	1	MH617040.1	5-8kb
+OR148975.1	Inovirus D_HF33_10	7705	0.413	False	isolate	1	OR148975.1	5-8kb
+MZ474489.1	Phage blackswan219-1	7703	0.5655	False	isolate	1	MZ474489.1	5-8kb
+PQ006120.1	MAG: Bajarodino virus 73 isolate BGG_10_10	7680	0.4376	False	metagenome	1	PQ006120.1	5-8kb
+NC_025454.1	Ralstonia phage RS603 DNA	7679	0.5937	False	isolate	2	NC_025454.1;AB937974.1	5-8kb
+PP511689.1	Dulem virus 54 isolate Duke_25SF_64	7656	0.5085	False	metagenome	1	PP511689.1	5-8kb
+NC_043029.1	Stenotrophomonas phage phiSMA6 proviral	7648	0.6263	False	isolate	2	NC_043029.1;HG315669.1	5-8kb
+PQ006128.1	MAG: Bajarodino virus 52 isolate BGG_07_18	7599	0.423	False	metagenome	1	PQ006128.1	5-8kb
+OR148974.1	Inovirus D_HF4_79	7564	0.3948	False	isolate	1	OR148974.1	5-8kb
+OR148973.1	Inovirus D_HF38_14	7551	0.4117	False	isolate	1	OR148973.1	5-8kb
+NC_004736.1	Vibrio phage VGJphi	7542	0.4337	False	isolate	2	NC_004736.1;AY242528.1	5-8kb
+OR148970.1	Inovirus D_HF3_12	7540	0.4325	False	isolate	3	OR148970.1;OR148971.1;OR148972.1	5-8kb
+OR148969.1	Inovirus D_HF6_34	7507	0.409	False	isolate	1	OR148969.1	5-8kb
+PQ490702.1	MAG: Ariapisin virus 3 isolate ASU_vp_6696	7487	0.3597	False	metagenome	1	PQ490702.1	5-8kb
+OQ709404.1	MAG: Inoviridae sp. isolate SHuIno5-1	7472	0.362	False	metagenome	1	OQ709404.1	5-8kb
+PP511690.1	Dulem virus 55 isolate Duke_25SF_70	7454	0.4553	False	metagenome	1	PP511690.1	5-8kb
+PP511608.1	Dulem virus 56 isolate Duke_24SS_10	7438	0.3747	False	metagenome	2	PP511608.1;PP511698.1	5-8kb
+PP511699.1	Dulem virus 57 isolate Duke_25SS_43	7433	0.4294	False	metagenome	1	PP511699.1	5-8kb
+PP511691.1	Dulem virus 58 isolate Duke_25SF_72	7412	0.4938	False	metagenome	1	PP511691.1	5-8kb
+NC_001331.1	Pseudomonas phage Pf1	7349	0.6149	False	isolate	1	NC_001331.1	5-8kb
+NC_074762.1	Xanthomonas phage XacF1 DNA	7325	0.5817	False	isolate	3	NC_074762.1;AB910602.1;NC_001396.1	5-8kb
+MH616883.1	MAG: Inoviridae sp. isolate ctbd3	7321	0.4838	False	metagenome	2	MH616883.1;OR047306.1	5-8kb
+NC_073760.1	Vibrio phage VALG_phi8	7311	0.4634	False	isolate	3	NC_073760.1;MN690600.1;CP017895.1	5-8kb
+MH616764.1	MAG: Inoviridae sp. isolate ctgi4	7292	0.4499	False	metagenome	1	MH616764.1	5-8kb
+MH616675.1	MAG: Inoviridae sp. isolate ctge7	7265	0.3727	False	metagenome	1	MH616675.1	5-8kb
+MH617445.1	MAG: Inoviridae sp. isolate ctcf2	7256	0.6413	False	metagenome	1	MH617445.1	5-8kb
+OR148968.1	Inovirus D_HF2_144	7245	0.3573	False	isolate	1	OR148968.1	5-8kb
+PQ490705.1	MAG: Ariapisin virus 1 isolate HBsed_vp_113	7229	0.3956	False	metagenome	3	PQ490705.1;PQ490703.1;PQ490704.1	5-8kb
+OQ354711.1	Pseudomonas phage WX_Y	7205	0.5747	False	isolate	1	OQ354711.1	5-8kb
+PV528706.1	Vibrio phage VapS4	7200	0.4282	False	isolate	1	PV528706.1	5-8kb
+NC_073750.1	Vibrio phage VP24-2_Ke	7180	0.4255	True	isolate	4	NC_073750.1;MN536023.1;NC_012757.1;FJ904927.1	5-8kb
+PQ006164.1	MAG: Bajarodino virus 31 isolate BGG_04_43	7150	0.3966	False	metagenome	1	PQ006164.1	5-8kb
+NC_005131.2	Ralstonia phage p12J	7118	0.5695	False	isolate	2	NC_005131.2;AY374414.2	5-8kb
+NC_006294.1	Vibrio phage KSF-1phi	7107	0.4438	False	isolate	2	NC_006294.1;AY714348.1	5-8kb
+PP511793.1	Dulem virus 59 isolate Duke_28FS_21	7104	0.2379	False	metagenome	1	PP511793.1	5-8kb
+NC_016162.1	Vibrio phage VCY-phi	7103	0.4141	False	isolate	2	NC_016162.1;JN848801.1	5-8kb
+PQ006173.1	MAG: Bajarodino virus 21 isolate BGG_02_17	7100	0.4345	False	metagenome	1	PQ006173.1	5-8kb
+NC_021569.1	Stenotrophomonas phage phiSMA7 proviral	7069	0.6234	False	isolate	2	NC_021569.1;HG007973.1	5-8kb
+PQ006100.1	MAG: Bajarodino virus 68 isolate BGG_089_1	7061	0.48	False	metagenome	1	PQ006100.1	5-8kb
+NC_062737.1	Xanthomonas phage XaF13	7045	0.603	False	isolate	2	NC_062737.1;MN335248.2	5-8kb
+MZ474491.1	Phage silverpheasant213	7022	0.5432	False	isolate	1	MZ474491.1	5-8kb
+PQ006118.1	MAG: Bajarodino virus 75 isolate BGG_11_11	7020	0.3714	False	metagenome	1	PQ006118.1	5-8kb
+MH649021.1	MAG: Inoviridae sp. isolate ctii000	7006	0.4028	False	metagenome	1	MH649021.1	5-8kb
+OR148966.1	Inovirus D_HF1_11	6969	0.4289	False	isolate	2	OR148966.1;OR148967.1	5-8kb
+PQ006181.1	MAG: Bajarodino virus 17 isolate BGG_01_28	6911	0.4106	False	metagenome	1	PQ006181.1	5-8kb
+NC_007189.1	Stenotrophomonas phage phiSMA9	6907	0.6239	False	isolate	1	NC_007189.1	5-8kb
+OR148965.1	Inovirus D_HF3_19	6884	0.4295	False	isolate	1	OR148965.1	5-8kb
+NC_002014.1	Enterobacteria phage Ike	6883	0.4055	False	isolate	1	NC_002014.1	5-8kb
+NC_003327.2	Vibrio phage VSK	6882	0.4372	False	isolate	6	NC_003327.2;AF453500.3;NC_055051.1;AB572858.1;NC_003311.2;AF452449.2	5-8kb
+NC_010429.1	Stenotrophomonas phage PSH1	6867	0.611	False	isolate	2	NC_010429.1;EF489910.1	5-8kb
+PP511700.1	Dulem virus 60 isolate Duke_25SS_52	6864	0.3568	False	metagenome	2	PP511700.1;PP511610.1	5-8kb
+PP511899.1	Dulem virus 61 isolate Duke_44SS_14	6817	0.4986	False	metagenome	1	PP511899.1	5-8kb
+MT901799.1	Erwinia phage PEar4	6801	0.4166	False	isolate	5	MT901799.1;MT901798.1;MT901797.1;NC_073751.1;MT901800.1	5-8kb
+MH617262.1	MAG: Inoviridae sp. isolate ctcg5	6789	0.3557	False	metagenome	1	MH617262.1	5-8kb
+PQ006163.1	MAG: Bajarodino virus 32 isolate BGG_04_48	6788	0.3586	False	metagenome	1	PQ006163.1	5-8kb
+PQ006138.1	MAG: Bajarodino virus 2 isolate BGG_06_54	6783	0.4553	False	metagenome	2	PQ006138.1;PQ006154.1	5-8kb
+MZ474490.1	Phage toucan80	6761	0.5143	False	isolate	1	MZ474490.1	5-8kb
+NC_001332.1	Enterobacteria phage I2-2	6744	0.4272	False	isolate	1	NC_001332.1	5-8kb
+MZ474488.1	Phage blackswan219-6	6732	0.5645	False	isolate	1	MZ474488.1	5-8kb
+NC_073748.1	Vibrio phage pre-CTX	6722	0.4705	False	isolate	3	NC_073748.1;KP972568.1;KP972569.1	5-8kb
+MF155889.1	Affertcholeramvirus CTXphi	6698	0.436	False	isolate	7	MF155889.1;KJ619459.1;KR063267.1;KT728931.1;NC_073749.1;KT728930.1;KR063268.1	5-8kb
+PP511609.1	Dulem virus 62 isolate Duke_24SS_13	6665	0.3497	False	metagenome	3	PP511609.1;PP511692.1;PP511701.1	5-8kb
+PQ006162.1	MAG: Bajarodino virus 33 isolate BGG_04_51	6660	0.2959	False	metagenome	1	PQ006162.1	5-8kb
+NC_105334.1	Vibrio phage V5	6658	0.4368	True	isolate	2	NC_105334.1;OL512807.1	5-8kb
+PQ006161.1	MAG: Bajarodino virus 34 isolate BGG_04_53	6622	0.5137	False	metagenome	1	PQ006161.1	5-8kb
+NC_073755.1	Xanthomonas phage phiXv2	6564	0.5955	False	isolate	2	NC_073755.1;MH206183.1	5-8kb
+MH552488.1	MAG: Inoviridae sp. isolate ctda6	6561	0.615	False	metagenome	1	MH552488.1	5-8kb
+OX639564.1	Clostridium phage CAK1 genome assembly	6557	0.2853	False	isolate	1	OX639564.1	5-8kb
+MH617280.1	MAG: Inoviridae sp. isolate ctba8	6551	0.3686	False	metagenome	1	MH617280.1	5-8kb
+PQ006153.1	MAG: Bajarodino virus 44 isolate BGG_05_46	6530	0.409	False	metagenome	1	PQ006153.1	5-8kb
+PQ006114.1	MAG: Bajarodino virus 80 isolate BGG_27_1	6517	0.4602	False	metagenome	1	PQ006114.1	5-8kb
+MH616719.1	MAG: Inoviridae sp. isolate ctbi9	6506	0.3836	False	metagenome	1	MH616719.1	5-8kb
+MN855892.1	MAG: Inoviridae sp. isolate 381	6503	0.4193	False	metagenome	1	MN855892.1	5-8kb
+MN855893.1	MAG: Inoviridae sp. isolate 382	6496	0.3651	False	metagenome	1	MN855893.1	5-8kb
+MW202693.1	Inoviridae sp. isolate ctcp9890	6466	0.4239	False	metagenome	1	MW202693.1	5-8kb
+MN855897.1	MAG: Inoviridae sp. isolate 387	6465	0.3664	False	metagenome	1	MN855897.1	5-8kb
+NC_073752.1	Xanthomonas phage Cf2	6454	0.5818	False	isolate	2	NC_073752.1;MK512531.1	5-8kb
+PQ006127.1	MAG: Bajarodino virus 53 isolate BGG_07_32	6449	0.4173	False	metagenome	1	PQ006127.1	5-8kb
+PP430150.1	Enterobacteria phage FfLilac	6424	0.4091	False	isolate	30	PP430150.1;NC_025824.1;OR791786.1;PP430148.1;J02451.1;NC_003287.2;NC_025823.1;NC_074765.1;NC_075025.1;NC_075026.1;NC_075027.1;NC_075028.1;NC_075029.1;NC_075030.1;NC_075031.1;NC_075032.1;NC_075033.1;PP430147.1;AB334720.1;AB334721.1;GQ153916.1;GQ153917.1;GQ153918.1;GQ153919.1;J02448.1;JF719732.1;JF719733.1;JF719734.1;JX412914.1;PP430151.1	5-8kb
+PP430149.1	Enterobacteria phage FfLavender	6412	0.4017	False	isolate	1	PP430149.1	5-8kb
+PQ006180.1	MAG: Bajarodino virus 18 isolate BGG_01_43	6397	0.3606	False	metagenome	1	PQ006180.1	5-8kb
+PQ006179.1	MAG: Bajarodino virus 19 isolate BGG_01_44	6394	0.4365	False	metagenome	1	PQ006179.1	5-8kb
+NC_073753.1	Xanthomonas phage phiLf2	6372	0.6022	False	isolate	2	NC_073753.1;MH218848.1	5-8kb
+MH617645.1	MAG: Inoviridae sp. isolate ctcb11	6372	0.3815	False	metagenome	1	MH617645.1	5-8kb
+MH649005.1	MAG: Inoviridae sp. isolate ctcf138	6362	0.3659	False	metagenome	1	MH649005.1	5-8kb
+PQ006172.1	MAG: Bajarodino virus 22 isolate BGG_02_25	6348	0.4737	False	metagenome	1	PQ006172.1	5-8kb
+MH617343.1	MAG: Inoviridae sp. isolate ctda12	6346	0.3801	False	metagenome	1	MH617343.1	5-8kb
+NC_004306.1	Vibrio phage fs1	6340	0.4342	False	isolate	2	NC_004306.1;D89074.1	5-8kb
+MH617363.1	MAG: Inoviridae sp. isolate ctcg13	6312	0.3162	False	metagenome	1	MH617363.1	5-8kb
+MH622909.1	MAG: Inoviridae sp. isolate ctcj22	6301	0.3957	False	metagenome	1	MH622909.1	5-8kb
+PP511650.1	Dulem virus 64 isolate Duke_25FS_55	6296	0.4354	False	metagenome	2	PP511650.1;PP511856.1	5-8kb
+PQ006152.1	MAG: Bajarodino virus 45 isolate BGG_05_58	6295	0.4113	False	metagenome	1	PQ006152.1	5-8kb
+MH617507.1	MAG: Inoviridae sp. isolate ctce6	6275	0.3522	False	metagenome	1	MH617507.1	5-8kb
+PQ006160.1	MAG: Bajarodino virus 35 isolate BGG_04_58	6269	0.4436	False	metagenome	1	PQ006160.1	5-8kb
+PQ490707.1	MAG: Wisapisin virus 1 isolate HBWI_vp_540	6268	0.3819	False	metagenome	1	PQ490707.1	5-8kb
+PQ006168.1	MAG: Bajarodino virus 26 isolate BGG_03_179	6227	0.5601	False	metagenome	1	PQ006168.1	5-8kb
+MH617292.1	MAG: Inoviridae sp. isolate ctbh8	6223	0.3543	False	metagenome	1	MH617292.1	5-8kb
+PQ006106.1	MAG: Bajarodino virus 62 isolate BGG_083_29	6221	0.5387	False	metagenome	1	PQ006106.1	5-8kb
+PQ006113.1	MAG: Bajarodino virus 47 isolate BGG_058_14	6220	0.3559	False	metagenome	1	PQ006113.1	5-8kb
+MH552551.1	MAG: Inoviridae sp. isolate ctda431	6216	0.481	False	metagenome	1	MH552551.1	5-8kb
+PQ006097.1	MAG: Bajarodino virus 3 isolate BGG_095_7	6183	0.47	False	metagenome	2	PQ006097.1;PQ006178.1	5-8kb
+PP511900.1	Dulem virus 65 isolate Duke_44SS_16	6177	0.3113	False	metagenome	1	PP511900.1	5-8kb
+MH552503.1	MAG: Inoviridae sp. isolate cthb500	6176	0.4344	False	metagenome	1	MH552503.1	5-8kb
+OQ709405.1	MAG: Inoviridae sp. isolate SHuIno7-1	6174	0.4347	False	metagenome	1	OQ709405.1	5-8kb
+MH617673.1	MAG: Inoviridae sp. isolate ctca11	6136	0.3382	False	metagenome	1	MH617673.1	5-8kb
+PP511394.1	Dulem virus 66 isolate Duke_21_41	6128	0.3902	False	metagenome	1	PP511394.1	5-8kb
+NC_073758.1	Vibrio phage VAI1	6117	0.4252	False	isolate	3	NC_073758.1;MN200777.1;MN200778.1	5-8kb
+MH617742.1	MAG: Inoviridae sp. isolate ctbf14	6115	0.3179	False	metagenome	1	MH617742.1	5-8kb
+PQ006137.1	MAG: Bajarodino virus 4 isolate BGG_06_81	6113	0.4405	False	metagenome	2	PQ006137.1;PQ006151.1	5-8kb
+NC_109830.1	Vibrio phage vB_VpI_FR1	6080	0.4293	True	isolate	2	NC_109830.1;OP628074.1	5-8kb
+PQ006112.1	MAG: Bajarodino virus 51 isolate BGG_062_24	6064	0.3701	False	metagenome	1	PQ006112.1	5-8kb
+NC_073754.1	Xanthomonas phage phiLF	6062	0.5986	False	isolate	2	NC_073754.1;MH206184.1	5-8kb
+MH617467.1	MAG: Inoviridae sp. isolate ctba17	6062	0.3514	False	metagenome	1	MH617467.1	5-8kb
+MH617224.1	MAG: Inoviridae sp. isolate ctfi19	6043	0.3275	False	metagenome	1	MH617224.1	5-8kb
+PP511337.1	Dulem virus 67 isolate Duke_18_38	6015	0.4446	False	metagenome	4	PP511337.1;PP511543.1;PP511726.1;PP511461.1	5-8kb
+MH617306.1	MAG: Inoviridae sp. isolate ctcj20	6009	0.3881	False	metagenome	1	MH617306.1	5-8kb
+PQ006111.1	MAG: Bajarodino virus 57 isolate BGG_077_4	6004	0.3969	False	metagenome	1	PQ006111.1	5-8kb
+MH649151.1	MAG: Inoviridae sp. isolate ctcb147	5999	0.3669	False	metagenome	1	MH649151.1	5-8kb
+MH617060.1	MAG: Inoviridae sp. isolate ctcg21	5991	0.3691	False	metagenome	1	MH617060.1	5-8kb
+OP433453.1	Alteromonas phage phiAFP1	5986	0.4034	False	isolate	3	OP433453.1;MT975991.1;NC_103327.1	5-8kb
+PQ490706.1	MAG: Ariapisin virus 4 isolate HBTUC_5901	5976	0.3315	False	metagenome	1	PQ490706.1	5-8kb
+PQ006171.1	MAG: Bajarodino virus 23 isolate BGG_02_34	5972	0.439	False	metagenome	1	PQ006171.1	5-8kb
+PQ006136.1	MAG: Bajarodino virus 5 isolate BGG_06_91	5971	0.3959	False	metagenome	2	PQ006136.1;PQ006150.1	5-8kb
+MH552527.1	MAG: Inoviridae sp. isolate ctcb17	5922	0.3995	False	metagenome	1	MH552527.1	5-8kb
+MH617675.1	MAG: Inoviridae sp. isolate ctbf24	5913	0.3563	False	metagenome	1	MH617675.1	5-8kb
+PQ006135.1	MAG: Bajarodino virus 6 isolate BGG_06_97	5910	0.4264	False	metagenome	2	PQ006135.1;PQ006149.1	5-8kb
+MH616843.1	MAG: Inoviridae sp. isolate ctbd25	5901	0.4096	False	metagenome	1	MH616843.1	5-8kb
+PQ006105.1	MAG: Bajarodino virus 63 isolate BGG_083_45	5886	0.4351	False	metagenome	1	PQ006105.1	5-8kb
+PQ006177.1	MAG: Bajarodino virus 20 isolate BGG_01_70	5880	0.4721	False	metagenome	1	PQ006177.1	5-8kb
+PQ006126.1	MAG: Bajarodino virus 54 isolate BGG_07_49	5873	0.4112	False	metagenome	1	PQ006126.1	5-8kb
+MH617539.1	MAG: Inoviridae sp. isolate ctcf31	5853	0.3371	False	metagenome	1	MH617539.1	5-8kb
+PQ006134.1	MAG: Bajarodino virus 7 isolate BGG_06_102	5845	0.4577	False	metagenome	2	PQ006134.1;PQ006148.1	5-8kb
+PQ006098.1	MAG: Bajarodino virus 72 isolate BGG_092_7	5843	0.4633	False	metagenome	2	PQ006098.1;PQ006099.1	5-8kb
+PQ006170.1	MAG: Bajarodino virus 24 isolate BGG_02_36	5834	0.518	False	metagenome	1	PQ006170.1	5-8kb
+NC_001418.1	Pseudomonas phage Pf3	5833	0.4536	False	isolate	4	NC_001418.1;NC_074763.1;M11912.1;M19377.1	5-8kb
+MH616765.1	MAG: Inoviridae sp. isolate ctcf1	5826	0.3953	False	metagenome	1	MH616765.1	5-8kb
+MH617622.1	MAG: Inoviridae sp. isolate ctbd37	5821	0.375	False	metagenome	1	MH617622.1	5-8kb
+NC_015586.1	Stenotrophomonas phage phiSHP2	5819	0.6151	False	isolate	2	NC_015586.1;HM150760.1	5-8kb
+PQ006110.1	MAG: Bajarodino virus 58 isolate BGG_080_21	5818	0.4531	False	metagenome	1	PQ006110.1	5-8kb
+PQ006125.1	MAG: Bajarodino virus 55 isolate BGG_07_52	5785	0.255	False	metagenome	1	PQ006125.1	5-8kb
+PQ006167.1	MAG: Bajarodino virus 27 isolate BGG_03_206	5779	0.4061	False	metagenome	1	PQ006167.1	5-8kb
+PQ006133.1	MAG: Bajarodino virus 8 isolate BGG_06_106	5775	0.4211	False	metagenome	2	PQ006133.1;PQ006147.1	5-8kb
+PQ006132.1	MAG: Bajarodino virus 9 isolate BGG_06_107	5770	0.4591	False	metagenome	2	PQ006132.1;PQ006146.1	5-8kb
+MH617106.1	MAG: Inoviridae sp. isolate ctcb32	5748	0.428	False	metagenome	1	MH617106.1	5-8kb
+MH617072.1	MAG: Inoviridae sp. isolate ctci24	5723	0.4	False	metagenome	1	MH617072.1	5-8kb
+MH616815.1	MAG: Inoviridae sp. isolate ctbf525	5715	0.5076	False	metagenome	1	MH616815.1	5-8kb
+PQ006124.1	MAG: Bajarodino virus 56 isolate BGG_07_55	5709	0.5116	False	metagenome	1	PQ006124.1	5-8kb
+MH617190.1	MAG: Inoviridae sp. isolate ctjd25	5705	0.4075	False	metagenome	1	MH617190.1	5-8kb
+PP511664.1	Dulem virus 68 isolate Duke_25FS_81	5680	0.3007	False	metagenome	1	PP511664.1	5-8kb
+PQ006169.1	MAG: Bajarodino virus 25 isolate BGG_02_40	5679	0.3664	False	metagenome	1	PQ006169.1	5-8kb
+PQ006103.1	MAG: Bajarodino virus 65 isolate BGG_084_13	5656	0.4678	False	metagenome	1	PQ006103.1	5-8kb
+PX789331.1	Pseudoxanthomonas phage PT847	5653	0.5951	False	isolate	1	PX789331.1	5-8kb
+PQ006101.1	MAG: Bajarodino virus 67 isolate BGG_087_9	5626	0.4264	False	metagenome	1	PQ006101.1	5-8kb
+PQ006145.1	MAG: Bajarodino virus 46 isolate BGG_05_97	5610	0.4223	False	metagenome	1	PQ006145.1	5-8kb
+PQ006159.1	MAG: Bajarodino virus 36 isolate BGG_04_76	5603	0.3686	False	metagenome	1	PQ006159.1	5-8kb
+PP511497.1	Dulem virus 71 isolate Duke_24FF_1038	5601	0.2651	False	metagenome	1	PP511497.1	5-8kb
+MH552537.1	MAG: Inoviridae sp. isolate ctci486	5568	0.3518	False	metagenome	1	MH552537.1	5-8kb
+PQ006117.1	MAG: Bajarodino virus 77 isolate BGG_12_51	5559	0.4355	False	metagenome	1	PQ006117.1	5-8kb
+PQ006144.1	MAG: Bajarodino virus 39 isolate BGG_05_104	5538	0.4859	False	metagenome	1	PQ006144.1	5-8kb
+MW202882.1	Inoviridae sp. isolate ctiKU136	5531	0.443	False	metagenome	1	MW202882.1	5-8kb
+PP511697.1	Dulem virus 72 isolate Duke_25SF_178	5519	0.3492	False	metagenome	1	PP511697.1	5-8kb
+PQ006123.1	MAG: Bajarodino virus 70 isolate BGG_09_23	5491	0.4329	False	metagenome	1	PQ006123.1	5-8kb
+NC_015297.1	Ralstonia phage PE226	5475	0.6166	False	isolate	2	NC_015297.1;HM064452.1	5-8kb
+PQ006131.1	MAG: Bajarodino virus 48 isolate BGG_06_130	5466	0.4233	False	metagenome	1	PQ006131.1	5-8kb
+PQ006143.1	MAG: Bajarodino virus 40 isolate BGG_05_108	5450	0.4037	False	metagenome	1	PQ006143.1	5-8kb
+PQ006116.1	MAG: Bajarodino virus 78 isolate BGG_12_54	5444	0.2952	False	metagenome	1	PQ006116.1	5-8kb
+PQ006142.1	MAG: Bajarodino virus 41 isolate BGG_05_111	5427	0.2856	False	metagenome	1	PQ006142.1	5-8kb
+MH616818.1	MAG: Inoviridae sp. isolate ctba29	5419	0.3624	False	metagenome	1	MH616818.1	5-8kb
+PQ006158.1	MAG: Bajarodino virus 37 isolate BGG_04_80	5414	0.309	False	metagenome	1	PQ006158.1	5-8kb
+PQ006141.1	MAG: Bajarodino virus 42 isolate BGG_05_116	5388	0.3497	False	metagenome	1	PQ006141.1	5-8kb
+MH616730.1	MAG: Inoviridae sp. isolate ctgd30	5370	0.4061	False	metagenome	1	MH616730.1	5-8kb
+PQ006130.1	MAG: Bajarodino virus 49 isolate BGG_06_142	5351	0.279	False	metagenome	1	PQ006130.1	5-8kb
+PQ006104.1	MAG: Bajarodino virus 64 isolate BGG_083_75	5313	0.4097	False	metagenome	1	PQ006104.1	5-8kb
+PQ006107.1	MAG: Bajarodino virus 61 isolate BGG_082_12	5312	0.311	False	metagenome	1	PQ006107.1	5-8kb
+MH617362.1	MAG: Inoviridae sp. isolate ctbj588	5295	0.3575	False	metagenome	1	MH617362.1	5-8kb
+PQ006122.1	MAG: Bajarodino virus 71 isolate BGG_09_26	5276	0.2799	False	metagenome	1	PQ006122.1	5-8kb
+PQ006176.1	MAG: Bajarodino virus 10 isolate BGG_01_100	5271	0.4288	False	metagenome	1	PQ006176.1	5-8kb
+MH616838.1	MAG: Inoviridae sp. isolate ctbh31	5257	0.4339	False	metagenome	1	MH616838.1	5-8kb
+PQ006109.1	MAG: Bajarodino virus 59 isolate BGG_080_39	5238	0.4154	False	metagenome	1	PQ006109.1	5-8kb
+NC_026613.1	Uncultured phage WW-nAnB strain 3	5210	0.4351	False	metagenome	2	NC_026613.1;KJ003982.1	5-8kb
+MH617618.1	MAG: Inoviridae sp. isolate ctch32	5205	0.4538	False	metagenome	1	MH617618.1	5-8kb
+PP511354.1	Dulem virus 73 isolate Duke_18_62	5186	0.4308	False	metagenome	3	PP511354.1;PP511469.1;PP511626.1	5-8kb
+MH616872.1	MAG: Inoviridae sp. isolate ctdf33	5181	0.4449	False	metagenome	1	MH616872.1	5-8kb
+MH617717.1	MAG: Inoviridae sp. isolate ctcc37	5180	0.4477	False	metagenome	1	MH617717.1	5-8kb
+MH617298.1	MAG: Inoviridae sp. isolate ctbi36	5178	0.4428	False	metagenome	1	MH617298.1	5-8kb
+MH617011.1	MAG: Inoviridae sp. isolate ctcj34	5175	0.4444	False	metagenome	1	MH617011.1	5-8kb
+MH593836.1	MAG: Inoviridae sp. isolate ctbh10	5166	0.3769	False	metagenome	1	MH593836.1	5-8kb
+PQ006157.1	MAG: Bajarodino virus 38 isolate BGG_04_97	5160	0.2961	False	metagenome	1	PQ006157.1	5-8kb
+MH617090.1	MAG: Inoviridae sp. isolate ctda39	5096	0.377	False	metagenome	1	MH617090.1	5-8kb
+MH617768.1	MAG: Inoviridae sp. isolate ctcj40	5095	0.4449	False	metagenome	1	MH617768.1	5-8kb
+MH616641.1	MAG: Inoviridae sp. isolate ctcf41	5080	0.3801	False	metagenome	1	MH616641.1	5-8kb
+NC_026612.1	Uncultured phage WW-nAnB strain 2	5077	0.4503	False	metagenome	2	NC_026612.1;KJ003981.1	5-8kb
+OQ709402.1	MAG: Inoviridae sp. isolate SHuIno1-2	4958	0.4476	False	metagenome	1	OQ709402.1	3-5kb
+MH617172.1	MAG: Inoviridae sp. isolate ctcf42	4949	0.3779	False	metagenome	1	MH617172.1	3-5kb
+MH617492.1	MAG: Inoviridae sp. isolate ctda43	4948	0.4549	False	metagenome	1	MH617492.1	3-5kb
+PQ006115.1	MAG: Bajarodino virus 79 isolate BGG_12_69	4930	0.4278	False	metagenome	1	PQ006115.1	3-5kb
+MH617219.1	MAG: Inoviridae sp. isolate cted44	4926	0.4472	False	metagenome	1	MH617219.1	3-5kb
+MN582099.1	MAG: Inoviridae sp. ctBZ32	4924	0.66	False	metagenome	1	MN582099.1	3-5kb
+PQ006129.1	MAG: Bajarodino virus 50 isolate BGG_06_188	4917	0.4124	False	metagenome	1	PQ006129.1	3-5kb
+PQ006175.1	MAG: Bajarodino virus 11 isolate BGG_01_112	4910	0.4183	False	metagenome	1	PQ006175.1	3-5kb
+PQ006156.1	MAG: Bajarodino virus 28 isolate BGG_04_116	4902	0.3007	False	metagenome	1	PQ006156.1	3-5kb
+MH616711.1	MAG: Inoviridae sp. isolate ctbe45	4891	0.4249	False	metagenome	1	MH616711.1	3-5kb
+NC_026582.1	Uncultured phage WW-nAnB	4817	0.4436	False	metagenome	2	NC_026582.1;JN402401.1	3-5kb
+MH617617.1	MAG: Inoviridae sp. isolate ctbh45	4815	0.3902	False	metagenome	1	MH617617.1	3-5kb
+OQ709401.1	MAG: Inoviridae sp. isolate SHuIno1-1	4781	0.4062	False	metagenome	1	OQ709401.1	3-5kb
+PQ006139.1	MAG: Bajarodino virus 1 isolate BGG_06_49	4727	0.3345	False	metagenome	2	PQ006139.1;PQ006140.1	3-5kb
+MH617117.1	MAG: Inoviridae sp. isolate ctda702	4649	0.539	False	metagenome	1	MH617117.1	3-5kb
+MW202486.1	Inoviridae sp. isolate ctPFb548	4577	0.5054	False	metagenome	3	MW202486.1;MW202591.1;MW202766.1	3-5kb
+MH616914.1	MAG: Inoviridae sp. isolate ctfh53	4551	0.4474	False	metagenome	1	MH616914.1	3-5kb
+MH617564.1	MAG: Inoviridae sp. isolate ctbi48	4533	0.4399	False	metagenome	1	MH617564.1	3-5kb
+PQ006102.1	MAG: Bajarodino virus 66 isolate BGG_084_38	4481	0.3901	False	metagenome	1	PQ006102.1	3-5kb
+PQ006174.1	MAG: Bajarodino virus 14 isolate BGG_01_167	4471	0.2885	False	metagenome	1	PQ006174.1	3-5kb
+PQ006108.1	MAG: Bajarodino virus 60 isolate BGG_080_81	4195	0.4279	False	metagenome	1	PQ006108.1	3-5kb
+PP511378.1	Dulem virus 75 isolate Duke_18_101	4134	0.417	False	metagenome	3	PP511378.1;PP511482.1;PP511772.1	3-5kb
