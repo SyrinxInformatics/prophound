@@ -38,5 +38,6 @@ python scripts/size_representation_audit.py \
   --splits_dir "$SPLITS" \
   --out_dir analysis/size_representation \
   --split train
-
-echo "=== job end ==="; date
+rc=$?
+echo "=== job end (exit $rc) ==="; date
+exit $rc

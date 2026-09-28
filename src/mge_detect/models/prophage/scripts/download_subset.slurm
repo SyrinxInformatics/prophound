@@ -9,3 +9,6 @@
 cd /work/pke835/mge_explorer
 module load parallel
 bash 01_scripts/download_subset.sh
+rc=$?
+echo "=== job end (exit $rc) ==="; date
+exit $rc

@@ -85,5 +85,10 @@ done
 python scripts/compare_variants.py \
   --elements "$ELEMENTS" \
   $ARGS --strata --out $OUT/results.json
-
-echo "=== job end ==="; date
+rc=$?
+if [ -s "$OUT/failures.txt" ]; then
+  echo "WARNING: $(wc -l < "$OUT/failures.txt") genome runs failed -- see $OUT/failures.txt" >&2
+  [ $rc -eq 0 ] && rc=2
+fi
+echo "=== job end (exit $rc) ==="; date
+exit $rc
