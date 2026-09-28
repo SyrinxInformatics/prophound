@@ -58,3 +58,14 @@ def test_short_contig_thresholds_cover_every_mode_and_scale_and_keep_mode_order(
     for scale in SHORT_CONTIG_SCALES:
         by_mode = [SHORT_CONTIG_THRESHOLDS[m][scale] for m in ("exploratory", "default", "conservative")]
         assert by_mode == sorted(by_mode)
+
+
+def test_seed_support_counts_checkpoints_with_an_overlapping_call():
+    import pandas as pd
+    from mge_detect.models.prophage.src.predict_genome import seed_support
+
+    calls = pd.DataFrame({"contig_id": ["a", "a", "b"], "start": [0, 50_000, 0], "end": [20_000, 60_000, 5_000]})
+    s1 = pd.DataFrame({"contig_id": ["a", "b"], "start": [10_000, 4_999], "end": [15_000, 9_000]})
+    s2 = pd.DataFrame({"contig_id": ["a"], "start": [19_999], "end": [30_000]})
+    s3 = pd.DataFrame({"contig_id": ["a"], "start": [20_000], "end": [49_999]})   # touches neither a-call
+    assert seed_support(calls, [s1, s2, s3]) == [2, 0, 1]

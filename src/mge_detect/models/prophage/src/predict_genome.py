@@ -458,9 +458,20 @@ DEFAULT_BRIDGE_PROB = 0.1
 # Off by default: 0 = no refinement, and with it off output is byte-identical.
 DEFAULT_REFINE_WINDOW_LEN = 0
 DEFAULT_REFINE_STRIDE = 250
+# Fine-pass threshold for the opt-in "tight boundaries" setting (5 kb, alpha 0.6,
+# ramp 15000 60000). Swept 2026-09-28 on the 42-genome tracks at 5 kb (ensemble):
+# 0.95 gives median IoU 0.785 at covered50 0.955 (vs 0.713 / 0.961 unrefined); the
+# previous fallback, the mode's extend threshold (0.99), gave 0.793 / 0.916. 0.6-0.8
+# is recall-neutral (+0.04-0.06 IoU) and is being confirmed on the 18-genome
+# sample. Default mode only; docs/downstream-postprocessing.md.
+DEFAULT_REFINE_THRESHOLD = 0.95
 DEFAULT_EDGE_ALPHA = 1.0        # 1 = keep coarse edges; calibrate before lowering
-DEFAULT_SPLIT_MIN_GAP_BP = 2000
-DEFAULT_SPLIT_MAX_PROB = 0.1    # mirrors DEFAULT_BRIDGE_PROB: merge above it, split below
+# Split gates as swept for the tight-boundaries setting (sweep_ramp, 2026-09-24):
+# 4 kb / 0.05 adds ~0.3-0.9 fragmented elements; 0.2 added ~4.7. Were 2000 / 0.1,
+# which no ramp sweep measured. Below DEFAULT_BRIDGE_PROB, so splitting cannot undo
+# a merge; 0.05-0.1 is a dead band where neither acts.
+DEFAULT_SPLIT_MIN_GAP_BP = 4000
+DEFAULT_SPLIT_MAX_PROB = 0.05
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -986,6 +997,7 @@ def write_metadata(
     trained_stride: int | None = None,
     refine: dict | None = None,
     short_contigs: dict | None = None,
+    seed_support: dict | None = None,
 ) -> None:
     metadata = {
         "run_name": cfg.run_name,
@@ -1009,6 +1021,8 @@ def write_metadata(
     }
     if short_contigs:
         metadata["short_contigs"] = short_contigs
+    if seed_support:
+        metadata["seed_support"] = seed_support
     if num_tiles > 1:
         metadata["region_builder"] = "multi_tile_hysteresis"
         metadata["boundary_refinement"] = "multi_tile_ramp_midpoint_crossing"
@@ -1159,8 +1173,8 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
         type=float,
         default=None,
         help=(
-            "Fine-pass score threshold (default: the mode's extend threshold). "
-            "Not yet calibrated per scale."
+            "Fine-pass score threshold (default 0.95, calibrated at 5 kb for the "
+            "tight-boundaries setting; 0.6-0.8 keeps recall unchanged)."
         ),
     )
     parser.add_argument("--refine-margin", type=int, default=None,
@@ -1264,6 +1278,25 @@ def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame]) -> List[int]:
+    """Per call, how many checkpoints make an overlapping call on their own.
+
+    docs/error-analysis.md: with the `max` ensemble any one seed can create a
+    call, and on the 42-genome sample calls only one of three seeds makes were
+    99% off-target (152 of 154). Reported so users can rank calls; no call is
+    dropped here.
+    """
+    out = []
+    for r in regions_df.itertuples(index=False):
+        n = 0
+        for sr in per_seed_regions:
+            if len(sr) and ((sr["contig_id"] == r.contig_id) & (sr["end"].astype(int) > int(r.start))
+                            & (sr["start"].astype(int) < int(r.end))).any():
+                n += 1
+        out.append(n)
+    return out
+
+
 def score_windows(
     model: torch.nn.Module,
     checkpoints: List[str],
@@ -1274,11 +1307,13 @@ def score_windows(
     device: torch.device,
     batch_size: int,
     num_workers: int,
+    per_checkpoint_out: List[np.ndarray] | None = None,
 ) -> np.ndarray:
     """Score `windows_df` with every checkpoint and combine per `ensemble`.
 
     Shared by the coarse pass and the fine refinement pass so both use the same
-    ensemble rule.
+    ensemble rule. If `per_checkpoint_out` is a list, each checkpoint's scores
+    are appended to it (for seed support).
     """
     dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=ambiguity_policy)
     loader = DataLoader(
@@ -1295,6 +1330,8 @@ def score_windows(
         model.load_state_dict(checkpoint["model"])
         per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
     dataset.close()
+    if per_checkpoint_out is not None:
+        per_checkpoint_out.extend(per_checkpoint)
 
     if len(per_checkpoint) == 1:
         return per_checkpoint[0]
@@ -1358,7 +1395,7 @@ def run_predict(args: argparse.Namespace) -> None:
     split_min_gap_bp = int(getattr(args, "split_min_gap_bp", DEFAULT_SPLIT_MIN_GAP_BP))
     split_max_prob = float(getattr(args, "split_max_prob", DEFAULT_SPLIT_MAX_PROB))
     refine_threshold = getattr(args, "refine_threshold", None)
-    refine_threshold = extend_threshold if refine_threshold is None else float(refine_threshold)
+    refine_threshold = DEFAULT_REFINE_THRESHOLD if refine_threshold is None else float(refine_threshold)
     refine_margin = getattr(args, "refine_margin", None)
     refine_margin = cfg.data.window_len if refine_margin is None else int(refine_margin)
     if refine_window_len:
@@ -1406,12 +1443,17 @@ def run_predict(args: argparse.Namespace) -> None:
     score_kw = dict(ambiguity_policy=ambiguity_policy, ensemble=ensemble, device=device,
                     batch_size=args.batch_size, num_workers=args.num_workers)
     bins_df = None
+    # seed support is computed for the coverage builder (the shipped one) only
+    track_support = len(checkpoints) > 1 and region_builder == "coverage" and num_tiles <= 1
+    per_seed_regions: List[List[pd.DataFrame]] = [[] for _ in checkpoints]
     if windows_df.empty:  # every contig is short: nothing for the coarse pass
         windows_df = pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "fasta_path",
                                            "prob", "pred_label", "region_pred_label"])
         regions_df = pd.DataFrame(columns=REGION_COLUMNS)
     else:
-        probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len, **score_kw)
+        coarse_per_ckpt: List[np.ndarray] = []
+        probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len,
+                              per_checkpoint_out=coarse_per_ckpt, **score_kw)
         windows_df = windows_df.copy()
         windows_df["prob"] = probs
         windows_df["pred_label"] = (windows_df["prob"] >= threshold).astype(int)
@@ -1437,6 +1479,14 @@ def run_predict(args: argparse.Namespace) -> None:
             max_gap_bp=max_gap_bp,
             bridge_prob=bridge_prob,
         )
+        if len(checkpoints) > 1:
+            for k, p in enumerate(coarse_per_ckpt):
+                _, sr = build_region_table_coverage(
+                    windows_df[["genome_id", "contig_id", "start", "end", "fasta_path"]].assign(prob=p),
+                    seed_threshold=seed_threshold, extend_threshold=extend_threshold,
+                    min_coverage_frac=coverage_frac, max_gap_bp=max_gap_bp, bridge_prob=bridge_prob,
+                )
+                per_seed_regions[k].append(sr)
     else:
         windows_df, regions_df = build_region_table(
             windows_df,
@@ -1505,8 +1555,18 @@ def run_predict(args: argparse.Namespace) -> None:
             short_seed, short_extend = short_thresholds(int(scale))
             used[str(int(scale))] = {"seed": short_seed, "extend": short_extend}
             sw = sw.drop(columns="scale").reset_index(drop=True)
-            sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale), **score_kw)
+            short_per_ckpt: List[np.ndarray] = []
+            sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale),
+                                       per_checkpoint_out=short_per_ckpt, **score_kw)
             sw["pred_label"] = (sw["prob"] >= short_seed).astype(int)
+            if track_support:
+                for k, p in enumerate(short_per_ckpt):
+                    _, ssr = build_region_table_coverage(
+                        sw[["genome_id", "contig_id", "start", "end", "fasta_path"]].assign(prob=p),
+                        seed_threshold=short_seed, extend_threshold=short_extend,
+                        min_coverage_frac=coverage_frac, max_gap_bp=0,
+                    )
+                    per_seed_regions[k].append(ssr)
             # per-contig windows share one length, so the coverage builder's
             # per-contig window_len/stride inference holds; no merging on short contigs
             sw, sr = build_region_table_coverage(
@@ -1535,6 +1595,16 @@ def run_predict(args: argparse.Namespace) -> None:
     regions_out = outdir / "regions.tsv"
     metadata_out = outdir / "run_metadata.json"
 
+    support_meta = None
+    if track_support:
+        seed_regs = [pd.concat(r, ignore_index=True) if r else pd.DataFrame(columns=["contig_id", "start", "end"])
+                     for r in per_seed_regions]
+        regions_df = regions_df.copy()
+        regions_df["seed_support"] = seed_support(regions_df, seed_regs) if len(regions_df) else []
+        support_meta = {"n_checkpoints": len(checkpoints),
+                        "calls_by_support": {str(k): int(v) for k, v in
+                                             regions_df["seed_support"].value_counts().sort_index().items()}}
+
     windows_df.to_csv(windows_out, sep="\t", index=False)
     regions_df.to_csv(regions_out, sep="\t", index=False)
     write_metadata(
@@ -1560,6 +1630,7 @@ def run_predict(args: argparse.Namespace) -> None:
         trained_window_len=trained_window_len,
         trained_stride=trained_stride,
         short_contigs=short_meta,
+        seed_support=support_meta,
         refine=(None if not refine_window_len else {
             "window_len": refine_window_len, "stride": refine_stride,
             "threshold": refine_threshold, "margin_bp": refine_margin,

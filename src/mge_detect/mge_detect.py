@@ -37,8 +37,8 @@ DEFAULT_BRIDGE_PROB = 0.1
 DEFAULT_REFINE_WINDOW_LEN = 0
 DEFAULT_REFINE_STRIDE = 250
 DEFAULT_EDGE_ALPHA = 1.0
-DEFAULT_SPLIT_MIN_GAP_BP = 2000
-DEFAULT_SPLIT_MAX_PROB = 0.1
+DEFAULT_SPLIT_MIN_GAP_BP = 4000
+DEFAULT_SPLIT_MAX_PROB = 0.05
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -244,8 +244,8 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         type=float,
         default=None,
         help=(
-            "Fine-pass score threshold (default: the mode's extend threshold). "
-            "Not yet calibrated per scale."
+            "Fine-pass score threshold (default 0.95, calibrated at 5 kb for the "
+            "tight-boundaries setting; 0.6-0.8 keeps recall unchanged)."
         ),
     )
     parser.add_argument("--refine-margin", type=int, default=None,

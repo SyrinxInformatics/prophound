@@ -134,6 +134,9 @@ def load_run(d: str):
         meta = json.loads(m.read_text())
         meta0 = meta0 or meta
         wdf = pd.read_csv(w, sep="\t")
+        # short-contig windows (--short-contigs scan) have their own thresholds and
+        # are never refined; mode_recheck.py scores them
+        wdf = wdf[(wdf.end - wdf.start) == int(meta["window_len"])]
         fm = meta.get("fragment_merge", {})
         _, reg = build_region_table_coverage(
             wdf, seed_threshold=meta["seed_threshold"], extend_threshold=meta["extend_threshold"],
@@ -168,7 +171,7 @@ def refine_all(coarse: pd.DataFrame, fine_by_genome: dict, alpha: float, gap: in
         fg, fr = fine_by_genome[g]
         out.append(refine_regions(cg, fg, fr, edge_alpha=alpha, split_min_gap_bp=gap,
                                   split_max_prob=maxp, alpha_ramp_bp=ramp))
-    return pd.concat(out, ignore_index=True)
+    return pd.concat(out, ignore_index=True) if out else coarse
 
 
 def floats(s: str):
