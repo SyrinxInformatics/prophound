@@ -99,18 +99,23 @@ Sample roles (`docs/research-integrity.md` C1): the 42 is the **tuning** sample;
 
 | mode | seed | vote *k* | 42: covered50 / calls | 18: covered50 / calls | phage-free calls |
 |---|---|---|---|---|---|
-| exploratory | 0.95 | 1 (all kept, `seed_support` flagged) | 0.983 / 29.1 | 1.000 / 31.2 | 20.6 |
-| default | 0.98 | 3 | 0.961 / 11.3 | 0.981 / 10.5 | 4.9 |
+| exploratory | 0.90 | 1 (all kept, `seed_support` flagged) | 0.994 / 35.6 | 1.000 / 39.6 | 27.1 |
+| default | 0.95 | 3 | 0.972 / 14.1 | 1.000 / 13.3 | 7.4 |
 | conservative | 0.995 | 3 | 0.944 / 8.5 | 0.962 / 6.4 | 2.45 |
 
-(Was 0.95 / 0.995 / 0.999 with no vote. Default keeps its recall with 22–27% fewer calls; Conservative keeps it with 10% fewer calls on the 42 but loses one element on the 18.)
+Short-contig thresholds (`SHORT_CONTIG_THRESHOLDS`) are 0.95 / 0.95 / 0.99, set by the "never exceed" rule (user). Each is the lowest threshold whose shredded false-call rate, with the mode's vote, stays at or below the intact 10 kb pipeline's (`822053`).
+
+History, all on 2026-09-29:
+- Before the vote, the modes were 0.95 / 0.995 / 0.999 with no vote.
+- Default was first set to 0.98 with 3 of 3. That kept geNomad recall at 22–27% fewer calls, but lost small and geNomad-negative elements (spike-in 0.30 → 0.25, in situ 20 → 18 of 21, *B. subtilis* prophage 3). So it moved to 0.95 with 3 of 3, which beats the old Default on every measure at the same cost (`docs/error-analysis.md`).
+- Exploratory then moved to 0.90 to keep a reach beyond Default. Recall saturates there.
 
 - **`--min-seed-support K`** overrides the mode's *k*; `1` keeps every call. The pre-2026-09-29 outputs are reproduced with `--threshold 0.995 --min-seed-support 1` (Default) or `--threshold 0.999 --min-seed-support 1` (Conservative).
 - **The vote needs several checkpoints** and the coverage builder with one tile. With fewer checkpoints than *k*, it votes at the number available, and with one checkpoint (or the strict builder) no vote applies. Either way a warning says so, because the thresholds were calibrated with the vote.
 - **It is applied before refinement**, to coarse and short-contig calls separately, so the fine pass never works on a call the vote will drop. `run_metadata.json` `seed_support` records `min_seed_support`, `requested_min_seed_support` and `calls_dropped_by_vote`.
 - **`--write-seed-scores`** (opt-in) adds `prob_ckpt1..N` to `windows.tsv`, so any vote can be re-applied offline. `scripts/mode_recheck.py` `shipped_calls()` does exactly what the CLI does, checked end to end: offline equals online on a planted fixture, and the offline rebuild reproduces the 42-genome and 18-genome frontier numbers to 3 dp.
 - Per-seed calls are now built from the pre-builder window frame, so they no longer depend on the builder preserving row order (it did, but only by construction).
-- **Short-contig thresholds are provisional**: calibrated against the pre-vote modes. They are re-derived under the vote by `scripts/short_contig_vote_sweep.py` (in `vote_rescore.slurm`).
+- **Short-contig thresholds**: re-derived under the vote (above). `final_modes_rescore.slurm` confirms them under the final modes.
 
 ## Decisions 2026-09-24 (user)
 

@@ -4,21 +4,21 @@
   "bootstrap_resamples": 10000,
   "modes": {
     "exploratory": {
-      "threshold": 0.95,
+      "threshold": 0.9,
       "min_seed_support": 1,
-      "calls_per_genome": 20.6,
+      "calls_per_genome": 27.15,
       "calls_per_genome_ci": [
-        14.55,
-        26.65
+        19.05,
+        35.45
       ]
     },
     "default": {
-      "threshold": 0.98,
+      "threshold": 0.95,
       "min_seed_support": 3,
-      "calls_per_genome": 4.9,
+      "calls_per_genome": 7.4,
       "calls_per_genome_ci": [
-        3.0,
-        6.95
+        4.7,
+        10.2
       ]
     },
     "conservative": {

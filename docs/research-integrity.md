@@ -186,6 +186,22 @@ Applied so far: README status, the CLI mode table, and the checklist claim items
 
 ### C2 + C3 — intervals and coverage cut-offs
 
+**Final modes (recomputed 2026-09-29 after the mode change):**
+
+| sample, mode | calls/genome | ≥1 bp | ≥25% | **≥50%** (genome bootstrap; Wilson) | ≥75% |
+|---|---|---|---|---|---|
+| 42, Exploratory 0.90 | 35.6 (31.3–40.1) | 1.000 | 1.000 | **0.994** (0.982–1.000; 0.969–0.999) | 0.989 |
+| 42, Default 0.95 / 3 of 3 | 14.1 (12.1–16.3) | 0.978 | 0.978 | **0.972** (0.949–0.994; 0.936–0.988) | 0.967 |
+| 42, Conservative 0.995 / 3 of 3 | 8.5 (7.3–9.6) | 0.961 | 0.950 | **0.944** (0.909–0.977; 0.900–0.969) | 0.916 |
+| 18, Exploratory | 39.6 (29.9–50.2) | 1.000 | 1.000 | **1.000** (Wilson 0.931–1.000) | 0.981 |
+| 18, Default | 13.3 (9.7–17.3) | 1.000 | 1.000 | **1.000** (Wilson 0.931–1.000) | 0.962 |
+| 18, Conservative | 6.4 (4.7–8.5) | 0.981 | 0.981 | **0.962** (0.881–1.000; 0.870–0.989) | 0.923 |
+| phage-free, E / D / C | 27.1 (19.1–35.5) / 7.4 (4.7–10.2) / 2.45 (1.35–3.7) | — | — | — | — |
+
+Default's lower bound on the 42 is 0.949, just under 95%, so the reading below still holds. The table after this one is the first pass, under the interim modes.
+
+**First pass (interim modes, Default 0.98):**
+
 Ensemble covered recall at four coverage cut-offs. Intervals are 95% genome bootstrap (Wilson in brackets where it differs notably).
 
 | sample, mode | calls/genome | ≥1 bp | ≥25% | **≥50%** | ≥75% |
@@ -252,8 +268,26 @@ Coordinate classes of the 57 truth rows:
     - `prophage_v2_pool_r1` `3259673877ced18e79a92227f898b2009f69cfe82b692c59cb355d74dc27655f`
     - `prophage_v2_pool_r2` `7a50701a0be0f9cca87f000b428341e67d55242f77807321b3237ee73f31e59c`
     - `prophage_v2_pool_r3` `541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484`
-  - The geNomad *software* version could not be read on the login node (conda loads only on job nodes). Take it from the version banner in the lockbox build's `genomad.log` files (`822062`, which also uses the corpus env and DB).
-  - Caveat: this records the DB on ARC *today*. That it is the one the corpus labels were made with is likely (same path as `genomad_array.slurm`) but not proven.
+  - **geNomad software version 1.9.4**, read by the user on 2026-09-29 from the `mge_explorer` env (`genomad --version`), the env both the corpus labelling and the lockbox build use.
+  - **The corpus labels were made with the same versions** (confirmed by the user 2026-09-29, who ran the original labelling). Training, evaluation and lockbox truth all come from geNomad 1.9.4 with DB 1.9, so no version difference separates them.
+
+### C6 — model-independent off-target controls (`822067`, 2026-09-29)
+
+The same 607 Default calls (pre-vote, `calls42.csv`) and the same categories. Only the controls change. Hallmark rate = any MGE category.
+
+| controls drawn | control_off_3seed | control_off_1_2seed | control_on_target |
+|---|---|---|---|
+| clear of calls and elements (821371) | 0.119 | 0.083 | 0.149 |
+| **clear of geNomad elements only** | **0.168** | **0.104** | 0.177 |
+| fully random | 0.186 | 0.136 | 0.278 |
+
+- **F8 confirmed.** Excluding called regions made the background look emptier than random sequence.
+- **Against the model-independent background, unanimous off-target calls (52.1% hallmark) are enriched 3.1×, not 4.3×.** One- and two-seed off-target calls (20.1%) are enriched 1.9×, not 2.4×.
+- The enrichment survives, smaller. The release uses the elements-only figure, and `docs/error-analysis.md` is corrected.
+
+### C5 — first attempt failed (`822067`)
+
+`literature_truth.tsv` carries both `genome_id` and `accession`, and the rename made a duplicate column. The bug is fixed, the lockbox is added as a fifth set (with a per-set genome dir), and the job is to be resubmitted. C6 in the same job was unaffected.
 
 ### Next
 

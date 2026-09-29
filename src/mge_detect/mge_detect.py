@@ -59,9 +59,9 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         choices=PROPHAGE_MODES,
         default="default",
         help=(
-            "Operating mode: seed threshold plus seed vote. exploratory 0.95, every "
-            "call kept (~30 calls/genome); default 0.98, all 3 checkpoints agree "
-            "(~11); conservative 0.995, all 3 agree (~8)."
+            "Operating mode: seed threshold plus seed vote. exploratory 0.90, every "
+            "call kept (~36 calls/genome); default 0.95, all 3 checkpoints agree "
+            "(~14); conservative 0.995, all 3 agree (~8)."
         ),
     )
     parser.add_argument(
@@ -238,7 +238,7 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
             "leaves them unscanned. Either way a warning reports them. Reduced-scale "
             "thresholds are calibrated per mode to the 10 kb false-positive load "
-            "(0.95 / 0.99 / 0.998)."
+            "(0.95 / 0.95 / 0.99, with the mode's seed vote)."
         ),
     )
     parser.add_argument(

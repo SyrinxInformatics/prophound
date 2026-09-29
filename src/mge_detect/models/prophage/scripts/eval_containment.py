@@ -49,7 +49,9 @@ from small_element_spikein import canon_kmers  # noqa: E402
 
 def read_set(label: str, path: str) -> pd.DataFrame:
     df = pd.read_csv(path, sep="\t" if path.endswith((".tsv", ".txt")) else ",")
-    df = df.rename(columns={"genome_id": "accession"})
+    if "genome_id" in df.columns:
+        # literature_truth.tsv carries both: genome_id is the corpus file stem, accession the bare GCF
+        df = df.drop(columns=["accession"], errors="ignore").rename(columns={"genome_id": "accession"})
     need = {"accession", "contig", "start", "end"}
     if not need <= set(df.columns):
         raise SystemExit(f"{label}: {path} lacks columns {sorted(need - set(df.columns))}")
@@ -66,13 +68,16 @@ def main() -> None:
     ap.add_argument("--genomes_dir", required=True)
     ap.add_argument("--spiked_dir", default=None)
     ap.add_argument("--set", action="append", required=True, metavar="LABEL=PATH")
+    ap.add_argument("--set_genomes_dir", action="append", default=[], metavar="LABEL=DIR",
+                    help="genome FASTA dir for one set (e.g. lockbox=../raw/lockbox); default --genomes_dir")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
     ev = pd.concat([read_set(*s.split("=", 1)) for s in a.set], ignore_index=True)
+    set_dir = dict(s.split("=", 1) for s in a.set_genomes_dir)
     codes, missing = [], []
-    for g, sub in ev.groupby("accession", sort=False):
-        d = Path(a.spiked_dir) if (a.spiked_dir and g.startswith("spk_")) else Path(a.genomes_dir)
+    for (lab, g), sub in ev.groupby(["set", "accession"], sort=False):
+        d = Path(a.spiked_dir) if (a.spiked_dir and g.startswith("spk_")) else Path(set_dir.get(lab, a.genomes_dir))
         fp = d / f"{g}.fna"
         if not fp.exists():
             missing.append(g)

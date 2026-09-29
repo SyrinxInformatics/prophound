@@ -1,0 +1,508 @@
+{
+  "genes_columns": [
+    "gene",
+    "start",
+    "end",
+    "length",
+    "strand",
+    "gc_content",
+    "genetic_code",
+    "rbs_motif",
+    "marker",
+    "evalue",
+    "bitscore",
+    "uscg",
+    "plasmid_hallmark",
+    "virus_hallmark",
+    "taxid",
+    "taxname",
+    "annotation_conjscan",
+    "annotation_amr",
+    "annotation_accessions",
+    "annotation_description"
+  ],
+  "missing_genomes": [],
+  "control_busy": "elements_only",
+  "groups": {
+    "default/control_off_1_2seed": {
+      "n": 747,
+      "category": {
+        "phage_structural": 0.0,
+        "conjugative": 0.0228,
+        "plasmid_replicon": 0.0348,
+        "integrase_or_transposase": 0.0214,
+        "phage_term_only": 0.0254,
+        "no_mge_hallmark": 0.8956,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0402,
+        "structural": 0.012,
+        "lysis": 0.0094,
+        "integrase": 0.004,
+        "transposase": 0.0254,
+        "conjugation": 0.0348,
+        "plasmid_rep": 0.0054,
+        "phage_generic": 0.0254,
+        "virus_hallmark": 0.0214,
+        "plasmid_hallmark": 0.0388,
+        "annotation_conjscan": 0.0214,
+        "annotation_amr": 0.0843,
+        "marker": 0.9826
+      },
+      "genes_per_10kb_median": 9.0,
+      "gc_shift_median": 0.006597076290543735,
+      "marker_suffix_total": {
+        "CP": 2549,
+        "CC": 593,
+        "PC": 491,
+        "CV": 299,
+        "PP": 134,
+        "VC": 123,
+        "VV": 119,
+        "VP": 34,
+        "PV": 11
+      }
+    },
+    "default/control_off_3seed": {
+      "n": 570,
+      "category": {
+        "phage_structural": 0.0,
+        "conjugative": 0.0316,
+        "plasmid_replicon": 0.0246,
+        "integrase_or_transposase": 0.0614,
+        "phage_term_only": 0.0509,
+        "no_mge_hallmark": 0.8316,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0298,
+        "structural": 0.007,
+        "lysis": 0.0158,
+        "integrase": 0.0228,
+        "transposase": 0.0456,
+        "conjugation": 0.0491,
+        "plasmid_rep": 0.0105,
+        "phage_generic": 0.0684,
+        "virus_hallmark": 0.0368,
+        "plasmid_hallmark": 0.0404,
+        "annotation_conjscan": 0.0298,
+        "annotation_amr": 0.093,
+        "marker": 0.9965
+      },
+      "genes_per_10kb_median": 9.09090909090909,
+      "gc_shift_median": 0.0043592159103328365,
+      "marker_suffix_total": {
+        "CP": 3724,
+        "CC": 893,
+        "PC": 657,
+        "CV": 477,
+        "VV": 223,
+        "VC": 194,
+        "PP": 152,
+        "VP": 81,
+        "PV": 37
+      }
+    },
+    "default/control_on_target": {
+      "n": 504,
+      "category": {
+        "phage_structural": 0.004,
+        "conjugative": 0.0397,
+        "plasmid_replicon": 0.0099,
+        "integrase_or_transposase": 0.0675,
+        "phage_term_only": 0.0556,
+        "no_mge_hallmark": 0.8234,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0099,
+        "structural": 0.0198,
+        "lysis": 0.0337,
+        "integrase": 0.0139,
+        "transposase": 0.0595,
+        "conjugation": 0.0714,
+        "plasmid_rep": 0.0139,
+        "phage_generic": 0.0694,
+        "virus_hallmark": 0.0675,
+        "plasmid_hallmark": 0.0774,
+        "annotation_conjscan": 0.0377,
+        "annotation_amr": 0.1667,
+        "marker": 0.994
+      },
+      "genes_per_10kb_median": 8.99367088607595,
+      "gc_shift_median": 0.00427203146855018,
+      "marker_suffix_total": {
+        "CP": 5008,
+        "CC": 1353,
+        "PC": 873,
+        "CV": 678,
+        "VC": 282,
+        "VV": 266,
+        "PP": 145,
+        "VP": 96,
+        "PV": 37
+      }
+    },
+    "default/off_1_2seed": {
+      "n": 249,
+      "category": {
+        "phage_structural": 0.008,
+        "conjugative": 0.0201,
+        "plasmid_replicon": 0.0482,
+        "integrase_or_transposase": 0.0763,
+        "phage_term_only": 0.0482,
+        "no_mge_hallmark": 0.7992,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0562,
+        "structural": 0.0241,
+        "lysis": 0.012,
+        "integrase": 0.0201,
+        "transposase": 0.0683,
+        "conjugation": 0.0321,
+        "plasmid_rep": 0.0241,
+        "phage_generic": 0.0602,
+        "virus_hallmark": 0.0522,
+        "plasmid_hallmark": 0.0562,
+        "annotation_conjscan": 0.0161,
+        "annotation_amr": 0.0482,
+        "marker": 0.9679
+      },
+      "genes_per_10kb_median": 9.285714285714286,
+      "gc_shift_median": -0.005904927315753872,
+      "marker_suffix_total": {
+        "CP": 563,
+        "PC": 265,
+        "CC": 139,
+        "PP": 102,
+        "CV": 95,
+        "VV": 61,
+        "VP": 50,
+        "VC": 35,
+        "PV": 29
+      }
+    },
+    "default/off_3seed": {
+      "n": 190,
+      "category": {
+        "phage_structural": 0.0368,
+        "conjugative": 0.1632,
+        "plasmid_replicon": 0.0474,
+        "integrase_or_transposase": 0.1316,
+        "phage_term_only": 0.1421,
+        "no_mge_hallmark": 0.4789,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0895,
+        "structural": 0.0842,
+        "lysis": 0.0211,
+        "integrase": 0.1,
+        "transposase": 0.1105,
+        "conjugation": 0.1632,
+        "plasmid_rep": 0.0316,
+        "phage_generic": 0.2684,
+        "virus_hallmark": 0.2474,
+        "plasmid_hallmark": 0.2842,
+        "annotation_conjscan": 0.1579,
+        "annotation_amr": 0.0579,
+        "marker": 0.9842
+      },
+      "genes_per_10kb_median": 10.11111111111111,
+      "gc_shift_median": -0.02209320209199092,
+      "marker_suffix_total": {
+        "CP": 511,
+        "PC": 401,
+        "PP": 265,
+        "VP": 185,
+        "CC": 135,
+        "VV": 135,
+        "PV": 94,
+        "CV": 58,
+        "VC": 45
+      }
+    },
+    "default/on_target": {
+      "n": 168,
+      "category": {
+        "phage_structural": 0.6905,
+        "conjugative": 0.0536,
+        "plasmid_replicon": 0.006,
+        "integrase_or_transposase": 0.0476,
+        "phage_term_only": 0.1369,
+        "no_mge_hallmark": 0.0655,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0238,
+        "structural": 0.7976,
+        "lysis": 0.3036,
+        "integrase": 0.131,
+        "transposase": 0.0833,
+        "conjugation": 0.0952,
+        "plasmid_rep": 0.0595,
+        "phage_generic": 0.9167,
+        "virus_hallmark": 0.9167,
+        "plasmid_hallmark": 0.0952,
+        "annotation_conjscan": 0.0655,
+        "annotation_amr": 0.0833,
+        "marker": 1.0
+      },
+      "genes_per_10kb_median": 12.182539682539684,
+      "gc_shift_median": -0.014319859558493991,
+      "marker_suffix_total": {
+        "VV": 2610,
+        "VP": 1312,
+        "CP": 331,
+        "PC": 169,
+        "VC": 148,
+        "CC": 104,
+        "PP": 71,
+        "PV": 55,
+        "CV": 40
+      }
+    },
+    "exploratory/control_off_1_2seed": {
+      "n": 1875,
+      "category": {
+        "phage_structural": 0.0016,
+        "conjugative": 0.0224,
+        "plasmid_replicon": 0.0283,
+        "integrase_or_transposase": 0.0224,
+        "phage_term_only": 0.0213,
+        "no_mge_hallmark": 0.9035,
+        "no_genes": 0.0005
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0336,
+        "structural": 0.0091,
+        "lysis": 0.0096,
+        "integrase": 0.0053,
+        "transposase": 0.0229,
+        "conjugation": 0.0277,
+        "plasmid_rep": 0.0048,
+        "phage_generic": 0.0229,
+        "virus_hallmark": 0.0181,
+        "plasmid_hallmark": 0.0325,
+        "annotation_conjscan": 0.0203,
+        "annotation_amr": 0.0517,
+        "marker": 0.9728
+      },
+      "genes_per_10kb_median": 9.0,
+      "gc_shift_median": 0.005219258887936951,
+      "marker_suffix_total": {
+        "CP": 5395,
+        "CC": 1174,
+        "PC": 1097,
+        "CV": 582,
+        "VC": 269,
+        "VV": 260,
+        "PP": 217,
+        "VP": 89,
+        "PV": 79
+      }
+    },
+    "exploratory/control_off_3seed": {
+      "n": 1278,
+      "category": {
+        "phage_structural": 0.0016,
+        "conjugative": 0.0282,
+        "plasmid_replicon": 0.0149,
+        "integrase_or_transposase": 0.0493,
+        "phage_term_only": 0.0454,
+        "no_mge_hallmark": 0.8607,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0211,
+        "structural": 0.018,
+        "lysis": 0.0282,
+        "integrase": 0.0149,
+        "transposase": 0.043,
+        "conjugation": 0.0415,
+        "plasmid_rep": 0.0039,
+        "phage_generic": 0.0501,
+        "virus_hallmark": 0.0446,
+        "plasmid_hallmark": 0.0383,
+        "annotation_conjscan": 0.0258,
+        "annotation_amr": 0.0947,
+        "marker": 0.993
+      },
+      "genes_per_10kb_median": 8.947368421052632,
+      "gc_shift_median": 0.004849154822450241,
+      "marker_suffix_total": {
+        "CP": 7607,
+        "CC": 2017,
+        "PC": 1376,
+        "CV": 987,
+        "VV": 438,
+        "VC": 406,
+        "PP": 334,
+        "VP": 133,
+        "PV": 65
+      }
+    },
+    "exploratory/control_on_target": {
+      "n": 513,
+      "category": {
+        "phage_structural": 0.0019,
+        "conjugative": 0.0331,
+        "plasmid_replicon": 0.0136,
+        "integrase_or_transposase": 0.0721,
+        "phage_term_only": 0.0546,
+        "no_mge_hallmark": 0.8246,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0214,
+        "structural": 0.0136,
+        "lysis": 0.0331,
+        "integrase": 0.0117,
+        "transposase": 0.0741,
+        "conjugation": 0.0721,
+        "plasmid_rep": 0.0214,
+        "phage_generic": 0.0624,
+        "virus_hallmark": 0.0819,
+        "plasmid_hallmark": 0.078,
+        "annotation_conjscan": 0.0312,
+        "annotation_amr": 0.1754,
+        "marker": 0.9981
+      },
+      "genes_per_10kb_median": 8.923076923076923,
+      "gc_shift_median": 0.004340808935817342,
+      "marker_suffix_total": {
+        "CP": 5553,
+        "CC": 1464,
+        "PC": 874,
+        "CV": 765,
+        "VC": 333,
+        "VV": 311,
+        "PP": 191,
+        "VP": 110,
+        "PV": 57
+      }
+    },
+    "exploratory/off_1_2seed": {
+      "n": 625,
+      "category": {
+        "phage_structural": 0.0,
+        "conjugative": 0.0144,
+        "plasmid_replicon": 0.032,
+        "integrase_or_transposase": 0.0368,
+        "phage_term_only": 0.0368,
+        "no_mge_hallmark": 0.88,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0352,
+        "structural": 0.0112,
+        "lysis": 0.0128,
+        "integrase": 0.0048,
+        "transposase": 0.032,
+        "conjugation": 0.0192,
+        "plasmid_rep": 0.0112,
+        "phage_generic": 0.0384,
+        "virus_hallmark": 0.032,
+        "plasmid_hallmark": 0.0384,
+        "annotation_conjscan": 0.0144,
+        "annotation_amr": 0.056,
+        "marker": 0.976
+      },
+      "genes_per_10kb_median": 9.0,
+      "gc_shift_median": -0.0011479828713093498,
+      "marker_suffix_total": {
+        "CP": 1482,
+        "PC": 521,
+        "CC": 391,
+        "CV": 219,
+        "PP": 130,
+        "VV": 114,
+        "VC": 78,
+        "VP": 63,
+        "PV": 32
+      }
+    },
+    "exploratory/off_3seed": {
+      "n": 426,
+      "category": {
+        "phage_structural": 0.0235,
+        "conjugative": 0.0822,
+        "plasmid_replicon": 0.0376,
+        "integrase_or_transposase": 0.1221,
+        "phage_term_only": 0.1033,
+        "no_mge_hallmark": 0.6315,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.061,
+        "structural": 0.0657,
+        "lysis": 0.0211,
+        "integrase": 0.0681,
+        "transposase": 0.1127,
+        "conjugation": 0.0915,
+        "plasmid_rep": 0.0282,
+        "phage_generic": 0.1667,
+        "virus_hallmark": 0.1737,
+        "plasmid_hallmark": 0.1643,
+        "annotation_conjscan": 0.0775,
+        "annotation_amr": 0.0704,
+        "marker": 0.9883
+      },
+      "genes_per_10kb_median": 9.523809523809524,
+      "gc_shift_median": -0.014697173632820276,
+      "marker_suffix_total": {
+        "CP": 1481,
+        "PC": 828,
+        "PP": 407,
+        "CC": 354,
+        "VP": 251,
+        "VV": 230,
+        "CV": 185,
+        "PV": 145,
+        "VC": 105
+      }
+    },
+    "exploratory/on_target": {
+      "n": 171,
+      "category": {
+        "phage_structural": 0.6842,
+        "conjugative": 0.0526,
+        "plasmid_replicon": 0.0058,
+        "integrase_or_transposase": 0.0526,
+        "phage_term_only": 0.1579,
+        "no_mge_hallmark": 0.0468,
+        "no_genes": 0.0
+      },
+      "frac_with": {
+        "replicon_plasmid": 0.0234,
+        "structural": 0.7953,
+        "lysis": 0.3099,
+        "integrase": 0.1345,
+        "transposase": 0.0877,
+        "conjugation": 0.1053,
+        "plasmid_rep": 0.0585,
+        "phage_generic": 0.9415,
+        "virus_hallmark": 0.9357,
+        "plasmid_hallmark": 0.1053,
+        "annotation_conjscan": 0.0936,
+        "annotation_amr": 0.0994,
+        "marker": 1.0
+      },
+      "genes_per_10kb_median": 11.956521739130435,
+      "gc_shift_median": -0.014438979902794968,
+      "marker_suffix_total": {
+        "VV": 2638,
+        "VP": 1350,
+        "CP": 453,
+        "PC": 201,
+        "VC": 161,
+        "CC": 135,
+        "PP": 77,
+        "PV": 57,
+        "CV": 51
+      }
+    }
+  }
+}

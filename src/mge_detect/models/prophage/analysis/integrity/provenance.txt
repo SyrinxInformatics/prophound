@@ -1,0 +1,35 @@
+Lmod has detected the following error: [1;31m This module is available on the
+job nodes. To use this module please allocate a node using the 'srun' command.
+[0m
+
+While processing the following module(s):
+    Module fullname   Module Filename
+    ---------------   ---------------
+    miniconda/24.4.0  /apps/availablemodules/miniconda/24.4.0.lua
+
+bash: conda: command not found
+bash: genomad: command not found
+genomad_db
+genomad_db.dbtype
+genomad_db_h
+genomad_db_h.dbtype
+genomad_db_h.index
+genomad_db.index
+genomad_db.lookup
+genomad_db_mapping
+genomad_db.source
+genomad_db_taxonomy
+genomad_integrase_db
+genomad_integrase_db.dbtype
+genomad_integrase_db_h
+genomad_integrase_db_h.dbtype
+genomad_integrase_db_h.index
+genomad_integrase_db.index
+genomad_integrase_db.lookup
+genomad_integrase_db.source
+genomad_marker_metadata.tsv
+genomad_mini_db
+1.9
+3259673877ced18e79a92227f898b2009f69cfe82b692c59cb355d74dc27655f  runs/prophage_v2_pool_r1/checkpoints/best.pt
+7a50701a0be0f9cca87f000b428341e67d55242f77807321b3237ee73f31e59c  runs/prophage_v2_pool_r2/checkpoints/best.pt
+541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484  runs/prophage_v2_pool_r3/checkpoints/best.pt

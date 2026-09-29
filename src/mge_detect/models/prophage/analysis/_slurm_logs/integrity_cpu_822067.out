@@ -1,0 +1,122 @@
+=== job start ===
+Tue Sep 29 09:36:46 CDT 2026
+c005
+[preflight] all inputs present
+[C5] containment
+Tue Sep 29 09:36:46 CDT 2026
+[C6] controls avoiding: elements_only
+Tue Sep 29 09:36:48 CDT 2026
+[genome] GCF_000006885.1_ASM688v1_genomic: 16 calls
+[genome] GCF_000009105.1_ASM910v1_genomic: 21 calls
+[genome] GCF_000009265.1_ASM926v1_genomic: 77 calls
+[genome] GCF_000009865.1_ASM986v1_genomic: 53 calls
+[genome] GCF_000011545.1_ASM1154v1_genomic: 54 calls
+[genome] GCF_000011665.1_ASM1166v1_genomic: 21 calls
+[genome] GCF_000012105.1_ASM1210v1_genomic: 58 calls
+[genome] GCF_000012725.1_ASM1272v1_genomic: 50 calls
+[genome] GCF_000013425.1_ASM1342v1_genomic: 45 calls
+[genome] GCF_000015905.1_ASM1590v1_genomic: 43 calls
+[genome] GCF_000016425.1_ASM1642v1_genomic: 41 calls
+[genome] GCF_000016845.1_ASM1684v1_genomic: 11 calls
+[genome] GCF_000016945.1_ASM1694v1_genomic: 77 calls
+[genome] GCF_000017205.1_ASM1720v1_genomic: 41 calls
+[genome] GCF_000017405.1_ASM1740v1_genomic: 55 calls
+[genome] GCF_000017665.1_ASM1766v1_genomic: 48 calls
+[genome] GCF_000165485.1_ASM16548v1_genomic: 72 calls
+[genome] GCF_000284415.1_ASM28441v2_genomic: 44 calls
+[genome] GCF_000470775.1_ASM47077v1_genomic: 25 calls
+[genome] GCF_000827125.1_ASM82712v1_genomic: 29 calls
+[genome] GCF_001561955.1_ASM156195v1_genomic: 55 calls
+[genome] GCF_001610875.1_ASM161087v1_genomic: 61 calls
+[genome] GCF_001887265.1_ASM188726v1_genomic: 26 calls
+[genome] GCF_002142475.1_ASM214247v1_genomic: 37 calls
+[genome] GCF_002291425.1_ASM229142v1_genomic: 51 calls
+[genome] GCF_003008555.2_ASM300855v2_genomic: 78 calls
+[genome] GCF_003008595.1_ASM300859v1_genomic: 29 calls
+[genome] GCF_003590145.2_ASM359014v2_genomic: 33 calls
+[genome] GCF_003966715.1_ASM396671v1_genomic: 39 calls
+[genome] GCF_003967035.1_ASM396703v1_genomic: 21 calls
+[genome] GCF_005304985.1_ASM530498v1_genomic: 29 calls
+[genome] GCF_007431345.1_ASM743134v1_genomic: 61 calls
+[genome] GCF_013341275.1_ASM1334127v1_genomic: 22 calls
+[genome] GCF_016894345.1_ASM1689434v1_genomic: 43 calls
+[genome] GCF_019355395.1_ASM1935539v1_genomic: 71 calls
+[genome] GCF_021733145.1_ASM2173314v1_genomic: 39 calls
+[genome] GCF_028891345.1_ASM2889134v1_genomic: 53 calls
+[genome] GCF_030759015.1_ASM3075901v1_genomic: 38 calls
+[genome] GCF_032164335.1_ASM3216433v1_genomic: 66 calls
+[genome] GCF_045865535.1_ASM4586553v1_genomic: 39 calls
+[genome] GCF_046523945.1_ASM4652394v1_genomic: 35 calls
+[genome] GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic: 22 calls
+[default/control_off_1_2seed] n=747 conjugative=0.02 plasmid_replicon=0.03 integrase_or_transposase=0.02 phage_term_only=0.03 no_mge_hallmark=0.90 | gc_shift 0.0066 genes/10kb 9.0
+[default/control_off_3seed] n=570 conjugative=0.03 plasmid_replicon=0.02 integrase_or_transposase=0.06 phage_term_only=0.05 no_mge_hallmark=0.83 | gc_shift 0.0044 genes/10kb 9.1
+[default/control_on_target] n=504 phage_structural=0.00 conjugative=0.04 plasmid_replicon=0.01 integrase_or_transposase=0.07 phage_term_only=0.06 no_mge_hallmark=0.82 | gc_shift 0.0043 genes/10kb 9.0
+[default/off_1_2seed] n=249 phage_structural=0.01 conjugative=0.02 plasmid_replicon=0.05 integrase_or_transposase=0.08 phage_term_only=0.05 no_mge_hallmark=0.80 | gc_shift -0.0059 genes/10kb 9.3
+[default/off_3seed] n=190 phage_structural=0.04 conjugative=0.16 plasmid_replicon=0.05 integrase_or_transposase=0.13 phage_term_only=0.14 no_mge_hallmark=0.48 | gc_shift -0.0221 genes/10kb 10.1
+[default/on_target] n=168 phage_structural=0.69 conjugative=0.05 plasmid_replicon=0.01 integrase_or_transposase=0.05 phage_term_only=0.14 no_mge_hallmark=0.07 | gc_shift -0.0143 genes/10kb 12.2
+[exploratory/control_off_1_2seed] n=1875 phage_structural=0.00 conjugative=0.02 plasmid_replicon=0.03 integrase_or_transposase=0.02 phage_term_only=0.02 no_mge_hallmark=0.90 no_genes=0.00 | gc_shift 0.0052 genes/10kb 9.0
+[exploratory/control_off_3seed] n=1278 phage_structural=0.00 conjugative=0.03 plasmid_replicon=0.01 integrase_or_transposase=0.05 phage_term_only=0.05 no_mge_hallmark=0.86 | gc_shift 0.0048 genes/10kb 8.9
+[exploratory/control_on_target] n=513 phage_structural=0.00 conjugative=0.03 plasmid_replicon=0.01 integrase_or_transposase=0.07 phage_term_only=0.05 no_mge_hallmark=0.82 | gc_shift 0.0043 genes/10kb 8.9
+[exploratory/off_1_2seed] n=625 conjugative=0.01 plasmid_replicon=0.03 integrase_or_transposase=0.04 phage_term_only=0.04 no_mge_hallmark=0.88 | gc_shift -0.0011 genes/10kb 9.0
+[exploratory/off_3seed] n=426 phage_structural=0.02 conjugative=0.08 plasmid_replicon=0.04 integrase_or_transposase=0.12 phage_term_only=0.10 no_mge_hallmark=0.63 | gc_shift -0.0147 genes/10kb 9.5
+[exploratory/on_target] n=171 phage_structural=0.68 conjugative=0.05 plasmid_replicon=0.01 integrase_or_transposase=0.05 phage_term_only=0.16 no_mge_hallmark=0.05 | gc_shift -0.0144 genes/10kb 12.0
+[done] wrote analysis/offtarget/annotation_ctrl_elements_only.json and analysis/offtarget/annotation_ctrl_elements_only.csv; missing genomes: 0
+[C6] controls avoiding: none
+Tue Sep 29 09:37:12 CDT 2026
+[genome] GCF_000006885.1_ASM688v1_genomic: 16 calls
+[genome] GCF_000009105.1_ASM910v1_genomic: 21 calls
+[genome] GCF_000009265.1_ASM926v1_genomic: 77 calls
+[genome] GCF_000009865.1_ASM986v1_genomic: 53 calls
+[genome] GCF_000011545.1_ASM1154v1_genomic: 54 calls
+[genome] GCF_000011665.1_ASM1166v1_genomic: 21 calls
+[genome] GCF_000012105.1_ASM1210v1_genomic: 58 calls
+[genome] GCF_000012725.1_ASM1272v1_genomic: 50 calls
+[genome] GCF_000013425.1_ASM1342v1_genomic: 45 calls
+[genome] GCF_000015905.1_ASM1590v1_genomic: 43 calls
+[genome] GCF_000016425.1_ASM1642v1_genomic: 41 calls
+[genome] GCF_000016845.1_ASM1684v1_genomic: 11 calls
+[genome] GCF_000016945.1_ASM1694v1_genomic: 77 calls
+[genome] GCF_000017205.1_ASM1720v1_genomic: 41 calls
+[genome] GCF_000017405.1_ASM1740v1_genomic: 55 calls
+[genome] GCF_000017665.1_ASM1766v1_genomic: 48 calls
+[genome] GCF_000165485.1_ASM16548v1_genomic: 72 calls
+[genome] GCF_000284415.1_ASM28441v2_genomic: 44 calls
+[genome] GCF_000470775.1_ASM47077v1_genomic: 25 calls
+[genome] GCF_000827125.1_ASM82712v1_genomic: 29 calls
+[genome] GCF_001561955.1_ASM156195v1_genomic: 55 calls
+[genome] GCF_001610875.1_ASM161087v1_genomic: 61 calls
+[genome] GCF_001887265.1_ASM188726v1_genomic: 26 calls
+[genome] GCF_002142475.1_ASM214247v1_genomic: 37 calls
+[genome] GCF_002291425.1_ASM229142v1_genomic: 51 calls
+[genome] GCF_003008555.2_ASM300855v2_genomic: 78 calls
+[genome] GCF_003008595.1_ASM300859v1_genomic: 29 calls
+[genome] GCF_003590145.2_ASM359014v2_genomic: 33 calls
+[genome] GCF_003966715.1_ASM396671v1_genomic: 39 calls
+[genome] GCF_003967035.1_ASM396703v1_genomic: 21 calls
+[genome] GCF_005304985.1_ASM530498v1_genomic: 29 calls
+[genome] GCF_007431345.1_ASM743134v1_genomic: 61 calls
+[genome] GCF_013341275.1_ASM1334127v1_genomic: 22 calls
+[genome] GCF_016894345.1_ASM1689434v1_genomic: 43 calls
+[genome] GCF_019355395.1_ASM1935539v1_genomic: 71 calls
+[genome] GCF_021733145.1_ASM2173314v1_genomic: 39 calls
+[genome] GCF_028891345.1_ASM2889134v1_genomic: 53 calls
+[genome] GCF_030759015.1_ASM3075901v1_genomic: 38 calls
+[genome] GCF_032164335.1_ASM3216433v1_genomic: 66 calls
+[genome] GCF_045865535.1_ASM4586553v1_genomic: 39 calls
+[genome] GCF_046523945.1_ASM4652394v1_genomic: 35 calls
+[genome] GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic: 22 calls
+[default/control_off_1_2seed] n=747 phage_structural=0.03 conjugative=0.02 plasmid_replicon=0.03 integrase_or_transposase=0.03 phage_term_only=0.03 no_mge_hallmark=0.86 | gc_shift 0.0043 genes/10kb 9.1
+[default/control_off_3seed] n=570 phage_structural=0.04 conjugative=0.04 plasmid_replicon=0.02 integrase_or_transposase=0.05 phage_term_only=0.05 no_mge_hallmark=0.81 | gc_shift 0.0051 genes/10kb 9.1
+[default/control_on_target] n=504 phage_structural=0.08 conjugative=0.03 plasmid_replicon=0.02 integrase_or_transposase=0.08 phage_term_only=0.08 no_mge_hallmark=0.72 | gc_shift 0.0031 genes/10kb 9.2
+[default/off_1_2seed] n=249 phage_structural=0.01 conjugative=0.02 plasmid_replicon=0.05 integrase_or_transposase=0.08 phage_term_only=0.05 no_mge_hallmark=0.80 | gc_shift -0.0059 genes/10kb 9.3
+[default/off_3seed] n=190 phage_structural=0.04 conjugative=0.16 plasmid_replicon=0.05 integrase_or_transposase=0.13 phage_term_only=0.14 no_mge_hallmark=0.48 | gc_shift -0.0221 genes/10kb 10.1
+[default/on_target] n=168 phage_structural=0.69 conjugative=0.05 plasmid_replicon=0.01 integrase_or_transposase=0.05 phage_term_only=0.14 no_mge_hallmark=0.07 | gc_shift -0.0143 genes/10kb 12.2
+[exploratory/control_off_1_2seed] n=1875 phage_structural=0.02 conjugative=0.02 plasmid_replicon=0.03 integrase_or_transposase=0.03 phage_term_only=0.03 no_mge_hallmark=0.88 no_genes=0.00 | gc_shift 0.0043 genes/10kb 9.0
+[exploratory/control_off_3seed] n=1278 phage_structural=0.02 conjugative=0.03 plasmid_replicon=0.02 integrase_or_transposase=0.05 phage_term_only=0.05 no_mge_hallmark=0.83 | gc_shift 0.0055 genes/10kb 9.0
+[exploratory/control_on_target] n=513 phage_structural=0.07 conjugative=0.04 plasmid_replicon=0.01 integrase_or_transposase=0.07 phage_term_only=0.06 no_mge_hallmark=0.75 | gc_shift 0.0019 genes/10kb 9.0
+[exploratory/off_1_2seed] n=625 conjugative=0.01 plasmid_replicon=0.03 integrase_or_transposase=0.04 phage_term_only=0.04 no_mge_hallmark=0.88 | gc_shift -0.0011 genes/10kb 9.0
+[exploratory/off_3seed] n=426 phage_structural=0.02 conjugative=0.08 plasmid_replicon=0.04 integrase_or_transposase=0.12 phage_term_only=0.10 no_mge_hallmark=0.63 | gc_shift -0.0147 genes/10kb 9.5
+[exploratory/on_target] n=171 phage_structural=0.68 conjugative=0.05 plasmid_replicon=0.01 integrase_or_transposase=0.05 phage_term_only=0.16 no_mge_hallmark=0.05 | gc_shift -0.0144 genes/10kb 12.0
+[done] wrote analysis/offtarget/annotation_ctrl_none.json and analysis/offtarget/annotation_ctrl_none.csv; missing genomes: 0
+=== job end (exit 1) ===
+Tue Sep 29 09:37:31 CDT 2026

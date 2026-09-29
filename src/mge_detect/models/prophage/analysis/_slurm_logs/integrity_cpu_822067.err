@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/work/pke835/mge_explorer/data_refactored/scripts/eval_containment.py", line 131, in <module>
+    main()
+  File "/work/pke835/mge_explorer/data_refactored/scripts/eval_containment.py", line 72, in main
+    ev = pd.concat([read_set(*s.split("=", 1)) for s in a.set], ignore_index=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pke835/.conda/envs/mge_explorer_gpu/lib/python3.11/site-packages/pandas/core/reshape/concat.py", line 466, in concat
+    result = _get_result(
+             ^^^^^^^^^^^^
+  File "/home/pke835/.conda/envs/mge_explorer_gpu/lib/python3.11/site-packages/pandas/core/reshape/concat.py", line 653, in _get_result
+    indexers[ax] = obj_labels.get_indexer(new_labels)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pke835/.conda/envs/mge_explorer_gpu/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3728, in get_indexer
+    raise InvalidIndexError(self._requires_unique_msg)
+pandas.errors.InvalidIndexError: Reindexing only valid with uniquely valued Index objects
+FAILED C5 (exit 1)

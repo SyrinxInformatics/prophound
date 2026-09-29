@@ -1,7 +1,7 @@
 #!/bin/bash
 # docs/research-integrity.md C5 + C6 (CPU; no model scoring):
 #   C5  21-mer containment of every evaluation element (42, 18, literature pilot,
-#       in-situ inovirus loci) against training-split positives
+#       in-situ inovirus loci, lockbox) against training-split positives
 #       -> analysis/integrity/containment.tsv
 #   C6  off-target annotation re-run with model-independent controls, avoiding
 #       geNomad elements only, and fully random; same calls42.csv as 821371
@@ -33,12 +33,12 @@ mkdir -p analysis/_slurm_logs analysis/integrity analysis/offtarget
 fail=0
 for f in scripts/eval_containment.py scripts/small_element_spikein.py scripts/offtarget_annotation.py \
          scripts/eval_sizestrat_elements.csv scripts/eval_confirm18_elements.csv scripts/literature_truth.tsv \
-         "$INSITU" "$CALLS" splits/train.txt; do
+         "$INSITU" "$CALLS" splits/train.txt analysis/lockbox/lockbox_elements.csv; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }
 done
 grep -q -- '--control_busy' scripts/offtarget_annotation.py \
   || { echo "PREFLIGHT FAIL: scripts/offtarget_annotation.py lacks --control_busy (not pushed?)" >&2; fail=1; }
-for d in "$GENOMAD" "$GENOMES" beds_pos sequences; do [ -d "$d" ] || { echo "PREFLIGHT FAIL: no directory $d" >&2; fail=1; }; done
+for d in "$GENOMAD" "$GENOMES" ../raw/lockbox beds_pos sequences; do [ -d "$d" ] || { echo "PREFLIGHT FAIL: no directory $d" >&2; fail=1; }; done
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
 echo "[preflight] all inputs present"
 # ---------------------------------------------------------------------------
@@ -49,6 +49,7 @@ python scripts/eval_containment.py --beds_dir beds_pos --sequences_dir sequences
   --genomes_dir "$GENOMES" \
   --set sizestrat42=scripts/eval_sizestrat_elements.csv --set confirm18=scripts/eval_confirm18_elements.csv \
   --set litpilot=scripts/literature_truth.tsv --set insitu=$INSITU \
+  --set lockbox=analysis/lockbox/lockbox_elements.csv --set_genomes_dir lockbox=../raw/lockbox \
   --out analysis/integrity/containment.tsv || { r=$?; echo "FAILED C5 (exit $r)" >&2; rc=$r; }
 
 for B in elements_only none; do

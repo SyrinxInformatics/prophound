@@ -39,15 +39,21 @@ RAMP_MIDPOINT_FRACTION = 0.77
 # decision) from the vote frontier (docs/error-analysis.md "Seed-vote
 # confirmation"): an ensemble call is kept only if at least MODE_MIN_SEED_SUPPORT
 # checkpoints make an overlapping call of their own at the same thresholds.
-# Ensemble covered50 / calls per genome, 42-genome sample and independent 18:
-#   exploratory 0.95, keep all (flagged) -> 0.983 / 29.1 and 1.000 / 31.2
-#   default     0.98, 3 of 3            -> 0.961 / 11.3 and 0.981 / 10.5
+# Ensemble covered50 / calls per genome, 42-genome tuning sample and the 18
+# (docs/research-integrity.md C1: neither is held out):
+#   exploratory 0.90, keep all (flagged) -> 0.994 / 35.6 and 1.000 / 39.6
+#   default     0.95, 3 of 3            -> 0.972 / 14.1 and 1.000 / 13.3
 #   conservative 0.995, 3 of 3          -> 0.944 /  8.5 and 0.962 /  6.4
+# Default was 0.98 / 3 of 3 for part of 2026-09-29; moved to 0.95 the same day
+# (user) because 0.98 lost small and geNomad-negative elements that 0.95 keeps
+# (docs/error-analysis.md "Cost on evidence that isn't geNomad agreement").
+# Exploratory then moved 0.95 -> 0.90 (user) so it keeps a reach beyond Default:
+# recall saturates at 0.90 (lower thresholds add calls, not elements).
 # Before 2026-09-29: 0.95 / 0.995 / 0.999 with no vote (reproduce with
 # --threshold and --min-seed-support 1).
 MODE_THRESHOLDS = {
-    "exploratory": 0.95,
-    "default": 0.98,
+    "exploratory": 0.90,
+    "default": 0.95,
     "conservative": 0.995,
 }
 MODE_MIN_SEED_SUPPORT = {
@@ -79,13 +85,16 @@ SHORT_CONTIG_STRIDE = 500
 # applied one threshold to both scales, so they share a value; a
 # fragment-length-normalised split puts 5 kb ~13% above the reference and 3 kb
 # below it, inside the reference's own seed spread.
-# PROVISIONAL since 2026-09-29: calibrated against the pre-vote modes. The seed
-# vote now applies to short-contig calls too and lowers both sides' false-call
-# load, so these are re-derived by scripts/short_contig_vote_sweep.py.
+# Re-derived 2026-09-29 under the seed vote (822053, short_contig_vote_sweep.py;
+# rule "never exceed", user): the lowest threshold whose shredded false calls/Mb,
+# with the mode's vote, do not exceed the intact 10 kb pipeline's in that mode.
+#   default 0.95/3-of-3: shredded 2.06 vs reference 2.45 (0.90 gives 3.12)
+#   conservative 0.995/3-of-3: shredded 0.84 at 0.99 vs 1.09 (0.985 gives 1.11)
+#   exploratory 0.90/keep all: shredded 6.55 at 0.95 vs reference 7.60 (0.90 gives 9.68)
 SHORT_CONTIG_THRESHOLDS = {
     "exploratory": {5000: 0.95, 3000: 0.95},
-    "default": {5000: 0.99, 3000: 0.99},
-    "conservative": {5000: 0.998, 3000: 0.998},
+    "default": {5000: 0.95, 3000: 0.95},
+    "conservative": {5000: 0.99, 3000: 0.99},
 }
 REGION_COLUMNS = ["genome_id", "contig_id", "start", "end", "n_windows",
                   "region_len_bp", "mean_prob", "max_prob", "boundary_kind"]
@@ -1182,7 +1191,7 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
             "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
             "leaves them unscanned. Either way a warning reports them. Reduced-scale "
             "thresholds are calibrated per mode to the 10 kb false-positive load "
-            "(0.95 / 0.99 / 0.998)."
+            "(0.95 / 0.95 / 0.99, with the mode's seed vote)."
         ),
     )
     parser.add_argument(
