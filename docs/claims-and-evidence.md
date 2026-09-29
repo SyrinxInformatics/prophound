@@ -103,6 +103,14 @@ The full table, all 37 tool labels, is in `baseline_scores.csv`. **Complement:**
 
 The intervals are wide because a few genomes carry many elements (Photorhabdus 20, EDL933 22). Gains are read through the paired comparison and the intervals, not from point estimates alone.
 
+**Containment against training (`822260`, 2026-09-29).** Of the 149 elements:
+- 36 have ≥10% of their canonical 21-mers in training-split positives;
+- 29 have ≥50%;
+- 10 have ≥90%;
+- the median is 0.003.
+
+About a quarter of LAMBDA's curated elements therefore closely resemble prophages the model was trained on, even though no LAMBDA genome is in the training split. Every LAMBDA figure is reported for the **low-containment subset (<0.1)** alongside the full set; `lambda_score.py --containment` does this. The coordinate note above holds: all 39 downloaded sequences have exactly the length NCBI reports, and LAMBDA's `genome_length` is that length rounded up to the next kb plus 1 kb.
+
 **Caveat specific to prophound:** 5 of the 39 genomes are in our test split, including EDL933 (22 elements). EDL933 is also in the literature pilot, and was studied closely in the ambiguity work. The primary row is therefore the **34 genomes not in the corpus**.
 
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)

@@ -51,8 +51,10 @@ tail -n +2 "$L/lambda_genomes.tsv" | while IFS=$'\t' read -r ASM SEQ ORG GLEN ST
     sleep 0.4                                   # NCBI allows 3 requests/s without a key
   fi
   len=$(grep -v '^>' "$out" | tr -d '\n' | wc -c)
-  d=$((GLEN - len))
-  if [ "$d" -lt 0 ] || [ "$d" -ge 1000 ]; then
+  # LAMBDA's genome_length is the length rounded up to the next kb, plus 1 kb
+  # (checked on all 39); 822260 used a <1 kb tolerance and flagged every genome
+  want=$(( (len + 999) / 1000 * 1000 + 1000 ))
+  if [ "$want" -ne "$GLEN" ]; then
     echo "FAILED length $ASM $SEQ: $len bp vs genome_length $GLEN" >> "$L/fetch_failures.txt"
   fi
 done

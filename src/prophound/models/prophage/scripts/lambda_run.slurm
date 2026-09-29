@@ -52,6 +52,13 @@ n=$(ls "$FNA"/*.fna 2>/dev/null | wc -l)
 [ "$n" -eq 39 ] || { echo "PREFLIGHT FAIL: $FNA has $n/39 sequences (run lambda_fetch.slurm)" >&2; fail=1; }
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
 echo "[preflight] all inputs present; checkpoint checksums match"
+# the offline scorer does not apply the >=50%-N call filter (MAX_CALL_N_FRAC), which is a
+# no-op only if the sequences carry no long N runs; record their N content
+for f in "$FNA"/*.fna; do
+  n=$(grep -v '^>' "$f" | tr -cd 'Nn' | wc -c)
+  [ "$n" -gt 0 ] && echo "[N content] $(basename "$f" .fna): $n N"
+done > "$OUT/../n_content.txt"
+echo "[preflight] sequences with any N: $(wc -l < "$OUT/../n_content.txt") of 39 (analysis/lambda/n_content.txt)"
 # ---------------------------------------------------------------------------
 
 CKPT="runs/prophage_v2_pool_r1/checkpoints/best.pt runs/prophage_v2_pool_r2/checkpoints/best.pt runs/prophage_v2_pool_r3/checkpoints/best.pt"
