@@ -218,3 +218,5 @@ __marimo__/
 src/prophound/models/prophage/analysis/multiscale/*/
 src/prophound/models/prophage/analysis/confirm18/*/
 src/prophound/models/prophage/analysis/phagefree/*/
+src/prophound/models/prophage/analysis/lambda/ens/*/
+src/prophound/models/prophage/analysis/ngap_dose/impute__*/

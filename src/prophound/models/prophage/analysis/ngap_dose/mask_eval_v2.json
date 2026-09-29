@@ -1,0 +1,209 @@
+{
+  "impute__clean__0/none/exploratory": {
+    "covered50": 0.994413407821229,
+    "calls_per_genome": 35.73809523809524,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/none/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 14.19047619047619,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/none/conservative": {
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 8.476190476190476,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/drop/exploratory": {
+    "covered50": 0.994413407821229,
+    "calls_per_genome": 35.73809523809524,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/drop/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 14.19047619047619,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/drop/conservative": {
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 8.476190476190476,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/clip/exploratory": {
+    "covered50": 0.994413407821229,
+    "calls_per_genome": 35.73809523809524,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/clip/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 14.19047619047619,
+    "lost_vs_clean": 0
+  },
+  "impute__clean__0/clip/conservative": {
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 8.476190476190476,
+    "lost_vs_clean": 0
+  },
+  "impute__ngap__1000/none/exploratory": {
+    "covered50": 0.9888268156424581,
+    "calls_per_genome": 35.73809523809524,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/none/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 14.166666666666666,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/none/conservative": {
+    "covered50": 0.9385474860335196,
+    "calls_per_genome": 8.5,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 2
+  },
+  "impute__ngap__1000/drop/exploratory": {
+    "covered50": 0.9888268156424581,
+    "calls_per_genome": 35.73809523809524,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/drop/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 14.166666666666666,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/drop/conservative": {
+    "covered50": 0.9385474860335196,
+    "calls_per_genome": 8.5,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 2
+  },
+  "impute__ngap__1000/clip/exploratory": {
+    "covered50": 0.9888268156424581,
+    "calls_per_genome": 41.30952380952381,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/clip/default": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 19.142857142857142,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__1000/clip/conservative": {
+    "covered50": 0.9385474860335196,
+    "calls_per_genome": 13.047619047619047,
+    "calls_in_random_gaps_per_genome_before_clip": 0.0,
+    "lost_vs_clean": 2
+  },
+  "impute__ngap__20000/none/exploratory": {
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 36.95238095238095,
+    "calls_in_random_gaps_per_genome_before_clip": 2.6904761904761907,
+    "lost_vs_clean": 2
+  },
+  "impute__ngap__20000/none/default": {
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 14.261904761904763,
+    "calls_in_random_gaps_per_genome_before_clip": 0.6428571428571429,
+    "lost_vs_clean": 6
+  },
+  "impute__ngap__20000/none/conservative": {
+    "covered50": 0.8770949720670391,
+    "calls_per_genome": 8.119047619047619,
+    "calls_in_random_gaps_per_genome_before_clip": 0.11904761904761904,
+    "lost_vs_clean": 13
+  },
+  "impute__ngap__20000/drop/exploratory": {
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 34.26190476190476,
+    "calls_in_random_gaps_per_genome_before_clip": 2.6904761904761907,
+    "lost_vs_clean": 6
+  },
+  "impute__ngap__20000/drop/default": {
+    "covered50": 0.9329608938547486,
+    "calls_per_genome": 13.642857142857142,
+    "calls_in_random_gaps_per_genome_before_clip": 0.6428571428571429,
+    "lost_vs_clean": 8
+  },
+  "impute__ngap__20000/drop/conservative": {
+    "covered50": 0.8715083798882681,
+    "calls_per_genome": 8.0,
+    "calls_in_random_gaps_per_genome_before_clip": 0.11904761904761904,
+    "lost_vs_clean": 14
+  },
+  "impute__ngap__20000/clip/exploratory": {
+    "covered50": 0.9162011173184358,
+    "calls_per_genome": 41.45238095238095,
+    "calls_in_random_gaps_per_genome_before_clip": 2.6904761904761907,
+    "lost_vs_clean": 14
+  },
+  "impute__ngap__20000/clip/default": {
+    "covered50": 0.8770949720670391,
+    "calls_per_genome": 18.714285714285715,
+    "calls_in_random_gaps_per_genome_before_clip": 0.6428571428571429,
+    "lost_vs_clean": 17
+  },
+  "impute__ngap__20000/clip/conservative": {
+    "covered50": 0.8044692737430168,
+    "calls_per_genome": 11.880952380952381,
+    "calls_in_random_gaps_per_genome_before_clip": 0.11904761904761904,
+    "lost_vs_clean": 25
+  },
+  "impute__ngap__5000/none/exploratory": {
+    "covered50": 0.9888268156424581,
+    "calls_per_genome": 36.61904761904762,
+    "calls_in_random_gaps_per_genome_before_clip": 0.5714285714285714,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__5000/none/default": {
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.261904761904763,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 4
+  },
+  "impute__ngap__5000/none/conservative": {
+    "covered50": 0.8994413407821229,
+    "calls_per_genome": 8.333333333333334,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 9
+  },
+  "impute__ngap__5000/drop/exploratory": {
+    "covered50": 0.9888268156424581,
+    "calls_per_genome": 36.04761904761905,
+    "calls_in_random_gaps_per_genome_before_clip": 0.5714285714285714,
+    "lost_vs_clean": 1
+  },
+  "impute__ngap__5000/drop/default": {
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.238095238095237,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 4
+  },
+  "impute__ngap__5000/drop/conservative": {
+    "covered50": 0.8994413407821229,
+    "calls_per_genome": 8.30952380952381,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 9
+  },
+  "impute__ngap__5000/clip/exploratory": {
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 42.69047619047619,
+    "calls_in_random_gaps_per_genome_before_clip": 0.5714285714285714,
+    "lost_vs_clean": 4
+  },
+  "impute__ngap__5000/clip/default": {
+    "covered50": 0.9497206703910615,
+    "calls_per_genome": 19.11904761904762,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 5
+  },
+  "impute__ngap__5000/clip/conservative": {
+    "covered50": 0.88268156424581,
+    "calls_per_genome": 12.404761904761905,
+    "calls_in_random_gaps_per_genome_before_clip": 0.023809523809523808,
+    "lost_vs_clean": 11
+  }
+}

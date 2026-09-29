@@ -1,0 +1,40 @@
+assembly	sequence	organism	genome_length	corpus_status	genus
+GCA_000143885.2	CP002907	Gordonia sp. KTR9	5443000	not_in_corpus	Gordonia
+GCA_000284555.1	AP012280	Pseudomonas aeruginosa NCGM2.S3	6766000	not_in_corpus	Pseudomonas
+GCA_000504045.1	CP006853	Pseudomonas aeruginosa MTB-3	6582000	not_in_corpus	Pseudomonas
+GCA_001618925.1	CP015117	Pseudomonas aeruginosa strain ATCC 27854	6829000	not_in_corpus	Pseudomonas
+GCA_002993285.1	CP027433	Gordonia iterans strain Co17	4008000	not_in_corpus	Gordonia
+GCA_013348785.1	CP054691	Gordonia sp. X0973	3749000	not_in_corpus	Gordonia
+GCA_014070455.1	CP059694	Gordonia rubripertincta strain SD8	5106000	not_in_corpus	Gordonia
+GCA_016919385.1	CP070351	Gordonia sp. PDNC006	4262000	not_in_corpus	Gordonia
+GCA_017183655.1	CP063320	Mycobacteroides abscessus subsp. abscessus strain GD25	5114000	not_in_corpus	Mycobacterium
+GCA_017183775.1	CP063324	Mycobacteroides abscessus subsp. abscessus strain GD22	5075000	not_in_corpus	Mycobacterium
+GCA_017183795.1	CP063327	Mycobacteroides abscessus subsp. abscessus strain GD20	5028000	not_in_corpus	Mycobacterium
+GCA_017183835.1	CP063165	Mycobacteroides abscessus subsp. abscessus strain GD17	5109000	not_in_corpus	Mycobacterium
+GCA_017183915.1	CP065265	Mycobacteroides abscessus subsp. bolletii strain GD91	5314000	not_in_corpus	Mycobacterium
+GCA_017189375.1	CP065275	Mycobacteroides abscessus subsp. abscessus strain GD57	5122000	not_in_corpus	Mycobacterium
+GCA_017189435.1	CP065279	Mycobacteroides abscessus subsp. abscessus strain GD43A	5379000	not_in_corpus	Mycobacterium
+GCA_017190535.1	CP065273	Mycobacteroides abscessus subsp. massiliense strain GD68A	5121000	not_in_corpus	Mycobacterium
+GCA_017190795.1	CP065287	Mycobacteroides abscessus subsp. abscessus strain GD05	5354000	not_in_corpus	Mycobacterium
+GCA_017190875.1	CP065284	Mycobacteroides abscessus subsp. abscessus strain GD21	5220000	not_in_corpus	Mycobacterium
+GCA_019930645.1	CP082859	Gordonia bronchialis strain FDAARGOS_1476	5309000	not_in_corpus	Gordonia
+GCA_020735545.1	CP085974	Gordonia otitidis strain FDAARGOS_1600	5110000	not_in_corpus	Gordonia
+GCF_000006665.1	NC_002655	Escherichia coli O157:H7 EDL933	5530000	test	Escherichia
+GCF_000006785.2	NC_002737	Streptococcus pyogenes M1 GAS	1854000	test	Streptococcus
+GCF_000007625.1	NC_004557	Clostridium tetani E88	2801000	test	Clostridium_G
+GCF_000009105.1	NC_003116	Neisseria meningitidis Z2491	2186000	test	Neisseria
+GCF_000009625.1	NC_002678	Mesorhizobium loti MAFF303099	7038000	test	Mesorhizobium
+GCF_000026645.1	NC_011770	Pseudomonas aeruginosa LESB61	6603000	not_in_corpus	Pseudomonas
+GCF_000027305.1	NC_000907	Haemophilus influenzae Rd KW20	1832000	not_in_corpus	Haemophilus
+GCF_000146165.2	NC_004347	Shewanella oneidensis MR-1	4971000	not_in_corpus	Shewanella
+GCF_000195795.1	NC_003212	Listeria innocua Clip11262	3013000	not_in_corpus	Listeria
+GCF_000195815.1	NC_002935	Corynebacterium diphtheriae NCTC 13129	2490000	not_in_corpus	Corynebacterium
+GCF_000195955.2	NC_000962	Mycobacterium tuberculosis H37Rv	4413000	not_in_corpus	Mycobacterium
+GCF_000195995.1	NC_003198	Salmonella enterica subsp. enterica serovar Typhi str. CT18	4811000	not_in_corpus	Salmonella
+GCF_000196035.1	NC_003210	Listeria monocytogenes EGD-e	2946000	not_in_corpus	Listeria
+GCF_000196155.1	NC_005126	Photorhabdus luminescens subsp. laumondii TTO1	5690000	not_in_corpus	Photorhabdus
+GCF_000203855.3	NC_004567	Lactobacillus plantarum WCFS1	3310000	not_in_corpus	Lactiplantibacillus
+GCF_000226155.1	NC_017548	Pseudomonas aeruginosa M18	6329000	not_in_corpus	Pseudomonas
+GCF_000496605.2	NC_022808	Pseudomonas aeruginosa PA3	6500000	not_in_corpus	Pseudomonas
+GCF_000508765.1	NC_023066	Pseudomonas aeruginosa LES433	6552000	not_in_corpus	Pseudomonas
+GCF_000510305.1	NC_023149	Pseudomonas aeruginosa SCV20267	6727000	not_in_corpus	Pseudomonas

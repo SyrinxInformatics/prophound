@@ -74,7 +74,38 @@ Two community gold standards exist. Their genome lists were matched against our 
 
 **LAMBDA is the stronger instrument.** Its per-genome files include the curated truth, **every published tool's predicted regions** (geNomad, PHASTER, VIBRANT, VirSorter2, Phigaro, PhiSpy, PhageBoost, PIDE, and eight genomic language models) and 292 off-truth candidate regions that its authors classified from PHROG gene evidence. A head-to-head comparison therefore needs only an prophound run. The other tools are already scored on the same genomes.
 
-### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb)
+### Amendment 2026-09-29, before any prophound run on LAMBDA: corrected baseline and bars
+
+Rebuilt from pinned sources: `lambda-benchmark@d9cbf81` per-genome JSONs, and Zenodo record 21355242 (`LAMBDA_v1`, `metadata/prophage_reference_locations.csv`). Built by `scripts/lambda_prepare.py`, scored by `scripts/lambda_score.py`; outputs in `analysis/external_benchmarks/lambda/`. Three errors in the 2026-09-28 table below:
+1. **Duplicate truth.** The dashboard JSON lists some elements twice (Photorhabdus TTO1: 25 entries, 20 unique). The clean subset has **149 curated elements, not 154**. The reference table is the deduplicated source, and the two agree as sets for all 39 genomes.
+2. **"Ran" vs "called nothing".** Each tool is now scored only on genomes it was run on (listed in the JSON's `metrics`). geNomad ran on 37 genomes, not 38.
+3. **Language models at one segment size.** Every model is now scored at 2k, 4k and 8k, and its best counts. That is conservative for us.
+
+**Coordinate frame, confirmed for all 39:** LAMBDA scores the one sequence carrying the curated elements, the chromosome in every case. `genome_length` equals that sequence's length rounded up to 1 kb. prophound is therefore run on that sequence only, not the whole assembly.
+
+Corrected covered50 (95% genome bootstrap), clean subset:
+
+| tool | genomes | elements | covered50 | calls/genome |
+|---|---|---|---|---|
+| PHASTER | 38 | 148 | 0.824 (0.672–0.947) | 3.9 |
+| PIDE | 38 | 148 | 0.824 (0.665–0.955) | 8.4 |
+| geNomad | 37 | 146 | 0.822 (0.675–0.950) | 4.6 |
+| VIBRANT | 37 | 146 | 0.788 (0.633–0.928) | 3.6 |
+| EVO2 4k (best genomic LM) | 39 | 149 | 0.785 (0.626–0.920) | 4.8 |
+| VirSorter2 | 18 | 101 | 0.762 | 3.9 |
+
+The full table, all 37 tool labels, is in `baseline_scores.csv`. **Complement:** the best geNomad pairing gains **+5** elements, a tie among PHASTER, EVO2 4k, EVO2+SAE, Generanno 4k, PhageBoost and VirSorter2.
+
+**Bars, corrected (supersede those below):**
+- G1: complement **more than +5** (was +8).
+- G2: matched-cost recall **above 0.785** against the best LM (was 0.727, NTv2 at one size).
+- G3: overall covered50 **above 0.824** (was 0.818).
+
+The intervals are wide because a few genomes carry many elements (Photorhabdus 20, EDL933 22). Gains are read through the paired comparison and the intervals, not from point estimates alone.
+
+**Caveat specific to prophound:** 5 of the 39 genomes are in our test split, including EDL933 (22 elements). EDL933 is also in the literature pilot, and was studied closely in the ambiguity work. The primary row is therefore the **34 genomes not in the corpus**.
+
+### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)
 
 Computed 2026-09-28 from the published per-genome predictions, using our own metric (covered50: ≥50% of the element's bp under calls) so that every tool is scored the same way:
 

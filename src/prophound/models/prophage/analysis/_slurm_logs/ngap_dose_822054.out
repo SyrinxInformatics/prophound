@@ -4,3 +4,26 @@ gpu017
 Tesla V100S-PCIE-32GB
 [preflight] 42 genomes
 [preflight] all inputs present
+[done] clean:0: 42 genomes
+Tue Sep 29 12:44:12 CDT 2026
+[done] ngap:1000: 42 genomes
+Tue Sep 29 13:05:38 CDT 2026
+[done] ngap:5000: 42 genomes
+Tue Sep 29 13:27:05 CDT 2026
+[done] ngap:20000: 42 genomes
+Tue Sep 29 13:48:29 CDT 2026
+[impute clean 0 exploratory] covered50 0.994 covered 1.000 calls/genome 35.7 lost 0
+[impute clean 0 default] covered50 0.972 covered 0.978 calls/genome 14.2 lost 0
+[impute clean 0 conservative] covered50 0.944 covered 0.961 calls/genome 8.5 lost 0
+[impute ngap 1000 exploratory] covered50 0.989 covered 1.000 calls/genome 35.7 lost 1
+[impute ngap 1000 default] covered50 0.972 covered 0.978 calls/genome 14.2 lost 1
+[impute ngap 1000 conservative] covered50 0.939 covered 0.961 calls/genome 8.5 lost 2
+[impute ngap 20000 exploratory] covered50 0.983 covered 0.989 calls/genome 37.0 lost 2
+[impute ngap 20000 default] covered50 0.944 covered 0.944 calls/genome 14.3 lost 6
+[impute ngap 20000 conservative] covered50 0.877 covered 0.899 calls/genome 8.1 lost 13
+[impute ngap 5000 exploratory] covered50 0.989 covered 0.994 calls/genome 36.6 lost 1
+[impute ngap 5000 default] covered50 0.961 covered 0.961 calls/genome 14.3 lost 4
+[impute ngap 5000 conservative] covered50 0.899 covered 0.911 calls/genome 8.3 lost 9
+[done] wrote analysis/ngap_dose/results.json
+=== job end (exit 0) ===
+Tue Sep 29 13:49:54 CDT 2026

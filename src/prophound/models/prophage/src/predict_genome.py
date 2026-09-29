@@ -501,6 +501,12 @@ DEFAULT_EDGE_ALPHA = 1.0        # 1 = keep coarse edges; calibrate before loweri
 # a merge; 0.05-0.1 is a dead band where neither acts.
 DEFAULT_SPLIT_MIN_GAP_BP = 4000
 DEFAULT_SPLIT_MAX_PROB = 0.05
+# Calls that are at least this fraction N are dropped (user decision 2026-09-29).
+# `impute` fills an N run with random bases; over a long scaffold gap that reads
+# as foreign sequence and gets called (822054: Exploratory 2.7 calls/genome
+# inside 20 kb gaps). Masking the gap's windows instead cost most of the
+# recall near every gap, because windows are 10 kb (docs/v1-scope.md A.3).
+MAX_CALL_N_FRAC = 0.5
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -1370,6 +1376,18 @@ def apply_seed_vote(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFram
     return regions_df[keep].reset_index(drop=True), int((~keep).sum())
 
 
+def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
+    """Fraction of each call's bases that are N."""
+    if regions_df.empty:
+        return np.zeros(0)
+    fa = Fasta(fasta_path, as_raw=True, sequence_always_upper=True)
+    try:
+        return np.array([fa[r.contig_id][int(r.start):int(r.end)].count("N") / max(1, int(r.end) - int(r.start))
+                         for r in regions_df.itertuples(index=False)])
+    finally:
+        fa.close()
+
+
 def label_windows(windows_df: pd.DataFrame, regions_df: pd.DataFrame) -> pd.DataFrame:
     """Set region_pred_label to 1 on windows overlapping any call, else 0."""
     windows_df = windows_df.copy()
@@ -1710,6 +1728,18 @@ def run_predict(args: argparse.Namespace) -> None:
     regions_out = outdir / "regions.tsv"
     metadata_out = outdir / "run_metadata.json"
 
+    # calls made mostly of N (imputed scaffold gaps) are not candidates
+    n_frac = call_n_fraction(regions_df, str(input_path))
+    n_dropped = int((n_frac >= MAX_CALL_N_FRAC).sum())
+    regions_df = regions_df.assign(n_frac=np.round(n_frac, 4))
+    if n_dropped:
+        regions_df = regions_df[regions_df.n_frac < MAX_CALL_N_FRAC].reset_index(drop=True)
+        windows_df = label_windows(windows_df, regions_df)
+        print(f"[warn] {n_dropped} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N (imputed gap sequence).",
+              file=sys.stderr)
+    gap_filter_meta = {"max_call_n_frac": MAX_CALL_N_FRAC, "calls_dropped": n_dropped,
+                       "calls_with_any_n": int((regions_df.n_frac > 0).sum())}
+
     support_meta = None
     if track_support:
         seed_regs = [pd.concat([x for x in r if len(x)], ignore_index=True) if any(len(x) for x in r)
@@ -1748,7 +1778,7 @@ def run_predict(args: argparse.Namespace) -> None:
         trained_stride=trained_stride,
         short_contigs=short_meta,
         seed_support=support_meta,
-        extra={"input": input_summary,
+        extra={"input": input_summary, "n_gap_filter": gap_filter_meta,
                "checkpoint_sha256": {str(c): sha256(str(c)) for c in checkpoints},
                "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
                + (["regions.fna"] if getattr(args, "write_region_fasta", False) else [])},
@@ -1782,10 +1812,11 @@ def run_predict(args: argparse.Namespace) -> None:
         write_region_fasta(regions_df, str(input_path), outdir / "regions.fna")
         print(f"[done] wrote {outdir / 'regions.fna'}", file=sys.stderr)
     print_run_summary(args.mode, input_summary, regions_df, short_meta, support_meta, ambiguity_policy,
-                      len(checkpoints))
+                      len(checkpoints), gap_filter_meta)
 
 
-def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity_policy, n_ckpt) -> None:
+def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity_policy, n_ckpt,
+                      gap_meta=None) -> None:
     """One human-readable block on stderr: what went in, what came out, what was skipped."""
     lines = [f"prophound {package_version()} | mode {mode} | {n_ckpt} checkpoint(s)",
              f"input: {inp['n_contigs']} contig(s), {inp['total_bp']:,} bp; "
@@ -1800,6 +1831,9 @@ def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity
         lines.append(f"seed vote: min support {support_meta['min_seed_support']}, "
                      f"{support_meta['calls_dropped_by_vote']} call(s) dropped; kept by support "
                      f"{support_meta['calls_by_support']}")
+    if gap_meta and (gap_meta["calls_dropped"] or gap_meta["calls_with_any_n"]):
+        lines.append(f"N gaps: {gap_meta['calls_dropped']} call(s) dropped as >= {gap_meta['max_call_n_frac']:.0%} N; "
+                     f"{gap_meta['calls_with_any_n']} kept call(s) contain some N (see n_frac)")
     lines.append("calls are candidates for follow-up, not annotations")
     print("\n".join("[summary] " + l for l in lines), file=sys.stderr)
 

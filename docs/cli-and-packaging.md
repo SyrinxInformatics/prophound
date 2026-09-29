@@ -140,6 +140,7 @@ From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-ev
   - experimental (14): tiles, grid offset, window length and stride, refinement, the region builder and the ensemble rule.
 
   Only the layout changes; definitions and defaults don't, and `tests/test_cli_defaults.py` still checks the two parsers agree.
+- **N-gap filter (2026-09-29)**: calls that are ≥50% N are dropped (`MAX_CALL_N_FRAC`). `n_frac` is in `regions.tsv` and the GFF3; the counts are in `run_metadata.json` `n_gap_filter` and in the summary (`docs/v1-scope.md` A.3).
 - **ARC note**: `predict_genome.py` now imports `io_checks.py`. Any push of `src/predict_genome.py` must include `src/io_checks.py`.
 - Tests: `tests/test_io_checks.py` covers every rejection and the BED/GFF3 coordinate conventions (31 tests in total). An end-to-end check with planted tracks confirmed empty stdout, BED, GFF3 and FASTA agreeing with `regions.tsv`, the metadata blocks, and a clear protein-input error.
 

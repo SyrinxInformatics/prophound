@@ -1,0 +1,11 @@
+genome_id	contig_id	start	end	kind
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	564864	565864	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	1284058	1285058	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	2044257	2045257	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	1963928	1964928	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	3128815	3129815	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	1869706	1870706	random
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	3317	4317	element
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	540552	541552	element
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	2474258	2475258	element
+GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic	NZ_OZ007001.1	2757756	2758756	element

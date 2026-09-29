@@ -71,3 +71,14 @@ def test_bed_is_zero_based_and_gff3_one_based(tmp_path):
     f = gff[2].split("\t")
     assert f[2] == "prophage" and (f[3], f[4]) == ("101", "250")
     assert "seed_support=3" in f[8] and "note=candidate" in f[8]
+
+
+def test_call_n_fraction_counts_gap_bases(tmp_path):
+    from prophound.models.prophage.src.predict_genome import MAX_CALL_N_FRAC, call_n_fraction
+
+    fa = tmp_path / "g.fna"
+    fa.write_text(">c1\n" + "ACGT" * 250 + "N" * 1000 + "ACGT" * 250 + "\n")      # 1 kb, 1 kb N, 1 kb
+    r = pd.DataFrame({"contig_id": ["c1", "c1", "c1"], "start": [0, 500, 1000], "end": [1000, 1500, 2000]})
+    f = call_n_fraction(r, str(fa))
+    assert list(f) == [0.0, 0.5, 1.0]
+    assert list(f >= MAX_CALL_N_FRAC) == [False, True, True]
