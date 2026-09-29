@@ -8,3 +8,21 @@ Tesla V100S-PCIE-32GB
 [build] 482 implants in 28 spiked genomes; by size {'5-8kb': 378, '8-10kb': 60, '3-5kb': 44}; in-situ 31 loci in 25 genomes
 [done] scored r1: 53 genomes
 Tue Sep 29 13:56:56 CDT 2026
+[done] scored r2: 53 genomes
+Tue Sep 29 14:03:51 CDT 2026
+[done] scored r3: 53 genomes
+Tue Sep 29 14:10:50 CDT 2026
+[done] scored ens: 53 genomes
+Tue Sep 29 14:27:28 CDT 2026
+[exploratory@0.9/refine=off/vote>=1] spike detected 0.678 covered50 0.674 IoU 0.273 | 3-5kb 0.64/0.64 5-8kb 0.65/0.65 8-10kb 0.87/0.87 | insitu far_neg 1.00 positive 1.00
+[exploratory@0.9/refine=off/vote>=2] spike detected 0.606 covered50 0.604 IoU 0.198 | 3-5kb 0.48/0.48 5-8kb 0.58/0.58 8-10kb 0.85/0.85 | insitu far_neg 1.00 positive 1.00
+[exploratory@0.9/refine=off/vote>=3] spike detected 0.494 covered50 0.492 IoU 0.000 | 3-5kb 0.36/0.36 5-8kb 0.47/0.46 8-10kb 0.77/0.77 | insitu far_neg 0.90 positive 0.95
+[default@0.95/refine=off/vote>=1] spike detected 0.608 covered50 0.600 IoU 0.241 | 3-5kb 0.52/0.52 5-8kb 0.58/0.57 8-10kb 0.83/0.83 | insitu far_neg 1.00 positive 1.00
+[default@0.95/refine=off/vote>=2] spike detected 0.521 covered50 0.515 IoU 0.081 | 3-5kb 0.41/0.41 5-8kb 0.49/0.48 8-10kb 0.80/0.80 | insitu far_neg 0.80 positive 1.00
+[default@0.95/refine=off/vote>=3] spike detected 0.405 covered50 0.405 IoU 0.000 | 3-5kb 0.23/0.23 5-8kb 0.37/0.37 8-10kb 0.75/0.75 | insitu far_neg 0.70 positive 0.90
+[conservative@0.995/refine=off/vote>=1] spike detected 0.392 covered50 0.386 IoU 0.000 | 3-5kb 0.30/0.27 5-8kb 0.35/0.35 8-10kb 0.72/0.72 | insitu far_neg 0.60 positive 0.95
+[conservative@0.995/refine=off/vote>=2] spike detected 0.280 covered50 0.278 IoU 0.000 | 3-5kb 0.16/0.16 5-8kb 0.24/0.24 8-10kb 0.62/0.62 | insitu far_neg 0.50 positive 0.86
+[conservative@0.995/refine=off/vote>=3] spike detected 0.195 covered50 0.195 IoU 0.000 | 3-5kb 0.07/0.07 5-8kb 0.16/0.16 8-10kb 0.50/0.50 | insitu far_neg 0.50 positive 0.81
+[done] wrote analysis/spikein_siterule/results.json
+=== job end (exit 0) ===
+Tue Sep 29 14:28:14 CDT 2026
