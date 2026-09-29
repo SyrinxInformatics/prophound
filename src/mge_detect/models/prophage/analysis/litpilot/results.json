@@ -1,0 +1,2136 @@
+{
+  "truth": "scripts/literature_truth.tsv",
+  "n_perm": 10000,
+  "runs": {
+    "r1/exploratory": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "median_best_iou": 0.64,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 1.0
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [],
+        "fisher_p_covered50": 7.158507921213806e-05,
+        "fisher_p_mean_iou": 5.089908986150172e-06,
+        "calls_per_genome": 20.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.9375,
+        "covered50": 0.84375,
+        "median_best_iou": 0.5495908084163899,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.5833333333333334
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.3912543153049482
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.04398500644254422
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.3522118906734291
+          }
+        ],
+        "fisher_p_covered50": 5.978952706059457e-06,
+        "fisher_p_mean_iou": 6.162420694494613e-07,
+        "calls_per_genome": 24.0
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 16,
+          "obs_mean_iou": 0.5459563373408405,
+          "null_covered50_mean": 3.2116,
+          "null_mean_iou_mean": 0.11883622991472202,
+          "p_covered50": 0.0044995500449955,
+          "p_mean_iou": 0.000999900009999
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.19795714285714286,
+          "null_covered50_mean": 0.1645,
+          "null_mean_iou_mean": 0.03280153445851386,
+          "p_covered50": 0.0435956404359564,
+          "p_mean_iou": 0.0827917208279172
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6210183982683983,
+          "null_covered50_mean": 0.0352,
+          "null_mean_iou_mean": 0.015089559266800206,
+          "p_covered50": 0.0038996100389961006,
+          "p_mean_iou": 0.0017998200179982
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7312204548554282,
+          "null_covered50_mean": 0.3798,
+          "null_mean_iou_mean": 0.05830936514948551,
+          "p_covered50": 0.012798720127987202,
+          "p_mean_iou": 0.0046995300469953
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 21,
+          "obs_mean_iou": 0.523034742704004,
+          "null_covered50_mean": 4.8345,
+          "null_mean_iou_mean": 0.11946321431891206,
+          "p_covered50": 0.0014998500149985001,
+          "p_mean_iou": 0.000999900009999
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.5145553360645522,
+          "null_covered50_mean": 0.6803,
+          "null_mean_iou_mean": 0.11645948254934739,
+          "p_covered50": 0.006199380061993801,
+          "p_mean_iou": 0.0015998400159984002
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6684701285136069,
+          "null_covered50_mean": 0.4654,
+          "null_mean_iou_mean": 0.14699516546443256,
+          "p_covered50": 0.032596740325967405,
+          "p_mean_iou": 0.009099090090990901
+        }
+      }
+    },
+    "r1/default": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 0.96,
+        "median_best_iou": 0.729741935483871,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.22712256359431782
+          }
+        ],
+        "fisher_p_covered50": 2.124671882069816e-05,
+        "fisher_p_mean_iou": 1.3004954874965304e-06,
+        "calls_per_genome": 11.0
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.875,
+        "covered50": 0.78125,
+        "median_best_iou": 0.6642222222222223,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.4166666666666667
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE1",
+            "class": "remnant",
+            "len_bp": 86248,
+            "cov_frac": 0.19710601984973564
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.25316455696202533
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.04398500644254422
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 7.26376889750115e-06,
+        "fisher_p_mean_iou": 2.839883344847993e-07,
+        "calls_per_genome": 12.666666666666666
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5544305636669238,
+          "null_covered50_mean": 2.3952,
+          "null_mean_iou_mean": 0.08557914090238637,
+          "p_covered50": 0.0035996400359964,
+          "p_mean_iou": 0.0017998200179982
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.0654,
+          "null_mean_iou_mean": 0.01172721255509493,
+          "p_covered50": 0.018698130186981302,
+          "p_mean_iou": 0.028197180281971802
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6835555555555555,
+          "null_covered50_mean": 0.0205,
+          "null_mean_iou_mean": 0.006818312547832075,
+          "p_covered50": 0.0032996700329967,
+          "p_mean_iou": 0.0016998300169983002
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7535609408322175,
+          "null_covered50_mean": 0.3598,
+          "null_mean_iou_mean": 0.05489913379984721,
+          "p_covered50": 0.0131986801319868,
+          "p_mean_iou": 0.0030996900309969004
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 20,
+          "obs_mean_iou": 0.5367683268213179,
+          "null_covered50_mean": 3.7811,
+          "null_mean_iou_mean": 0.08943702367380446,
+          "p_covered50": 0.0017998200179982,
+          "p_mean_iou": 0.0005999400059994001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.4124959297547039,
+          "null_covered50_mean": 0.3661,
+          "null_mean_iou_mean": 0.05392442113220939,
+          "p_covered50": 0.007599240075992401,
+          "p_mean_iou": 0.0011998800119988001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.7193876888460302,
+          "null_covered50_mean": 0.2876,
+          "null_mean_iou_mean": 0.08796125071971649,
+          "p_covered50": 0.021497850214978503,
+          "p_mean_iou": 0.0045995400459954
+        }
+      }
+    },
+    "r1/conservative": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.729741935483871,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 1.5334827679959617e-05,
+        "fisher_p_mean_iou": 2.1930558665993356e-07,
+        "calls_per_genome": 7.75
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.78125,
+        "covered50": 0.75,
+        "median_best_iou": 0.5480818713450293,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.3333333333333333
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE1",
+            "class": "remnant",
+            "len_bp": 86248,
+            "cov_frac": 0.19710601984973564
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE5",
+            "class": "remnant",
+            "len_bp": 10235,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 1.5755625637709954e-05,
+        "fisher_p_mean_iou": 3.8128163826534154e-07,
+        "calls_per_genome": 10.0
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5489495062015242,
+          "null_covered50_mean": 2.2511,
+          "null_mean_iou_mean": 0.07064119105121422,
+          "p_covered50": 0.0032996700329967,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.0464,
+          "null_mean_iou_mean": 0.006011152179991618,
+          "p_covered50": 0.017198280171982803,
+          "p_mean_iou": 0.014698530146985302
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6835555555555555,
+          "null_covered50_mean": 0.018,
+          "null_mean_iou_mean": 0.005132827467349864,
+          "p_covered50": 0.0036996300369963003,
+          "p_mean_iou": 0.0013998600139986002
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7535609408322175,
+          "null_covered50_mean": 0.3543,
+          "null_mean_iou_mean": 0.054121048389103955,
+          "p_covered50": 0.012698730126987301,
+          "p_mean_iou": 0.0025997400259974
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 19,
+          "obs_mean_iou": 0.49647574150372153,
+          "null_covered50_mean": 3.728,
+          "null_mean_iou_mean": 0.08412134417061846,
+          "p_covered50": 0.0033996600339966003,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.4124959297547039,
+          "null_covered50_mean": 0.363,
+          "null_mean_iou_mean": 0.045274143978576466,
+          "p_covered50": 0.008599140085991401,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.7193876888460302,
+          "null_covered50_mean": 0.2823,
+          "null_mean_iou_mean": 0.0723814266277679,
+          "p_covered50": 0.017998200179982,
+          "p_mean_iou": 0.0034996500349965005
+        }
+      }
+    },
+    "r2/exploratory": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 0.96,
+        "median_best_iou": 0.601718309859155,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.22712256359431782
+          }
+        ],
+        "fisher_p_covered50": 7.366452114571615e-05,
+        "fisher_p_mean_iou": 2.069436469524515e-06,
+        "calls_per_genome": 26.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.9375,
+        "covered50": 0.875,
+        "median_best_iou": 0.5750555555555555,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.6666666666666666
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.48331415420023016
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.1611221740658311
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 9.366357077428315e-06,
+        "fisher_p_mean_iou": 1.212454334867225e-07,
+        "calls_per_genome": 28.0
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.48603441236199774,
+          "null_covered50_mean": 3.7796,
+          "null_mean_iou_mean": 0.13928618791467587,
+          "p_covered50": 0.005099490050994901,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.13324038461538462,
+          "null_covered50_mean": 0.2022,
+          "null_mean_iou_mean": 0.040910761606196715,
+          "p_covered50": 0.052894710528947106,
+          "p_mean_iou": 0.132986701329867
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6428662790697675,
+          "null_covered50_mean": 0.0415,
+          "null_mean_iou_mean": 0.02033914059968797,
+          "p_covered50": 0.0033996600339966003,
+          "p_mean_iou": 0.001999800019998
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7339356303418804,
+          "null_covered50_mean": 0.4108,
+          "null_mean_iou_mean": 0.07230012628586625,
+          "p_covered50": 0.013898610138986101,
+          "p_mean_iou": 0.0035996400359964
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 22,
+          "obs_mean_iou": 0.5484185953521576,
+          "null_covered50_mean": 5.387,
+          "null_mean_iou_mean": 0.13482737687438293,
+          "p_covered50": 0.0012998700129987,
+          "p_mean_iou": 0.00019998000199980003
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.4435648394349488,
+          "null_covered50_mean": 0.9122,
+          "null_mean_iou_mean": 0.1264164224645169,
+          "p_covered50": 0.013598640135986401,
+          "p_mean_iou": 0.0011998800119988001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6599559445562263,
+          "null_covered50_mean": 0.3741,
+          "null_mean_iou_mean": 0.14030779395674867,
+          "p_covered50": 0.0225977402259774,
+          "p_mean_iou": 0.0036996300369963003
+        }
+      }
+    },
+    "r2/default": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 0.96,
+        "median_best_iou": 0.6244861111111111,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.22712256359431782
+          }
+        ],
+        "fisher_p_covered50": 2.570824350190499e-05,
+        "fisher_p_mean_iou": 9.40578145764391e-07,
+        "calls_per_genome": 13.0
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.90625,
+        "covered50": 0.84375,
+        "median_best_iou": 0.5710454167613878,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.5833333333333334
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.4142692750287687
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.13183788216000938
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 4.8071826573798684e-06,
+        "fisher_p_mean_iou": 2.1481146139069184e-07,
+        "calls_per_genome": 14.0
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5373338784002653,
+          "null_covered50_mean": 2.725,
+          "null_mean_iou_mean": 0.10143225199946698,
+          "p_covered50": 0.004399560043995601,
+          "p_mean_iou": 0.0017998200179982
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.22349999999999998,
+          "null_covered50_mean": 0.0814,
+          "null_mean_iou_mean": 0.01477569302080622,
+          "p_covered50": 0.024197580241975804,
+          "p_mean_iou": 0.0324967503249675
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.675171834625323,
+          "null_covered50_mean": 0.0235,
+          "null_mean_iou_mean": 0.008282040150118271,
+          "p_covered50": 0.0025997400259974,
+          "p_mean_iou": 0.000999900009999
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7529631944444444,
+          "null_covered50_mean": 0.3539,
+          "null_mean_iou_mean": 0.0539683750084089,
+          "p_covered50": 0.011198880111988802,
+          "p_mean_iou": 0.0022997700229977
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 21,
+          "obs_mean_iou": 0.5304699279597606,
+          "null_covered50_mean": 4.0758,
+          "null_mean_iou_mean": 0.09790097576874675,
+          "p_covered50": 0.0012998700129987,
+          "p_mean_iou": 0.0005999400059994001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.44620211110846236,
+          "null_covered50_mean": 0.6243,
+          "null_mean_iou_mean": 0.06731408755382205,
+          "p_covered50": 0.008399160083991601,
+          "p_mean_iou": 0.0014998500149985001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6758667989417989,
+          "null_covered50_mean": 0.3319,
+          "null_mean_iou_mean": 0.08216194678341905,
+          "p_covered50": 0.020097990200979902,
+          "p_mean_iou": 0.0036996300369963003
+        }
+      }
+    },
+    "r2/conservative": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.6244861111111111,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 2.2167219397384652e-05,
+        "fisher_p_mean_iou": 6.820034928173306e-07,
+        "calls_per_genome": 8.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.8125,
+        "covered50": 0.78125,
+        "median_best_iou": 0.4872884807037215,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.4166666666666667
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.4142692750287687
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE5",
+            "class": "remnant",
+            "len_bp": 10235,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 4.019132288366086e-06,
+        "fisher_p_mean_iou": 4.481561526797653e-07,
+        "calls_per_genome": 9.0
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5329669136154693,
+          "null_covered50_mean": 2.4631,
+          "null_mean_iou_mean": 0.077869487933202,
+          "p_covered50": 0.0037996200379962005,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.22349999999999998,
+          "null_covered50_mean": 0.057,
+          "null_mean_iou_mean": 0.00871003732706239,
+          "p_covered50": 0.019498050194980503,
+          "p_mean_iou": 0.0216978302169783
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.675171834625323,
+          "null_covered50_mean": 0.0214,
+          "null_mean_iou_mean": 0.007025756702718599,
+          "p_covered50": 0.0028997100289971,
+          "p_mean_iou": 0.0008999100089991
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7529631944444444,
+          "null_covered50_mean": 0.3575,
+          "null_mean_iou_mean": 0.05413754088706774,
+          "p_covered50": 0.013098690130986902,
+          "p_mean_iou": 0.0035996400359964
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 20,
+          "obs_mean_iou": 0.5013627198726497,
+          "null_covered50_mean": 3.9292,
+          "null_mean_iou_mean": 0.08542814704092772,
+          "p_covered50": 0.0008999100089991,
+          "p_mean_iou": 0.0014998500149985001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.341460883038287,
+          "null_covered50_mean": 0.4384,
+          "null_mean_iou_mean": 0.03524017149987024,
+          "p_covered50": 0.008899110088991101,
+          "p_mean_iou": 0.0014998500149985001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6758667989417989,
+          "null_covered50_mean": 0.33,
+          "null_mean_iou_mean": 0.07813409489515358,
+          "p_covered50": 0.0206979302069793,
+          "p_mean_iou": 0.003999600039996
+        }
+      }
+    },
+    "r3/exploratory": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 0.96,
+        "median_best_iou": 0.6302608695652174,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.22712256359431782
+          }
+        ],
+        "fisher_p_covered50": 0.00012088978724686217,
+        "fisher_p_mean_iou": 8.645734680448432e-06,
+        "calls_per_genome": 23.0
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.9375,
+        "covered50": 0.8125,
+        "median_best_iou": 0.46627266408579693,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.5
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.4372842347525892
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.1611221740658311
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.39886929373048685
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.2964684887761811
+          }
+        ],
+        "fisher_p_covered50": 3.17947765373134e-05,
+        "fisher_p_mean_iou": 1.6314364796493862e-07,
+        "calls_per_genome": 23.333333333333332
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5186116748988622,
+          "null_covered50_mean": 3.1372,
+          "null_mean_iou_mean": 0.11915175735326158,
+          "p_covered50": 0.0044995500449955,
+          "p_mean_iou": 0.0016998300169983002
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.20377941176470588,
+          "null_covered50_mean": 0.2193,
+          "null_mean_iou_mean": 0.03730447007474559,
+          "p_covered50": 0.06979302069793021,
+          "p_mean_iou": 0.07439256074392561
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6428662790697675,
+          "null_covered50_mean": 0.0294,
+          "null_mean_iou_mean": 0.014220700003259958,
+          "p_covered50": 0.005099490050994901,
+          "p_mean_iou": 0.0018998100189981002
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7297906203071799,
+          "null_covered50_mean": 0.3727,
+          "null_mean_iou_mean": 0.05662496065620382,
+          "p_covered50": 0.014998500149985002,
+          "p_mean_iou": 0.0034996500349965005
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 21,
+          "obs_mean_iou": 0.525475970087515,
+          "null_covered50_mean": 4.7982,
+          "null_mean_iou_mean": 0.12310372036228938,
+          "p_covered50": 0.0029997000299970002,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.46291164368899174,
+          "null_covered50_mean": 0.5599,
+          "null_mean_iou_mean": 0.09437613846080561,
+          "p_covered50": 0.0156984301569843,
+          "p_mean_iou": 0.0004999500049995
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6439728750784682,
+          "null_covered50_mean": 0.5497,
+          "null_mean_iou_mean": 0.18559630156024098,
+          "p_covered50": 0.0327967203279672,
+          "p_mean_iou": 0.014898510148985102
+        }
+      }
+    },
+    "r3/default": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.704,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 4.814934379925617e-05,
+        "fisher_p_mean_iou": 3.9526936510394893e-07,
+        "calls_per_genome": 12.0
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.84375,
+        "covered50": 0.78125,
+        "median_best_iou": 0.5185124631577998,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.4166666666666667
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE1",
+            "class": "remnant",
+            "len_bp": 86248,
+            "cov_frac": 0.40400936833317874
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.014700714536722502
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 5.711423859024742e-06,
+        "fisher_p_mean_iou": 2.017573903189112e-07,
+        "calls_per_genome": 11.333333333333334
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5525554051133549,
+          "null_covered50_mean": 2.3513,
+          "null_mean_iou_mean": 0.0791598665325553,
+          "p_covered50": 0.0034996500349965005,
+          "p_mean_iou": 0.0004999500049995
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.1078,
+          "null_mean_iou_mean": 0.01667448858492513,
+          "p_covered50": 0.035596440355964404,
+          "p_mean_iou": 0.032396760323967606
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6581689106487147,
+          "null_covered50_mean": 0.0206,
+          "null_mean_iou_mean": 0.006315970238088841,
+          "p_covered50": 0.0028997100289971,
+          "p_mean_iou": 0.0013998600139986002
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7466401754864521,
+          "null_covered50_mean": 0.3636,
+          "null_mean_iou_mean": 0.05576037625200405,
+          "p_covered50": 0.014198580141985802,
+          "p_mean_iou": 0.0026997300269973002
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 20,
+          "obs_mean_iou": 0.5235365946914428,
+          "null_covered50_mean": 3.851,
+          "null_mean_iou_mean": 0.08633217647009854,
+          "p_covered50": 0.0010998900109989002,
+          "p_mean_iou": 0.00039996000399960006
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.3537627890066723,
+          "null_covered50_mean": 0.4715,
+          "null_mean_iou_mean": 0.05278572779837274,
+          "p_covered50": 0.010798920107989201,
+          "p_mean_iou": 0.0014998500149985001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6684554671141224,
+          "null_covered50_mean": 0.3814,
+          "null_mean_iou_mean": 0.11021876784332958,
+          "p_covered50": 0.028697130286971302,
+          "p_mean_iou": 0.004199580041995801
+        }
+      }
+    },
+    "r3/conservative": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.704,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 2.850289509678536e-05,
+        "fisher_p_mean_iou": 5.746491631276882e-07,
+        "calls_per_genome": 8.75
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.78125,
+        "covered50": 0.75,
+        "median_best_iou": 0.4570924329501916,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.3333333333333333
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE1",
+            "class": "remnant",
+            "len_bp": 86248,
+            "cov_frac": 0.40400936833317874
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE5",
+            "class": "remnant",
+            "len_bp": 10235,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 1.0393578800042286e-05,
+        "fisher_p_mean_iou": 5.56755997328123e-07,
+        "calls_per_genome": 9.333333333333334
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5525554051133549,
+          "null_covered50_mean": 2.1881,
+          "null_mean_iou_mean": 0.06825752616927205,
+          "p_covered50": 0.0033996600339966003,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.055,
+          "null_mean_iou_mean": 0.008190159469090076,
+          "p_covered50": 0.0184981501849815,
+          "p_mean_iou": 0.0197980201979802
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6581689106487147,
+          "null_covered50_mean": 0.0181,
+          "null_mean_iou_mean": 0.004905684096723389,
+          "p_covered50": 0.0028997100289971,
+          "p_mean_iou": 0.0012998700129987
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7466401754864521,
+          "null_covered50_mean": 0.3605,
+          "null_mean_iou_mean": 0.05549987178285366,
+          "p_covered50": 0.013098690130986902,
+          "p_mean_iou": 0.0023997600239976003
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 19,
+          "obs_mean_iou": 0.48657005954011884,
+          "null_covered50_mean": 3.8246,
+          "null_mean_iou_mean": 0.08260285380581255,
+          "p_covered50": 0.0020997900209979003,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.3537627890066723,
+          "null_covered50_mean": 0.4381,
+          "null_mean_iou_mean": 0.043343207001808076,
+          "p_covered50": 0.0110988901109889,
+          "p_mean_iou": 0.0017998200179982
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6684554671141224,
+          "null_covered50_mean": 0.3695,
+          "null_mean_iou_mean": 0.09333502767319539,
+          "p_covered50": 0.032896710328967106,
+          "p_mean_iou": 0.0053994600539946005
+        }
+      }
+    },
+    "ens/exploratory": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "median_best_iou": 0.5916184210526316,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 1.0
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [],
+        "fisher_p_covered50": 0.0001103328053254855,
+        "fisher_p_mean_iou": 1.7530850575707723e-05,
+        "calls_per_genome": 31.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 1.0,
+        "covered50": 0.90625,
+        "median_best_iou": 0.5495908084163899,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.75
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.48331415420023016
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.1611221740658311
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.39886929373048685
+          }
+        ],
+        "fisher_p_covered50": 9.600889583789252e-06,
+        "fisher_p_mean_iou": 4.648810263699316e-08,
+        "calls_per_genome": 33.666666666666664
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 16,
+          "obs_mean_iou": 0.4668978806654655,
+          "null_covered50_mean": 4.3277,
+          "null_mean_iou_mean": 0.16010465314978253,
+          "p_covered50": 0.0032996700329967,
+          "p_mean_iou": 0.0012998700129987
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.13072641509433963,
+          "null_covered50_mean": 0.2889,
+          "null_mean_iou_mean": 0.05030895151048354,
+          "p_covered50": 0.08539146085391461,
+          "p_mean_iou": 0.16828317168283172
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6210183982683983,
+          "null_covered50_mean": 0.0472,
+          "null_mean_iou_mean": 0.02734435737093422,
+          "p_covered50": 0.005099490050994901,
+          "p_mean_iou": 0.0023997600239976003
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.71732955352231,
+          "null_covered50_mean": 0.4116,
+          "null_mean_iou_mean": 0.07305556273878858,
+          "p_covered50": 0.013898610138986101,
+          "p_mean_iou": 0.004999500049995001
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 22,
+          "obs_mean_iou": 0.5201494271271546,
+          "null_covered50_mean": 6.1046,
+          "null_mean_iou_mean": 0.14964526511933487,
+          "p_covered50": 0.0011998800119988001,
+          "p_mean_iou": 9.999000099990002e-05
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 5,
+          "obs_mean_iou": 0.551529174274234,
+          "null_covered50_mean": 1.1389,
+          "null_mean_iou_mean": 0.15771364955029724,
+          "p_covered50": 0.0100989901009899,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.64134345987379,
+          "null_covered50_mean": 0.6287,
+          "null_mean_iou_mean": 0.20844894337785028,
+          "p_covered50": 0.0352964703529647,
+          "p_mean_iou": 0.013898610138986101
+        }
+      }
+    },
+    "ens/default": {
+      "test": {
+        "n": 25,
+        "covered": 1.0,
+        "covered50": 0.96,
+        "median_best_iou": 0.6159315068493151,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.22712256359431782
+          }
+        ],
+        "fisher_p_covered50": 6.429709590383938e-05,
+        "fisher_p_mean_iou": 1.617423111005828e-06,
+        "calls_per_genome": 15.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.9375,
+        "covered50": 0.875,
+        "median_best_iou": 0.5873372011251758,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.6666666666666666
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.4142692750287687
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.13183788216000938
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 6.9850700858518755e-06,
+        "fisher_p_mean_iou": 8.139922167475134e-07,
+        "calls_per_genome": 16.333333333333332
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5109313312711284,
+          "null_covered50_mean": 2.9031,
+          "null_mean_iou_mean": 0.10683656838507873,
+          "p_covered50": 0.0046995300469953,
+          "p_mean_iou": 0.0010998900109989002
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.1233,
+          "null_mean_iou_mean": 0.019394678559948406,
+          "p_covered50": 0.0400959904009599,
+          "p_mean_iou": 0.034096590340965904
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6581689106487147,
+          "null_covered50_mean": 0.0268,
+          "null_mean_iou_mean": 0.010800827478813878,
+          "p_covered50": 0.003999600039996,
+          "p_mean_iou": 0.001999800019998
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7339356303418804,
+          "null_covered50_mean": 0.3795,
+          "null_mean_iou_mean": 0.0576166495261009,
+          "p_covered50": 0.0143985601439856,
+          "p_mean_iou": 0.0045995400459954
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 21,
+          "obs_mean_iou": 0.5238776813649482,
+          "null_covered50_mean": 4.327,
+          "null_mean_iou_mean": 0.10250477998561391,
+          "p_covered50": 0.0017998200179982,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 5,
+          "obs_mean_iou": 0.5068716198307844,
+          "null_covered50_mean": 0.7317,
+          "null_mean_iou_mean": 0.08635141893148796,
+          "p_covered50": 0.0059994000599940004,
+          "p_mean_iou": 0.0027997200279972004
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6593462986706257,
+          "null_covered50_mean": 0.3767,
+          "null_mean_iou_mean": 0.11544055673194949,
+          "p_covered50": 0.026497350264973504,
+          "p_mean_iou": 0.0053994600539946005
+        }
+      }
+    },
+    "ens/conservative": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.6159315068493151,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 4.148426659543057e-05,
+        "fisher_p_mean_iou": 2.5905613260187826e-07,
+        "calls_per_genome": 9.5
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.84375,
+        "covered50": 0.8125,
+        "median_best_iou": 0.4872884807037215,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.5
+          }
+        },
+        "named_prophages_covered50": 1.0,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.4142692750287687
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE5",
+            "class": "remnant",
+            "len_bp": 10235,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 4.705004369924908e-06,
+        "fisher_p_mean_iou": 6.278286725747618e-07,
+        "calls_per_genome": 11.666666666666666
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.5065643664863325,
+          "null_covered50_mean": 2.5607,
+          "null_mean_iou_mean": 0.07941502359774669,
+          "p_covered50": 0.0038996100389961006,
+          "p_mean_iou": 0.00039996000399960006
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.21651562500000002,
+          "null_covered50_mean": 0.0808,
+          "null_mean_iou_mean": 0.011232517907720414,
+          "p_covered50": 0.028097190280971903,
+          "p_mean_iou": 0.021097890210978902
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.6581689106487147,
+          "null_covered50_mean": 0.021,
+          "null_mean_iou_mean": 0.0067095930210390375,
+          "p_covered50": 0.0025997400259974,
+          "p_mean_iou": 0.000999900009999
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.7339356303418804,
+          "null_covered50_mean": 0.3635,
+          "null_mean_iou_mean": 0.054007970074530225,
+          "p_covered50": 0.0124987501249875,
+          "p_mean_iou": 0.0021997800219978004
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 20,
+          "obs_mean_iou": 0.49624853008957004,
+          "null_covered50_mean": 4.2427,
+          "null_mean_iou_mean": 0.09271240836173782,
+          "p_covered50": 0.0012998700129987,
+          "p_mean_iou": 0.0006999300069993001
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.402130391760609,
+          "null_covered50_mean": 0.65,
+          "null_mean_iou_mean": 0.06691788293017618,
+          "p_covered50": 0.0081991800819918,
+          "p_mean_iou": 0.004199580041995801
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.6593462986706257,
+          "null_covered50_mean": 0.3555,
+          "null_mean_iou_mean": 0.09023722816915115,
+          "p_covered50": 0.030996900309969003,
+          "p_mean_iou": 0.006099390060993901
+        }
+      }
+    },
+    "genomad": {
+      "test": {
+        "n": 25,
+        "covered": 0.96,
+        "covered50": 0.96,
+        "median_best_iou": 0.9353836682151453,
+        "by_class": {
+          "cryptic_prophage": {
+            "n": 15,
+            "covered50": 0.9333333333333333
+          },
+          "prophage": {
+            "n": 8,
+            "covered50": 1.0
+          },
+          "remnant": {
+            "n": 2,
+            "covered50": 1.0
+          }
+        },
+        "named_prophages_covered50": 0.9565217391304348,
+        "missed": [
+          {
+            "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+            "name": "CP-933L",
+            "class": "cryptic_prophage",
+            "len_bp": 6054,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 2.4897546826919785e-06,
+        "fisher_p_mean_iou": 3.379679419935223e-10,
+        "calls_per_genome": 6.0
+      },
+      "val": {
+        "n": 32,
+        "covered": 0.6875,
+        "covered50": 0.6875,
+        "median_best_iou": 0.7105007758265571,
+        "by_class": {
+          "prophage": {
+            "n": 20,
+            "covered50": 0.95
+          },
+          "remnant": {
+            "n": 12,
+            "covered50": 0.25
+          }
+        },
+        "named_prophages_covered50": 0.95,
+        "missed": [
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE1",
+            "class": "remnant",
+            "len_bp": 86248,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE2",
+            "class": "remnant",
+            "len_bp": 13459,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "Sp16",
+            "class": "prophage",
+            "len_bp": 8551,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE3",
+            "class": "remnant",
+            "len_bp": 23451,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE4",
+            "class": "remnant",
+            "len_bp": 43450,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE5",
+            "class": "remnant",
+            "len_bp": 10235,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+            "name": "SpLE6",
+            "class": "remnant",
+            "len_bp": 34148,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 1",
+            "class": "remnant",
+            "len_bp": 23702,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 3",
+            "class": "remnant",
+            "len_bp": 23881,
+            "cov_frac": 0.0
+          },
+          {
+            "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+            "name": "prophage 6",
+            "class": "remnant",
+            "len_bp": 42588,
+            "cov_frac": 0.0
+          }
+        ],
+        "fisher_p_covered50": 7.414563285771532e-06,
+        "fisher_p_mean_iou": 2.6241969598466623e-08,
+        "calls_per_genome": 6.333333333333333
+      },
+      "permutation": {
+        "GCF_000006665.1_ASM666v1_genomic": {
+          "n_elements": 16,
+          "obs_covered50": 15,
+          "obs_mean_iou": 0.727125726518475,
+          "null_covered50_mean": 1.7359,
+          "null_mean_iou_mean": 0.060507677222076894,
+          "p_covered50": 0.001999800019998,
+          "p_mean_iou": 0.00019998000199980003
+        },
+        "GCF_000006745.1_ASM674v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.35784009916330956,
+          "null_covered50_mean": 0.023,
+          "null_mean_iou_mean": 0.004639038183990269,
+          "p_covered50": 0.0066993300669933005,
+          "p_mean_iou": 0.0040995900409959
+        },
+        "GCF_000006765.1_ASM676v1_genomic": {
+          "n_elements": 2,
+          "obs_covered50": 2,
+          "obs_mean_iou": 0.8573167522122805,
+          "null_covered50_mean": 0.0122,
+          "null_mean_iou_mean": 0.004586415572861483,
+          "p_covered50": 0.0021997800219978004,
+          "p_mean_iou": 0.000999900009999
+        },
+        "GCF_000006785.2_ASM678v2_genomic": {
+          "n_elements": 4,
+          "obs_covered50": 4,
+          "obs_mean_iou": 0.9568537379359366,
+          "null_covered50_mean": 0.2601,
+          "null_mean_iou_mean": 0.048705691537450954,
+          "p_covered50": 0.007699230076992301,
+          "p_mean_iou": 0.00019998000199980003
+        },
+        "GCF_000008865.2_ASM886v2_genomic": {
+          "n_elements": 24,
+          "obs_covered50": 17,
+          "obs_mean_iou": 0.5495657591819951,
+          "null_covered50_mean": 2.8568,
+          "null_mean_iou_mean": 0.06734671100456736,
+          "p_covered50": 0.0029997000299970002,
+          "p_mean_iou": 9.999000099990002e-05
+        },
+        "GCF_000009045.1_ASM904v1_genomic": {
+          "n_elements": 6,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.4345402959372416,
+          "null_covered50_mean": 0.2691,
+          "null_mean_iou_mean": 0.022621132202267413,
+          "p_covered50": 0.006999300069993001,
+          "p_mean_iou": 0.0008999100089991
+        },
+        "GCF_000013425.1_ASM1342v1_genomic": {
+          "n_elements": 3,
+          "obs_covered50": 3,
+          "obs_mean_iou": 0.8515648015591881,
+          "null_covered50_mean": 0.1893,
+          "null_mean_iou_mean": 0.0486008866331633,
+          "p_covered50": 0.014898510148985102,
+          "p_mean_iou": 0.00039996000399960006
+        }
+      }
+    }
+  }
+}

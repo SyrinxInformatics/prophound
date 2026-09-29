@@ -1,0 +1,617 @@
+{
+  "exploratory/refine=off/vote>=1": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.46296296296296297,
+        "covered50": 0.46296296296296297,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.8666666666666667,
+        "covered50": 0.8666666666666667,
+        "median_iou": 0.5410937499999999
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.5049261083743842,
+        "covered50": 0.5049261083743842,
+        "median_iou": 0.30644166666666667
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 1.0,
+        "covered50": 0.9
+      },
+      "positive": {
+        "n": 21,
+        "detected": 1.0,
+        "covered50": 0.9047619047619048
+      }
+    },
+    "calls_per_spiked_genome": 34.2972972972973
+  },
+  "exploratory/refine=off/vote>=2": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.35802469135802467,
+        "covered50": 0.35802469135802467,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.8,
+        "covered50": 0.8,
+        "median_iou": 0.5267058823529411
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.41133004926108374,
+        "covered50": 0.41133004926108374,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.8,
+        "covered50": 0.8
+      },
+      "positive": {
+        "n": 21,
+        "detected": 1.0,
+        "covered50": 0.9047619047619048
+      }
+    },
+    "calls_per_spiked_genome": 24.37837837837838
+  },
+  "exploratory/refine=off/vote>=3": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.2654320987654321,
+        "covered50": 0.2654320987654321,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.6833333333333333,
+        "covered50": 0.6833333333333333,
+        "median_iou": 0.5091687306501549
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.32019704433497537,
+        "covered50": 0.32019704433497537,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.7,
+        "covered50": 0.7
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.9047619047619048,
+        "covered50": 0.8095238095238095
+      }
+    },
+    "calls_per_spiked_genome": 17.945945945945947
+  },
+  "default/refine=off/vote>=1": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.24382716049382716,
+        "covered50": 0.24382716049382716,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.6666666666666666,
+        "covered50": 0.6666666666666666,
+        "median_iou": 0.5455333333333334
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.30049261083743845,
+        "covered50": 0.30049261083743845,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.6,
+        "covered50": 0.6
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.9523809523809523,
+        "covered50": 0.8095238095238095
+      }
+    },
+    "calls_per_spiked_genome": 17.945945945945947
+  },
+  "default/refine=off/vote>=2": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.18518518518518517,
+        "covered50": 0.18518518518518517,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5833333333333334,
+        "covered50": 0.5833333333333334,
+        "median_iou": 0.5154705882352941
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.2413793103448276,
+        "covered50": 0.2413793103448276,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8571428571428571,
+        "covered50": 0.7142857142857143
+      }
+    },
+    "calls_per_spiked_genome": 13.108108108108109
+  },
+  "default/refine=off/vote>=3": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.0,
+        "covered50": 0.0,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.10493827160493827,
+        "covered50": 0.10493827160493827,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5666666666666667,
+        "covered50": 0.5666666666666667,
+        "median_iou": 0.5154705882352941
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.16748768472906403,
+        "covered50": 0.16748768472906403,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8095238095238095,
+        "covered50": 0.6666666666666666
+      }
+    },
+    "calls_per_spiked_genome": 10.0
+  },
+  "default/refine=0.8/vote>=1": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.24382716049382716,
+        "covered50": 0.24382716049382716,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.6666666666666666,
+        "covered50": 0.6666666666666666,
+        "median_iou": 0.722645732689211
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.30049261083743845,
+        "covered50": 0.30049261083743845,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.6,
+        "covered50": 0.6
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.9523809523809523,
+        "covered50": 0.8095238095238095
+      }
+    },
+    "calls_per_spiked_genome": 18.027027027027028
+  },
+  "default/refine=0.8/vote>=2": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.18518518518518517,
+        "covered50": 0.18518518518518517,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5833333333333334,
+        "covered50": 0.5833333333333334,
+        "median_iou": 0.6974826546003017
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.2413793103448276,
+        "covered50": 0.2413793103448276,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8571428571428571,
+        "covered50": 0.7142857142857143
+      }
+    },
+    "calls_per_spiked_genome": 13.18918918918919
+  },
+  "default/refine=0.8/vote>=3": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.0,
+        "covered50": 0.0,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.10493827160493827,
+        "covered50": 0.10493827160493827,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5666666666666667,
+        "covered50": 0.5666666666666667,
+        "median_iou": 0.6708374455732946
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.16748768472906403,
+        "covered50": 0.16748768472906403,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8095238095238095,
+        "covered50": 0.6666666666666666
+      }
+    },
+    "calls_per_spiked_genome": 10.027027027027026
+  },
+  "default/refine=0.95/vote>=1": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.24382716049382716,
+        "covered50": 0.24382716049382716,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.6666666666666666,
+        "covered50": 0.6666666666666666,
+        "median_iou": 0.7732400422869952
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.30049261083743845,
+        "covered50": 0.30049261083743845,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.6,
+        "covered50": 0.6
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8571428571428571,
+        "covered50": 0.7619047619047619
+      }
+    },
+    "calls_per_spiked_genome": 17.91891891891892
+  },
+  "default/refine=0.95/vote>=2": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.13636363636363635,
+        "covered50": 0.13636363636363635,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.18518518518518517,
+        "covered50": 0.18518518518518517,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5833333333333334,
+        "covered50": 0.5833333333333334,
+        "median_iou": 0.7551971014492753
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.2413793103448276,
+        "covered50": 0.2413793103448276,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.7619047619047619,
+        "covered50": 0.7142857142857143
+      }
+    },
+    "calls_per_spiked_genome": 13.135135135135135
+  },
+  "default/refine=0.95/vote>=3": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.0,
+        "covered50": 0.0,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.10493827160493827,
+        "covered50": 0.10493827160493827,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5666666666666667,
+        "covered50": 0.5666666666666667,
+        "median_iou": 0.7512971014492753
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.16748768472906403,
+        "covered50": 0.16748768472906403,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.5,
+        "covered50": 0.5
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.7142857142857143,
+        "covered50": 0.6666666666666666
+      }
+    },
+    "calls_per_spiked_genome": 10.0
+  },
+  "conservative/refine=off/vote>=1": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.045454545454545456,
+        "covered50": 0.045454545454545456,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.12037037037037036,
+        "covered50": 0.12037037037037036,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.5833333333333334,
+        "covered50": 0.5833333333333334,
+        "median_iou": 0.5154705882352941
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.18472906403940886,
+        "covered50": 0.18472906403940886,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.6,
+        "covered50": 0.6
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.8571428571428571,
+        "covered50": 0.7142857142857143
+      }
+    },
+    "calls_per_spiked_genome": 11.54054054054054
+  },
+  "conservative/refine=off/vote>=2": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.0,
+        "covered50": 0.0,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.07716049382716049,
+        "covered50": 0.07716049382716049,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.4666666666666667,
+        "covered50": 0.4666666666666667,
+        "median_iou": 0.0
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.13054187192118227,
+        "covered50": 0.13054187192118227,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.4,
+        "covered50": 0.4
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.6666666666666666,
+        "covered50": 0.5238095238095238
+      }
+    },
+    "calls_per_spiked_genome": 8.783783783783784
+  },
+  "conservative/refine=off/vote>=3": {
+    "spike": {
+      "3-5kb": {
+        "n": 22,
+        "detected": 0.0,
+        "covered50": 0.0,
+        "median_iou": 0.0
+      },
+      "5-8kb": {
+        "n": 324,
+        "detected": 0.046296296296296294,
+        "covered50": 0.046296296296296294,
+        "median_iou": 0.0
+      },
+      "8-10kb": {
+        "n": 60,
+        "detected": 0.25,
+        "covered50": 0.25,
+        "median_iou": 0.0
+      },
+      "all": {
+        "n": 406,
+        "detected": 0.07389162561576355,
+        "covered50": 0.07389162561576355,
+        "median_iou": 0.0
+      }
+    },
+    "insitu": {
+      "far_neg": {
+        "n": 10,
+        "detected": 0.3,
+        "covered50": 0.3
+      },
+      "positive": {
+        "n": 21,
+        "detected": 0.5714285714285714,
+        "covered50": 0.42857142857142855
+      }
+    },
+    "calls_per_spiked_genome": 6.8108108108108105
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "r1": {
+    "n_genomes": 20,
+    "total_bp": 77392155.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 12.8,
+        "short_contig_calls": 1,
+        "calls_per_mb": 3.3078288102973743,
+        "frac_bp_called": 0.05047023176961541,
+        "genomes_with_calls": 17,
+        "max_prob_median": 0.9903611540794373,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 40,
+          "GCF_002240355.1_ASM224035v1_genomic": 23,
+          "GCF_040126055.1_ASM4012605v1_genomic": 23,
+          "GCF_000317475.1_ASM31747v1_genomic": 20,
+          "GCF_007954585.1_ASM795458v1_genomic": 20,
+          "GCF_028401415.2_ASM2840141v2_genomic": 19,
+          "GCF_000012505.1_ASM1250v1_genomic": 18,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 18,
+          "GCF_005166025.1_ASM516602v1_genomic": 14,
+          "GCF_021117385.1_ASM2111738v1_genomic": 13,
+          "GCF_014069875.1_ASM1406987v1_genomic": 12,
+          "GCF_000092645.1_ASM9264v1_genomic": 10,
+          "GCF_000020625.1_ASM2062v1_genomic": 8,
+          "GCF_003194085.1_ASM319408v1_genomic": 5,
+          "GCF_026013905.1_ASM2601390v1_genomic": 5,
+          "GCF_040436365.1_ASM4043636v1_genomic": 5,
+          "GCF_001887245.1_ASM188724v1_genomic": 3
+        }
+      },
+      "default": {
+        "calls_per_genome": 4.4,
+        "short_contig_calls": 1,
+        "calls_per_mb": 1.1370661535397224,
+        "frac_bp_called": 0.017811882871073947,
+        "genomes_with_calls": 16,
+        "max_prob_median": 0.998723328113556,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 14,
+          "GCF_002240355.1_ASM224035v1_genomic": 12,
+          "GCF_040126055.1_ASM4012605v1_genomic": 10,
+          "GCF_007954585.1_ASM795458v1_genomic": 9,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 8,
+          "GCF_000317475.1_ASM31747v1_genomic": 7,
+          "GCF_028401415.2_ASM2840141v2_genomic": 6,
+          "GCF_000012505.1_ASM1250v1_genomic": 5,
+          "GCF_005166025.1_ASM516602v1_genomic": 4,
+          "GCF_021117385.1_ASM2111738v1_genomic": 3,
+          "GCF_000020625.1_ASM2062v1_genomic": 2,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_003194085.1_ASM319408v1_genomic": 2,
+          "GCF_014069875.1_ASM1406987v1_genomic": 2,
+          "GCF_026013905.1_ASM2601390v1_genomic": 1,
+          "GCF_040436365.1_ASM4043636v1_genomic": 1
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 1.85,
+        "short_contig_calls": 1,
+        "calls_per_mb": 0.4780846327382924,
+        "frac_bp_called": 0.00856675977041859,
+        "genomes_with_calls": 12,
+        "max_prob_median": 0.999816596508026,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 9,
+          "GCF_000317475.1_ASM31747v1_genomic": 5,
+          "GCF_002240355.1_ASM224035v1_genomic": 4,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 4,
+          "GCF_007954585.1_ASM795458v1_genomic": 3,
+          "GCF_040126055.1_ASM4012605v1_genomic": 3,
+          "GCF_000020625.1_ASM2062v1_genomic": 2,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_021117385.1_ASM2111738v1_genomic": 2,
+          "GCF_000012505.1_ASM1250v1_genomic": 1,
+          "GCF_028401415.2_ASM2840141v2_genomic": 1,
+          "GCF_040436365.1_ASM4043636v1_genomic": 1
+        }
+      }
+    }
+  },
+  "r2": {
+    "n_genomes": 20,
+    "total_bp": 77392155.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 14.7,
+        "short_contig_calls": 1,
+        "calls_per_mb": 3.7988346493258907,
+        "frac_bp_called": 0.05853952509786037,
+        "genomes_with_calls": 17,
+        "max_prob_median": 0.9887740612030028,
+        "calls_by_genome": {
+          "GCF_002240355.1_ASM224035v1_genomic": 27,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 27,
+          "GCF_040126055.1_ASM4012605v1_genomic": 27,
+          "GCF_047130825.1_ASM4713082v1_genomic": 27,
+          "GCF_000317475.1_ASM31747v1_genomic": 25,
+          "GCF_028401415.2_ASM2840141v2_genomic": 24,
+          "GCF_014069875.1_ASM1406987v1_genomic": 21,
+          "GCF_007954585.1_ASM795458v1_genomic": 19,
+          "GCF_021117385.1_ASM2111738v1_genomic": 17,
+          "GCF_000012505.1_ASM1250v1_genomic": 16,
+          "GCF_005166025.1_ASM516602v1_genomic": 14,
+          "GCF_040436365.1_ASM4043636v1_genomic": 12,
+          "GCF_000020625.1_ASM2062v1_genomic": 9,
+          "GCF_001887245.1_ASM188724v1_genomic": 9,
+          "GCF_026013905.1_ASM2601390v1_genomic": 9,
+          "GCF_000092645.1_ASM9264v1_genomic": 6,
+          "GCF_003194085.1_ASM319408v1_genomic": 5
+        }
+      },
+      "default": {
+        "calls_per_genome": 4.95,
+        "short_contig_calls": 1,
+        "calls_per_mb": 1.2791994227321877,
+        "frac_bp_called": 0.020596402826617247,
+        "genomes_with_calls": 15,
+        "max_prob_median": 0.9987642765045166,
+        "calls_by_genome": {
+          "GCF_000317475.1_ASM31747v1_genomic": 13,
+          "GCF_047130825.1_ASM4713082v1_genomic": 13,
+          "GCF_002240355.1_ASM224035v1_genomic": 11,
+          "GCF_007954585.1_ASM795458v1_genomic": 8,
+          "GCF_040126055.1_ASM4012605v1_genomic": 8,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 7,
+          "GCF_000012505.1_ASM1250v1_genomic": 6,
+          "GCF_021117385.1_ASM2111738v1_genomic": 6,
+          "GCF_040436365.1_ASM4043636v1_genomic": 6,
+          "GCF_014069875.1_ASM1406987v1_genomic": 5,
+          "GCF_028401415.2_ASM2840141v2_genomic": 5,
+          "GCF_000020625.1_ASM2062v1_genomic": 3,
+          "GCF_003194085.1_ASM319408v1_genomic": 3,
+          "GCF_005166025.1_ASM516602v1_genomic": 3,
+          "GCF_000092645.1_ASM9264v1_genomic": 2
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 2.3,
+        "short_contig_calls": 1,
+        "calls_per_mb": 0.5943754893503095,
+        "frac_bp_called": 0.011551558423460362,
+        "genomes_with_calls": 14,
+        "max_prob_median": 0.9997481107711792,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 9,
+          "GCF_002240355.1_ASM224035v1_genomic": 6,
+          "GCF_000317475.1_ASM31747v1_genomic": 5,
+          "GCF_040126055.1_ASM4012605v1_genomic": 5,
+          "GCF_007954585.1_ASM795458v1_genomic": 4,
+          "GCF_003194085.1_ASM319408v1_genomic": 3,
+          "GCF_021117385.1_ASM2111738v1_genomic": 3,
+          "GCF_028401415.2_ASM2840141v2_genomic": 3,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 3,
+          "GCF_000012505.1_ASM1250v1_genomic": 1,
+          "GCF_000020625.1_ASM2062v1_genomic": 1,
+          "GCF_000092645.1_ASM9264v1_genomic": 1,
+          "GCF_005166025.1_ASM516602v1_genomic": 1,
+          "GCF_040436365.1_ASM4043636v1_genomic": 1
+        }
+      }
+    }
+  },
+  "r3": {
+    "n_genomes": 20,
+    "total_bp": 77392155.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 13.75,
+        "short_contig_calls": 1,
+        "calls_per_mb": 3.5533317298116325,
+        "frac_bp_called": 0.05446934511643978,
+        "genomes_with_calls": 18,
+        "max_prob_median": 0.9895702600479126,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 35,
+          "GCF_000317475.1_ASM31747v1_genomic": 31,
+          "GCF_040126055.1_ASM4012605v1_genomic": 27,
+          "GCF_002240355.1_ASM224035v1_genomic": 26,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 25,
+          "GCF_028401415.2_ASM2840141v2_genomic": 23,
+          "GCF_005166025.1_ASM516602v1_genomic": 22,
+          "GCF_007954585.1_ASM795458v1_genomic": 19,
+          "GCF_000012505.1_ASM1250v1_genomic": 18,
+          "GCF_021117385.1_ASM2111738v1_genomic": 11,
+          "GCF_014069875.1_ASM1406987v1_genomic": 9,
+          "GCF_000020625.1_ASM2062v1_genomic": 6,
+          "GCF_000092645.1_ASM9264v1_genomic": 6,
+          "GCF_003194085.1_ASM319408v1_genomic": 6,
+          "GCF_026013905.1_ASM2601390v1_genomic": 4,
+          "GCF_040436365.1_ASM4043636v1_genomic": 4,
+          "GCF_029919255.1_ASM2991925v1_genomic": 2,
+          "GCF_001887245.1_ASM188724v1_genomic": 1
+        }
+      },
+      "default": {
+        "calls_per_genome": 4.9,
+        "short_contig_calls": 1,
+        "calls_per_mb": 1.2662782164419637,
+        "frac_bp_called": 0.02051241498573079,
+        "genomes_with_calls": 16,
+        "max_prob_median": 0.9992006123065948,
+        "calls_by_genome": {
+          "GCF_000317475.1_ASM31747v1_genomic": 16,
+          "GCF_047130825.1_ASM4713082v1_genomic": 14,
+          "GCF_002240355.1_ASM224035v1_genomic": 12,
+          "GCF_040126055.1_ASM4012605v1_genomic": 9,
+          "GCF_007954585.1_ASM795458v1_genomic": 8,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 8,
+          "GCF_000012505.1_ASM1250v1_genomic": 6,
+          "GCF_005166025.1_ASM516602v1_genomic": 6,
+          "GCF_028401415.2_ASM2840141v2_genomic": 5,
+          "GCF_021117385.1_ASM2111738v1_genomic": 4,
+          "GCF_003194085.1_ASM319408v1_genomic": 3,
+          "GCF_000020625.1_ASM2062v1_genomic": 2,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_014069875.1_ASM1406987v1_genomic": 1,
+          "GCF_026013905.1_ASM2601390v1_genomic": 1,
+          "GCF_040436365.1_ASM4043636v1_genomic": 1
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 2.55,
+        "short_contig_calls": 1,
+        "calls_per_mb": 0.65898152080143,
+        "frac_bp_called": 0.011299594900800992,
+        "genomes_with_calls": 13,
+        "max_prob_median": 0.999758780002594,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 10,
+          "GCF_000317475.1_ASM31747v1_genomic": 7,
+          "GCF_002240355.1_ASM224035v1_genomic": 6,
+          "GCF_040126055.1_ASM4012605v1_genomic": 5,
+          "GCF_021117385.1_ASM2111738v1_genomic": 4,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 4,
+          "GCF_003194085.1_ASM319408v1_genomic": 3,
+          "GCF_007954585.1_ASM795458v1_genomic": 3,
+          "GCF_028401415.2_ASM2840141v2_genomic": 3,
+          "GCF_000012505.1_ASM1250v1_genomic": 2,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_000020625.1_ASM2062v1_genomic": 1,
+          "GCF_005166025.1_ASM516602v1_genomic": 1
+        }
+      }
+    }
+  },
+  "ens": {
+    "n_genomes": 20,
+    "total_bp": 77392155.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 20.6,
+        "short_contig_calls": 1,
+        "calls_per_mb": 5.323536991572337,
+        "frac_bp_called": 0.08681112446087075,
+        "genomes_with_calls": 18,
+        "max_prob_median": 0.9896969497203827,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 48,
+          "GCF_040126055.1_ASM4012605v1_genomic": 40,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 37,
+          "GCF_000317475.1_ASM31747v1_genomic": 34,
+          "GCF_002240355.1_ASM224035v1_genomic": 34,
+          "GCF_028401415.2_ASM2840141v2_genomic": 33,
+          "GCF_005166025.1_ASM516602v1_genomic": 26,
+          "GCF_007954585.1_ASM795458v1_genomic": 25,
+          "GCF_014069875.1_ASM1406987v1_genomic": 23,
+          "GCF_000012505.1_ASM1250v1_genomic": 22,
+          "GCF_021117385.1_ASM2111738v1_genomic": 20,
+          "GCF_001887245.1_ASM188724v1_genomic": 13,
+          "GCF_040436365.1_ASM4043636v1_genomic": 13,
+          "GCF_000020625.1_ASM2062v1_genomic": 12,
+          "GCF_000092645.1_ASM9264v1_genomic": 12,
+          "GCF_026013905.1_ASM2601390v1_genomic": 11,
+          "GCF_003194085.1_ASM319408v1_genomic": 7,
+          "GCF_029919255.1_ASM2991925v1_genomic": 2
+        }
+      },
+      "default": {
+        "calls_per_genome": 7.35,
+        "short_contig_calls": 1,
+        "calls_per_mb": 1.8994173246629453,
+        "frac_bp_called": 0.032981379055797067,
+        "genomes_with_calls": 16,
+        "max_prob_median": 0.9987642765045166,
+        "calls_by_genome": {
+          "GCF_000317475.1_ASM31747v1_genomic": 19,
+          "GCF_047130825.1_ASM4713082v1_genomic": 19,
+          "GCF_002240355.1_ASM224035v1_genomic": 16,
+          "GCF_040126055.1_ASM4012605v1_genomic": 13,
+          "GCF_007954585.1_ASM795458v1_genomic": 12,
+          "GCF_000012505.1_ASM1250v1_genomic": 11,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 10,
+          "GCF_028401415.2_ASM2840141v2_genomic": 9,
+          "GCF_005166025.1_ASM516602v1_genomic": 7,
+          "GCF_014069875.1_ASM1406987v1_genomic": 7,
+          "GCF_021117385.1_ASM2111738v1_genomic": 6,
+          "GCF_040436365.1_ASM4043636v1_genomic": 6,
+          "GCF_000020625.1_ASM2062v1_genomic": 5,
+          "GCF_003194085.1_ASM319408v1_genomic": 4,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_026013905.1_ASM2601390v1_genomic": 1
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 3.3,
+        "short_contig_calls": 1,
+        "calls_per_mb": 0.8527996151547919,
+        "frac_bp_called": 0.017359640650916105,
+        "genomes_with_calls": 14,
+        "max_prob_median": 0.999769926071167,
+        "calls_by_genome": {
+          "GCF_047130825.1_ASM4713082v1_genomic": 12,
+          "GCF_002240355.1_ASM224035v1_genomic": 9,
+          "GCF_000317475.1_ASM31747v1_genomic": 7,
+          "GCF_037113525.1_AgR_BfibD1_NP_genomic": 6,
+          "GCF_040126055.1_ASM4012605v1_genomic": 6,
+          "GCF_003194085.1_ASM319408v1_genomic": 4,
+          "GCF_007954585.1_ASM795458v1_genomic": 4,
+          "GCF_021117385.1_ASM2111738v1_genomic": 4,
+          "GCF_028401415.2_ASM2840141v2_genomic": 4,
+          "GCF_000020625.1_ASM2062v1_genomic": 3,
+          "GCF_000012505.1_ASM1250v1_genomic": 2,
+          "GCF_000092645.1_ASM9264v1_genomic": 2,
+          "GCF_005166025.1_ASM516602v1_genomic": 2,
+          "GCF_040436365.1_ASM4043636v1_genomic": 1
+        }
+      }
+    }
+  }
+}

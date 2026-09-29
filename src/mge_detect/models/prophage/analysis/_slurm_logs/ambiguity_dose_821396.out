@@ -1,0 +1,81 @@
+=== job start ===
+Mon Sep 28 19:44:01 CDT 2026
+gpu006
+Tesla V100S-PCIE-32GB
+[preflight] 42 genomes
+[preflight] all inputs present
+[done] clean:0
+Mon Sep 28 20:25:32 CDT 2026
+[done] scattered:10
+Mon Sep 28 21:07:32 CDT 2026
+[done] scattered:100
+Mon Sep 28 21:50:34 CDT 2026
+[done] scattered:300
+Mon Sep 28 22:34:19 CDT 2026
+[done] scattered:1000
+Mon Sep 28 23:18:10 CDT 2026
+[done] scattered:3000
+Tue Sep 29 00:02:06 CDT 2026
+[done] nruns:0.5
+Tue Sep 29 00:43:51 CDT 2026
+[done] nruns:2
+Tue Sep 29 01:25:30 CDT 2026
+[done] nruns:10
+Tue Sep 29 02:07:20 CDT 2026
+[impute clean 0 exploratory] covered50 0.983 covered 0.994 calls/genome 29.2 lost 0
+[impute clean 0 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[impute clean 0 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute nruns 0.5 exploratory] covered50 0.983 covered 0.994 calls/genome 29.2 lost 0
+[impute nruns 0.5 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[impute nruns 0.5 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute nruns 10 exploratory] covered50 0.983 covered 0.994 calls/genome 29.1 lost 0
+[impute nruns 10 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[impute nruns 10 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute nruns 2 exploratory] covered50 0.983 covered 0.994 calls/genome 29.2 lost 0
+[impute nruns 2 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[impute nruns 2 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute scattered 10 exploratory] covered50 0.983 covered 0.994 calls/genome 29.2 lost 0
+[impute scattered 10 default] covered50 0.961 covered 0.978 calls/genome 14.6 lost 0
+[impute scattered 10 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute scattered 100 exploratory] covered50 0.983 covered 0.994 calls/genome 29.1 lost 0
+[impute scattered 100 default] covered50 0.961 covered 0.978 calls/genome 14.7 lost 0
+[impute scattered 100 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[impute scattered 1000 exploratory] covered50 0.983 covered 0.994 calls/genome 29.7 lost 0
+[impute scattered 1000 default] covered50 0.961 covered 0.978 calls/genome 14.7 lost 1
+[impute scattered 1000 conservative] covered50 0.944 covered 0.961 calls/genome 9.6 lost 1
+[impute scattered 300 exploratory] covered50 0.983 covered 0.994 calls/genome 29.3 lost 0
+[impute scattered 300 default] covered50 0.961 covered 0.978 calls/genome 14.7 lost 0
+[impute scattered 300 conservative] covered50 0.944 covered 0.961 calls/genome 9.6 lost 0
+[impute scattered 3000 exploratory] covered50 0.983 covered 1.000 calls/genome 29.6 lost 0
+[impute scattered 3000 default] covered50 0.955 covered 0.978 calls/genome 15.0 lost 2
+[impute scattered 3000 conservative] covered50 0.944 covered 0.966 calls/genome 9.6 lost 2
+[n-channel clean 0 exploratory] covered50 0.983 covered 0.994 calls/genome 29.1 lost 0
+[n-channel clean 0 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[n-channel clean 0 conservative] covered50 0.944 covered 0.961 calls/genome 9.4 lost 0
+[n-channel nruns 0.5 exploratory] covered50 0.983 covered 0.994 calls/genome 29.0 lost 0
+[n-channel nruns 0.5 default] covered50 0.961 covered 0.978 calls/genome 14.5 lost 0
+[n-channel nruns 0.5 conservative] covered50 0.944 covered 0.961 calls/genome 9.5 lost 0
+[n-channel nruns 10 exploratory] covered50 0.972 covered 0.994 calls/genome 29.8 lost 2
+[n-channel nruns 10 default] covered50 0.944 covered 0.972 calls/genome 15.2 lost 3
+[n-channel nruns 10 conservative] covered50 0.927 covered 0.950 calls/genome 10.0 lost 3
+[n-channel nruns 2 exploratory] covered50 0.983 covered 0.994 calls/genome 29.2 lost 0
+[n-channel nruns 2 default] covered50 0.961 covered 0.978 calls/genome 14.7 lost 0
+[n-channel nruns 2 conservative] covered50 0.944 covered 0.961 calls/genome 9.7 lost 0
+[n-channel scattered 10 exploratory] covered50 0.983 covered 0.994 calls/genome 29.1 lost 0
+[n-channel scattered 10 default] covered50 0.961 covered 0.978 calls/genome 14.4 lost 0
+[n-channel scattered 10 conservative] covered50 0.933 covered 0.961 calls/genome 9.3 lost 2
+[n-channel scattered 100 exploratory] covered50 0.955 covered 0.983 calls/genome 27.5 lost 5
+[n-channel scattered 100 default] covered50 0.927 covered 0.972 calls/genome 14.4 lost 6
+[n-channel scattered 100 conservative] covered50 0.883 covered 0.950 calls/genome 9.4 lost 11
+[n-channel scattered 1000 exploratory] covered50 0.240 covered 0.525 calls/genome 5.5 lost 133
+[n-channel scattered 1000 default] covered50 0.168 covered 0.453 calls/genome 3.4 lost 142
+[n-channel scattered 1000 conservative] covered50 0.134 covered 0.380 calls/genome 2.5 lost 145
+[n-channel scattered 300 exploratory] covered50 0.799 covered 0.933 calls/genome 21.2 lost 33
+[n-channel scattered 300 default] covered50 0.765 covered 0.894 calls/genome 11.9 lost 35
+[n-channel scattered 300 conservative] covered50 0.693 covered 0.849 calls/genome 8.0 lost 45
+[n-channel scattered 3000 exploratory] covered50 0.006 covered 0.017 calls/genome 0.1 lost 175
+[n-channel scattered 3000 default] covered50 0.000 covered 0.017 calls/genome 0.1 lost 172
+[n-channel scattered 3000 conservative] covered50 0.000 covered 0.017 calls/genome 0.1 lost 169
+[done] wrote analysis/ambiguity_dose/results.json
+=== job end (exit 0) ===
+Tue Sep 29 02:09:50 CDT 2026

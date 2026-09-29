@@ -17,7 +17,9 @@
 """Operating modes under the shipped pipeline, rebuilt offline from score tracks.
 
 For each run directory (`<genome>/windows.tsv` + `run_metadata.json`) and each
-mode, calls are rebuilt the way predict_genome builds them: full-length windows
+mode, calls are rebuilt the way predict_genome builds them (with runs labelled
+r1, r2, r3 and ens, an extra `ens_shipped` row applies each mode's seed vote,
+MODE_MIN_SEED_SUPPORT; the other rows are unvoted): full-length windows
 with the mode's seed/extend, coverage builder and fragment merging; short-contig
 windows (shorter than the run's window_len) per scale at
 SHORT_CONTIG_THRESHOLDS[mode], no merging. Refinement is not applied (off by
@@ -51,21 +53,26 @@ from refine_sweep import covered50  # noqa: E402
 
 try:  # repo layout
     from mge_detect.models.prophage.src.predict_genome import (
-        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_THRESHOLDS,
-        SHORT_CONTIG_THRESHOLDS, build_region_table_coverage, iter_fasta_lengths)
+        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_MIN_SEED_SUPPORT,
+        MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS, apply_seed_vote, build_region_table_coverage,
+        iter_fasta_lengths)
 except ImportError:  # HPCC data_refactored/ layout
     from src.predict_genome import (
-        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_THRESHOLDS,
-        SHORT_CONTIG_THRESHOLDS, build_region_table_coverage, iter_fasta_lengths)
+        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_MIN_SEED_SUPPORT,
+        MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS, apply_seed_vote, build_region_table_coverage,
+        iter_fasta_lengths)
 
 
-def load_tracks(d: str) -> dict:
+def load_tracks(d: str, prob_col: str = "prob") -> dict:
+    """`prob_col` picks the score column: `prob` (the run's own, ensemble if it
+    had several checkpoints) or `prob_ckpt<k>` from --write-seed-scores runs."""
     out = {}
     for g in sorted(Path(d).iterdir()):
         w, m = g / "windows.tsv", g / "run_metadata.json"
         if w.exists() and m.exists():
             wl = int(json.loads(m.read_text())["window_len"])
-            out[g.name] = (pd.read_csv(w, sep="\t", usecols=["genome_id", "contig_id", "start", "end", "prob"]), wl)
+            t = pd.read_csv(w, sep="\t", usecols=["genome_id", "contig_id", "start", "end", prob_col])
+            out[g.name] = (t.rename(columns={prob_col: "prob"}), wl)
     if not out:
         raise SystemExit(f"no <genome>/windows.tsv + run_metadata.json under {d}")
     return out
@@ -93,6 +100,21 @@ def calls(tracks: dict, mode: str) -> pd.DataFrame:
         columns=["genome_id", "contig_id", "start", "end", "max_prob", "short"])
 
 
+def vote(reg: pd.DataFrame, seed_regs: list, k: int) -> pd.DataFrame:
+    """predict_genome's call-level seed vote, applied genome by genome."""
+    if k <= 1 or reg.empty:
+        return reg
+    kept = [apply_seed_vote(sub.reset_index(drop=True), [s[s.genome_id == g] for s in seed_regs], k)[0]
+            for g, sub in reg.groupby("genome_id", sort=False)]
+    return pd.concat(kept, ignore_index=True)
+
+
+def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str) -> pd.DataFrame:
+    """Calls as predict_genome ships them for `mode`: ensemble calls at the
+    mode's thresholds, kept by the mode's seed vote over the single-seed tracks."""
+    return vote(calls(ens_tracks, mode), [calls(t, mode) for t in seed_tracks], MODE_MIN_SEED_SUPPORT[mode])
+
+
 def element_overlap_bp(ev: pd.DataFrame, r) -> int:
     x = ev[(ev.accession == r.genome_id) & (ev.contig == r.contig_id) & (ev.end > r.start) & (ev.start < r.end)]
     return int(sum(min(e, r.end) - max(s, r.start) for s, e in zip(x.start, x.end)))
@@ -112,9 +134,13 @@ def main() -> None:
     lengths = pd.read_csv(args.lengths_csv).set_index("accession").total_bp if args.lengths_csv else None
     ev = pd.read_csv(args.elements) if args.elements else None
     res, flat = {}, []
-    for spec in args.run:
-        label, _, d = spec.partition("=")
-        tracks = load_tracks(d)
+    specs = [s.partition("=")[::2] for s in args.run]
+    loaded = {label: load_tracks(d) for label, d in specs}
+    seeds = [loaded[s] for s in ("r1", "r2", "r3") if s in loaded]
+    jobs = [(label, loaded[label], None) for label, _ in specs]
+    if "ens" in loaded and len(seeds) == 3:   # the shipped pipeline: ensemble + the mode's vote
+        jobs.append(("ens_shipped", loaded["ens"], seeds))
+    for label, tracks, vote_seeds in jobs:
         if lengths is not None:
             total_bp = float(lengths.loc[list(tracks)].sum())
         else:
@@ -123,7 +149,7 @@ def main() -> None:
         free_bp = total_bp - el_bp
         res[label] = {"n_genomes": len(tracks), "total_bp": total_bp, "modes": {}}
         for mode in MODE_THRESHOLDS:
-            reg = calls(tracks, mode)
+            reg = shipped_calls(tracks, vote_seeds, mode) if vote_seeds else calls(tracks, mode)
             n = len(reg)
             m = {"calls_per_genome": n / len(tracks), "short_contig_calls": int(reg["short"].sum()) if n else 0,
                  "calls_per_mb": n / (total_bp / 1e6)}

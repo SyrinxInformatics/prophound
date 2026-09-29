@@ -1,0 +1,60 @@
+=== job start ===
+Mon Sep 28 18:45:23 CDT 2026
+gpu006
+Tesla V100S-PCIE-32GB
+[preflight] scripts/eval_genome_list.txt: 18 genomes
+[preflight] scripts/eval_phagefree_list.txt: 20 genomes
+[preflight] all inputs present
+[done] confirm18 r1: 18 genomes
+Mon Sep 28 18:50:03 CDT 2026
+[done] phagefree r1: 20 genomes
+Mon Sep 28 18:54:16 CDT 2026
+[done] confirm18 r2: 18 genomes
+Mon Sep 28 18:58:48 CDT 2026
+[done] phagefree r2: 20 genomes
+Mon Sep 28 19:03:06 CDT 2026
+[done] confirm18 r3: 18 genomes
+Mon Sep 28 19:07:36 CDT 2026
+[done] phagefree r3: 20 genomes
+Mon Sep 28 19:11:47 CDT 2026
+[done] confirm18 ens: 18 genomes
+Mon Sep 28 19:23:13 CDT 2026
+[done] phagefree ens: 20 genomes
+Mon Sep 28 19:33:23 CDT 2026
+[r1 exploratory] calls_per_genome 20.500 short_contig_calls 0 calls_per_mb 4.700 covered_recall 1.000 covered50_recall 0.962 on_target 0.136 false_calls_per_mb 4.170
+[r1 default] calls_per_genome 9.056 short_contig_calls 0 calls_per_mb 2.076 covered_recall 1.000 covered50_recall 0.962 on_target 0.307 false_calls_per_mb 1.477
+[r1 conservative] calls_per_genome 4.889 short_contig_calls 0 calls_per_mb 1.121 covered_recall 0.981 covered50_recall 0.962 on_target 0.557 false_calls_per_mb 0.510
+[r2 exploratory] calls_per_genome 26.278 short_contig_calls 0 calls_per_mb 6.025 covered_recall 1.000 covered50_recall 0.981 on_target 0.106 false_calls_per_mb 5.529
+[r2 default] calls_per_genome 11.500 short_contig_calls 0 calls_per_mb 2.637 covered_recall 0.981 covered50_recall 0.942 on_target 0.237 false_calls_per_mb 2.065
+[r2 conservative] calls_per_genome 6.500 short_contig_calls 0 calls_per_mb 1.490 covered_recall 0.962 covered50_recall 0.923 on_target 0.410 false_calls_per_mb 0.902
+[r3 exploratory] calls_per_genome 20.444 short_contig_calls 0 calls_per_mb 4.688 covered_recall 1.000 covered50_recall 1.000 on_target 0.136 false_calls_per_mb 4.157
+[r3 default] calls_per_genome 10.056 short_contig_calls 0 calls_per_mb 2.306 covered_recall 1.000 covered50_recall 0.981 on_target 0.276 false_calls_per_mb 1.712
+[r3 conservative] calls_per_genome 5.778 short_contig_calls 0 calls_per_mb 1.325 covered_recall 0.962 covered50_recall 0.962 on_target 0.462 false_calls_per_mb 0.732
+[ens exploratory] calls_per_genome 31.222 short_contig_calls 0 calls_per_mb 7.159 covered_recall 1.000 covered50_recall 1.000 on_target 0.089 false_calls_per_mb 6.693
+[ens default] calls_per_genome 14.444 short_contig_calls 0 calls_per_mb 3.312 covered_recall 1.000 covered50_recall 0.981 on_target 0.192 false_calls_per_mb 2.745
+[ens conservative] calls_per_genome 7.611 short_contig_calls 0 calls_per_mb 1.745 covered_recall 1.000 covered50_recall 0.981 on_target 0.365 false_calls_per_mb 1.137
+[done] wrote analysis/confirm18/modes.json
+[r1 exploratory] calls_per_genome 12.800 short_contig_calls 1 calls_per_mb 3.308 frac_bp_called 0.050 genomes_with_calls 17 max_prob_median 0.990
+[r1 default] calls_per_genome 4.400 short_contig_calls 1 calls_per_mb 1.137 frac_bp_called 0.018 genomes_with_calls 16 max_prob_median 0.999
+[r1 conservative] calls_per_genome 1.850 short_contig_calls 1 calls_per_mb 0.478 frac_bp_called 0.009 genomes_with_calls 12 max_prob_median 1.000
+[r2 exploratory] calls_per_genome 14.700 short_contig_calls 1 calls_per_mb 3.799 frac_bp_called 0.059 genomes_with_calls 17 max_prob_median 0.989
+[r2 default] calls_per_genome 4.950 short_contig_calls 1 calls_per_mb 1.279 frac_bp_called 0.021 genomes_with_calls 15 max_prob_median 0.999
+[r2 conservative] calls_per_genome 2.300 short_contig_calls 1 calls_per_mb 0.594 frac_bp_called 0.012 genomes_with_calls 14 max_prob_median 1.000
+[r3 exploratory] calls_per_genome 13.750 short_contig_calls 1 calls_per_mb 3.553 frac_bp_called 0.054 genomes_with_calls 18 max_prob_median 0.990
+[r3 default] calls_per_genome 4.900 short_contig_calls 1 calls_per_mb 1.266 frac_bp_called 0.021 genomes_with_calls 16 max_prob_median 0.999
+[r3 conservative] calls_per_genome 2.550 short_contig_calls 1 calls_per_mb 0.659 frac_bp_called 0.011 genomes_with_calls 13 max_prob_median 1.000
+[ens exploratory] calls_per_genome 20.600 short_contig_calls 1 calls_per_mb 5.324 frac_bp_called 0.087 genomes_with_calls 18 max_prob_median 0.990
+[ens default] calls_per_genome 7.350 short_contig_calls 1 calls_per_mb 1.899 frac_bp_called 0.033 genomes_with_calls 16 max_prob_median 0.999
+[ens conservative] calls_per_genome 3.300 short_contig_calls 1 calls_per_mb 0.853 frac_bp_called 0.017 genomes_with_calls 14 max_prob_median 1.000
+[done] wrote analysis/phagefree/modes.json
+[r1_5000] baseline covered 1.000 matched 0.962 absorbed 4 over 8824.5 under 0.0
+[r1_5000] 3 variants done
+[r2_5000] baseline covered 0.981 matched 0.942 absorbed 4 over 10481.0 under 0.0
+[r2_5000] 3 variants done
+[r3_5000] baseline covered 1.000 matched 0.962 absorbed 4 over 8332.0 under 0.0
+[r3_5000] 3 variants done
+[ens_5000] baseline covered 1.000 matched 0.962 absorbed 4 over 11434.0 under 0.0
+[ens_5000] 3 variants done
+[done] wrote analysis/confirm18/refine_sweep.json and analysis/confirm18/refine_sweep.csv
+=== job end (exit 0) ===
+Mon Sep 28 19:34:11 CDT 2026

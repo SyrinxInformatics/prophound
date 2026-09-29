@@ -58,7 +58,11 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         "--mode",
         choices=PROPHAGE_MODES,
         default="default",
-        help="Confidence mode (controls the default score threshold).",
+        help=(
+            "Operating mode: seed threshold plus seed vote. exploratory 0.95, every "
+            "call kept (~30 calls/genome); default 0.98, all 3 checkpoints agree "
+            "(~11); conservative 0.995, all 3 agree (~8)."
+        ),
     )
     parser.add_argument(
         "--config",
@@ -88,6 +92,25 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     parser.add_argument("--threshold", type=float, default=None, help="Override the mode's score threshold.")
     parser.add_argument("--seed-threshold", type=float, default=None)
     parser.add_argument("--extend-threshold", type=float, default=None)
+    parser.add_argument(
+        "--min-seed-support",
+        type=int,
+        default=None,
+        help=(
+            "Keep an ensemble call only if at least this many checkpoints make an "
+            "overlapping call on their own (default: the mode's; exploratory 1, "
+            "default 3, conservative 3). Needs several --checkpoint files; 1 keeps "
+            "every call."
+        ),
+    )
+    parser.add_argument(
+        "--write-seed-scores",
+        action="store_true",
+        help=(
+            "With several --checkpoint files, also write each checkpoint's score to "
+            "windows.tsv (prob_ckpt1, ...) for offline re-analysis."
+        ),
+    )
     parser.add_argument(
         "--device",
         default="auto",

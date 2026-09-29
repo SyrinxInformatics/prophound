@@ -1,0 +1,1274 @@
+{
+  "n_elements": 52,
+  "runs": {
+    "r1_5000": {
+      "n_genomes": 18,
+      "fine_window_len": 5000,
+      "baseline": {
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9615384615384616,
+        "matched_recall": 0.9615384615384616,
+        "median_iou": 0.7888523936170213,
+        "conflated_calls": 2,
+        "absorbed_elements": 4,
+        "fragmented_elements": 0,
+        "calls_per_genome": 9.055555555555555,
+        "n_elements": 52,
+        "median_overshoot_bp": 8824.5,
+        "median_undershoot_bp": 0.0,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.48800297619047617,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 4,
+            "median_overshoot_bp": 13415.0,
+            "median_undershoot_bp": 0.0
+          },
+          "15-30kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.6853703703703704,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 13,
+            "median_overshoot_bp": 8791.0,
+            "median_undershoot_bp": 0.0
+          },
+          "30-60kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.96,
+            "matched_recall": 1.0,
+            "median_iou": 0.8123275862068966,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 25,
+            "median_overshoot_bp": 8752.0,
+            "median_undershoot_bp": 0.0
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.8888888888888888,
+            "matched_recall": 1.0,
+            "median_iou": 0.7941518987341772,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 9,
+            "median_overshoot_bp": 7455.0,
+            "median_undershoot_bp": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.48678947368421055,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 1,
+            "median_overshoot_bp": 9751.0,
+            "median_undershoot_bp": 0.0
+          }
+        }
+      },
+      "variants": {
+        "t0.6_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9615384615384616,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.8160290863841348,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 9.055555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 6759.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.5295201548157791,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 11645.0,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.755513084386945,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 5420.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8431697834975534,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 6101.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.8158387516254877,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 6763.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6166,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 163
+          }
+        },
+        "t0.8_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9615384615384616,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.8208151801226103,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 9.055555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 6266.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.5728063584954339,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 9512.0,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7747771283022564,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 5420.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8530998768740494,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5989.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.8158387516254877,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 6755.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6378620689655172,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5251.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 163
+          }
+        },
+        "t0.95_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9423076923076923,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.8183927714966703,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 9.055555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 5114.5,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.5899899460396676,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 7536.5,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.9230769230769231,
+              "matched_recall": 1.0,
+              "median_iou": 0.741999770053271,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 2152.0,
+              "median_undershoot_bp": 1281.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.871631920831086,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5457.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.8169010416666667,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 5355.0,
+              "median_undershoot_bp": 2024.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6606428571428572,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 4751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 160,
+            "no_fine_support": 3
+          }
+        }
+      }
+    },
+    "r2_5000": {
+      "n_genomes": 18,
+      "fine_window_len": 5000,
+      "baseline": {
+        "covered_recall": 0.9807692307692307,
+        "covered50_recall": 0.9423076923076923,
+        "matched_recall": 0.9423076923076923,
+        "median_iou": 0.7735083014048532,
+        "conflated_calls": 2,
+        "absorbed_elements": 4,
+        "fragmented_elements": 0,
+        "calls_per_genome": 11.5,
+        "n_elements": 52,
+        "median_overshoot_bp": 10481.0,
+        "median_undershoot_bp": 0.0,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.4247679398148148,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 4,
+            "median_overshoot_bp": 17039.0,
+            "median_undershoot_bp": 0.0
+          },
+          "15-30kb": {
+            "covered_recall": 0.9230769230769231,
+            "covered50_recall": 0.9230769230769231,
+            "matched_recall": 0.9230769230769231,
+            "median_iou": 0.6590555555555555,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 13,
+            "median_overshoot_bp": 9176.5,
+            "median_undershoot_bp": 0.0
+          },
+          "30-60kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.96,
+            "matched_recall": 1.0,
+            "median_iou": 0.7985593220338983,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 25,
+            "median_overshoot_bp": 9752.0,
+            "median_undershoot_bp": 0.0
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.8888888888888888,
+            "matched_recall": 1.0,
+            "median_iou": 0.7788778385793311,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 9,
+            "median_overshoot_bp": 9644.0,
+            "median_undershoot_bp": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.4021304347826087,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 1,
+            "median_overshoot_bp": 13751.0,
+            "median_undershoot_bp": 0.0
+          }
+        }
+      },
+      "variants": {
+        "t0.6_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 0.9807692307692307,
+          "covered50_recall": 0.9423076923076923,
+          "matched_recall": 0.9423076923076923,
+          "median_iou": 0.7911773732866366,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 11.555555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 6763.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.4532868484575887,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 15459.5,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 0.9230769230769231,
+              "covered50_recall": 0.9230769230769231,
+              "matched_recall": 0.9230769230769231,
+              "median_iou": 0.7604243453735458,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 5389.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8485117493472585,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 6686.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.7579584594509967,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 9517.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.604312316236524,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 6056.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 206,
+            "split": 2
+          }
+        },
+        "t0.8_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 0.9807692307692307,
+          "covered50_recall": 0.9230769230769231,
+          "matched_recall": 0.9423076923076923,
+          "median_iou": 0.8022799408257597,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 11.5,
+          "n_elements": 52,
+          "median_overshoot_bp": 6660.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.4503689563818536,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 13879.5,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 0.9230769230769231,
+              "covered50_recall": 0.8461538461538461,
+              "matched_recall": 0.9230769230769231,
+              "median_iou": 0.7705498359910363,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 4056.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8551630278517893,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 6291.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.7545141425738441,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 9317.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6166,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 206,
+            "no_fine_support": 1
+          }
+        },
+        "t0.95_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 0.9807692307692307,
+          "covered50_recall": 0.9038461538461539,
+          "matched_recall": 0.9423076923076923,
+          "median_iou": 0.8056641242905425,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 11.5,
+          "n_elements": 52,
+          "median_overshoot_bp": 5203.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.75,
+              "matched_recall": 1.0,
+              "median_iou": 0.5601014588739821,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 1463.5,
+              "median_undershoot_bp": 1673.5
+            },
+            "15-30kb": {
+              "covered_recall": 0.9230769230769231,
+              "covered50_recall": 0.8461538461538461,
+              "matched_recall": 0.9230769230769231,
+              "median_iou": 0.7263173259378193,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 3357.5,
+              "median_undershoot_bp": 948.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8710899476467339,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5617.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.8888888888888888,
+              "matched_recall": 1.0,
+              "median_iou": 0.7485512874126292,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 8817.0,
+              "median_undershoot_bp": 282.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6166,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 190,
+            "no_fine_support": 17
+          }
+        }
+      }
+    },
+    "r3_5000": {
+      "n_genomes": 18,
+      "fine_window_len": 5000,
+      "baseline": {
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "matched_recall": 0.9615384615384616,
+        "median_iou": 0.7775315118822581,
+        "conflated_calls": 2,
+        "absorbed_elements": 4,
+        "fragmented_elements": 0,
+        "calls_per_genome": 10.055555555555555,
+        "n_elements": 52,
+        "median_overshoot_bp": 8332.0,
+        "median_undershoot_bp": 0.0,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.4597261273209549,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 4,
+            "median_overshoot_bp": 14915.0,
+            "median_undershoot_bp": 0.0
+          },
+          "15-30kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.6934815373021854,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 13,
+            "median_overshoot_bp": 8274.0,
+            "median_undershoot_bp": 0.0
+          },
+          "30-60kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.96,
+            "matched_recall": 1.0,
+            "median_iou": 0.8090376820297253,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 25,
+            "median_overshoot_bp": 8390.0,
+            "median_undershoot_bp": 0.0
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.7941518987341772,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 9,
+            "median_overshoot_bp": 7455.0,
+            "median_undershoot_bp": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.48678947368421055,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 1,
+            "median_overshoot_bp": 9751.0,
+            "median_undershoot_bp": 0.0
+          }
+        }
+      },
+      "variants": {
+        "t0.6_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9807692307692307,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.7944894336146551,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 10.11111111111111,
+          "n_elements": 52,
+          "median_overshoot_bp": 6103.5,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.5110408893551776,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 12304.0,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7310374474589224,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 5011.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8623084928721834,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5959.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7942977311092673,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 6763.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6270508474576271,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5501.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 180,
+            "split": 2
+          }
+        },
+        "t0.8_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9615384615384616,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.8095335897061867,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 10.055555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 5536.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.5286566273274174,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 11359.5,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.9230769230769231,
+              "matched_recall": 1.0,
+              "median_iou": 0.7310374474589224,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 4330.0,
+              "median_undershoot_bp": 392.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8692936440161034,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5846.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.808669939257986,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 6763.0,
+              "median_undershoot_bp": 182.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6378620689655172,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5251.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 181
+          }
+        },
+        "t0.95_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9423076923076923,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.8269158259582692,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 10.055555555555555,
+          "n_elements": 52,
+          "median_overshoot_bp": 5098.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.75,
+              "matched_recall": 1.0,
+              "median_iou": 0.5151055207712985,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 9113.0,
+              "median_undershoot_bp": 752.5
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.9230769230769231,
+              "matched_recall": 1.0,
+              "median_iou": 0.785644457813205,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 2362.0,
+              "median_undershoot_bp": 669.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8818715531044298,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 5374.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.8056584809708826,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 5724.0,
+              "median_undershoot_bp": 324.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6726545454545455,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 4501.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 173,
+            "no_fine_support": 8
+          }
+        }
+      }
+    },
+    "ens_5000": {
+      "n_genomes": 18,
+      "fine_window_len": 5000,
+      "baseline": {
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "matched_recall": 0.9615384615384616,
+        "median_iou": 0.7664927721088435,
+        "conflated_calls": 2,
+        "absorbed_elements": 4,
+        "fragmented_elements": 0,
+        "calls_per_genome": 14.444444444444445,
+        "n_elements": 52,
+        "median_overshoot_bp": 11434.0,
+        "median_undershoot_bp": 0.0,
+        "by_stratum": {
+          "10-15kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.35425545058139535,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 4,
+            "median_overshoot_bp": 24450.0,
+            "median_undershoot_bp": 0.0
+          },
+          "15-30kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.6590555555555555,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 13,
+            "median_overshoot_bp": 10858.0,
+            "median_undershoot_bp": 0.0
+          },
+          "30-60kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 0.96,
+            "matched_recall": 1.0,
+            "median_iou": 0.7985593220338983,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 25,
+            "median_overshoot_bp": 9752.0,
+            "median_undershoot_bp": 0.0
+          },
+          "60kb+": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.784225,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 9,
+            "median_overshoot_bp": 9644.0,
+            "median_undershoot_bp": 0.0
+          },
+          "8-10kb": {
+            "covered_recall": 1.0,
+            "covered50_recall": 1.0,
+            "matched_recall": 1.0,
+            "median_iou": 0.4021304347826087,
+            "conflated_calls": 0,
+            "absorbed_elements": 0,
+            "fragmented_elements": 0,
+            "n_elements": 1,
+            "median_overshoot_bp": 13751.0,
+            "median_undershoot_bp": 0.0
+          }
+        }
+      },
+      "variants": {
+        "t0.6_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9807692307692307,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.7799050953203766,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 14.5,
+          "n_elements": 52,
+          "median_overshoot_bp": 8977.0,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.36941194892538265,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 22621.0,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7158870225886682,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 8558.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8167347454415295,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 8704.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7901511335012594,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 9617.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.604312316236524,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 6056.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 259,
+            "split": 2
+          }
+        },
+        "t0.8_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9807692307692307,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.7813013904425814,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 14.5,
+          "n_elements": 52,
+          "median_overshoot_bp": 8105.5,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.33252555023676855,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 21943.5,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7479986415021105,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 6655.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8355231982079008,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 7636.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7961675126903554,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 9317.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6166,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 259,
+            "split": 2
+          }
+        },
+        "t0.95_a0.6_g4000_p0.05_r15000-60000": {
+          "covered_recall": 1.0,
+          "covered50_recall": 0.9807692307692307,
+          "matched_recall": 0.9615384615384616,
+          "median_iou": 0.7943393950632041,
+          "conflated_calls": 2,
+          "absorbed_elements": 4,
+          "fragmented_elements": 0,
+          "calls_per_genome": 14.444444444444445,
+          "n_elements": 52,
+          "median_overshoot_bp": 6858.5,
+          "median_undershoot_bp": 0.0,
+          "by_stratum": {
+            "10-15kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.46937839821569105,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 4,
+              "median_overshoot_bp": 16807.0,
+              "median_undershoot_bp": 0.0
+            },
+            "15-30kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.7293102798809659,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 13,
+              "median_overshoot_bp": 4344.0,
+              "median_undershoot_bp": 0.0
+            },
+            "30-60kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 0.96,
+              "matched_recall": 1.0,
+              "median_iou": 0.8468437702207204,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 25,
+              "median_overshoot_bp": 7272.0,
+              "median_undershoot_bp": 0.0
+            },
+            "60kb+": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.8053658536585366,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 9,
+              "median_overshoot_bp": 9217.0,
+              "median_undershoot_bp": 0.0
+            },
+            "8-10kb": {
+              "covered_recall": 1.0,
+              "covered50_recall": 1.0,
+              "matched_recall": 1.0,
+              "median_iou": 0.6166,
+              "conflated_calls": 0,
+              "absorbed_elements": 0,
+              "fragmented_elements": 0,
+              "n_elements": 1,
+              "median_overshoot_bp": 5751.0,
+              "median_undershoot_bp": 0.0
+            }
+          },
+          "refine_status": {
+            "refined": 252,
+            "no_fine_support": 8
+          }
+        }
+      }
+    }
+  }
+}

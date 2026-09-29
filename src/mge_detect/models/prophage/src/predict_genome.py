@@ -35,10 +35,25 @@ from .train_prophage import (
 # against more genomes before relying on it heavily.
 RAMP_MIDPOINT_FRACTION = 0.77
 
+# Seed threshold and call-level seed vote per mode. Re-derived 2026-09-29 (user
+# decision) from the vote frontier (docs/error-analysis.md "Seed-vote
+# confirmation"): an ensemble call is kept only if at least MODE_MIN_SEED_SUPPORT
+# checkpoints make an overlapping call of their own at the same thresholds.
+# Ensemble covered50 / calls per genome, 42-genome sample and independent 18:
+#   exploratory 0.95, keep all (flagged) -> 0.983 / 29.1 and 1.000 / 31.2
+#   default     0.98, 3 of 3            -> 0.961 / 11.3 and 0.981 / 10.5
+#   conservative 0.995, 3 of 3          -> 0.944 /  8.5 and 0.962 /  6.4
+# Before 2026-09-29: 0.95 / 0.995 / 0.999 with no vote (reproduce with
+# --threshold and --min-seed-support 1).
 MODE_THRESHOLDS = {
     "exploratory": 0.95,
-    "default": 0.995,
-    "conservative": 0.999,
+    "default": 0.98,
+    "conservative": 0.995,
+}
+MODE_MIN_SEED_SUPPORT = {
+    "exploratory": 1,
+    "default": 3,
+    "conservative": 3,
 }
 
 
@@ -64,6 +79,9 @@ SHORT_CONTIG_STRIDE = 500
 # applied one threshold to both scales, so they share a value; a
 # fragment-length-normalised split puts 5 kb ~13% above the reference and 3 kb
 # below it, inside the reference's own seed spread.
+# PROVISIONAL since 2026-09-29: calibrated against the pre-vote modes. The seed
+# vote now applies to short-contig calls too and lowers both sides' false-call
+# load, so these are re-derived by scripts/short_contig_vote_sweep.py.
 SHORT_CONTIG_THRESHOLDS = {
     "exploratory": {5000: 0.95, 3000: 0.95},
     "default": {5000: 0.99, 3000: 0.99},
@@ -1076,6 +1094,26 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--threshold", type=float, default=None)
     parser.add_argument("--seed-threshold", type=float, default=None)
     parser.add_argument("--extend-threshold", type=float, default=None)
+    parser.add_argument(
+        "--min-seed-support",
+        type=int,
+        default=None,
+        help=(
+            "Keep an ensemble call only if at least this many checkpoints make an "
+            "overlapping call on their own (default: the mode's; exploratory 1, "
+            "default 3, conservative 3). Needs several --checkpoint files; 1 keeps "
+            "every call. See docs/error-analysis.md."
+        ),
+    )
+    parser.add_argument(
+        "--write-seed-scores",
+        action="store_true",
+        help=(
+            "With several --checkpoint files, also write each checkpoint's score to "
+            "windows.tsv (prob_ckpt1, prob_ckpt2, ...), so seed votes can be re-applied "
+            "offline. Off by default."
+        ),
+    )
     parser.add_argument("--device", default="auto")
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--num-workers", type=int, default=0)
@@ -1297,6 +1335,32 @@ def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame])
     return out
 
 
+def apply_seed_vote(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame],
+                    min_support: int) -> Tuple[pd.DataFrame, int]:
+    """Keep calls that at least `min_support` checkpoints make on their own.
+
+    The call-level vote of docs/error-analysis.md: extent comes from the
+    ensemble (`max`) call, the vote only decides whether it is kept. Returns the
+    kept calls and the number dropped. min_support <= 1 keeps everything.
+    """
+    if min_support <= 1 or regions_df.empty:
+        return regions_df, 0
+    sup = np.asarray(seed_support(regions_df, per_seed_regions))
+    keep = sup >= min_support
+    return regions_df[keep].reset_index(drop=True), int((~keep).sum())
+
+
+def label_windows(windows_df: pd.DataFrame, regions_df: pd.DataFrame) -> pd.DataFrame:
+    """Set region_pred_label to 1 on windows overlapping any call, else 0."""
+    windows_df = windows_df.copy()
+    windows_df["region_pred_label"] = 0
+    for r in regions_df.itertuples(index=False):
+        m = ((windows_df["contig_id"] == r.contig_id)
+             & (windows_df["end"].astype(int) > int(r.start)) & (windows_df["start"].astype(int) < int(r.end)))
+        windows_df.loc[m, "region_pred_label"] = 1
+    return windows_df
+
+
 def score_windows(
     model: torch.nn.Module,
     checkpoints: List[str],
@@ -1445,6 +1509,20 @@ def run_predict(args: argparse.Namespace) -> None:
     bins_df = None
     # seed support is computed for the coverage builder (the shipped one) only
     track_support = len(checkpoints) > 1 and region_builder == "coverage" and num_tiles <= 1
+    min_support = getattr(args, "min_seed_support", None)
+    min_support = MODE_MIN_SEED_SUPPORT[args.mode] if min_support is None else int(min_support)
+    if min_support < 1:
+        raise SystemExit("--min-seed-support must be >= 1")
+    vote_k = min(min_support, len(checkpoints)) if track_support else 1
+    if min_support > 1 and vote_k < min_support:
+        # never silent: the mode thresholds assume the vote (MODE_THRESHOLDS comment)
+        why = (f"only {len(checkpoints)} checkpoint(s)" if len(checkpoints) < min_support
+               else "the vote needs --region-builder coverage and --num-tiles 1")
+        print(f"[warn] seed vote of {min_support} requested but {why}: "
+              f"{'voting at ' + str(vote_k) if vote_k > 1 else 'no vote applied'}. The '{args.mode}' "
+              "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+    vote_dropped = 0
+    write_seed_scores = bool(getattr(args, "write_seed_scores", False)) and len(checkpoints) > 1
     per_seed_regions: List[List[pd.DataFrame]] = [[] for _ in checkpoints]
     if windows_df.empty:  # every contig is short: nothing for the coarse pass
         windows_df = pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "fasta_path",
@@ -1457,6 +1535,9 @@ def run_predict(args: argparse.Namespace) -> None:
         windows_df = windows_df.copy()
         windows_df["prob"] = probs
         windows_df["pred_label"] = (windows_df["prob"] >= threshold).astype(int)
+        if write_seed_scores:
+            for k, p in enumerate(coarse_per_ckpt):
+                windows_df[f"prob_ckpt{k + 1}"] = p
 
     if windows_df.empty:
         pass
@@ -1471,6 +1552,8 @@ def run_predict(args: argparse.Namespace) -> None:
             stride=cfg.data.stride,
         )
     elif region_builder == "coverage":
+        # per-checkpoint scores are aligned to this (pre-builder) row order
+        coarse_coords = windows_df[["genome_id", "contig_id", "start", "end", "fasta_path"]]
         windows_df, regions_df = build_region_table_coverage(
             windows_df,
             seed_threshold=seed_threshold,
@@ -1482,11 +1565,16 @@ def run_predict(args: argparse.Namespace) -> None:
         if len(checkpoints) > 1:
             for k, p in enumerate(coarse_per_ckpt):
                 _, sr = build_region_table_coverage(
-                    windows_df[["genome_id", "contig_id", "start", "end", "fasta_path"]].assign(prob=p),
+                    coarse_coords.assign(prob=p),
                     seed_threshold=seed_threshold, extend_threshold=extend_threshold,
                     min_coverage_frac=coverage_frac, max_gap_bp=max_gap_bp, bridge_prob=bridge_prob,
                 )
                 per_seed_regions[k].append(sr)
+            if vote_k > 1:
+                regions_df, n = apply_seed_vote(regions_df, [r[-1] for r in per_seed_regions], vote_k)
+                vote_dropped += n
+                if n:
+                    windows_df = label_windows(windows_df, regions_df)
     else:
         windows_df, regions_df = build_region_table(
             windows_df,
@@ -1532,11 +1620,7 @@ def run_predict(args: argparse.Namespace) -> None:
         )
         refine_counts = {k: int(v) for k, v in regions_df["refine_status"].value_counts().items()}
         # region_pred_label must describe the refined calls, not the coarse ones
-        windows_df["region_pred_label"] = 0
-        for r in regions_df.itertuples(index=False):
-            m = ((windows_df["contig_id"] == r.contig_id)
-                 & (windows_df["end"].astype(int) > r.start) & (windows_df["start"].astype(int) < r.end))
-            windows_df.loc[m, "region_pred_label"] = 1
+        windows_df = label_windows(windows_df, regions_df)
 
     short_meta = {"mode": short_contigs, **short_report}
     if short_contigs == "scan" and not short_windows_df.empty:
@@ -1559,6 +1643,9 @@ def run_predict(args: argparse.Namespace) -> None:
             sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale),
                                        per_checkpoint_out=short_per_ckpt, **score_kw)
             sw["pred_label"] = (sw["prob"] >= short_seed).astype(int)
+            if write_seed_scores:
+                for k, p in enumerate(short_per_ckpt):
+                    sw[f"prob_ckpt{k + 1}"] = p
             if track_support:
                 for k, p in enumerate(short_per_ckpt):
                     _, ssr = build_region_table_coverage(
@@ -1573,6 +1660,11 @@ def run_predict(args: argparse.Namespace) -> None:
                 sw, seed_threshold=short_seed, extend_threshold=short_extend,
                 min_coverage_frac=coverage_frac, max_gap_bp=0,
             )
+            if vote_k > 1:
+                sr, n = apply_seed_vote(sr, [r[-1] for r in per_seed_regions], vote_k)
+                vote_dropped += n
+                if n:
+                    sw = label_windows(sw, sr)
             sr["boundary_kind"] = sr["boundary_kind"].astype(str) + f"_short{int(scale)}"
             short_regions.append(sr)
             short_windows.append(sw)
@@ -1597,11 +1689,13 @@ def run_predict(args: argparse.Namespace) -> None:
 
     support_meta = None
     if track_support:
-        seed_regs = [pd.concat(r, ignore_index=True) if r else pd.DataFrame(columns=["contig_id", "start", "end"])
-                     for r in per_seed_regions]
+        seed_regs = [pd.concat([x for x in r if len(x)], ignore_index=True) if any(len(x) for x in r)
+                     else pd.DataFrame(columns=["contig_id", "start", "end"]) for r in per_seed_regions]
         regions_df = regions_df.copy()
         regions_df["seed_support"] = seed_support(regions_df, seed_regs) if len(regions_df) else []
         support_meta = {"n_checkpoints": len(checkpoints),
+                        "min_seed_support": vote_k, "requested_min_seed_support": min_support,
+                        "calls_dropped_by_vote": vote_dropped,
                         "calls_by_support": {str(k): int(v) for k, v in
                                              regions_df["seed_support"].value_counts().sort_index().items()}}
 

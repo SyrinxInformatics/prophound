@@ -52,7 +52,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from mode_recheck import calls, load_tracks  # noqa: E402
+from mode_recheck import calls, load_tracks, shipped_calls  # noqa: E402
 
 try:  # repo layout
     from mge_detect.models.prophage.src.predict_genome import MODE_THRESHOLDS
@@ -208,15 +208,21 @@ def main() -> None:
                                          for s in ("test", "val") if s in d), flush=True)
         return d
 
+    loaded = {}
     for spec in args.run:
         label, _, d = spec.partition("=")
         tracks = load_tracks(d)
         missing = set(truth.genome_id) - set(tracks)
         if missing:
             raise SystemExit(f"run {label} lacks genomes {sorted(missing)}")
-        tracks = {g: tracks[g] for g in truth.genome_id.unique()}
+        loaded[label] = tracks = {g: tracks[g] for g in truth.genome_id.unique()}
         for mode in MODE_THRESHOLDS:
             res["runs"][f"{label}/{mode}"] = evaluate(f"{label}/{mode}", calls(tracks, mode))
+    if {"ens", "r1", "r2", "r3"} <= set(loaded):   # the shipped pipeline: each mode's seed vote
+        seeds = [loaded[s] for s in ("r1", "r2", "r3")]
+        for mode in MODE_THRESHOLDS:
+            res["runs"][f"ens_shipped/{mode}"] = evaluate(f"ens_shipped/{mode}",
+                                                          shipped_calls(loaded["ens"], seeds, mode))
 
     if args.genomad_dir:
         rows = []

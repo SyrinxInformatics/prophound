@@ -1,0 +1,31 @@
+=== job start ===
+Mon Sep 28 19:34:53 CDT 2026
+gpu006
+Tesla V100S-PCIE-32GB
+[preflight] 7 genomes
+[preflight] all inputs present
+[done] r1: 7 genomes
+Mon Sep 28 19:36:35 CDT 2026
+[done] r2: 7 genomes
+Mon Sep 28 19:38:08 CDT 2026
+[done] r3: 7 genomes
+Mon Sep 28 19:39:41 CDT 2026
+[done] ens: 7 genomes
+Mon Sep 28 19:43:19 CDT 2026
+[truth] 57 elements; flanks verified against ../raw/genomes
+[r1/exploratory] test: covered50 1.000 (n=25), prophages 1.000, Fisher p 7.2e-05/5.1e-06 | val: covered50 0.844 (n=32), prophages 1.000, Fisher p 6e-06/6.2e-07
+[r1/default] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 2.1e-05/1.3e-06 | val: covered50 0.781 (n=32), prophages 1.000, Fisher p 7.3e-06/2.8e-07
+[r1/conservative] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 1.5e-05/2.2e-07 | val: covered50 0.750 (n=32), prophages 1.000, Fisher p 1.6e-05/3.8e-07
+[r2/exploratory] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 7.4e-05/2.1e-06 | val: covered50 0.875 (n=32), prophages 1.000, Fisher p 9.4e-06/1.2e-07
+[r2/default] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 2.6e-05/9.4e-07 | val: covered50 0.844 (n=32), prophages 1.000, Fisher p 4.8e-06/2.1e-07
+[r2/conservative] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 2.2e-05/6.8e-07 | val: covered50 0.781 (n=32), prophages 1.000, Fisher p 4e-06/4.5e-07
+[r3/exploratory] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 0.00012/8.6e-06 | val: covered50 0.812 (n=32), prophages 1.000, Fisher p 3.2e-05/1.6e-07
+[r3/default] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 4.8e-05/4e-07 | val: covered50 0.781 (n=32), prophages 1.000, Fisher p 5.7e-06/2e-07
+[r3/conservative] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 2.9e-05/5.7e-07 | val: covered50 0.750 (n=32), prophages 1.000, Fisher p 1e-05/5.6e-07
+[ens/exploratory] test: covered50 1.000 (n=25), prophages 1.000, Fisher p 0.00011/1.8e-05 | val: covered50 0.906 (n=32), prophages 1.000, Fisher p 9.6e-06/4.6e-08
+[ens/default] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 6.4e-05/1.6e-06 | val: covered50 0.875 (n=32), prophages 1.000, Fisher p 7e-06/8.1e-07
+[ens/conservative] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 4.1e-05/2.6e-07 | val: covered50 0.812 (n=32), prophages 1.000, Fisher p 4.7e-06/6.3e-07
+[genomad] test: covered50 0.960 (n=25), prophages 0.957, Fisher p 2.5e-06/3.4e-10 | val: covered50 0.688 (n=32), prophages 0.950, Fisher p 7.4e-06/2.6e-08
+[done] wrote analysis/litpilot/results.json
+=== job end (exit 0) ===
+Mon Sep 28 19:43:56 CDT 2026

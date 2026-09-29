@@ -327,13 +327,17 @@ def cmd_build(a) -> None:
 def cmd_eval(a) -> None:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from mode_recheck import calls, load_tracks
+    from mode_recheck import MODE_THRESHOLDS, calls, load_tracks
     from refine_sweep import fine_regions_by_genome, refine_all
 
     runs = dict(s.split("=", 1) for s in a.run)
     tracks = {k: load_tracks(v) for k, v in runs.items()}
+    refines = [x for x in a.refine.split(",") if x]
+    # fine tracks exist only around the calls of the mode they were scored in
+    # (821410: Default at 0.995), so refinement variants are only meaningful then
     fine = pd.concat([pd.read_csv(p, sep="\t", usecols=["genome_id", "contig_id", "start", "end", "prob"])
-                      for p in Path(runs["ens"]).glob("*/fine_windows.tsv")], ignore_index=True)
+                      for p in Path(runs["ens"]).glob("*/fine_windows.tsv")], ignore_index=True) \
+        if any(x != "off" for x in refines) else None
 
     def overlaps_any(reg, g, c, s, e):
         return ((reg.genome_id == g) & (reg.contig_id == c) & (reg.end > s) & (reg.start < e)).any()
@@ -361,11 +365,11 @@ def cmd_eval(a) -> None:
     spike = pd.read_csv(a.spike_truth, sep="\t")
     insitu = pd.read_csv(a.insitu_truth, sep="\t")
     res, per = {}, []
-    fine_cache = {t: fine_regions_by_genome(fine, t, 0.1) for t in (0.8, 0.95)}
+    fine_cache = {float(t): fine_regions_by_genome(fine, float(t), 0.1) for t in refines if t != "off"}
     for mode in ("exploratory", "default", "conservative"):
         base = calls(tracks["ens"], mode)
         seeds = {s: calls(tracks[s], mode) for s in ("r1", "r2", "r3") if s in tracks}
-        for refine in ("off", "0.8", "0.95"):
+        for refine in refines:
             if mode != "default" and refine != "off":
                 continue
             reg = base if refine == "off" else refine_all(base.assign(fasta_path="x"), fine_cache[float(refine)],
@@ -376,7 +380,9 @@ def cmd_eval(a) -> None:
                 if k > 1 and not seeds:
                     continue
                 v = reg[sup >= k]
-                name = f"{mode}/refine={refine}/vote>={k}"
+                # the threshold is in the name: modes were re-derived 2026-09-29, and
+                # 821410's names (0.95 / 0.995 / 0.999) must not be read as today's
+                name = f"{mode}@{MODE_THRESHOLDS[mode]:g}/refine={refine}/vote>={k}"
                 sc, si = score(spike, v), score(insitu, v)
                 d = {"spike": {}, "insitu": {}}
                 for b, idx in spike.groupby("size_bin").groups.items():
@@ -445,6 +451,9 @@ def main() -> None:
     e.add_argument("--spike_truth", required=True)
     e.add_argument("--insitu_truth", required=True)
     e.add_argument("--run", action="append", required=True, metavar="LABEL=DIR", help="r1..r3 and ens (ens needs fine tracks)")
+    e.add_argument("--refine", default="off,0.8,0.95",
+                   help="comma list of fine thresholds to score ('off' = none); only valid for the "
+                        "mode the fine tracks were scored in")
     e.add_argument("--out", required=True)
     a = ap.parse_args()
     {"select": cmd_select, "disjoint": cmd_disjoint, "build": cmd_build, "eval": cmd_eval}[a.cmd](a)

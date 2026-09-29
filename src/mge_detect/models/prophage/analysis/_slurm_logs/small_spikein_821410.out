@@ -1,0 +1,35 @@
+=== job start ===
+Mon Sep 28 20:33:38 CDT 2026
+gpu002
+Tesla V100S-PCIE-32GB
+[preflight] all inputs present
+[disjoint] 2851 training intervals scanned; kept 241 of 250 (max containment 0.1); by size {'5-8kb': 189, '8-10kb': 30, '3-5kb': 22}
+[build] 42 hosts, 406 quiet sites for up to 482 implants (241 elements x 2)
+[build] contexts per element: {1: 76, 2: 165} (elements with none: 0)
+[build] 406 implants in 37 spiked genomes; by size {'5-8kb': 324, '8-10kb': 60, '3-5kb': 22}; in-situ 31 loci in 25 genomes
+[done] scored r1: 62 genomes
+Mon Sep 28 20:52:17 CDT 2026
+[done] scored r2: 62 genomes
+Mon Sep 28 21:05:44 CDT 2026
+[done] scored r3: 62 genomes
+Mon Sep 28 21:19:31 CDT 2026
+[done] scored ens: 62 genomes
+Mon Sep 28 22:00:23 CDT 2026
+[exploratory/refine=off/vote>=1] spike detected 0.505 covered50 0.505 IoU 0.306 | 3-5kb 0.14/0.14 5-8kb 0.46/0.46 8-10kb 0.87/0.87 | insitu far_neg 1.00 positive 1.00
+[exploratory/refine=off/vote>=2] spike detected 0.411 covered50 0.411 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.36/0.36 8-10kb 0.80/0.80 | insitu far_neg 0.80 positive 1.00
+[exploratory/refine=off/vote>=3] spike detected 0.320 covered50 0.320 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.27/0.27 8-10kb 0.68/0.68 | insitu far_neg 0.70 positive 0.90
+[default/refine=off/vote>=1] spike detected 0.300 covered50 0.300 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.24/0.24 8-10kb 0.67/0.67 | insitu far_neg 0.60 positive 0.95
+[default/refine=off/vote>=2] spike detected 0.241 covered50 0.241 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.19/0.19 8-10kb 0.58/0.58 | insitu far_neg 0.50 positive 0.86
+[default/refine=off/vote>=3] spike detected 0.167 covered50 0.167 IoU 0.000 | 3-5kb 0.00/0.00 5-8kb 0.10/0.10 8-10kb 0.57/0.57 | insitu far_neg 0.50 positive 0.81
+[default/refine=0.8/vote>=1] spike detected 0.300 covered50 0.300 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.24/0.24 8-10kb 0.67/0.67 | insitu far_neg 0.60 positive 0.95
+[default/refine=0.8/vote>=2] spike detected 0.241 covered50 0.241 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.19/0.19 8-10kb 0.58/0.58 | insitu far_neg 0.50 positive 0.86
+[default/refine=0.8/vote>=3] spike detected 0.167 covered50 0.167 IoU 0.000 | 3-5kb 0.00/0.00 5-8kb 0.10/0.10 8-10kb 0.57/0.57 | insitu far_neg 0.50 positive 0.81
+[default/refine=0.95/vote>=1] spike detected 0.300 covered50 0.300 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.24/0.24 8-10kb 0.67/0.67 | insitu far_neg 0.60 positive 0.86
+[default/refine=0.95/vote>=2] spike detected 0.241 covered50 0.241 IoU 0.000 | 3-5kb 0.14/0.14 5-8kb 0.19/0.19 8-10kb 0.58/0.58 | insitu far_neg 0.50 positive 0.76
+[default/refine=0.95/vote>=3] spike detected 0.167 covered50 0.167 IoU 0.000 | 3-5kb 0.00/0.00 5-8kb 0.10/0.10 8-10kb 0.57/0.57 | insitu far_neg 0.50 positive 0.71
+[conservative/refine=off/vote>=1] spike detected 0.185 covered50 0.185 IoU 0.000 | 3-5kb 0.05/0.05 5-8kb 0.12/0.12 8-10kb 0.58/0.58 | insitu far_neg 0.60 positive 0.86
+[conservative/refine=off/vote>=2] spike detected 0.131 covered50 0.131 IoU 0.000 | 3-5kb 0.00/0.00 5-8kb 0.08/0.08 8-10kb 0.47/0.47 | insitu far_neg 0.40 positive 0.67
+[conservative/refine=off/vote>=3] spike detected 0.074 covered50 0.074 IoU 0.000 | 3-5kb 0.00/0.00 5-8kb 0.05/0.05 8-10kb 0.25/0.25 | insitu far_neg 0.30 positive 0.57
+[done] wrote analysis/spikein_small/results.json
+=== job end (exit 0) ===
+Mon Sep 28 22:01:12 CDT 2026

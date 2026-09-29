@@ -216,3 +216,5 @@ __marimo__/
 
 # per-genome score tracks from multiscale_eval (~300 MB); sweep.{json,csv} stay tracked
 src/mge_detect/models/prophage/analysis/multiscale/*/
+src/mge_detect/models/prophage/analysis/confirm18/*/
+src/mge_detect/models/prophage/analysis/phagefree/*/

@@ -1,0 +1,398 @@
+{
+  "r1": {
+    "n_genomes": 18,
+    "total_bp": 78506176.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 20.5,
+        "short_contig_calls": 0,
+        "calls_per_mb": 4.700267148408808,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9615384615384616,
+        "on_target": 0.1355013550135501,
+        "false_calls_per_mb": 4.169941726698359,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 0.8888888888888888
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "default": {
+        "calls_per_genome": 9.055555555555555,
+        "short_contig_calls": 0,
+        "calls_per_mb": 2.0762697701643247,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9615384615384616,
+        "on_target": 0.3067484662576687,
+        "false_calls_per_mb": 1.477126693156472,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 0.8888888888888888
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 4.888888888888889,
+        "short_contig_calls": 0,
+        "calls_per_mb": 1.1209309188617211,
+        "covered_recall": 0.9807692307692307,
+        "covered50_recall": 0.9615384615384616,
+        "on_target": 0.5568181818181819,
+        "false_calls_per_mb": 0.5098047879035611,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 0.8888888888888888
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      }
+    }
+  },
+  "r2": {
+    "n_genomes": 18,
+    "total_bp": 78506176.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 26.27777777777778,
+        "short_contig_calls": 0,
+        "calls_per_mb": 6.0250036888817515,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "on_target": 0.10570824524312894,
+        "false_calls_per_mb": 5.529421161107855,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "default": {
+        "calls_per_genome": 11.5,
+        "short_contig_calls": 0,
+        "calls_per_mb": 2.636735229595185,
+        "covered_recall": 0.9807692307692307,
+        "covered50_recall": 0.9423076923076923,
+        "on_target": 0.23671497584541068,
+        "false_calls_per_mb": 2.0653629868913503,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 0.9230769230769231
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 0.8888888888888888
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 6.5,
+        "short_contig_calls": 0,
+        "calls_per_mb": 1.4903286080320612,
+        "covered_recall": 0.9615384615384616,
+        "covered50_recall": 0.9230769230769231,
+        "on_target": 0.41025641025641024,
+        "false_calls_per_mb": 0.9019623170601466,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 0.8461538461538461
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 0.8888888888888888
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      }
+    }
+  },
+  "r3": {
+    "n_genomes": 18,
+    "total_bp": 78506176.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 20.444444444444443,
+        "short_contig_calls": 0,
+        "calls_per_mb": 4.687529297058107,
+        "covered_recall": 1.0,
+        "covered50_recall": 1.0,
+        "on_target": 0.13586956521739135,
+        "false_calls_per_mb": 4.156869809059806,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 1.0
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "default": {
+        "calls_per_genome": 10.055555555555555,
+        "short_contig_calls": 0,
+        "calls_per_mb": 2.3055510944769493,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "on_target": 0.2762430939226519,
+        "false_calls_per_mb": 1.7124212106504233,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 5.777777777777778,
+        "short_contig_calls": 0,
+        "calls_per_mb": 1.3247365404729432,
+        "covered_recall": 0.9615384615384616,
+        "covered50_recall": 0.9615384615384616,
+        "on_target": 0.46153846153846156,
+        "false_calls_per_mb": 0.7320273877589596,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 0.9230769230769231
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      }
+    }
+  },
+  "ens": {
+    "n_genomes": 18,
+    "total_bp": 78506176.0,
+    "modes": {
+      "exploratory": {
+        "calls_per_genome": 31.22222222222222,
+        "short_contig_calls": 0,
+        "calls_per_mb": 7.158672459094174,
+        "covered_recall": 1.0,
+        "covered50_recall": 1.0,
+        "on_target": 0.08896797153024916,
+        "false_calls_per_mb": 6.692821830939059,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 1.0
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "default": {
+        "calls_per_genome": 14.444444444444445,
+        "short_contig_calls": 0,
+        "calls_per_mb": 3.311841351182358,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "on_target": 0.1923076923076923,
+        "false_calls_per_mb": 2.7451027040960985,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      },
+      "conservative": {
+        "calls_per_genome": 7.611111111111111,
+        "short_contig_calls": 0,
+        "calls_per_mb": 1.7450856350460886,
+        "covered_recall": 1.0,
+        "covered50_recall": 0.9807692307692307,
+        "on_target": 0.36496350364963503,
+        "false_calls_per_mb": 1.1372568345540979,
+        "by_stratum": {
+          "10-15kb": {
+            "n": 4,
+            "covered50_recall": 1.0
+          },
+          "15-30kb": {
+            "n": 13,
+            "covered50_recall": 1.0
+          },
+          "30-60kb": {
+            "n": 25,
+            "covered50_recall": 0.96
+          },
+          "60kb+": {
+            "n": 9,
+            "covered50_recall": 1.0
+          },
+          "8-10kb": {
+            "n": 1,
+            "covered50_recall": 1.0
+          }
+        }
+      }
+    }
+  }
+}

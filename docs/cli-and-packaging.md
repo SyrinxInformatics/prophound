@@ -91,6 +91,25 @@ Reverse-complement handling is *not* a concern: window scores and whole-contig r
 - `--refine-window-len W` (0 = off), plus `--refine-stride`, `--refine-threshold`, `--refine-margin`, `--edge-alpha`, `--split-min-gap-bp` and `--split-max-prob`: the fine pass that splits conflated calls and places edges. It needs `--region-builder coverage`. It writes an extra `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four".
 - The flags are defined twice, in `predict_genome.add_multiscale_args` and in `mge_detect.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
 
+## Seed vote per mode (2026-09-29, user decision)
+
+Each mode is now a seed threshold **plus** a call-level seed vote (`predict_genome.MODE_THRESHOLDS`, `MODE_MIN_SEED_SUPPORT`). An ensemble call is kept only if at least *k* checkpoints make an overlapping call of their own at the same thresholds; its extent still comes from the `max` track.
+
+| mode | seed | vote *k* | 42: covered50 / calls | 18: covered50 / calls | phage-free calls |
+|---|---|---|---|---|---|
+| exploratory | 0.95 | 1 (all kept, `seed_support` flagged) | 0.983 / 29.1 | 1.000 / 31.2 | 20.6 |
+| default | 0.98 | 3 | 0.961 / 11.3 | 0.981 / 10.5 | 4.9 |
+| conservative | 0.995 | 3 | 0.944 / 8.5 | 0.962 / 6.4 | 2.45 |
+
+(Was 0.95 / 0.995 / 0.999 with no vote. Default keeps its recall with 22–27% fewer calls; Conservative keeps it with 10% fewer calls on the 42 but loses one element on the 18.)
+
+- **`--min-seed-support K`** overrides the mode's *k*; `1` keeps every call. The pre-2026-09-29 outputs are reproduced with `--threshold 0.995 --min-seed-support 1` (Default) or `--threshold 0.999 --min-seed-support 1` (Conservative).
+- **The vote needs several checkpoints** and the coverage builder with one tile. With fewer checkpoints than *k*, it votes at the number available, and with one checkpoint (or the strict builder) no vote applies. Either way a warning says so, because the thresholds were calibrated with the vote.
+- **It is applied before refinement**, to coarse and short-contig calls separately, so the fine pass never works on a call the vote will drop. `run_metadata.json` `seed_support` records `min_seed_support`, `requested_min_seed_support` and `calls_dropped_by_vote`.
+- **`--write-seed-scores`** (opt-in) adds `prob_ckpt1..N` to `windows.tsv`, so any vote can be re-applied offline. `scripts/mode_recheck.py` `shipped_calls()` does exactly what the CLI does, checked end to end: offline equals online on a planted fixture, and the offline rebuild reproduces the 42-genome and 18-genome frontier numbers to 3 dp.
+- Per-seed calls are now built from the pre-builder window frame, so they no longer depend on the builder preserving row order (it did, but only by construction).
+- **Short-contig thresholds are provisional**: calibrated against the pre-vote modes. They are re-derived under the vote by `scripts/short_contig_vote_sweep.py` (in `vote_rescore.slurm`).
+
 ## Decisions 2026-09-24 (user)
 
 - **`--ambiguity-policy` defaults to `impute`** in both CLIs and in the library (`predict_genome.DEFAULT_AMBIGUITY_POLICY`). It is a no-op on ambiguity-free sequence: checked end to end byte-for-byte against the prior commit, and unit-tested in `tests/test_encoding.py` (816446 also showed covered recall identical to 3 dp on the eval sample). Numbers published before 2026-09-24 are reproduced with `--ambiguity-policy n-channel`. Note: `scripts/spikein_harness.py` keeps its own explicit `n-channel` default so its recorded curves stay reproducible.

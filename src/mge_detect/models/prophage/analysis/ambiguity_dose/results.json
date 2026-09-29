@@ -1,0 +1,1082 @@
+{
+  "impute__clean__0/exploratory": {
+    "policy": "impute",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.214285714285715,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__clean__0/default": {
+    "policy": "impute",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.523809523809524,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__clean__0/conservative": {
+    "policy": "impute",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.5,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__0.5/exploratory": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.214285714285715,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__0.5/default": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.523809523809524,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__0.5/conservative": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.5,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__10/exploratory": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__10/default": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.476190476190476,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__10/conservative": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.5,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__2/exploratory": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.214285714285715,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__2/default": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.523809523809524,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__nruns__2/conservative": {
+    "policy": "impute",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.5,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__10/exploratory": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.214285714285715,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__10/default": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.571428571428571,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__10/conservative": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.5,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__100/exploratory": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__100/default": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.69047619047619,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__100/conservative": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.523809523809524,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__1000/exploratory": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.69047619047619,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__1000/default": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.666666666666666,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9523809523809523,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 1,
+    "gained_vs_clean": 1
+  },
+  "impute__scattered__1000/conservative": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.619047619047619,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9523809523809523,
+      "8-10kb": 0.8181818181818182
+    },
+    "lost_vs_clean": 1,
+    "gained_vs_clean": 1
+  },
+  "impute__scattered__300/exploratory": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.30952380952381,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__300/default": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.714285714285714,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__300/conservative": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.571428571428571,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__3000/exploratory": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "exploratory",
+    "covered": 1.0,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.595238095238095,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "impute__scattered__3000/default": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9553072625698324,
+    "calls_per_genome": 14.952380952380953,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 2,
+    "gained_vs_clean": 1
+  },
+  "impute__scattered__3000/conservative": {
+    "policy": "impute",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "conservative",
+    "covered": 0.9664804469273743,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.619047619047619,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 2,
+    "gained_vs_clean": 2
+  },
+  "n-channel__clean__0/exploratory": {
+    "policy": "n-channel",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.095238095238095,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__clean__0/default": {
+    "policy": "n-channel",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.452380952380953,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__clean__0/conservative": {
+    "policy": "n-channel",
+    "pattern": "clean",
+    "rate": 0.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.428571428571429,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__0.5/exploratory": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.047619047619047,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__0.5/default": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.476190476190476,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__0.5/conservative": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 0.5,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.476190476190476,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__10/exploratory": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9720670391061452,
+    "calls_per_genome": 29.761904761904763,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.926829268292683,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 2,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__10/default": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "default",
+    "covered": 0.9720670391061452,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 15.238095238095237,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9333333333333333,
+      "15-30kb": 0.926829268292683,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 3,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__10/conservative": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 10.0,
+    "mode": "conservative",
+    "covered": 0.9497206703910615,
+    "covered50": 0.9273743016759777,
+    "calls_per_genome": 10.023809523809524,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.926829268292683,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.8181818181818182
+    },
+    "lost_vs_clean": 3,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__2/exploratory": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.19047619047619,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__2/default": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.738095238095237,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__nruns__2/conservative": {
+    "policy": "n-channel",
+    "pattern": "nruns",
+    "rate": 2.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9441340782122905,
+    "calls_per_genome": 9.666666666666666,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__10/exploratory": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "exploratory",
+    "covered": 0.994413407821229,
+    "covered50": 0.9832402234636871,
+    "calls_per_genome": 29.142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 1.0,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 1.0,
+      "60kb+": 1.0,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__10/default": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "default",
+    "covered": 0.9776536312849162,
+    "covered50": 0.9608938547486033,
+    "calls_per_genome": 14.380952380952381,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9855072463768116,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 0,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__10/conservative": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 10.0,
+    "mode": "conservative",
+    "covered": 0.9608938547486033,
+    "covered50": 0.9329608938547486,
+    "calls_per_genome": 9.30952380952381,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.8666666666666667,
+      "15-30kb": 0.9512195121951219,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9047619047619048,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 2,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__100/exploratory": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "exploratory",
+    "covered": 0.9832402234636871,
+    "covered50": 0.9553072625698324,
+    "calls_per_genome": 27.523809523809526,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9666666666666667,
+      "15-30kb": 0.926829268292683,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.9523809523809523,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 5,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__100/default": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "default",
+    "covered": 0.9720670391061452,
+    "covered50": 0.9273743016759777,
+    "calls_per_genome": 14.380952380952381,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.9,
+      "15-30kb": 0.926829268292683,
+      "30-60kb": 0.9710144927536232,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.8095238095238095,
+      "8-10kb": 1.0
+    },
+    "lost_vs_clean": 6,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__100/conservative": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 100.0,
+    "mode": "conservative",
+    "covered": 0.9497206703910615,
+    "covered50": 0.88268156424581,
+    "calls_per_genome": 9.428571428571429,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.8333333333333334,
+      "15-30kb": 0.8780487804878049,
+      "30-60kb": 0.9565217391304348,
+      "5-8kb": 0.8571428571428571,
+      "60kb+": 0.7142857142857143,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 11,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__1000/exploratory": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "exploratory",
+    "covered": 0.5251396648044693,
+    "covered50": 0.24022346368715083,
+    "calls_per_genome": 5.5476190476190474,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.4,
+      "15-30kb": 0.2926829268292683,
+      "30-60kb": 0.2028985507246377,
+      "5-8kb": 0.2857142857142857,
+      "60kb+": 0.047619047619047616,
+      "8-10kb": 0.18181818181818182
+    },
+    "lost_vs_clean": 133,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__1000/default": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "default",
+    "covered": 0.45251396648044695,
+    "covered50": 0.16759776536312848,
+    "calls_per_genome": 3.4285714285714284,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.3,
+      "15-30kb": 0.24390243902439024,
+      "30-60kb": 0.10144927536231885,
+      "5-8kb": 0.2857142857142857,
+      "60kb+": 0.047619047619047616,
+      "8-10kb": 0.09090909090909091
+    },
+    "lost_vs_clean": 142,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__1000/conservative": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 1000.0,
+    "mode": "conservative",
+    "covered": 0.37988826815642457,
+    "covered50": 0.1340782122905028,
+    "calls_per_genome": 2.5238095238095237,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.2,
+      "15-30kb": 0.1951219512195122,
+      "30-60kb": 0.10144927536231885,
+      "5-8kb": 0.14285714285714285,
+      "60kb+": 0.047619047619047616,
+      "8-10kb": 0.09090909090909091
+    },
+    "lost_vs_clean": 145,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__300/exploratory": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "exploratory",
+    "covered": 0.9329608938547486,
+    "covered50": 0.7988826815642458,
+    "calls_per_genome": 21.214285714285715,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.8333333333333334,
+      "15-30kb": 0.7073170731707317,
+      "30-60kb": 0.8985507246376812,
+      "5-8kb": 0.42857142857142855,
+      "60kb+": 0.6666666666666666,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 33,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__300/default": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "default",
+    "covered": 0.8938547486033519,
+    "covered50": 0.7653631284916201,
+    "calls_per_genome": 11.857142857142858,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.8,
+      "15-30kb": 0.7073170731707317,
+      "30-60kb": 0.855072463768116,
+      "5-8kb": 0.42857142857142855,
+      "60kb+": 0.5714285714285714,
+      "8-10kb": 0.9090909090909091
+    },
+    "lost_vs_clean": 35,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__300/conservative": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 300.0,
+    "mode": "conservative",
+    "covered": 0.8491620111731844,
+    "covered50": 0.6927374301675978,
+    "calls_per_genome": 8.047619047619047,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.7333333333333333,
+      "15-30kb": 0.6097560975609756,
+      "30-60kb": 0.8115942028985508,
+      "5-8kb": 0.42857142857142855,
+      "60kb+": 0.47619047619047616,
+      "8-10kb": 0.7272727272727273
+    },
+    "lost_vs_clean": 45,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__3000/exploratory": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "exploratory",
+    "covered": 0.01675977653631285,
+    "covered50": 0.00558659217877095,
+    "calls_per_genome": 0.07142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.0,
+      "15-30kb": 0.024390243902439025,
+      "30-60kb": 0.0,
+      "5-8kb": 0.0,
+      "60kb+": 0.0,
+      "8-10kb": 0.0
+    },
+    "lost_vs_clean": 175,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__3000/default": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "default",
+    "covered": 0.01675977653631285,
+    "covered50": 0.0,
+    "calls_per_genome": 0.07142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.0,
+      "15-30kb": 0.0,
+      "30-60kb": 0.0,
+      "5-8kb": 0.0,
+      "60kb+": 0.0,
+      "8-10kb": 0.0
+    },
+    "lost_vs_clean": 172,
+    "gained_vs_clean": 0
+  },
+  "n-channel__scattered__3000/conservative": {
+    "policy": "n-channel",
+    "pattern": "scattered",
+    "rate": 3000.0,
+    "mode": "conservative",
+    "covered": 0.01675977653631285,
+    "covered50": 0.0,
+    "calls_per_genome": 0.07142857142857142,
+    "n_genomes": 42,
+    "by_stratum": {
+      "10-15kb": 0.0,
+      "15-30kb": 0.0,
+      "30-60kb": 0.0,
+      "5-8kb": 0.0,
+      "60kb+": 0.0,
+      "8-10kb": 0.0
+    },
+    "lost_vs_clean": 169,
+    "gained_vs_clean": 0
+  }
+}
