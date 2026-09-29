@@ -1,0 +1,10 @@
+=== job start ===
+Tue Sep 29 14:28:29 CDT 2026
+gpu017
+Tesla V100S-PCIE-32GB
+[preflight] all inputs present; checkpoint checksums match
+[preflight] sequences with any N: 2 of 39 (analysis/lambda/n_content.txt)
+[done] 39 of 39 genomes scored
+Tue Sep 29 14:50:40 CDT 2026
+=== job end (exit 0) ===
+Tue Sep 29 14:50:40 CDT 2026

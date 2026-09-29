@@ -111,6 +111,37 @@ The intervals are wide because a few genomes carry many elements (Photorhabdus 2
 
 About a quarter of LAMBDA's curated elements therefore closely resemble prophages the model was trained on, even though no LAMBDA genome is in the training split. Every LAMBDA figure is reported for the **low-containment subset (<0.1)** alongside the full set; `lambda_score.py --containment` does this. The coordinate note above holds: all 39 downloaded sequences have exactly the length NCBI reports, and LAMBDA's `genome_length` is that length rounded up to the next kb plus 1 kb.
 
+### LAMBDA result (`822275`, 2026-09-29, final modes)
+
+The ensemble ran on all 39 chromosomes (exit 0, checkpoint SHA-256s verified) and was scored locally with `scripts/lambda_score.py` (`analysis/external_benchmarks/lambda/scores.{json,csv}`). No call on the two N-bearing chromosomes is more than 2.9% N, so the offline scoring equals the current CLI's.
+
+**Covered50**, with 95% genome bootstrap intervals:
+
+| subset | prophound Exploratory | **Default** | Conservative | geNomad | PHASTER | best LM (EVO2 4k) |
+|---|---|---|---|---|---|---|
+| all 39 (149 elements) | 0.946 | **0.933 (0.874–0.983)** | 0.899 | 0.822 | 0.824 | 0.785 |
+| **not in corpus, 34 (113)** | 0.938 | **0.920 (0.859–0.983)** | 0.885 | 0.791 | 0.795 | 0.779 |
+| not in corpus, containment <0.1 (103) | 0.942 | **0.922** | 0.883 | 0.780 | 0.784 | 0.796 |
+| test split, 5 (36) | 0.972 | 0.972 | 0.944 | 0.917 | 0.917 | 0.806 |
+| under 10 kb, all (13) | 0.846 | 0.846 | 0.769 | 0.500 | 0.462 | 0.154 |
+| calls/genome | 39.9 | 14.4 | 7.1 | 4.6 | 3.9 | 4.8 |
+
+**Gates** (bars from the pre-run amendment):
+- **G1 complement, bar >+5: cleared.** geNomad plus prophound Default gains **+16** elements (+18 Exploratory, +12 Conservative) at +14.6 extra calls/genome. The paired difference against geNomad, on the 37 genomes both ran, is **+16 / −0**: +0.110, interval 0.018–0.210.
+- **G2 matched cost, bar >0.785: cleared narrowly.** Exploratory's calls, ranked by max_prob and cut to EVO2 4k's per-genome count, reach **0.805**, against its 0.785. At geNomad's cost it **ties** (0.822 vs 0.822). At PHASTER's lower cost it is **below** (0.797 vs 0.824).
+- **G3 overall recall, bar >0.824: cleared** at every mode, but at 1.5–3.7× the competitors' call counts.
+
+**Caveats that set the wording:**
+- **Much of the raw margin is cost.** Default calls 9.8% of each chromosome, geNomad 3.5%. Rotating each tool's calls to random positions gives a chance covered50 of 0.144 for Default and 0.050 for geNomad. **Recall above chance is 0.787 against 0.772** (Conservative 0.808, PHASTER 0.771). Per unit of cost, prophound is level with the annotation tools. It does not beat them.
+- **The gains are concentrated.** 12 of the 16 elements come from two genomes (Photorhabdus TTO1, 9; *P. aeruginosa* LESB61, 3), and only 5 genomes gain anything. Two are in the test-split EDL933.
+- **The gains are not training look-alikes.** All 16 have containment ≤0.16 against training positives, 13 of them <0.01. Elements under 10 kb favour prophound, but n = 13 overall and 8 not in the corpus.
+- The sample is 39 genomes, dominated by a few with many elements. Intervals overlap for every pairwise comparison except the paired one against geNomad.
+
+**Reading for the release:**
+- **Supported:** "run alongside geNomad, prophound recovered 16 additional curated prophages on LAMBDA's clean subset, at about 15 extra candidate calls per genome".
+- **Supported:** it reaches the highest raw curated recall of the tools compared, *at a higher call cost*.
+- **Not supported:** "more accurate than" any tool. At matched cost it ties geNomad and trails PHASTER.
+
 **Caveat specific to prophound:** 5 of the 39 genomes are in our test split, including EDL933 (22 elements). EDL933 is also in the literature pilot, and was studied closely in the ambiguity work. The primary row is therefore the **34 genomes not in the corpus**.
 
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)

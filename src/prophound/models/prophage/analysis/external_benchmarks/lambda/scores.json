@@ -1,0 +1,6846 @@
+{
+  "n_genomes": 39,
+  "n_elements": 149,
+  "per_tool": {
+    "all/all_sizes": {
+      "Caduceus 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5838926174496645,
+        "covered50": 0.5570469798657718,
+        "k50": 83,
+        "covered50_boot95": [
+          0.3838370188370188,
+          0.798079128440367
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "Caduceus 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6644295302013423,
+        "covered50": 0.6308724832214765,
+        "k50": 94,
+        "covered50_boot95": [
+          0.44607843137254904,
+          0.8650869963369963
+        ],
+        "calls_per_genome": 3.3076923076923075,
+        "calls_per_mb": 0.676824277529434
+      },
+      "Caduceus 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6778523489932886,
+        "covered50": 0.6510067114093959,
+        "k50": 97,
+        "covered50_boot95": [
+          0.49344537568292635,
+          0.8611111111111112
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5302013422818792,
+        "covered50": 0.5167785234899329,
+        "k50": 77,
+        "covered50_boot95": [
+          0.3409059167089893,
+          0.7666810344827585
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6442953020134228,
+        "covered50": 0.6241610738255033,
+        "k50": 93,
+        "covered50_boot95": [
+          0.4684178433889602,
+          0.8214285714285714
+        ],
+        "calls_per_genome": 3.871794871794872,
+        "calls_per_mb": 0.7922516736972444
+      },
+      "EVO2 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7248322147651006,
+        "covered50": 0.697986577181208,
+        "k50": 104,
+        "covered50_boot95": [
+          0.5266194331983806,
+          0.8849557522123894
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "EVO2 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7919463087248322,
+        "covered50": 0.785234899328859,
+        "k50": 117,
+        "covered50_boot95": [
+          0.6256151798846684,
+          0.9204590548340548
+        ],
+        "calls_per_genome": 4.846153846153846,
+        "calls_per_mb": 0.9916262670780079
+      },
+      "EVO2 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7449664429530202,
+        "covered50": 0.738255033557047,
+        "k50": 110,
+        "covered50_boot95": [
+          0.5769153225806452,
+          0.885720551378446
+        ],
+        "calls_per_genome": 3.641025641025641,
+        "calls_per_mb": 0.7450313752649583
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.697986577181208,
+        "covered50": 0.6510067114093959,
+        "k50": 97,
+        "covered50_boot95": [
+          0.4580966428235786,
+          0.9090909090909091
+        ],
+        "calls_per_genome": 4.897435897435898,
+        "calls_per_mb": 1.002119666729627
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7248322147651006,
+        "covered50": 0.6778523489932886,
+        "k50": 101,
+        "covered50_boot95": [
+          0.5,
+          0.9166666666666666
+        ],
+        "calls_per_genome": 5.666666666666667,
+        "calls_per_mb": 1.159520661503914
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7046979865771812,
+        "covered50": 0.6644295302013423,
+        "k50": 99,
+        "covered50_boot95": [
+          0.489247311827957,
+          0.9074074074074074
+        ],
+        "calls_per_genome": 5.205128205128205,
+        "calls_per_mb": 1.065080064639342
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5234899328859061,
+        "covered50": 0.4899328859060403,
+        "k50": 73,
+        "covered50_boot95": [
+          0.3130434782608696,
+          0.7333486238532108
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.4429530201342282,
+        "covered50": 0.436241610738255,
+        "k50": 65,
+        "covered50_boot95": [
+          0.2849454856730943,
+          0.6634637850467289
+        ],
+        "calls_per_genome": 3.051282051282051,
+        "calls_per_mb": 0.6243572792713383
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5637583892617449,
+        "covered50": 0.5302013422818792,
+        "k50": 79,
+        "covered50_boot95": [
+          0.3901029055690073,
+          0.7027027027027027
+        ],
+        "calls_per_genome": 2.8974358974358974,
+        "calls_per_mb": 0.5928770803164809
+      },
+      "Generanno 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.738255033557047,
+        "covered50": 0.7248322147651006,
+        "k50": 108,
+        "covered50_boot95": [
+          0.5389221556886228,
+          0.8921606334841629
+        ],
+        "calls_per_genome": 4.076923076923077,
+        "calls_per_mb": 0.8342252723037209
+      },
+      "Generanno 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6308724832214765,
+        "covered50": 0.6241610738255033,
+        "k50": 93,
+        "covered50_boot95": [
+          0.42,
+          0.8787878787878788
+        ],
+        "calls_per_genome": 7.282051282051282,
+        "calls_per_mb": 1.4900627505299167
+      },
+      "Generanno 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5973154362416108,
+        "covered50": 0.5973154362416108,
+        "k50": 89,
+        "covered50_boot95": [
+          0.4055238636594328,
+          0.8608695652173913
+        ],
+        "calls_per_genome": 4.641025641025641,
+        "calls_per_mb": 0.9496526684715314
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.5570469798657718,
+        "covered50": 0.5503355704697986,
+        "k50": 82,
+        "covered50_boot95": [
+          0.3720871800864789,
+          0.7884615384615384
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6375838926174496,
+        "covered50": 0.6174496644295302,
+        "k50": 92,
+        "covered50_boot95": [
+          0.44999161073825505,
+          0.8333695652173908
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7114093959731543,
+        "covered50": 0.6845637583892618,
+        "k50": 102,
+        "covered50_boot95": [
+          0.5220456304531382,
+          0.8712939413207375
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6711409395973155,
+        "covered50": 0.6577181208053692,
+        "k50": 98,
+        "covered50_boot95": [
+          0.4866274028038734,
+          0.868421052631579
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "NTv2 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7248322147651006,
+        "covered50": 0.697986577181208,
+        "k50": 104,
+        "covered50_boot95": [
+          0.5366944506601029,
+          0.875
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7583892617449665,
+        "covered50": 0.738255033557047,
+        "k50": 110,
+        "covered50_boot95": [
+          0.5728081227303046,
+          0.8857142857142857
+        ],
+        "calls_per_genome": 3.3846153846153846,
+        "calls_per_mb": 0.6925643770068627
+      },
+      "PHASTER": {
+        "n_genomes": 38,
+        "n_elements": 148,
+        "covered": 0.8445945945945946,
+        "covered50": 0.8243243243243243,
+        "k50": 122,
+        "covered50_boot95": [
+          0.6718589469178082,
+          0.946969696969697
+        ],
+        "calls_per_genome": 3.8947368421052633,
+        "calls_per_mb": 0.7993389251051833
+      },
+      "PIDE": {
+        "n_genomes": 38,
+        "n_elements": 148,
+        "covered": 0.8581081081081081,
+        "covered50": 0.8243243243243243,
+        "k50": 122,
+        "covered50_boot95": [
+          0.6645569620253164,
+          0.9553571428571429
+        ],
+        "calls_per_genome": 8.394736842105264,
+        "calls_per_mb": 1.7228994399226587
+      },
+      "PhageBoost": {
+        "n_genomes": 33,
+        "n_elements": 141,
+        "covered": 0.7801418439716312,
+        "covered50": 0.6666666666666666,
+        "k50": 94,
+        "covered50_boot95": [
+          0.5151515151515151,
+          0.8104663487016427
+        ],
+        "calls_per_genome": 8.666666666666666,
+        "calls_per_mb": 1.7648764895002191
+      },
+      "PhiSpy": {
+        "n_genomes": 38,
+        "n_elements": 148,
+        "covered": 0.7635135135135135,
+        "covered50": 0.6824324324324325,
+        "k50": 101,
+        "covered50_boot95": [
+          0.5353956272774597,
+          0.859504132231405
+        ],
+        "calls_per_genome": 5.5,
+        "calls_per_mb": 1.1287961847769143
+      },
+      "Phigaro": {
+        "n_genomes": 38,
+        "n_elements": 148,
+        "covered": 0.7905405405405406,
+        "covered50": 0.722972972972973,
+        "k50": 107,
+        "covered50_boot95": [
+          0.5519424540976265,
+          0.8759138233463476
+        ],
+        "calls_per_genome": 4.526315789473684,
+        "calls_per_mb": 0.9289614535006184
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.697986577181208,
+        "covered50": 0.6778523489932886,
+        "k50": 101,
+        "covered50_boot95": [
+          0.5197368421052632,
+          0.8606610833927297
+        ],
+        "calls_per_genome": 4.256410256410256,
+        "calls_per_mb": 0.8709521710843879
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.6442953020134228,
+        "covered50": 0.6174496644295302,
+        "k50": 92,
+        "covered50_boot95": [
+          0.45077150828446166,
+          0.8282828282828283
+        ],
+        "calls_per_genome": 3.230769230769231,
+        "calls_per_mb": 0.6610841780520053
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7248322147651006,
+        "covered50": 0.7114093959731543,
+        "k50": 106,
+        "covered50_boot95": [
+          0.5454545454545454,
+          0.8782608695652174
+        ],
+        "calls_per_genome": 3.923076923076923,
+        "calls_per_mb": 0.8027450733488636
+      },
+      "VIBRANT": {
+        "n_genomes": 37,
+        "n_elements": 146,
+        "covered": 0.7945205479452054,
+        "covered50": 0.7876712328767124,
+        "k50": 115,
+        "covered50_boot95": [
+          0.6325256909992912,
+          0.9281162464985993
+        ],
+        "calls_per_genome": 3.5675675675675675,
+        "calls_per_mb": 0.7303308620117295
+      },
+      "VirSorter2": {
+        "n_genomes": 18,
+        "n_elements": 101,
+        "covered": 0.7722772277227723,
+        "covered50": 0.7623762376237624,
+        "k50": 77,
+        "covered50_boot95": [
+          0.603448275862069,
+          0.9102564102564102
+        ],
+        "calls_per_genome": 3.9444444444444446,
+        "calls_per_mb": 0.8745673355259105
+      },
+      "geNomad": {
+        "n_genomes": 37,
+        "n_elements": 146,
+        "covered": 0.8287671232876712,
+        "covered50": 0.821917808219178,
+        "k50": 120,
+        "covered50_boot95": [
+          0.6748429300022174,
+          0.95
+        ],
+        "calls_per_genome": 4.594594594594595,
+        "calls_per_mb": 0.9405776253181365
+      },
+      "megaDNA 2k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7046979865771812,
+        "covered50": 0.6711409395973155,
+        "k50": 100,
+        "covered50_boot95": [
+          0.4882282069454288,
+          0.8411330619043211
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "megaDNA 4k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.697986577181208,
+        "covered50": 0.6912751677852349,
+        "k50": 103,
+        "covered50_boot95": [
+          0.551217433481153,
+          0.8437555407801418
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "megaDNA 8k": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.7181208053691275,
+        "covered50": 0.697986577181208,
+        "k50": 104,
+        "covered50_boot95": [
+          0.5180180180180181,
+          0.8596532218396458
+        ],
+        "calls_per_genome": 3.6153846153846154,
+        "calls_per_mb": 0.7397846754391487
+      },
+      "prophound exploratory": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.9798657718120806,
+        "covered50": 0.9463087248322147,
+        "k50": 141,
+        "covered50_boot95": [
+          0.9058823529411765,
+          0.983739837398374
+        ],
+        "calls_per_genome": 39.92307692307692,
+        "calls_per_mb": 8.169111628785494
+      },
+      "prophound default": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.959731543624161,
+        "covered50": 0.9328859060402684,
+        "k50": 139,
+        "covered50_boot95": [
+          0.8743440538519073,
+          0.9834744614550874
+        ],
+        "calls_per_genome": 14.35897435897436,
+        "calls_per_mb": 2.938151902453357
+      },
+      "prophound conservative": {
+        "n_genomes": 39,
+        "n_elements": 149,
+        "covered": 0.9194630872483222,
+        "covered50": 0.8993288590604027,
+        "k50": 134,
+        "covered50_boot95": [
+          0.7971965851407475,
+          0.9823529411764705
+        ],
+        "calls_per_genome": 7.102564102564102,
+        "calls_per_mb": 1.4533358517492496
+      }
+    },
+    "all/under_10kb": {
+      "Caduceus 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "Caduceus 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.3076923076923075,
+        "calls_per_mb": 0.676824277529434
+      },
+      "Caduceus 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3076923076923077
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.871794871794872,
+        "calls_per_mb": 0.7922516736972444
+      },
+      "EVO2 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "EVO2 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.4444444444444444
+        ],
+        "calls_per_genome": 4.846153846153846,
+        "calls_per_mb": 0.9916262670780079
+      },
+      "EVO2 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2942647058823508
+        ],
+        "calls_per_genome": 3.641025641025641,
+        "calls_per_mb": 0.7450313752649583
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.45454545454545453
+        ],
+        "calls_per_genome": 4.897435897435898,
+        "calls_per_mb": 1.002119666729627
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.23076923076923078,
+        "covered50": 0.23076923076923078,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5833333333333334
+        ],
+        "calls_per_genome": 5.666666666666667,
+        "calls_per_mb": 1.159520661503914
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.45454545454545453
+        ],
+        "calls_per_genome": 5.205128205128205,
+        "calls_per_mb": 1.065080064639342
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.051282051282051,
+        "calls_per_mb": 0.6243572792713383
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 2.8974358974358974,
+        "calls_per_mb": 0.5928770803164809
+      },
+      "Generanno 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.4
+        ],
+        "calls_per_genome": 4.076923076923077,
+        "calls_per_mb": 0.8342252723037209
+      },
+      "Generanno 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.23076923076923078,
+        "covered50": 0.23076923076923078,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5833333333333334
+        ],
+        "calls_per_genome": 7.282051282051282,
+        "calls_per_mb": 1.4900627505299167
+      },
+      "Generanno 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.4444444444444444
+        ],
+        "calls_per_genome": 4.641025641025641,
+        "calls_per_mb": 0.9496526684715314
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.28607142857142337
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "NTv2 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.15384615384615385,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.35714285714285715
+        ],
+        "calls_per_genome": 3.3846153846153846,
+        "calls_per_mb": 0.6925643770068627
+      },
+      "PHASTER": {
+        "n_genomes": 38,
+        "n_elements": 13,
+        "covered": 0.5384615384615384,
+        "covered50": 0.46153846153846156,
+        "k50": 6,
+        "covered50_boot95": [
+          0.2,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.8947368421052633,
+        "calls_per_mb": 0.7993389251051833
+      },
+      "PIDE": {
+        "n_genomes": 38,
+        "n_elements": 13,
+        "covered": 0.6153846153846154,
+        "covered50": 0.6153846153846154,
+        "k50": 8,
+        "covered50_boot95": [
+          0.4166666666666667,
+          0.8888888888888888
+        ],
+        "calls_per_genome": 8.394736842105264,
+        "calls_per_mb": 1.7228994399226587
+      },
+      "PhageBoost": {
+        "n_genomes": 33,
+        "n_elements": 12,
+        "covered": 0.5833333333333334,
+        "covered50": 0.5,
+        "k50": 6,
+        "covered50_boot95": [
+          0.14285714285714285,
+          1.0
+        ],
+        "calls_per_genome": 8.666666666666666,
+        "calls_per_mb": 1.7648764895002191
+      },
+      "PhiSpy": {
+        "n_genomes": 38,
+        "n_elements": 13,
+        "covered": 0.23076923076923078,
+        "covered50": 0.23076923076923078,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 5.5,
+        "calls_per_mb": 1.1287961847769143
+      },
+      "Phigaro": {
+        "n_genomes": 38,
+        "n_elements": 13,
+        "covered": 0.15384615384615385,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.25
+        ],
+        "calls_per_genome": 4.526315789473684,
+        "calls_per_mb": 0.9289614535006184
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 4.256410256410256,
+        "calls_per_mb": 0.8709521710843879
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.230769230769231,
+        "calls_per_mb": 0.6610841780520053
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.923076923076923,
+        "calls_per_mb": 0.8027450733488636
+      },
+      "VIBRANT": {
+        "n_genomes": 37,
+        "n_elements": 12,
+        "covered": 0.3333333333333333,
+        "covered50": 0.3333333333333333,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6428571428571429
+        ],
+        "calls_per_genome": 3.5675675675675675,
+        "calls_per_mb": 0.7303308620117295
+      },
+      "VirSorter2": {
+        "n_genomes": 18,
+        "n_elements": 12,
+        "covered": 0.5833333333333334,
+        "covered50": 0.5833333333333334,
+        "k50": 7,
+        "covered50_boot95": [
+          0.36363636363636365,
+          0.8
+        ],
+        "calls_per_genome": 3.9444444444444446,
+        "calls_per_mb": 0.8745673355259105
+      },
+      "geNomad": {
+        "n_genomes": 37,
+        "n_elements": 12,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 6,
+        "covered50_boot95": [
+          0.25,
+          0.8571428571428571
+        ],
+        "calls_per_genome": 4.594594594594595,
+        "calls_per_mb": 0.9405776253181365
+      },
+      "megaDNA 2k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "megaDNA 4k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "megaDNA 8k": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.07692307692307693,
+        "covered50": 0.07692307692307693,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.6153846153846154,
+        "calls_per_mb": 0.7397846754391487
+      },
+      "prophound exploratory": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.8461538461538461,
+        "covered50": 0.8461538461538461,
+        "k50": 11,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 39.92307692307692,
+        "calls_per_mb": 8.169111628785494
+      },
+      "prophound default": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.8461538461538461,
+        "covered50": 0.8461538461538461,
+        "k50": 11,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 14.35897435897436,
+        "calls_per_mb": 2.938151902453357
+      },
+      "prophound conservative": {
+        "n_genomes": 39,
+        "n_elements": 13,
+        "covered": 0.7692307692307693,
+        "covered50": 0.7692307692307693,
+        "k50": 10,
+        "covered50_boot95": [
+          0.5714285714285714,
+          1.0
+        ],
+        "calls_per_genome": 7.102564102564102,
+        "calls_per_mb": 1.4533358517492496
+      }
+    },
+    "all/containment_lt_0.1": {
+      "Caduceus 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6814159292035398,
+        "covered50": 0.6548672566371682,
+        "k50": 74,
+        "covered50_boot95": [
+          0.4366971795089627,
+          0.88
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "Caduceus 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7256637168141593,
+        "covered50": 0.7079646017699115,
+        "k50": 80,
+        "covered50_boot95": [
+          0.47320563399778515,
+          0.9333333333333333
+        ],
+        "calls_per_genome": 3.3076923076923075,
+        "calls_per_mb": 0.676824277529434
+      },
+      "Caduceus 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7522123893805309,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.534880611864196,
+          0.9294117647058824
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6548672566371682,
+        "covered50": 0.6371681415929203,
+        "k50": 72,
+        "covered50_boot95": [
+          0.4327454273982829,
+          0.8446601941747572
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.6814159292035398,
+        "k50": 77,
+        "covered50_boot95": [
+          0.4758536291294912,
+          0.8854166666666666
+        ],
+        "calls_per_genome": 3.871794871794872,
+        "calls_per_mb": 0.7922516736972444
+      },
+      "EVO2 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7522123893805309,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.5070398082942097,
+          0.9428652597402596
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "EVO2 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7964601769911505,
+        "covered50": 0.7876106194690266,
+        "k50": 89,
+        "covered50_boot95": [
+          0.5945908408408409,
+          0.9615384615384616
+        ],
+        "calls_per_genome": 4.846153846153846,
+        "calls_per_mb": 0.9916262670780079
+      },
+      "EVO2 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7610619469026548,
+        "covered50": 0.7522123893805309,
+        "k50": 85,
+        "covered50_boot95": [
+          0.5563380281690141,
+          0.9405940594059405
+        ],
+        "calls_per_genome": 3.641025641025641,
+        "calls_per_mb": 0.7450313752649583
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7964601769911505,
+        "covered50": 0.7699115044247787,
+        "k50": 87,
+        "covered50_boot95": [
+          0.5639059898067316,
+          0.9514563106796117
+        ],
+        "calls_per_genome": 4.897435897435898,
+        "calls_per_mb": 1.002119666729627
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.8141592920353983,
+        "covered50": 0.7876106194690266,
+        "k50": 89,
+        "covered50_boot95": [
+          0.5766423357664233,
+          0.9662921348314607
+        ],
+        "calls_per_genome": 5.666666666666667,
+        "calls_per_mb": 1.159520661503914
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.8053097345132744,
+        "covered50": 0.7876106194690266,
+        "k50": 89,
+        "covered50_boot95": [
+          0.5786496789727127,
+          0.9659090909090909
+        ],
+        "calls_per_genome": 5.205128205128205,
+        "calls_per_mb": 1.065080064639342
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6283185840707964,
+        "covered50": 0.5929203539823009,
+        "k50": 67,
+        "covered50_boot95": [
+          0.3877487244897959,
+          0.8041237113402062
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.5398230088495575,
+        "covered50": 0.5398230088495575,
+        "k50": 61,
+        "covered50_boot95": [
+          0.3464566929133858,
+          0.7619047619047619
+        ],
+        "calls_per_genome": 3.051282051282051,
+        "calls_per_mb": 0.6243572792713383
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6017699115044248,
+        "covered50": 0.5752212389380531,
+        "k50": 65,
+        "covered50_boot95": [
+          0.39681855500821017,
+          0.7731958762886598
+        ],
+        "calls_per_genome": 2.8974358974358974,
+        "calls_per_mb": 0.5928770803164809
+      },
+      "Generanno 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.506095724360858,
+          0.945054945054945
+        ],
+        "calls_per_genome": 4.076923076923077,
+        "calls_per_mb": 0.8342252723037209
+      },
+      "Generanno 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.5364190421345618,
+          0.9263157894736842
+        ],
+        "calls_per_genome": 7.282051282051282,
+        "calls_per_mb": 1.4900627505299167
+      },
+      "Generanno 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.6991150442477876,
+        "k50": 79,
+        "covered50_boot95": [
+          0.5035958467268739,
+          0.9080459770114943
+        ],
+        "calls_per_genome": 4.641025641025641,
+        "calls_per_mb": 0.9496526684715314
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6637168141592921,
+        "covered50": 0.6548672566371682,
+        "k50": 74,
+        "covered50_boot95": [
+          0.45,
+          0.8588235294117647
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7079646017699115,
+        "covered50": 0.6991150442477876,
+        "k50": 79,
+        "covered50_boot95": [
+          0.4799932432432432,
+          0.9100028089887641
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7256637168141593,
+        "k50": 82,
+        "covered50_boot95": [
+          0.5142857142857142,
+          0.929295900178253
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7345132743362832,
+        "covered50": 0.7256637168141593,
+        "k50": 82,
+        "covered50_boot95": [
+          0.5,
+          0.9381443298969072
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "NTv2 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7522123893805309,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.517436848436247,
+          0.93
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7787610619469026,
+        "covered50": 0.7522123893805309,
+        "k50": 85,
+        "covered50_boot95": [
+          0.5533333333333333,
+          0.9444571865443423
+        ],
+        "calls_per_genome": 3.3846153846153846,
+        "calls_per_mb": 0.6925643770068627
+      },
+      "PHASTER": {
+        "n_genomes": 38,
+        "n_elements": 112,
+        "covered": 0.8125,
+        "covered50": 0.7857142857142857,
+        "k50": 88,
+        "covered50_boot95": [
+          0.6232851895969824,
+          0.9468085106382979
+        ],
+        "calls_per_genome": 3.8947368421052633,
+        "calls_per_mb": 0.7993389251051833
+      },
+      "PIDE": {
+        "n_genomes": 38,
+        "n_elements": 112,
+        "covered": 0.8214285714285714,
+        "covered50": 0.7767857142857143,
+        "k50": 87,
+        "covered50_boot95": [
+          0.5971196177386449,
+          0.9523809523809523
+        ],
+        "calls_per_genome": 8.394736842105264,
+        "calls_per_mb": 1.7228994399226587
+      },
+      "PhageBoost": {
+        "n_genomes": 33,
+        "n_elements": 105,
+        "covered": 0.7333333333333333,
+        "covered50": 0.580952380952381,
+        "k50": 61,
+        "covered50_boot95": [
+          0.44953870734975776,
+          0.7560975609756098
+        ],
+        "calls_per_genome": 8.666666666666666,
+        "calls_per_mb": 1.7648764895002191
+      },
+      "PhiSpy": {
+        "n_genomes": 38,
+        "n_elements": 112,
+        "covered": 0.7767857142857143,
+        "covered50": 0.7232142857142857,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5304335815517656,
+          0.9183673469387755
+        ],
+        "calls_per_genome": 5.5,
+        "calls_per_mb": 1.1287961847769143
+      },
+      "Phigaro": {
+        "n_genomes": 38,
+        "n_elements": 112,
+        "covered": 0.7589285714285714,
+        "covered50": 0.6785714285714286,
+        "k50": 76,
+        "covered50_boot95": [
+          0.48629661339421615,
+          0.882982177397071
+        ],
+        "calls_per_genome": 4.526315789473684,
+        "calls_per_mb": 0.9289614535006184
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7256637168141593,
+        "covered50": 0.7079646017699115,
+        "k50": 80,
+        "covered50_boot95": [
+          0.5,
+          0.9166666666666666
+        ],
+        "calls_per_genome": 4.256410256410256,
+        "calls_per_mb": 0.8709521710843879
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.6814159292035398,
+        "k50": 77,
+        "covered50_boot95": [
+          0.4645598987626547,
+          0.9047619047619048
+        ],
+        "calls_per_genome": 3.230769230769231,
+        "calls_per_mb": 0.6610841780520053
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7345132743362832,
+        "covered50": 0.7256637168141593,
+        "k50": 82,
+        "covered50_boot95": [
+          0.514070232204035,
+          0.9270833333333334
+        ],
+        "calls_per_genome": 3.923076923076923,
+        "calls_per_mb": 0.8027450733488636
+      },
+      "VIBRANT": {
+        "n_genomes": 37,
+        "n_elements": 110,
+        "covered": 0.7818181818181819,
+        "covered50": 0.7727272727272727,
+        "k50": 85,
+        "covered50_boot95": [
+          0.59118782161235,
+          0.946236559139785
+        ],
+        "calls_per_genome": 3.5675675675675675,
+        "calls_per_mb": 0.7303308620117295
+      },
+      "VirSorter2": {
+        "n_genomes": 18,
+        "n_elements": 65,
+        "covered": 0.6923076923076923,
+        "covered50": 0.676923076923077,
+        "k50": 44,
+        "covered50_boot95": [
+          0.5223839137645108,
+          0.9090909090909091
+        ],
+        "calls_per_genome": 3.9444444444444446,
+        "calls_per_mb": 0.8745673355259105
+      },
+      "geNomad": {
+        "n_genomes": 37,
+        "n_elements": 110,
+        "covered": 0.7909090909090909,
+        "covered50": 0.7818181818181819,
+        "k50": 86,
+        "covered50_boot95": [
+          0.6103872230710465,
+          0.9514563106796117
+        ],
+        "calls_per_genome": 4.594594594594595,
+        "calls_per_mb": 0.9405776253181365
+      },
+      "megaDNA 2k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7079646017699115,
+        "covered50": 0.672566371681416,
+        "k50": 76,
+        "covered50_boot95": [
+          0.4444444444444444,
+          0.8932071197411003
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "megaDNA 4k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7168141592920354,
+        "covered50": 0.7079646017699115,
+        "k50": 80,
+        "covered50_boot95": [
+          0.5294022770398482,
+          0.9
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "megaDNA 8k": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.7256637168141593,
+        "covered50": 0.6991150442477876,
+        "k50": 79,
+        "covered50_boot95": [
+          0.48366013071895425,
+          0.9139784946236559
+        ],
+        "calls_per_genome": 3.6153846153846154,
+        "calls_per_mb": 0.7397846754391487
+      },
+      "prophound exploratory": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.9823008849557522,
+        "covered50": 0.9380530973451328,
+        "k50": 106,
+        "covered50_boot95": [
+          0.8962962962962963,
+          0.9885057471264368
+        ],
+        "calls_per_genome": 39.92307692307692,
+        "calls_per_mb": 8.169111628785494
+      },
+      "prophound default": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.9557522123893806,
+        "covered50": 0.9203539823008849,
+        "k50": 104,
+        "covered50_boot95": [
+          0.8582089552238806,
+          0.9863013698630136
+        ],
+        "calls_per_genome": 14.35897435897436,
+        "calls_per_mb": 2.938151902453357
+      },
+      "prophound conservative": {
+        "n_genomes": 39,
+        "n_elements": 113,
+        "covered": 0.9026548672566371,
+        "covered50": 0.8761061946902655,
+        "k50": 99,
+        "covered50_boot95": [
+          0.7664670658682635,
+          0.9809568733153637
+        ],
+        "calls_per_genome": 7.102564102564102,
+        "calls_per_mb": 1.4533358517492496
+      }
+    },
+    "all/containment_ge_0.5": {
+      "Caduceus 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.3448275862068966,
+        "covered50": 0.3103448275862069,
+        "k50": 9,
+        "covered50_boot95": [
+          0.0,
+          0.6923076923076923
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "Caduceus 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5862068965517241,
+        "covered50": 0.4827586206896552,
+        "k50": 14,
+        "covered50_boot95": [
+          0.23809523809523808,
+          0.8421052631578947
+        ],
+        "calls_per_genome": 3.3076923076923075,
+        "calls_per_mb": 0.676824277529434
+      },
+      "Caduceus 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5517241379310345,
+        "covered50": 0.4827586206896552,
+        "k50": 14,
+        "covered50_boot95": [
+          0.0,
+          0.8235294117647058
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.1724137931034483,
+        "covered50": 0.1724137931034483,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.41025641025641,
+        "calls_per_mb": 0.6978110768326722
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5862068965517241,
+        "covered50": 0.5517241379310345,
+        "k50": 16,
+        "covered50_boot95": [
+          0.0,
+          0.8235294117647058
+        ],
+        "calls_per_genome": 3.871794871794872,
+        "calls_per_mb": 0.7922516736972444
+      },
+      "EVO2 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.7586206896551724,
+        "covered50": 0.6896551724137931,
+        "k50": 20,
+        "covered50_boot95": [
+          0.25,
+          0.8421052631578947
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "EVO2 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8620689655172413,
+        "covered50": 0.8620689655172413,
+        "k50": 25,
+        "covered50_boot95": [
+          0.25,
+          0.9729819819819819
+        ],
+        "calls_per_genome": 4.846153846153846,
+        "calls_per_mb": 0.9916262670780079
+      },
+      "EVO2 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8620689655172413,
+        "covered50": 0.8620689655172413,
+        "k50": 25,
+        "covered50_boot95": [
+          0.25,
+          0.975
+        ],
+        "calls_per_genome": 3.641025641025641,
+        "calls_per_mb": 0.7450313752649583
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.41379310344827586,
+        "covered50": 0.27586206896551724,
+        "k50": 8,
+        "covered50_boot95": [
+          0.05555555555555555,
+          0.75
+        ],
+        "calls_per_genome": 4.897435897435898,
+        "calls_per_mb": 1.002119666729627
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.4482758620689655,
+        "covered50": 0.3103448275862069,
+        "k50": 9,
+        "covered50_boot95": [
+          0.11425876010781673,
+          0.75
+        ],
+        "calls_per_genome": 5.666666666666667,
+        "calls_per_mb": 1.159520661503914
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.41379310344827586,
+        "covered50": 0.27586206896551724,
+        "k50": 8,
+        "covered50_boot95": [
+          0.1111111111111111,
+          0.75
+        ],
+        "calls_per_genome": 5.205128205128205,
+        "calls_per_mb": 1.065080064639342
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.2413793103448276,
+        "covered50": 0.20689655172413793,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          0.7058823529411765
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.1724137931034483,
+        "covered50": 0.13793103448275862,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.26666666666666666
+        ],
+        "calls_per_genome": 3.051282051282051,
+        "calls_per_mb": 0.6243572792713383
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5517241379310345,
+        "covered50": 0.4827586206896552,
+        "k50": 14,
+        "covered50_boot95": [
+          0.0,
+          0.6153846153846154
+        ],
+        "calls_per_genome": 2.8974358974358974,
+        "calls_per_mb": 0.5928770803164809
+      },
+      "Generanno 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8275862068965517,
+        "covered50": 0.7931034482758621,
+        "k50": 23,
+        "covered50_boot95": [
+          0.25,
+          0.8804388384166125
+        ],
+        "calls_per_genome": 4.076923076923077,
+        "calls_per_mb": 0.8342252723037209
+      },
+      "Generanno 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.3448275862068966,
+        "covered50": 0.3448275862068966,
+        "k50": 10,
+        "covered50_boot95": [
+          0.0,
+          0.9333333333333333
+        ],
+        "calls_per_genome": 7.282051282051282,
+        "calls_per_mb": 1.4900627505299167
+      },
+      "Generanno 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.3448275862068966,
+        "covered50": 0.3448275862068966,
+        "k50": 10,
+        "covered50_boot95": [
+          0.0,
+          0.9091897233201567
+        ],
+        "calls_per_genome": 4.641025641025641,
+        "calls_per_mb": 0.9496526684715314
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.27586206896551724,
+        "covered50": 0.27586206896551724,
+        "k50": 8,
+        "covered50_boot95": [
+          0.05555555555555555,
+          0.64
+        ],
+        "calls_per_genome": 3.5641025641025643,
+        "calls_per_mb": 0.7292912757875296
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5172413793103449,
+        "covered50": 0.4482758620689655,
+        "k50": 13,
+        "covered50_boot95": [
+          0.0,
+          0.6153846153846154
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.7241379310344828,
+        "covered50": 0.6551724137931034,
+        "k50": 19,
+        "covered50_boot95": [
+          0.0,
+          0.8235294117647058
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5172413793103449,
+        "covered50": 0.4827586206896552,
+        "k50": 14,
+        "covered50_boot95": [
+          0.0,
+          0.8260869565217391
+        ],
+        "calls_per_genome": 3.7435897435897436,
+        "calls_per_mb": 0.7660181745681965
+      },
+      "NTv2 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.7586206896551724,
+        "covered50": 0.6896551724137931,
+        "k50": 20,
+        "covered50_boot95": [
+          0.25,
+          0.8461538461538461
+        ],
+        "calls_per_genome": 3.4871794871794872,
+        "calls_per_mb": 0.7135511763101009
+      },
+      "NTv2 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8275862068965517,
+        "covered50": 0.8275862068965517,
+        "k50": 24,
+        "covered50_boot95": [
+          0.0,
+          0.9722222222222222
+        ],
+        "calls_per_genome": 3.3846153846153846,
+        "calls_per_mb": 0.6925643770068627
+      },
+      "PHASTER": {
+        "n_genomes": 38,
+        "n_elements": 29,
+        "covered": 0.9310344827586207,
+        "covered50": 0.9310344827586207,
+        "k50": 27,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 3.8947368421052633,
+        "calls_per_mb": 0.7993389251051833
+      },
+      "PIDE": {
+        "n_genomes": 38,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.7,
+          1.0
+        ],
+        "calls_per_genome": 8.394736842105264,
+        "calls_per_mb": 1.7228994399226587
+      },
+      "PhageBoost": {
+        "n_genomes": 33,
+        "n_elements": 29,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 29,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 8.666666666666666,
+        "calls_per_mb": 1.7648764895002191
+      },
+      "PhiSpy": {
+        "n_genomes": 38,
+        "n_elements": 29,
+        "covered": 0.8620689655172413,
+        "covered50": 0.6551724137931034,
+        "k50": 19,
+        "covered50_boot95": [
+          0.25,
+          0.7777777777777778
+        ],
+        "calls_per_genome": 5.5,
+        "calls_per_mb": 1.1287961847769143
+      },
+      "Phigaro": {
+        "n_genomes": 38,
+        "n_elements": 29,
+        "covered": 0.9310344827586207,
+        "covered50": 0.9310344827586207,
+        "k50": 27,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.526315789473684,
+        "calls_per_mb": 0.9289614535006184
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.7586206896551724,
+        "covered50": 0.7241379310344828,
+        "k50": 21,
+        "covered50_boot95": [
+          0.25,
+          0.8461538461538461
+        ],
+        "calls_per_genome": 4.256410256410256,
+        "calls_per_mb": 0.8709521710843879
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.5862068965517241,
+        "covered50": 0.5172413793103449,
+        "k50": 15,
+        "covered50_boot95": [
+          0.25,
+          0.7777777777777778
+        ],
+        "calls_per_genome": 3.230769230769231,
+        "calls_per_mb": 0.6610841780520053
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8275862068965517,
+        "covered50": 0.7931034482758621,
+        "k50": 23,
+        "covered50_boot95": [
+          0.25,
+          0.88
+        ],
+        "calls_per_genome": 3.923076923076923,
+        "calls_per_mb": 0.8027450733488636
+      },
+      "VIBRANT": {
+        "n_genomes": 37,
+        "n_elements": 29,
+        "covered": 0.8620689655172413,
+        "covered50": 0.8620689655172413,
+        "k50": 25,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 3.5675675675675675,
+        "calls_per_mb": 0.7303308620117295
+      },
+      "VirSorter2": {
+        "n_genomes": 18,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.75,
+          1.0
+        ],
+        "calls_per_genome": 3.9444444444444446,
+        "calls_per_mb": 0.8745673355259105
+      },
+      "geNomad": {
+        "n_genomes": 37,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.6666666666666666,
+          1.0
+        ],
+        "calls_per_genome": 4.594594594594595,
+        "calls_per_mb": 0.9405776253181365
+      },
+      "megaDNA 2k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8620689655172413,
+        "covered50": 0.8275862068965517,
+        "k50": 24,
+        "covered50_boot95": [
+          0.25,
+          0.925
+        ],
+        "calls_per_genome": 3.4615384615384617,
+        "calls_per_mb": 0.7083044764842914
+      },
+      "megaDNA 4k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.7931034482758621,
+        "covered50": 0.7931034482758621,
+        "k50": 23,
+        "covered50_boot95": [
+          0.0,
+          0.9230769230769231
+        ],
+        "calls_per_genome": 3.282051282051282,
+        "calls_per_mb": 0.6715775777036244
+      },
+      "megaDNA 8k": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.8275862068965517,
+        "covered50": 0.8275862068965517,
+        "k50": 24,
+        "covered50_boot95": [
+          0.25,
+          0.9230769230769231
+        ],
+        "calls_per_genome": 3.6153846153846154,
+        "calls_per_mb": 0.7397846754391487
+      },
+      "prophound exploratory": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.6923076923076923,
+          1.0
+        ],
+        "calls_per_genome": 39.92307692307692,
+        "calls_per_mb": 8.169111628785494
+      },
+      "prophound default": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.6923076923076923,
+          1.0
+        ],
+        "calls_per_genome": 14.35897435897436,
+        "calls_per_mb": 2.938151902453357
+      },
+      "prophound conservative": {
+        "n_genomes": 39,
+        "n_elements": 29,
+        "covered": 0.9655172413793104,
+        "covered50": 0.9655172413793104,
+        "k50": 28,
+        "covered50_boot95": [
+          0.6666666666666666,
+          1.0
+        ],
+        "calls_per_genome": 7.102564102564102,
+        "calls_per_mb": 1.4533358517492496
+      }
+    },
+    "not_in_corpus/all_sizes": {
+      "Caduceus 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.672566371681416,
+        "covered50": 0.6460176991150443,
+        "k50": 73,
+        "covered50_boot95": [
+          0.42566811214199274,
+          0.875
+        ],
+        "calls_per_genome": 3.5588235294117645,
+        "calls_per_mb": 0.7068293737258086
+      },
+      "Caduceus 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7168141592920354,
+        "covered50": 0.6991150442477876,
+        "k50": 79,
+        "covered50_boot95": [
+          0.465511254789272,
+          0.9175257731958762
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "Caduceus 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7256637168141593,
+        "k50": 82,
+        "covered50_boot95": [
+          0.5328391569127111,
+          0.9204545454545454
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6460176991150443,
+        "covered50": 0.6283185840707964,
+        "k50": 71,
+        "covered50_boot95": [
+          0.4266643356643357,
+          0.8470728291316525
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7168141592920354,
+        "covered50": 0.6991150442477876,
+        "k50": 79,
+        "covered50_boot95": [
+          0.4965022566086396,
+          0.9052631578947369
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 0.7944528498075204
+      },
+      "EVO2 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7345132743362832,
+        "covered50": 0.7168141592920354,
+        "k50": 81,
+        "covered50_boot95": [
+          0.49659746657283604,
+          0.925
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "EVO2 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7876106194690266,
+        "covered50": 0.7787610619469026,
+        "k50": 88,
+        "covered50_boot95": [
+          0.5912325812873259,
+          0.9523809523809523
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "EVO2 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.54247790665562,
+          0.9238121118012422
+        ],
+        "calls_per_genome": 3.5294117647058822,
+        "calls_per_mb": 0.7009878086536945
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7699115044247787,
+        "covered50": 0.7433628318584071,
+        "k50": 84,
+        "covered50_boot95": [
+          0.5460526315789473,
+          0.9404761904761905
+        ],
+        "calls_per_genome": 5.029411764705882,
+        "calls_per_mb": 0.9989076273315146
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7787610619469026,
+        "covered50": 0.7522123893805309,
+        "k50": 85,
+        "covered50_boot95": [
+          0.5507246376811594,
+          0.951810125115848
+        ],
+        "calls_per_genome": 5.823529411764706,
+        "calls_per_mb": 1.1566298842785958
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7699115044247787,
+        "covered50": 0.7433628318584071,
+        "k50": 84,
+        "covered50_boot95": [
+          0.5432098765432098,
+          0.95
+        ],
+        "calls_per_genome": 5.294117647058823,
+        "calls_per_mb": 1.0514817129805416
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6194690265486725,
+        "covered50": 0.584070796460177,
+        "k50": 66,
+        "covered50_boot95": [
+          0.38636363636363635,
+          0.8
+        ],
+        "calls_per_genome": 3.4411764705882355,
+        "calls_per_mb": 0.6834631134373521
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.5486725663716814,
+        "covered50": 0.5398230088495575,
+        "k50": 61,
+        "covered50_boot95": [
+          0.344,
+          0.7735849056603774
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6106194690265486,
+        "covered50": 0.584070796460177,
+        "k50": 66,
+        "covered50_boot95": [
+          0.4044078535669587,
+          0.7857142857142857
+        ],
+        "calls_per_genome": 3.0294117647058822,
+        "calls_per_mb": 0.6016812024277544
+      },
+      "Generanno 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7256637168141593,
+        "covered50": 0.7168141592920354,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5,
+          0.9292929292929293
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "Generanno 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.5289792603698151,
+          0.9278350515463918
+        ],
+        "calls_per_genome": 8.029411764705882,
+        "calls_per_mb": 1.5947472646871548
+      },
+      "Generanno 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6814159292035398,
+        "covered50": 0.6814159292035398,
+        "k50": 77,
+        "covered50_boot95": [
+          0.49242424242424243,
+          0.898876404494382
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6548672566371682,
+        "covered50": 0.6460176991150443,
+        "k50": 73,
+        "covered50_boot95": [
+          0.44999260355029586,
+          0.85
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7079646017699115,
+        "covered50": 0.6902654867256637,
+        "k50": 78,
+        "covered50_boot95": [
+          0.47516837593754785,
+          0.9047619047619048
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7433628318584071,
+        "covered50": 0.7256637168141593,
+        "k50": 82,
+        "covered50_boot95": [
+          0.5167675571347108,
+          0.925531914893617
+        ],
+        "calls_per_genome": 3.5,
+        "calls_per_mb": 0.6951462435815803
+      },
+      "NTv2 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7168141592920354,
+        "covered50": 0.7079646017699115,
+        "k50": 80,
+        "covered50_boot95": [
+          0.4895067698259188,
+          0.9183732795443759
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "NTv2 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7345132743362832,
+        "covered50": 0.7168141592920354,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5128205128205128,
+          0.9148936170212766
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "NTv2 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7610619469026548,
+        "covered50": 0.7345132743362832,
+        "k50": 83,
+        "covered50_boot95": [
+          0.5337321063394683,
+          0.9239130434782609
+        ],
+        "calls_per_genome": 3.2058823529411766,
+        "calls_per_mb": 0.6367305928604391
+      },
+      "PHASTER": {
+        "n_genomes": 33,
+        "n_elements": 112,
+        "covered": 0.8125,
+        "covered50": 0.7946428571428571,
+        "k50": 89,
+        "covered50_boot95": [
+          0.6239882352941176,
+          0.9557595059807449
+        ],
+        "calls_per_genome": 3.6363636363636362,
+        "calls_per_mb": 0.7240081088908196
+      },
+      "PIDE": {
+        "n_genomes": 33,
+        "n_elements": 112,
+        "covered": 0.8392857142857143,
+        "covered50": 0.7946428571428571,
+        "k50": 89,
+        "covered50_boot95": [
+          0.6180453431372549,
+          0.9655172413793104
+        ],
+        "calls_per_genome": 7.818181818181818,
+        "calls_per_mb": 1.556617434115262
+      },
+      "PhageBoost": {
+        "n_genomes": 28,
+        "n_elements": 105,
+        "covered": 0.7428571428571429,
+        "covered50": 0.6095238095238096,
+        "k50": 64,
+        "covered50_boot95": [
+          0.4645103686635945,
+          0.7865168539325843
+        ],
+        "calls_per_genome": 8.357142857142858,
+        "calls_per_mb": 1.6404705486462614
+      },
+      "PhiSpy": {
+        "n_genomes": 33,
+        "n_elements": 112,
+        "covered": 0.7678571428571429,
+        "covered50": 0.7053571428571429,
+        "k50": 79,
+        "covered50_boot95": [
+          0.5170068027210885,
+          0.9012527233115466
+        ],
+        "calls_per_genome": 5.545454545454546,
+        "calls_per_mb": 1.1041123660585
+      },
+      "Phigaro": {
+        "n_genomes": 33,
+        "n_elements": 112,
+        "covered": 0.7678571428571429,
+        "covered50": 0.7410714285714286,
+        "k50": 83,
+        "covered50_boot95": [
+          0.5433514632925219,
+          0.935064935064935
+        ],
+        "calls_per_genome": 4.303030303030303,
+        "calls_per_mb": 0.8567429288541365
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7079646017699115,
+        "covered50": 0.6902654867256637,
+        "k50": 78,
+        "covered50_boot95": [
+          0.487650462962963,
+          0.9
+        ],
+        "calls_per_genome": 4.176470588235294,
+        "calls_per_mb": 0.8295022402402051
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6902654867256637,
+        "covered50": 0.6637168141592921,
+        "k50": 75,
+        "covered50_boot95": [
+          0.45599240506329114,
+          0.8842105263157894
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.7256637168141593,
+        "covered50": 0.7168141592920354,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5094310324622056,
+          0.9157919331037875
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "VIBRANT": {
+        "n_genomes": 32,
+        "n_elements": 110,
+        "covered": 0.7727272727272727,
+        "covered50": 0.7636363636363637,
+        "k50": 84,
+        "covered50_boot95": [
+          0.5886420525657071,
+          0.95
+        ],
+        "calls_per_genome": 3.375,
+        "calls_per_mb": 0.6694311694590624
+      },
+      "VirSorter2": {
+        "n_genomes": 13,
+        "n_elements": 65,
+        "covered": 0.7076923076923077,
+        "covered50": 0.6923076923076923,
+        "k50": 45,
+        "covered50_boot95": [
+          0.5333333333333333,
+          0.9259485094850946
+        ],
+        "calls_per_genome": 3.769230769230769,
+        "calls_per_mb": 0.7932139735163661
+      },
+      "geNomad": {
+        "n_genomes": 32,
+        "n_elements": 110,
+        "covered": 0.8,
+        "covered50": 0.7909090909090909,
+        "k50": 87,
+        "covered50_boot95": [
+          0.6212121212121212,
+          0.9595959595959596
+        ],
+        "calls_per_genome": 4.4375,
+        "calls_per_mb": 0.8801780191035822
+      },
+      "megaDNA 2k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.6637168141592921,
+        "k50": 75,
+        "covered50_boot95": [
+          0.4444444444444444,
+          0.8875
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "megaDNA 4k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.6902654867256637,
+        "k50": 78,
+        "covered50_boot95": [
+          0.5193798449612403,
+          0.8878764278296984
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "megaDNA 8k": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.6991150442477876,
+        "covered50": 0.672566371681416,
+        "k50": 76,
+        "covered50_boot95": [
+          0.46275750215225675,
+          0.8888888888888888
+        ],
+        "calls_per_genome": 3.4705882352941178,
+        "calls_per_mb": 0.6893046785094662
+      },
+      "prophound exploratory": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.9734513274336283,
+        "covered50": 0.9380530973451328,
+        "k50": 106,
+        "covered50_boot95": [
+          0.8986486486486487,
+          0.9827586206896551
+        ],
+        "calls_per_genome": 39.970588235294116,
+        "calls_per_mb": 7.93868693300309
+      },
+      "prophound default": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.9557522123893806,
+        "covered50": 0.9203539823008849,
+        "k50": 104,
+        "covered50_boot95": [
+          0.8591525664051423,
+          0.9834710743801653
+        ],
+        "calls_per_genome": 14.382352941176471,
+        "calls_per_mb": 2.856525320263805
+      },
+      "prophound conservative": {
+        "n_genomes": 34,
+        "n_elements": 113,
+        "covered": 0.911504424778761,
+        "covered50": 0.8849557522123894,
+        "k50": 100,
+        "covered50_boot95": [
+          0.7753602833414753,
+          0.9821428571428571
+        ],
+        "calls_per_genome": 6.970588235294118,
+        "calls_per_mb": 1.3844509220910466
+      }
+    },
+    "not_in_corpus/under_10kb": {
+      "Caduceus 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.5588235294117645,
+        "calls_per_mb": 0.7068293737258086
+      },
+      "Caduceus 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "Caduceus 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 0.7944528498075204
+      },
+      "EVO2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "EVO2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.125,
+        "covered50": 0.125,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.5714285714285714
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "EVO2 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.5294117647058822,
+        "calls_per_mb": 0.7009878086536945
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 5.029411764705882,
+        "calls_per_mb": 0.9989076273315146
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.125,
+        "covered50": 0.125,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6
+        ],
+        "calls_per_genome": 5.823529411764706,
+        "calls_per_mb": 1.1566298842785958
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.125,
+        "covered50": 0.125,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 5.294117647058823,
+        "calls_per_mb": 1.0514817129805416
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.4411764705882355,
+        "calls_per_mb": 0.6834631134373521
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.0294117647058822,
+        "calls_per_mb": 0.6016812024277544
+      },
+      "Generanno 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "Generanno 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.25,
+        "covered50": 0.25,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.8
+        ],
+        "calls_per_genome": 8.029411764705882,
+        "calls_per_mb": 1.5947472646871548
+      },
+      "Generanno 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.5,
+        "calls_per_mb": 0.6951462435815803
+      },
+      "NTv2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "NTv2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "NTv2 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.125,
+        "covered50": 0.125,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "calls_per_genome": 3.2058823529411766,
+        "calls_per_mb": 0.6367305928604391
+      },
+      "PHASTER": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 3.6363636363636362,
+        "calls_per_mb": 0.7240081088908196
+      },
+      "PIDE": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.25,
+          1.0
+        ],
+        "calls_per_genome": 7.818181818181818,
+        "calls_per_mb": 1.556617434115262
+      },
+      "PhageBoost": {
+        "n_genomes": 28,
+        "n_elements": 7,
+        "covered": 0.5714285714285714,
+        "covered50": 0.5714285714285714,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 8.357142857142858,
+        "calls_per_mb": 1.6404705486462614
+      },
+      "PhiSpy": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.25,
+        "covered50": 0.25,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.6
+        ],
+        "calls_per_genome": 5.545454545454546,
+        "calls_per_mb": 1.1041123660585
+      },
+      "Phigaro": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.125,
+        "covered50": 0.125,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.4
+        ],
+        "calls_per_genome": 4.303030303030303,
+        "calls_per_mb": 0.8567429288541365
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 4.176470588235294,
+        "calls_per_mb": 0.8295022402402051
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "VIBRANT": {
+        "n_genomes": 32,
+        "n_elements": 7,
+        "covered": 0.2857142857142857,
+        "covered50": 0.2857142857142857,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.375,
+        "calls_per_mb": 0.6694311694590624
+      },
+      "VirSorter2": {
+        "n_genomes": 13,
+        "n_elements": 7,
+        "covered": 0.5714285714285714,
+        "covered50": 0.5714285714285714,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.769230769230769,
+        "calls_per_mb": 0.7932139735163661
+      },
+      "geNomad": {
+        "n_genomes": 32,
+        "n_elements": 7,
+        "covered": 0.42857142857142855,
+        "covered50": 0.42857142857142855,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.4375,
+        "calls_per_mb": 0.8801780191035822
+      },
+      "megaDNA 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "megaDNA 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "megaDNA 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.0,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 3.4705882352941178,
+        "calls_per_mb": 0.6893046785094662
+      },
+      "prophound exploratory": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.75,
+        "covered50": 0.75,
+        "k50": 6,
+        "covered50_boot95": [
+          0.3333333333333333,
+          1.0
+        ],
+        "calls_per_genome": 39.970588235294116,
+        "calls_per_mb": 7.93868693300309
+      },
+      "prophound default": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.75,
+        "covered50": 0.75,
+        "k50": 6,
+        "covered50_boot95": [
+          0.3333333333333333,
+          1.0
+        ],
+        "calls_per_genome": 14.382352941176471,
+        "calls_per_mb": 2.856525320263805
+      },
+      "prophound conservative": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.3333333333333333,
+          1.0
+        ],
+        "calls_per_genome": 6.970588235294118,
+        "calls_per_mb": 1.3844509220910466
+      }
+    },
+    "not_in_corpus/containment_lt_0.1": {
+      "Caduceus 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7087378640776699,
+        "covered50": 0.6796116504854369,
+        "k50": 70,
+        "covered50_boot95": [
+          0.4336209439528024,
+          0.925
+        ],
+        "calls_per_genome": 3.5588235294117645,
+        "calls_per_mb": 0.7068293737258086
+      },
+      "Caduceus 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7378640776699029,
+        "covered50": 0.7184466019417476,
+        "k50": 74,
+        "covered50_boot95": [
+          0.46616541353383456,
+          0.9583333333333334
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "Caduceus 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7669902912621359,
+        "covered50": 0.7475728155339806,
+        "k50": 77,
+        "covered50_boot95": [
+          0.5322528949545078,
+          0.9583333333333334
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.6893203883495146,
+        "covered50": 0.6699029126213593,
+        "k50": 69,
+        "covered50_boot95": [
+          0.4482652845356463,
+          0.896551724137931
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7378640776699029,
+        "covered50": 0.7184466019417476,
+        "k50": 74,
+        "covered50_boot95": [
+          0.4921875,
+          0.9368421052631579
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 0.7944528498075204
+      },
+      "EVO2 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7572815533980582,
+        "covered50": 0.7378640776699029,
+        "k50": 76,
+        "covered50_boot95": [
+          0.48888040712468195,
+          0.9615384615384616
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "EVO2 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.8058252427184466,
+        "covered50": 0.7961165048543689,
+        "k50": 82,
+        "covered50_boot95": [
+          0.5864661654135338,
+          0.9789473684210527
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "EVO2 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7669902912621359,
+        "covered50": 0.7572815533980582,
+        "k50": 78,
+        "covered50_boot95": [
+          0.5441147058823529,
+          0.9611743838685585
+        ],
+        "calls_per_genome": 3.5294117647058822,
+        "calls_per_mb": 0.7009878086536945
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.8058252427184466,
+        "covered50": 0.7766990291262136,
+        "k50": 80,
+        "covered50_boot95": [
+          0.56,
+          0.9714353099730457
+        ],
+        "calls_per_genome": 5.029411764705882,
+        "calls_per_mb": 0.9989076273315146
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.8155339805825242,
+        "covered50": 0.7864077669902912,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5680473372781065,
+          0.978494623655914
+        ],
+        "calls_per_genome": 5.823529411764706,
+        "calls_per_mb": 1.1566298842785958
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.8058252427184466,
+        "covered50": 0.7864077669902912,
+        "k50": 81,
+        "covered50_boot95": [
+          0.5692086330935252,
+          0.978494623655914
+        ],
+        "calls_per_genome": 5.294117647058823,
+        "calls_per_mb": 1.0514817129805416
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.6504854368932039,
+        "covered50": 0.6116504854368932,
+        "k50": 63,
+        "covered50_boot95": [
+          0.3904109589041096,
+          0.8494623655913979
+        ],
+        "calls_per_genome": 3.4411764705882355,
+        "calls_per_mb": 0.6834631134373521
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.5728155339805825,
+        "covered50": 0.5728155339805825,
+        "k50": 59,
+        "covered50_boot95": [
+          0.3540358929258506,
+          0.8160919540229885
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.6310679611650486,
+        "covered50": 0.6019417475728155,
+        "k50": 62,
+        "covered50_boot95": [
+          0.40880388376256716,
+          0.8181818181818182
+        ],
+        "calls_per_genome": 3.0294117647058822,
+        "calls_per_mb": 0.6016812024277544
+      },
+      "Generanno 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7378640776699029,
+        "covered50": 0.7281553398058253,
+        "k50": 75,
+        "covered50_boot95": [
+          0.49056603773584906,
+          0.9574468085106383
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "Generanno 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7572815533980582,
+        "covered50": 0.7475728155339806,
+        "k50": 77,
+        "covered50_boot95": [
+          0.5289190398483972,
+          0.9545454545454546
+        ],
+        "calls_per_genome": 8.029411764705882,
+        "calls_per_mb": 1.5947472646871548
+      },
+      "Generanno 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.6990291262135923,
+        "covered50": 0.6990291262135923,
+        "k50": 72,
+        "covered50_boot95": [
+          0.4906832298136646,
+          0.9247311827956989
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.6796116504854369,
+        "covered50": 0.6699029126213593,
+        "k50": 69,
+        "covered50_boot95": [
+          0.4496106251333476,
+          0.891566265060241
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7281553398058253,
+        "covered50": 0.7184466019417476,
+        "k50": 74,
+        "covered50_boot95": [
+          0.4785276073619632,
+          0.9473684210526315
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7572815533980582,
+        "covered50": 0.7378640776699029,
+        "k50": 76,
+        "covered50_boot95": [
+          0.5097946725860155,
+          0.9583333333333334
+        ],
+        "calls_per_genome": 3.5,
+        "calls_per_mb": 0.6951462435815803
+      },
+      "NTv2 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7378640776699029,
+        "covered50": 0.7281553398058253,
+        "k50": 75,
+        "covered50_boot95": [
+          0.4851466676518398,
+          0.9571504559270516
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "NTv2 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7572815533980582,
+        "covered50": 0.7378640776699029,
+        "k50": 76,
+        "covered50_boot95": [
+          0.5128151260504201,
+          0.9484602167591857
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "NTv2 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7864077669902912,
+        "covered50": 0.7572815533980582,
+        "k50": 78,
+        "covered50_boot95": [
+          0.5401459854014599,
+          0.9647058823529412
+        ],
+        "calls_per_genome": 3.2058823529411766,
+        "calls_per_mb": 0.6367305928604391
+      },
+      "PHASTER": {
+        "n_genomes": 33,
+        "n_elements": 102,
+        "covered": 0.803921568627451,
+        "covered50": 0.7843137254901961,
+        "k50": 80,
+        "covered50_boot95": [
+          0.6060550763105508,
+          0.963855421686747
+        ],
+        "calls_per_genome": 3.6363636363636362,
+        "calls_per_mb": 0.7240081088908196
+      },
+      "PIDE": {
+        "n_genomes": 33,
+        "n_elements": 102,
+        "covered": 0.8333333333333334,
+        "covered50": 0.7843137254901961,
+        "k50": 80,
+        "covered50_boot95": [
+          0.5909001431639227,
+          0.975609756097561
+        ],
+        "calls_per_genome": 7.818181818181818,
+        "calls_per_mb": 1.556617434115262
+      },
+      "PhageBoost": {
+        "n_genomes": 28,
+        "n_elements": 95,
+        "covered": 0.7263157894736842,
+        "covered50": 0.5789473684210527,
+        "k50": 55,
+        "covered50_boot95": [
+          0.439714783565664,
+          0.7692307692307693
+        ],
+        "calls_per_genome": 8.357142857142858,
+        "calls_per_mb": 1.6404705486462614
+      },
+      "PhiSpy": {
+        "n_genomes": 33,
+        "n_elements": 102,
+        "covered": 0.7745098039215687,
+        "covered50": 0.7254901960784313,
+        "k50": 74,
+        "covered50_boot95": [
+          0.5153787878787879,
+          0.9381443298969072
+        ],
+        "calls_per_genome": 5.545454545454546,
+        "calls_per_mb": 1.1041123660585
+      },
+      "Phigaro": {
+        "n_genomes": 33,
+        "n_elements": 102,
+        "covered": 0.7549019607843137,
+        "covered50": 0.7254901960784313,
+        "k50": 74,
+        "covered50_boot95": [
+          0.5187900306321359,
+          0.9428571428571428
+        ],
+        "calls_per_genome": 4.303030303030303,
+        "calls_per_mb": 0.8567429288541365
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7281553398058253,
+        "covered50": 0.7087378640776699,
+        "k50": 73,
+        "covered50_boot95": [
+          0.48951048951048953,
+          0.935075408462505
+        ],
+        "calls_per_genome": 4.176470588235294,
+        "calls_per_mb": 0.8295022402402051
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7087378640776699,
+        "covered50": 0.6893203883495146,
+        "k50": 71,
+        "covered50_boot95": [
+          0.46086297760210804,
+          0.9318236981465136
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7475728155339806,
+        "covered50": 0.7378640776699029,
+        "k50": 76,
+        "covered50_boot95": [
+          0.508962403062727,
+          0.9594594594594594
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "VIBRANT": {
+        "n_genomes": 32,
+        "n_elements": 100,
+        "covered": 0.78,
+        "covered50": 0.77,
+        "k50": 77,
+        "covered50_boot95": [
+          0.5793650793650794,
+          0.9620253164556962
+        ],
+        "calls_per_genome": 3.375,
+        "calls_per_mb": 0.6694311694590624
+      },
+      "VirSorter2": {
+        "n_genomes": 13,
+        "n_elements": 55,
+        "covered": 0.6545454545454545,
+        "covered50": 0.6363636363636364,
+        "k50": 35,
+        "covered50_boot95": [
+          0.4787118408880666,
+          0.9047619047619048
+        ],
+        "calls_per_genome": 3.769230769230769,
+        "calls_per_mb": 0.7932139735163661
+      },
+      "geNomad": {
+        "n_genomes": 32,
+        "n_elements": 100,
+        "covered": 0.79,
+        "covered50": 0.78,
+        "k50": 78,
+        "covered50_boot95": [
+          0.5985387635478877,
+          0.967032967032967
+        ],
+        "calls_per_genome": 4.4375,
+        "calls_per_mb": 0.8801780191035822
+      },
+      "megaDNA 2k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7184466019417476,
+        "covered50": 0.6796116504854369,
+        "k50": 70,
+        "covered50_boot95": [
+          0.43876766091051805,
+          0.9230769230769231
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "megaDNA 4k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7184466019417476,
+        "covered50": 0.7087378640776699,
+        "k50": 73,
+        "covered50_boot95": [
+          0.5190815537733114,
+          0.9204545454545454
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "megaDNA 8k": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.7184466019417476,
+        "covered50": 0.6893203883495146,
+        "k50": 71,
+        "covered50_boot95": [
+          0.46322848583877996,
+          0.9270833333333334
+        ],
+        "calls_per_genome": 3.4705882352941178,
+        "calls_per_mb": 0.6893046785094662
+      },
+      "prophound exploratory": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.9805825242718447,
+        "covered50": 0.941747572815534,
+        "k50": 97,
+        "covered50_boot95": [
+          0.8976377952755905,
+          0.9893617021276596
+        ],
+        "calls_per_genome": 39.970588235294116,
+        "calls_per_mb": 7.93868693300309
+      },
+      "prophound default": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.9611650485436893,
+        "covered50": 0.9223300970873787,
+        "k50": 95,
+        "covered50_boot95": [
+          0.8562080311576685,
+          0.989010989010989
+        ],
+        "calls_per_genome": 14.382352941176471,
+        "calls_per_mb": 2.856525320263805
+      },
+      "prophound conservative": {
+        "n_genomes": 34,
+        "n_elements": 103,
+        "covered": 0.912621359223301,
+        "covered50": 0.883495145631068,
+        "k50": 91,
+        "covered50_boot95": [
+          0.7669172932330827,
+          0.9891304347826086
+        ],
+        "calls_per_genome": 6.970588235294118,
+        "calls_per_mb": 1.3844509220910466
+      }
+    },
+    "not_in_corpus/containment_ge_0.5": {
+      "Caduceus 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.375,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 3.5588235294117645,
+        "calls_per_mb": 0.7068293737258086
+      },
+      "Caduceus 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "Caduceus 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.25,
+        "covered50": 0.25,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.3333333333333333
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 0.7944528498075204
+      },
+      "EVO2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "EVO2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "EVO2 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.5294117647058822,
+        "calls_per_mb": 0.7009878086536945
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.375,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 5.029411764705882,
+        "calls_per_mb": 0.9989076273315146
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.375,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 5.823529411764706,
+        "calls_per_mb": 1.1566298842785958
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.25,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.3333333333333333
+        ],
+        "calls_per_genome": 5.294117647058823,
+        "calls_per_mb": 1.0514817129805416
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.375,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5
+        ],
+        "calls_per_genome": 3.4411764705882355,
+        "calls_per_mb": 0.6834631134373521
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.375,
+        "covered50": 0.25,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.3333333333333333
+        ],
+        "calls_per_genome": 3.2941176470588234,
+        "calls_per_mb": 0.6542552880767815
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.0294117647058822,
+        "calls_per_mb": 0.6016812024277544
+      },
+      "Generanno 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "Generanno 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.75,
+        "covered50": 0.75,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 8.029411764705882,
+        "calls_per_mb": 1.5947472646871548
+      },
+      "Generanno 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.764705882352941,
+        "calls_per_mb": 0.9463335416824875
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.588235294117647,
+        "calls_per_mb": 0.7126709387979226
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.5,
+        "calls_per_mb": 0.6951462435815803
+      },
+      "NTv2 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.676470588235294,
+        "calls_per_mb": 0.730195634014265
+      },
+      "NTv2 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "NTv2 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.2058823529411766,
+        "calls_per_mb": 0.6367305928604391
+      },
+      "PHASTER": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.6363636363636362,
+        "calls_per_mb": 0.7240081088908196
+      },
+      "PIDE": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 7.818181818181818,
+        "calls_per_mb": 1.556617434115262
+      },
+      "PhageBoost": {
+        "n_genomes": 28,
+        "n_elements": 8,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 8,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 8.357142857142858,
+        "calls_per_mb": 1.6404705486462614
+      },
+      "PhiSpy": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.75,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 5.545454545454546,
+        "calls_per_mb": 1.1041123660585
+      },
+      "Phigaro": {
+        "n_genomes": 33,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.303030303030303,
+        "calls_per_mb": 0.8567429288541365
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.176470588235294,
+        "calls_per_mb": 0.8295022402402051
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.5,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.8529411764705883,
+        "calls_per_mb": 0.7652450244469498
+      },
+      "VIBRANT": {
+        "n_genomes": 32,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.375,
+        "calls_per_mb": 0.6694311694590624
+      },
+      "VirSorter2": {
+        "n_genomes": 13,
+        "n_elements": 8,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 8,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.769230769230769,
+        "calls_per_mb": 0.7932139735163661
+      },
+      "geNomad": {
+        "n_genomes": 32,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.4375,
+        "calls_per_mb": 0.8801780191035822
+      },
+      "megaDNA 2k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.3823529411764706,
+        "calls_per_mb": 0.6717799832931238
+      },
+      "megaDNA 4k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.176470588235294,
+        "calls_per_mb": 0.630889027788325
+      },
+      "megaDNA 8k": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.625,
+        "covered50": 0.625,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 3.4705882352941178,
+        "calls_per_mb": 0.6893046785094662
+      },
+      "prophound exploratory": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 39.970588235294116,
+        "calls_per_mb": 7.93868693300309
+      },
+      "prophound default": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 14.382352941176471,
+        "calls_per_mb": 2.856525320263805
+      },
+      "prophound conservative": {
+        "n_genomes": 34,
+        "n_elements": 8,
+        "covered": 0.875,
+        "covered50": 0.875,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 6.970588235294118,
+        "calls_per_mb": 1.3844509220910466
+      }
+    },
+    "test/all_sizes": {
+      "Caduceus 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.3055555555555556,
+        "covered50": 0.2777777777777778,
+        "k50": 10,
+        "covered50_boot95": [
+          0.16304347826086957,
+          0.6470588235294118
+        ],
+        "calls_per_genome": 2.4,
+        "calls_per_mb": 0.6182698748003503
+      },
+      "Caduceus 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.5,
+        "covered50": 0.4166666666666667,
+        "k50": 15,
+        "covered50_boot95": [
+          0.273972602739726,
+          0.8235294117647058
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "Caduceus 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.4722222222222222,
+        "covered50": 0.4166666666666667,
+        "k50": 15,
+        "covered50_boot95": [
+          0.2962962962962963,
+          0.8125
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.16666666666666666,
+        "covered50": 0.16666666666666666,
+        "k50": 6,
+        "covered50_boot95": [
+          0.018518518518518517,
+          0.6111111111111112
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.4166666666666667,
+        "covered50": 0.3888888888888889,
+        "k50": 14,
+        "covered50_boot95": [
+          0.23529411764705882,
+          0.6111111111111112
+        ],
+        "calls_per_genome": 3.0,
+        "calls_per_mb": 0.772837343500438
+      },
+      "EVO2 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.6944444444444444,
+        "covered50": 0.6388888888888888,
+        "k50": 23,
+        "covered50_boot95": [
+          0.5660377358490566,
+          0.875
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "EVO2 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.8055555555555556,
+        "covered50": 0.8055555555555556,
+        "k50": 29,
+        "covered50_boot95": [
+          0.7222222222222222,
+          0.875
+        ],
+        "calls_per_genome": 5.4,
+        "calls_per_mb": 1.3911072183007884
+      },
+      "EVO2 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.75,
+        "covered50": 0.75,
+        "k50": 27,
+        "covered50_boot95": [
+          0.7142857142857143,
+          0.875
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.4722222222222222,
+        "covered50": 0.3611111111111111,
+        "k50": 13,
+        "covered50_boot95": [
+          0.12162162162162163,
+          0.9444444444444444
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.5555555555555556,
+        "covered50": 0.4444444444444444,
+        "k50": 16,
+        "covered50_boot95": [
+          0.24324324324324326,
+          0.9444444444444444
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.5,
+        "covered50": 0.4166666666666667,
+        "k50": 15,
+        "covered50_boot95": [
+          0.2361111111111111,
+          0.875
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.2222222222222222,
+        "covered50": 0.19444444444444445,
+        "k50": 7,
+        "covered50_boot95": [
+          0.027777777777777776,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.1111111111111111,
+        "covered50": 0.1111111111111111,
+        "k50": 4,
+        "covered50_boot95": [
+          0.05405405405405406,
+          0.23529411764705882
+        ],
+        "calls_per_genome": 1.4,
+        "calls_per_mb": 0.3606574269668711
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.4166666666666667,
+        "covered50": 0.3611111111111111,
+        "k50": 13,
+        "covered50_boot95": [
+          0.1875,
+          0.5
+        ],
+        "calls_per_genome": 2.0,
+        "calls_per_mb": 0.5152248956669586
+      },
+      "Generanno 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.7777777777777778,
+        "covered50": 0.75,
+        "k50": 27,
+        "covered50_boot95": [
+          0.7142857142857143,
+          0.875
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "Generanno 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.2777777777777778,
+        "covered50": 0.2777777777777778,
+        "k50": 10,
+        "covered50_boot95": [
+          0.05555555555555555,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "Generanno 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.3333333333333333,
+        "covered50": 0.3333333333333333,
+        "k50": 12,
+        "covered50_boot95": [
+          0.08108108108108109,
+          0.9444444444444444
+        ],
+        "calls_per_genome": 3.8,
+        "calls_per_mb": 0.9789273017672214
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.25,
+        "covered50": 0.25,
+        "k50": 9,
+        "covered50_boot95": [
+          0.0945945945945946,
+          0.75
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.4166666666666667,
+        "covered50": 0.3888888888888889,
+        "k50": 14,
+        "covered50_boot95": [
+          0.2571428571428571,
+          0.6875
+        ],
+        "calls_per_genome": 2.6,
+        "calls_per_mb": 0.6697923643670463
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.6111111111111112,
+        "covered50": 0.5555555555555556,
+        "k50": 20,
+        "covered50_boot95": [
+          0.47058823529411764,
+          0.7894736842105263
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "NTv2 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.5277777777777778,
+        "covered50": 0.5,
+        "k50": 18,
+        "covered50_boot95": [
+          0.3835616438356164,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.6944444444444444,
+        "covered50": 0.6388888888888888,
+        "k50": 23,
+        "covered50_boot95": [
+          0.5660377358490566,
+          0.875
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.75,
+        "covered50": 0.75,
+        "k50": 27,
+        "covered50_boot95": [
+          0.5625,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "PHASTER": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.9444444444444444,
+        "covered50": 0.9166666666666666,
+        "k50": 33,
+        "covered50_boot95": [
+          0.7647058823529411,
+          0.9722222222222222
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "PIDE": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.9166666666666666,
+        "covered50": 0.9166666666666666,
+        "k50": 33,
+        "covered50_boot95": [
+          0.8421052631578947,
+          1.0
+        ],
+        "calls_per_genome": 12.2,
+        "calls_per_mb": 3.142871863568448
+      },
+      "PhageBoost": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.8888888888888888,
+        "covered50": 0.8333333333333334,
+        "k50": 30,
+        "covered50_boot95": [
+          0.5,
+          0.9411764705882353
+        ],
+        "calls_per_genome": 10.4,
+        "calls_per_mb": 2.679169457468185
+      },
+      "PhiSpy": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.75,
+        "covered50": 0.6111111111111112,
+        "k50": 22,
+        "covered50_boot95": [
+          0.527027027027027,
+          0.875
+        ],
+        "calls_per_genome": 5.2,
+        "calls_per_mb": 1.3395847287340925
+      },
+      "Phigaro": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.8611111111111112,
+        "covered50": 0.6666666666666666,
+        "k50": 24,
+        "covered50_boot95": [
+          0.23529411764705882,
+          0.8
+        ],
+        "calls_per_genome": 6.0,
+        "calls_per_mb": 1.545674687000876
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.6666666666666666,
+        "covered50": 0.6388888888888888,
+        "k50": 23,
+        "covered50_boot95": [
+          0.5675675675675675,
+          0.875
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.5,
+        "covered50": 0.4722222222222222,
+        "k50": 17,
+        "covered50_boot95": [
+          0.3561643835616438,
+          0.8235294117647058
+        ],
+        "calls_per_genome": 3.6,
+        "calls_per_mb": 0.9274048122005256
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.7222222222222222,
+        "covered50": 0.6944444444444444,
+        "k50": 25,
+        "covered50_boot95": [
+          0.5625,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "VIBRANT": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.8611111111111112,
+        "covered50": 0.8611111111111112,
+        "k50": 31,
+        "covered50_boot95": [
+          0.7647058823529411,
+          0.9444444444444444
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "VirSorter2": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.8888888888888888,
+        "covered50": 0.8888888888888888,
+        "k50": 32,
+        "covered50_boot95": [
+          0.7647058823529411,
+          0.9459459459459459
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "geNomad": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.9166666666666666,
+        "covered50": 0.9166666666666666,
+        "k50": 33,
+        "covered50_boot95": [
+          0.8421052631578947,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "megaDNA 2k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.7222222222222222,
+        "covered50": 0.6944444444444444,
+        "k50": 25,
+        "covered50_boot95": [
+          0.5625,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 4k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.6944444444444444,
+        "covered50": 0.6944444444444444,
+        "k50": 25,
+        "covered50_boot95": [
+          0.5625,
+          0.8333333333333334
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 8k": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.7777777777777778,
+        "covered50": 0.7777777777777778,
+        "k50": 28,
+        "covered50_boot95": [
+          0.7222222222222222,
+          0.875
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "prophound exploratory": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 1.0,
+        "covered50": 0.9722222222222222,
+        "k50": 35,
+        "covered50_boot95": [
+          0.8421052631578947,
+          1.0
+        ],
+        "calls_per_genome": 39.6,
+        "calls_per_mb": 10.201452934205781
+      },
+      "prophound default": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.9722222222222222,
+        "covered50": 0.9722222222222222,
+        "k50": 35,
+        "covered50_boot95": [
+          0.8421052631578947,
+          1.0
+        ],
+        "calls_per_genome": 14.2,
+        "calls_per_mb": 3.6580967592354066
+      },
+      "prophound conservative": {
+        "n_genomes": 5,
+        "n_elements": 36,
+        "covered": 0.9444444444444444,
+        "covered50": 0.9444444444444444,
+        "k50": 34,
+        "covered50_boot95": [
+          0.6842105263157895,
+          1.0
+        ],
+        "calls_per_genome": 8.0,
+        "calls_per_mb": 2.0608995826678345
+      }
+    },
+    "test/under_10kb": {
+      "Caduceus 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6687499999999696
+        ],
+        "calls_per_genome": 2.4,
+        "calls_per_mb": 0.6182698748003503
+      },
+      "Caduceus 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "Caduceus 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 3.0,
+        "calls_per_mb": 0.772837343500438
+      },
+      "EVO2 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "EVO2 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 5.4,
+        "calls_per_mb": 1.3911072183007884
+      },
+      "EVO2 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 1.4,
+        "calls_per_mb": 0.3606574269668711
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.0,
+        "calls_per_mb": 0.5152248956669586
+      },
+      "Generanno 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "Generanno 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "Generanno 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.8,
+        "calls_per_mb": 0.9789273017672214
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 2.6,
+        "calls_per_mb": 0.6697923643670463
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "NTv2 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "PHASTER": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.6,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "PIDE": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 4,
+        "covered50_boot95": [
+          0.5714285714285714,
+          1.0
+        ],
+        "calls_per_genome": 12.2,
+        "calls_per_mb": 3.142871863568448
+      },
+      "PhageBoost": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.6,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 10.4,
+        "calls_per_mb": 2.679169457468185
+      },
+      "PhiSpy": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 5.2,
+        "calls_per_mb": 1.3395847287340925
+      },
+      "Phigaro": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.0,
+        "k50": 0,
+        "covered50_boot95": [
+          0.0,
+          0.0
+        ],
+        "calls_per_genome": 6.0,
+        "calls_per_mb": 1.545674687000876
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 3.6,
+        "calls_per_mb": 0.9274048122005256
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "VIBRANT": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "VirSorter2": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 3,
+        "covered50_boot95": [
+          0.25,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "geNomad": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 3,
+        "covered50_boot95": [
+          0.14285714285714285,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "megaDNA 2k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 4k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 8k": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 1,
+        "covered50_boot95": [
+          0.0,
+          0.75
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "prophound exploratory": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 5,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 39.6,
+        "calls_per_mb": 10.201452934205781
+      },
+      "prophound default": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 5,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 14.2,
+        "calls_per_mb": 3.6580967592354066
+      },
+      "prophound conservative": {
+        "n_genomes": 5,
+        "n_elements": 5,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 5,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 8.0,
+        "calls_per_mb": 2.0608995826678345
+      }
+    },
+    "test/containment_lt_0.1": {
+      "Caduceus 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 4,
+        "covered50_boot95": [
+          0.125,
+          0.8
+        ],
+        "calls_per_genome": 2.4,
+        "calls_per_mb": 0.6182698748003503
+      },
+      "Caduceus 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "Caduceus 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.3,
+        "covered50": 0.3,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5714285714285714
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.3,
+        "covered50": 0.3,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5714285714285714
+        ],
+        "calls_per_genome": 3.0,
+        "calls_per_mb": 0.772837343500438
+      },
+      "EVO2 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "EVO2 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 5.4,
+        "calls_per_mb": 1.3911072183007884
+      },
+      "EVO2 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.4,
+        "covered50": 0.4,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          0.6
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.2,
+        "covered50": 0.2,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.3
+        ],
+        "calls_per_genome": 1.4,
+        "calls_per_mb": 0.3606574269668711
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.3,
+        "covered50": 0.3,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          0.5714285714285714
+        ],
+        "calls_per_genome": 2.0,
+        "calls_per_mb": 0.5152248956669586
+      },
+      "Generanno 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "Generanno 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          0.9
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "Generanno 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.8,
+        "calls_per_mb": 0.9789273017672214
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8571428571428571
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.5,
+        "covered50": 0.5,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          0.8571428571428571
+        ],
+        "calls_per_genome": 2.6,
+        "calls_per_mb": 0.6697923643670463
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "NTv2 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.24875000000000114,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "PHASTER": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.9,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "PIDE": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 12.2,
+        "calls_per_mb": 3.142871863568448
+      },
+      "PhageBoost": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.3,
+          1.0
+        ],
+        "calls_per_genome": 10.4,
+        "calls_per_mb": 2.679169457468185
+      },
+      "PhiSpy": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 5.2,
+        "calls_per_mb": 1.3395847287340925
+      },
+      "Phigaro": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.2,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.6
+        ],
+        "calls_per_genome": 6.0,
+        "calls_per_mb": 1.545674687000876
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 3.6,
+        "calls_per_mb": 0.9274048122005256
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          0.9
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "VIBRANT": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "VirSorter2": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.9,
+        "covered50": 0.9,
+        "k50": 9,
+        "covered50_boot95": [
+          0.7777777777777778,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "geNomad": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "megaDNA 2k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.6,
+        "covered50": 0.6,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          0.9
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 4k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.7,
+        "covered50": 0.7,
+        "k50": 7,
+        "covered50_boot95": [
+          0.2,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 8k": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.6,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "prophound exploratory": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 1.0,
+        "covered50": 0.9,
+        "k50": 9,
+        "covered50_boot95": [
+          0.7777777777777778,
+          1.0
+        ],
+        "calls_per_genome": 39.6,
+        "calls_per_mb": 10.201452934205781
+      },
+      "prophound default": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.9,
+        "covered50": 0.9,
+        "k50": 9,
+        "covered50_boot95": [
+          0.7777777777777778,
+          1.0
+        ],
+        "calls_per_genome": 14.2,
+        "calls_per_mb": 3.6580967592354066
+      },
+      "prophound conservative": {
+        "n_genomes": 5,
+        "n_elements": 10,
+        "covered": 0.8,
+        "covered50": 0.8,
+        "k50": 8,
+        "covered50_boot95": [
+          0.5555555555555556,
+          1.0
+        ],
+        "calls_per_genome": 8.0,
+        "calls_per_mb": 2.0608995826678345
+      }
+    },
+    "test/containment_ge_0.5": {
+      "Caduceus 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.3333333333333333,
+        "covered50": 0.2857142857142857,
+        "k50": 6,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 2.4,
+        "calls_per_mb": 0.6182698748003503
+      },
+      "Caduceus 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.5714285714285714,
+        "covered50": 0.42857142857142855,
+        "k50": 9,
+        "covered50_boot95": [
+          0.3125,
+          1.0
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "Caduceus 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.5238095238095238,
+        "covered50": 0.42857142857142855,
+        "k50": 9,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "DNABERT2 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.14285714285714285,
+        "covered50": 0.14285714285714285,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "DNABERT2 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.5714285714285714,
+        "covered50": 0.5238095238095238,
+        "k50": 11,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.0,
+        "calls_per_mb": 0.772837343500438
+      },
+      "EVO2 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.8095238095238095,
+        "covered50": 0.7142857142857143,
+        "k50": 15,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "EVO2 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 5.4,
+        "calls_per_mb": 1.3911072183007884
+      },
+      "EVO2 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "EVO2+SAE 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.42857142857142855,
+        "covered50": 0.23809523809523808,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0625,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "EVO2+SAE 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.47619047619047616,
+        "covered50": 0.2857142857142857,
+        "k50": 6,
+        "covered50_boot95": [
+          0.125,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "EVO2+SAE 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.42857142857142855,
+        "covered50": 0.2857142857142857,
+        "k50": 6,
+        "covered50_boot95": [
+          0.125,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "GENA-LM 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.19047619047619047,
+        "covered50": 0.14285714285714285,
+        "k50": 3,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "GENA-LM 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.09523809523809523,
+        "covered50": 0.09523809523809523,
+        "k50": 2,
+        "covered50_boot95": [
+          0.0,
+          0.125
+        ],
+        "calls_per_genome": 1.4,
+        "calls_per_mb": 0.3606574269668711
+      },
+      "GENA-LM 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.5714285714285714,
+        "covered50": 0.47619047619047616,
+        "k50": 10,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 2.0,
+        "calls_per_mb": 0.5152248956669586
+      },
+      "Generanno 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9047619047619048,
+        "covered50": 0.8571428571428571,
+        "k50": 18,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "Generanno 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.19047619047619047,
+        "covered50": 0.19047619047619047,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 2.2,
+        "calls_per_mb": 0.5667473852336545
+      },
+      "Generanno 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.23809523809523808,
+        "covered50": 0.23809523809523808,
+        "k50": 5,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.8,
+        "calls_per_mb": 0.9789273017672214
+      },
+      "ModernGENA 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.19047619047619047,
+        "covered50": 0.19047619047619047,
+        "k50": 4,
+        "covered50_boot95": [
+          0.0625,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 2.8,
+        "calls_per_mb": 0.7213148539337422
+      },
+      "ModernGENA 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.47619047619047616,
+        "covered50": 0.42857142857142855,
+        "k50": 9,
+        "covered50_boot95": [
+          0.0,
+          0.6666666666666666
+        ],
+        "calls_per_genome": 2.6,
+        "calls_per_mb": 0.6697923643670463
+      },
+      "ModernGENA 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.7619047619047619,
+        "covered50": 0.6666666666666666,
+        "k50": 14,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 3.4,
+        "calls_per_mb": 0.8758823226338297
+      },
+      "NTv2 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.47619047619047616,
+        "covered50": 0.42857142857142855,
+        "k50": 9,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.8095238095238095,
+        "covered50": 0.7142857142857143,
+        "k50": 15,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.2,
+        "calls_per_mb": 1.0819722809006131
+      },
+      "NTv2 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9047619047619048,
+        "covered50": 0.9047619047619048,
+        "k50": 19,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "PHASTER": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "PIDE": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 12.2,
+        "calls_per_mb": 3.142871863568448
+      },
+      "PhageBoost": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 10.4,
+        "calls_per_mb": 2.679169457468185
+      },
+      "PhiSpy": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9047619047619048,
+        "covered50": 0.7142857142857143,
+        "k50": 15,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 5.2,
+        "calls_per_mb": 1.3395847287340925
+      },
+      "Phigaro": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 6.0,
+        "calls_per_mb": 1.545674687000876
+      },
+      "ProkBERT-mini 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.8095238095238095,
+        "covered50": 0.7619047619047619,
+        "k50": 16,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "ProkBERT-mini-c 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.5714285714285714,
+        "covered50": 0.5238095238095238,
+        "k50": 11,
+        "covered50_boot95": [
+          0.4375,
+          1.0
+        ],
+        "calls_per_genome": 3.6,
+        "calls_per_mb": 0.9274048122005256
+      },
+      "ProkBERT-mini-long 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9047619047619048,
+        "covered50": 0.8571428571428571,
+        "k50": 18,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "VIBRANT": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.8,
+        "calls_per_mb": 1.2365397496007007
+      },
+      "VirSorter2": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9523809523809523,
+        "k50": 20,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.4,
+        "calls_per_mb": 1.133494770467309
+      },
+      "geNomad": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 5.6,
+        "calls_per_mb": 1.4426297078674843
+      },
+      "megaDNA 2k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9523809523809523,
+        "covered50": 0.9047619047619048,
+        "k50": 19,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 4k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.8571428571428571,
+        "covered50": 0.8571428571428571,
+        "k50": 18,
+        "covered50_boot95": [
+          0.0,
+          1.0
+        ],
+        "calls_per_genome": 4.0,
+        "calls_per_mb": 1.0304497913339172
+      },
+      "megaDNA 8k": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 0.9047619047619048,
+        "covered50": 0.9047619047619048,
+        "k50": 19,
+        "covered50_boot95": [
+          0.5,
+          1.0
+        ],
+        "calls_per_genome": 4.6,
+        "calls_per_mb": 1.185017260034005
+      },
+      "prophound exploratory": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 39.6,
+        "calls_per_mb": 10.201452934205781
+      },
+      "prophound default": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 14.2,
+        "calls_per_mb": 3.6580967592354066
+      },
+      "prophound conservative": {
+        "n_genomes": 5,
+        "n_elements": 21,
+        "covered": 1.0,
+        "covered50": 1.0,
+        "k50": 21,
+        "covered50_boot95": [
+          1.0,
+          1.0
+        ],
+        "calls_per_genome": 8.0,
+        "calls_per_mb": 2.0608995826678345
+      }
+    }
+  },
+  "G1_complement_to_genomad": {
+    "Caduceus 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.5405405405405403
+    },
+    "Caduceus 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.4054054054054053
+    },
+    "Caduceus 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 3.7027027027027026
+    },
+    "DNABERT2 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.4864864864864864
+    },
+    "DNABERT2 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.972972972972973
+    },
+    "EVO2 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 3.8378378378378377
+    },
+    "EVO2 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 4.945945945945946
+    },
+    "EVO2 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.7837837837837838
+    },
+    "EVO2+SAE 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 5.0
+    },
+    "EVO2+SAE 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 5.756756756756757
+    },
+    "EVO2+SAE 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 5.297297297297297
+    },
+    "GENA-LM 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.4054054054054053
+    },
+    "GENA-LM 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.135135135135135
+    },
+    "GENA-LM 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 122,
+      "gained_over_genomad": 2,
+      "extra_calls_per_genome": 3.0
+    },
+    "Generanno 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 4.243243243243243
+    },
+    "Generanno 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 7.621621621621622
+    },
+    "Generanno 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 4.216216216216216
+    },
+    "ModernGENA 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.6486486486486487
+    },
+    "ModernGENA 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.5135135135135136
+    },
+    "ModernGENA 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.5945945945945947
+    },
+    "NTv2 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.864864864864865
+    },
+    "NTv2 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 3.5945945945945947
+    },
+    "NTv2 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 3.4864864864864864
+    },
+    "PHASTER": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 125,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 3.945945945945946
+    },
+    "PIDE": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 122,
+      "gained_over_genomad": 2,
+      "extra_calls_per_genome": 8.54054054054054
+    },
+    "PhageBoost": {
+      "n_genomes": 33,
+      "n_elements": 141,
+      "genomad": 116,
+      "union": 121,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 8.666666666666666
+    },
+    "PhiSpy": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 121,
+      "gained_over_genomad": 1,
+      "extra_calls_per_genome": 5.594594594594595
+    },
+    "Phigaro": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 120,
+      "gained_over_genomad": 0,
+      "extra_calls_per_genome": 4.621621621621622
+    },
+    "ProkBERT-mini 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 4.4324324324324325
+    },
+    "ProkBERT-mini-c 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.324324324324324
+    },
+    "ProkBERT-mini-long 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 4.081081081081081
+    },
+    "VIBRANT": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 124,
+      "gained_over_genomad": 4,
+      "extra_calls_per_genome": 3.5675675675675675
+    },
+    "VirSorter2": {
+      "n_genomes": 18,
+      "n_elements": 101,
+      "genomad": 76,
+      "union": 81,
+      "gained_over_genomad": 5,
+      "extra_calls_per_genome": 3.9444444444444446
+    },
+    "megaDNA 2k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.5405405405405403
+    },
+    "megaDNA 4k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.4054054054054053
+    },
+    "megaDNA 8k": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 123,
+      "gained_over_genomad": 3,
+      "extra_calls_per_genome": 3.675675675675676
+    },
+    "prophound exploratory": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 138,
+      "gained_over_genomad": 18,
+      "extra_calls_per_genome": 39.945945945945944
+    },
+    "prophound default": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 136,
+      "gained_over_genomad": 16,
+      "extra_calls_per_genome": 14.567567567567568
+    },
+    "prophound conservative": {
+      "n_genomes": 37,
+      "n_elements": 146,
+      "genomad": 120,
+      "union": 132,
+      "gained_over_genomad": 12,
+      "extra_calls_per_genome": 7.27027027027027
+    }
+  },
+  "G2_matched_cost": {
+    "Caduceus 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.5570469798657718,
+      "prophound_at_matched_cost_covered50": 0.6375838926174496,
+      "calls_per_genome": 3.41025641025641
+    },
+    "Caduceus 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6308724832214765,
+      "prophound_at_matched_cost_covered50": 0.6644295302013423,
+      "calls_per_genome": 3.3076923076923075
+    },
+    "Caduceus 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6510067114093959,
+      "prophound_at_matched_cost_covered50": 0.6510067114093959,
+      "calls_per_genome": 3.5641025641025643
+    },
+    "DNABERT2 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.5167785234899329,
+      "prophound_at_matched_cost_covered50": 0.5838926174496645,
+      "calls_per_genome": 3.41025641025641
+    },
+    "DNABERT2 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6241610738255033,
+      "prophound_at_matched_cost_covered50": 0.6711409395973155,
+      "calls_per_genome": 3.871794871794872
+    },
+    "EVO2 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.697986577181208,
+      "prophound_at_matched_cost_covered50": 0.7718120805369127,
+      "calls_per_genome": 3.7435897435897436
+    },
+    "EVO2 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.785234899328859,
+      "prophound_at_matched_cost_covered50": 0.8053691275167785,
+      "calls_per_genome": 4.846153846153846
+    },
+    "EVO2 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.738255033557047,
+      "prophound_at_matched_cost_covered50": 0.7583892617449665,
+      "calls_per_genome": 3.641025641025641
+    },
+    "EVO2+SAE 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6510067114093959,
+      "prophound_at_matched_cost_covered50": 0.6912751677852349,
+      "calls_per_genome": 4.897435897435898
+    },
+    "EVO2+SAE 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6778523489932886,
+      "prophound_at_matched_cost_covered50": 0.7114093959731543,
+      "calls_per_genome": 5.666666666666667
+    },
+    "EVO2+SAE 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6644295302013423,
+      "prophound_at_matched_cost_covered50": 0.6778523489932886,
+      "calls_per_genome": 5.205128205128205
+    },
+    "GENA-LM 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.4899328859060403,
+      "prophound_at_matched_cost_covered50": 0.5704697986577181,
+      "calls_per_genome": 3.282051282051282
+    },
+    "GENA-LM 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.436241610738255,
+      "prophound_at_matched_cost_covered50": 0.5234899328859061,
+      "calls_per_genome": 3.051282051282051
+    },
+    "GENA-LM 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.5302013422818792,
+      "prophound_at_matched_cost_covered50": 0.5906040268456376,
+      "calls_per_genome": 2.8974358974358974
+    },
+    "Generanno 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.7248322147651006,
+      "prophound_at_matched_cost_covered50": 0.7583892617449665,
+      "calls_per_genome": 4.076923076923077
+    },
+    "Generanno 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6241610738255033,
+      "prophound_at_matched_cost_covered50": 0.6375838926174496,
+      "calls_per_genome": 7.282051282051282
+    },
+    "Generanno 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.5973154362416108,
+      "prophound_at_matched_cost_covered50": 0.5906040268456376,
+      "calls_per_genome": 4.641025641025641
+    },
+    "ModernGENA 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.5503355704697986,
+      "prophound_at_matched_cost_covered50": 0.5906040268456376,
+      "calls_per_genome": 3.5641025641025643
+    },
+    "ModernGENA 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6174496644295302,
+      "prophound_at_matched_cost_covered50": 0.6510067114093959,
+      "calls_per_genome": 3.4615384615384617
+    },
+    "ModernGENA 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6845637583892618,
+      "prophound_at_matched_cost_covered50": 0.7046979865771812,
+      "calls_per_genome": 3.4871794871794872
+    },
+    "NTv2 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6577181208053692,
+      "prophound_at_matched_cost_covered50": 0.7181208053691275,
+      "calls_per_genome": 3.7435897435897436
+    },
+    "NTv2 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.697986577181208,
+      "prophound_at_matched_cost_covered50": 0.7516778523489933,
+      "calls_per_genome": 3.4871794871794872
+    },
+    "NTv2 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.738255033557047,
+      "prophound_at_matched_cost_covered50": 0.7449664429530202,
+      "calls_per_genome": 3.3846153846153846
+    },
+    "PHASTER": {
+      "n_genomes": 38,
+      "competitor_covered50": 0.8243243243243243,
+      "prophound_at_matched_cost_covered50": 0.7972972972972973,
+      "calls_per_genome": 3.8947368421052633
+    },
+    "PIDE": {
+      "n_genomes": 38,
+      "competitor_covered50": 0.8243243243243243,
+      "prophound_at_matched_cost_covered50": 0.8918918918918919,
+      "calls_per_genome": 8.394736842105264
+    },
+    "PhageBoost": {
+      "n_genomes": 33,
+      "competitor_covered50": 0.6666666666666666,
+      "prophound_at_matched_cost_covered50": 0.8794326241134752,
+      "calls_per_genome": 8.666666666666666
+    },
+    "PhiSpy": {
+      "n_genomes": 38,
+      "competitor_covered50": 0.6824324324324325,
+      "prophound_at_matched_cost_covered50": 0.8175675675675675,
+      "calls_per_genome": 5.5
+    },
+    "Phigaro": {
+      "n_genomes": 38,
+      "competitor_covered50": 0.722972972972973,
+      "prophound_at_matched_cost_covered50": 0.7905405405405406,
+      "calls_per_genome": 4.526315789473684
+    },
+    "ProkBERT-mini 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6778523489932886,
+      "prophound_at_matched_cost_covered50": 0.738255033557047,
+      "calls_per_genome": 4.256410256410256
+    },
+    "ProkBERT-mini-c 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6174496644295302,
+      "prophound_at_matched_cost_covered50": 0.6442953020134228,
+      "calls_per_genome": 3.230769230769231
+    },
+    "ProkBERT-mini-long 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.7114093959731543,
+      "prophound_at_matched_cost_covered50": 0.7651006711409396,
+      "calls_per_genome": 3.923076923076923
+    },
+    "VIBRANT": {
+      "n_genomes": 37,
+      "competitor_covered50": 0.7876712328767124,
+      "prophound_at_matched_cost_covered50": 0.7465753424657534,
+      "calls_per_genome": 3.5675675675675675
+    },
+    "VirSorter2": {
+      "n_genomes": 18,
+      "competitor_covered50": 0.7623762376237624,
+      "prophound_at_matched_cost_covered50": 0.6732673267326733,
+      "calls_per_genome": 3.9444444444444446
+    },
+    "geNomad": {
+      "n_genomes": 37,
+      "competitor_covered50": 0.821917808219178,
+      "prophound_at_matched_cost_covered50": 0.821917808219178,
+      "calls_per_genome": 4.594594594594595
+    },
+    "megaDNA 2k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6711409395973155,
+      "prophound_at_matched_cost_covered50": 0.7315436241610739,
+      "calls_per_genome": 3.4615384615384617
+    },
+    "megaDNA 4k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.6912751677852349,
+      "prophound_at_matched_cost_covered50": 0.7114093959731543,
+      "calls_per_genome": 3.282051282051282
+    },
+    "megaDNA 8k": {
+      "n_genomes": 39,
+      "competitor_covered50": 0.697986577181208,
+      "prophound_at_matched_cost_covered50": 0.7583892617449665,
+      "calls_per_genome": 3.6153846153846154
+    }
+  },
+  "off_truth_landing": {
+    "exploratory": {
+      "off_truth_calls": 1418,
+      "by_class": {
+        "no LAMBDA candidate": 1267,
+        "WEAK PHAGE SIGNAL": 58,
+        "POSSIBLE PHAGE": 46,
+        "LIKELY PHAGE": 21,
+        "GENOMIC ISLAND / ICE": 10,
+        "UNLIKELY PHAGE": 9,
+        "GENOMIC ISLAND": 7
+      }
+    },
+    "default": {
+      "off_truth_calls": 427,
+      "by_class": {
+        "no LAMBDA candidate": 322,
+        "WEAK PHAGE SIGNAL": 36,
+        "POSSIBLE PHAGE": 32,
+        "LIKELY PHAGE": 19,
+        "UNLIKELY PHAGE": 7,
+        "GENOMIC ISLAND / ICE": 7,
+        "GENOMIC ISLAND": 4
+      }
+    },
+    "conservative": {
+      "off_truth_calls": 151,
+      "by_class": {
+        "no LAMBDA candidate": 73,
+        "POSSIBLE PHAGE": 25,
+        "WEAK PHAGE SIGNAL": 25,
+        "LIKELY PHAGE": 17,
+        "UNLIKELY PHAGE": 5,
+        "GENOMIC ISLAND / ICE": 4,
+        "GENOMIC ISLAND": 2
+      }
+    }
+  }
+}
