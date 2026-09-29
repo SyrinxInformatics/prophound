@@ -32,7 +32,10 @@ recorded per element:
 
 class: `prophage` (literature calls it a prophage), `cryptic_prophage` (Perna
 et al.'s term for EDL933's CP-933 set), `remnant` (described as a remnant,
-defective or phage-like element, satellite, or phage-tail bacteriocin).
+defective or phage-like element), `phage_derived` (phage-derived but not a
+prophage: the TLC satellite and the R2/F2 pyocin, a phage-tail bacteriocin).
+Classes were split this way 2026-09-29 (user; docs/research-integrity.md C4):
+the release headline uses `prophage` only and reports the others apart.
 
 Source coordinates are lifted onto the corpus RefSeq assemblies by sequence:
 the build checks that each source record is identical to the RefSeq contig
@@ -207,9 +210,12 @@ def main() -> None:
             for n in set(re.findall(r"(CP-933\w|BP-933W)", " ".join(q.get(k, "") for k in ("note", "product")))):
                 genes[n].append((s, e))
     for name in sorted(set(marked) | set(genes)):
-        if name in marked:
+        # CP-933P's author feature is its whole O-island (58 kb, non-phage genes
+        # included); since 2026-09-29 (user) it takes the gene-cluster rule like
+        # the other gene-annotated cryptic prophages
+        if name in marked and name != "CP-933P":
             s, e = marked[name]
-            basis = "author_feature_island" if name == "CP-933P" else "author_feature"
+            basis = "author_feature"
         else:
             s, e, n = densest_cluster(genes[name])
             basis = f"author_genes(n={n})"
@@ -260,14 +266,14 @@ def main() -> None:
     # --- PAO1 ---
     G = gff("GCF_000006765.1")
     for name, a, b, cls, ref in [("Pf4", "PA0715", "PA0729", "prophage", REF["PAO1_Pf4"]),
-                                 ("R2/F2 pyocin", "PA0610", "PA0648", "remnant", REF["PAO1_pyo"])]:
+                                 ("R2/F2 pyocin", "PA0610", "PA0648", "phage_derived", REF["PAO1_pyo"])]:
         c, s, e = tag_span(G, a, b)
         add("GCF_000006765.1", c, s, e, name, cls, f"locus_tags {a}-{b};lift=same_record", ref)
 
     # --- N16961 ---
     G = gff("GCF_000006745.1")
     for name, a, b, cls in [("RS1-CTXphi array", "VC1452", "VC1465", "prophage"),
-                            ("TLC", "VC1466", "VC1470", "remnant")]:
+                            ("TLC", "VC1466", "VC1470", "phage_derived")]:
         c, s, e = tag_span(G, a, b)
         add("GCF_000006745.1", c, s, e, name, cls, f"locus_tags {a}-{b};lift=same_record", REF["N16961"])
 

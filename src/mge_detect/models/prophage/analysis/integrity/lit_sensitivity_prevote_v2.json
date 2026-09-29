@@ -1,0 +1,377 @@
+{
+  "coord_class_counts": {
+    "author_coordinates": 41,
+    "gene_span_judgement": 12,
+    "locus_tag_span": 4
+  },
+  "runs": {
+    "ens/default": {
+      "headline_prophage": {
+        "n": 28,
+        "n_genomes": 7,
+        "covered50": 1.0,
+        "wilson95": [
+          0.8793566935605293,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "cryptic_prophage": {
+        "n": 15,
+        "n_genomes": 1,
+        "covered50": 0.9333333333333333,
+        "wilson95": [
+          0.7018346989112435,
+          0.9881331046384677
+        ],
+        "genome_bootstrap95": [
+          0.9333333333333333,
+          0.9333333333333333
+        ]
+      },
+      "remnant": {
+        "n": 12,
+        "n_genomes": 3,
+        "covered50": 0.6666666666666666,
+        "wilson95": [
+          0.3906220869404939,
+          0.86187990987514
+        ],
+        "genome_bootstrap95": [
+          0.5,
+          1.0
+        ]
+      },
+      "phage_derived": {
+        "n": 2,
+        "n_genomes": 2,
+        "covered50": 1.0,
+        "wilson95": [
+          0.3423802239546494,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "all": {
+        "n": 57,
+        "n_genomes": 7,
+        "covered50": 0.9122807017543859,
+        "wilson95": [
+          0.8105512279941347,
+          0.9619483284628987
+        ],
+        "genome_bootstrap95": [
+          0.88,
+          0.9705882352941176
+        ]
+      },
+      "author_coordinates_only": {
+        "n": 41,
+        "n_genomes": 4,
+        "covered50": 0.926829268292683,
+        "wilson95": [
+          0.8057255133716131,
+          0.9748021695624273
+        ],
+        "genome_bootstrap95": [
+          0.881578947368421,
+          1.0
+        ]
+      },
+      "no_gene_span_judgement": {
+        "n": 45,
+        "n_genomes": 6,
+        "covered50": 0.9333333333333333,
+        "wilson95": [
+          0.8214339791946774,
+          0.9770679675793814
+        ],
+        "genome_bootstrap95": [
+          0.8888888888888888,
+          1.0
+        ]
+      },
+      "no_remnants": {
+        "n": 43,
+        "n_genomes": 7,
+        "covered50": 0.9767441860465116,
+        "wilson95": [
+          0.8794100644159603,
+          0.99588291277121
+        ],
+        "genome_bootstrap95": [
+          0.9464285714285714,
+          1.0
+        ]
+      },
+      "named_prophages_author_coordinates": {
+        "n": 25,
+        "n_genomes": 4,
+        "covered50": 1.0,
+        "wilson95": [
+          0.866807747239609,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "covered_beyond_reference": [
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE1",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "Sp16",
+          "class": "prophage",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE3",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE5",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 3",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 6",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        }
+      ],
+      "paired_difference_vs_reference": {
+        "headline_prophage": {
+          "n": 28,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.03571428571428571,
+          "genome_bootstrap95": [
+            0.0,
+            0.05
+          ]
+        },
+        "cryptic_prophage": {
+          "n": 15,
+          "elements_gained": 0,
+          "elements_lost": 0,
+          "difference": 0.0,
+          "genome_bootstrap95": [
+            0.0,
+            0.0
+          ]
+        },
+        "remnant": {
+          "n": 12,
+          "elements_gained": 5,
+          "elements_lost": 0,
+          "difference": 0.4166666666666667,
+          "genome_bootstrap95": [
+            0.0,
+            0.5
+          ]
+        },
+        "phage_derived": {
+          "n": 2,
+          "elements_gained": 0,
+          "elements_lost": 0,
+          "difference": 0.0,
+          "genome_bootstrap95": [
+            0.0,
+            0.0
+          ]
+        },
+        "all": {
+          "n": 57,
+          "elements_gained": 6,
+          "elements_lost": 0,
+          "difference": 0.10526315789473684,
+          "genome_bootstrap95": [
+            0.0,
+            0.19607843137254902
+          ]
+        },
+        "author_coordinates_only": {
+          "n": 41,
+          "elements_gained": 4,
+          "elements_lost": 0,
+          "difference": 0.0975609756097561,
+          "genome_bootstrap95": [
+            0.0,
+            0.15789473684210525
+          ]
+        },
+        "no_gene_span_judgement": {
+          "n": 45,
+          "elements_gained": 4,
+          "elements_lost": 0,
+          "difference": 0.08888888888888889,
+          "genome_bootstrap95": [
+            0.0,
+            0.14814814814814814
+          ]
+        },
+        "no_remnants": {
+          "n": 43,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.023255813953488372,
+          "genome_bootstrap95": [
+            0.0,
+            0.04838709677419355
+          ]
+        },
+        "named_prophages_author_coordinates": {
+          "n": 25,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.04,
+          "genome_bootstrap95": [
+            0.0,
+            0.05263157894736842
+          ]
+        }
+      }
+    },
+    "genomad": {
+      "headline_prophage": {
+        "n": 28,
+        "n_genomes": 7,
+        "covered50": 0.9642857142857143,
+        "wilson95": [
+          0.8228780209422653,
+          0.9936674802210836
+        ],
+        "genome_bootstrap95": [
+          0.95,
+          1.0
+        ]
+      },
+      "cryptic_prophage": {
+        "n": 15,
+        "n_genomes": 1,
+        "covered50": 0.9333333333333333,
+        "wilson95": [
+          0.7018346989112435,
+          0.9881331046384677
+        ],
+        "genome_bootstrap95": [
+          0.9333333333333333,
+          0.9333333333333333
+        ]
+      },
+      "remnant": {
+        "n": 12,
+        "n_genomes": 3,
+        "covered50": 0.25,
+        "wilson95": [
+          0.08894166769488562,
+          0.5323053370816633
+        ],
+        "genome_bootstrap95": [
+          0.0,
+          1.0
+        ]
+      },
+      "phage_derived": {
+        "n": 2,
+        "n_genomes": 2,
+        "covered50": 1.0,
+        "wilson95": [
+          0.3423802239546494,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "all": {
+        "n": 57,
+        "n_genomes": 7,
+        "covered50": 0.8070175438596491,
+        "wilson95": [
+          0.6865930964617099,
+          0.8886725306871449
+        ],
+        "genome_bootstrap95": [
+          0.6896551724137931,
+          0.9714285714285714
+        ]
+      },
+      "author_coordinates_only": {
+        "n": 41,
+        "n_genomes": 4,
+        "covered50": 0.8292682926829268,
+        "wilson95": [
+          0.6873738747186828,
+          0.9147474806875768
+        ],
+        "genome_bootstrap95": [
+          0.7236842105263158,
+          1.0
+        ]
+      },
+      "no_gene_span_judgement": {
+        "n": 45,
+        "n_genomes": 6,
+        "covered50": 0.8444444444444444,
+        "wilson95": [
+          0.7121609100670803,
+          0.922545765573838
+        ],
+        "genome_bootstrap95": [
+          0.7407407407407407,
+          1.0
+        ]
+      },
+      "no_remnants": {
+        "n": 43,
+        "n_genomes": 7,
+        "covered50": 0.9534883720930233,
+        "wilson95": [
+          0.8454450187663708,
+          0.9871507400214253
+        ],
+        "genome_bootstrap95": [
+          0.9431818181818182,
+          1.0
+        ]
+      },
+      "named_prophages_author_coordinates": {
+        "n": 25,
+        "n_genomes": 4,
+        "covered50": 0.96,
+        "wilson95": [
+          0.8045593608838223,
+          0.9929037665766179
+        ],
+        "genome_bootstrap95": [
+          0.9473684210526315,
+          1.0
+        ]
+      }
+    }
+  }
+}

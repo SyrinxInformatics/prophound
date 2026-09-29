@@ -97,7 +97,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 
 *What happened:*
 - **Tuning is asymmetric.** mge-detect's settings were tuned on geNomad-labelled data; geNomad ran at its defaults. That favours geNomad-agreement for us, which matters most where geNomad is the truth.
-- **The agent built the literature truth.** Five EDL933 extents come from "the densest cluster of genes the authors assigned", which is a judgement call. They were set after the model's tracks on EDL933 had been examined in detail (the 2026-09-22 ambiguity work).
+- **The agent built the literature truth.** The 11 `author_genes` rows are not hand-placed. `build_literature_truth.py` collects the genes whose author notes name the element (by regex), groups them into clusters split at gaps over 20 kb, and takes the largest cluster. *Corrected 2026-09-29: an earlier version of this finding called them hand-set after the EDL933 tracks were seen.* The risk is a rule that matches the wrong genes, not boundaries placed with the model's output in view.
 - **The gains sit in the least-defined class.** Five of the six recovered elements are remnants or prophage-like elements.
 
 *Correction:*
@@ -221,7 +221,27 @@ Coordinate classes of the 57 truth rows:
 - **The ensemble never loses an element geNomad covers**, in any subset.
 - **The advantage lives in remnants.** Remove them and it shrinks from 6 elements to 1 (Sakai Sp16). Two of the six gains (*B. subtilis* prophages 3 and 6) rest on gene-span judgement rows.
 - **At Default, the genome-level interval includes zero in every subset.** The gains come from 2 of the 7 genomes, so "better than geNomad on curated truth" is not established by this pilot. Exploratory's all-rows difference (+8 / −0) is the only one whose interval excludes zero (+0.029 to +0.214).
-- **User review of `scripts/literature_truth.tsv` is pending** (decided 2026-09-29). The 16 non-author-coordinate rows are the ones to check first.
+- **Verified 2026-09-29 against the raw AL009126 record** (NCBI efetch):
+  - The two gains on gene-span rows reproduce the authors' own annotation exactly.
+  - *B. subtilis* prophage 3: the "defective prophage 3" / "prophage region 3" genes run *ydzTc*…*ydjJ*, 651,977–675,857, identical to the truth row. The region includes the *bsuM*/*bsuR* restriction-modification genes.
+  - *B. subtilis* prophage 6: the "(putative) defective prophage 6" genes run *yoaM*…*yobO*, 2,036,039–2,078,626, identical. It carries an Xre/cro repressor, phage proteins and a pre-neck appendage protein.
+  - The extraction is sound for these two. What remains a judgement is **class**: whether "defective prophage" regions count as prophage truth at all.
+- **User review of the 16 non-author-coordinate rows, 2026-09-29.** Of the 16, 12 are covered by both tools, 2 are missed by both, and only *B. subtilis* prophages 3 and 6 separate them (verified above). Decisions:
+  - **Headline = class `prophage` only.** `cryptic_prophage`, `remnant` and the new `phage_derived` class are reported as separate rows.
+  - **TLC and the R2/F2 pyocin move to `phage_derived`**: phage-derived, not prophages.
+  - **CP-933P is re-derived with the gene-cluster rule**, replacing its whole O-island: 56 genes, 2,283,855–2,330,172 (46.3 kb, against the island's 58.0 kb).
+  - `build_literature_truth.py` encodes all three. `scripts/literature_truth.tsv` was patched to its output: the build inputs are not in the repo, and AE005174 was re-fetched from NCBI to derive CP-933P.
+
+  Pre-vote results under the new classes (CP-933P still at its old extent until the ARC re-evaluation):
+
+  | class | n | ensemble Default | geNomad | paired |
+  |---|---|---|---|---|
+  | **prophage (headline)** | 28 | **28/28** | 27/28 | +1 / −0 (Sakai Sp16) |
+  | cryptic_prophage | 15 | 14/15 | 14/15 | 0 |
+  | remnant | 12 | 8/12 | 3/12 | +5 / −0 |
+  | phage_derived | 2 | 2/2 | 2/2 | 0 |
+
+  **Headline reading:** on literature-named prophages, both tools are near ceiling and the ensemble adds one. The larger difference is on remnants and defective prophages, reported as such. The shipped-mode numbers follow from re-running `literature_pilot.slurm` with the new truth: **`822071`**, submitted 2026-09-29. Pull `analysis/litpilot/results.{json,elements.csv}`.
 
 ### C8 — reproducibility
 

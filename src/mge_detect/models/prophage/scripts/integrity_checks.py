@@ -131,13 +131,19 @@ def cmd_lit(a) -> None:
         ["author_coordinates", "locus_tag_span"], default="gene_span_judgement")
     el = pd.read_csv(a.elements_csv)
     key = ["genome_id", "name"]
-    el = el.merge(truth[key + ["coord_class"]], on=key, how="left")
+    # class comes from the truth file, so a class change applies without re-scoring
+    el = el.drop(columns=["class"]).merge(truth[key + ["coord_class", "class"]], on=key, how="left")
     if el.coord_class.isna().any():
         raise SystemExit("elements.csv rows without a truth match")
-    subsets = {"all": lambda d: d,
+    # headline = class `prophage` only; the other classes are reported apart (user, 2026-09-29)
+    subsets = {"headline_prophage": lambda d: d[d["class"] == "prophage"],
+               "cryptic_prophage": lambda d: d[d["class"] == "cryptic_prophage"],
+               "remnant": lambda d: d[d["class"] == "remnant"],
+               "phage_derived": lambda d: d[d["class"] == "phage_derived"],
+               "all": lambda d: d,
                "author_coordinates_only": lambda d: d[d.coord_class == "author_coordinates"],
                "no_gene_span_judgement": lambda d: d[d.coord_class != "gene_span_judgement"],
-               "no_remnants": lambda d: d[d["class"] != "remnant"],
+               "no_remnants": lambda d: d[~d["class"].isin(["remnant", "phage_derived"])],
                "named_prophages_author_coordinates": lambda d: d[(d["class"] == "prophage")
                                                                  & (d.coord_class == "author_coordinates")]}
     res = {"coord_class_counts": truth.coord_class.value_counts().to_dict(), "runs": {}}
