@@ -223,14 +223,19 @@ def cmd_disjoint(a) -> None:
 
 # ---------------------------------------------------------------- build
 def quiet_sites(w: pd.DataFrame, contig_len: dict, elements: pd.DataFrame, a, rng) -> list:
+    """Implant sites. site_rule 'model' (821410) also excludes bins near any window the
+    host's clean track scores >= quiet_prob, which conditions the experiment on the
+    model; 'genomad' uses geNomad elements and spacing only (docs/research-integrity.md F7)."""
     sites = []
+    model_rule = getattr(a, "site_rule", "model") == "model"
     for c, L in contig_len.items():
         if L < 4 * a.quiet_flank:
             continue
         x = w[w.contig_id == c]
         hot = np.zeros(L // 1000 + 1, bool)       # 1 kb bins touched by a window above quiet_prob
-        for s, e in zip(x.start[x.prob >= a.quiet_prob], x.end[x.prob >= a.quiet_prob]):
-            hot[s // 1000:e // 1000 + 1] = True
+        if model_rule:
+            for s, e in zip(x.start[x.prob >= a.quiet_prob], x.end[x.prob >= a.quiet_prob]):
+                hot[s // 1000:e // 1000 + 1] = True
         for r in elements[elements.contig == c].itertuples():
             hot[max(0, (r.start - a.element_gap) // 1000):(r.end + a.element_gap) // 1000 + 1] = True
         scanned = np.zeros_like(hot)               # bins with no window at all are not quiet either
@@ -265,7 +270,7 @@ def cmd_build(a) -> None:
         w = pd.read_csv(tw, sep="\t", usecols=["contig_id", "start", "end", "prob"])
         host_sites[h] = quiet_sites(w, {n: len(s) for n, _, s in recs}, ev[ev.accession == h], a, rng)
     cap = sum(len(v) for v in host_sites.values())
-    print(f"[build] {len(host_sites)} hosts, {cap} quiet sites for up to {len(cand) * a.replicates} implants "
+    print(f"[build] site rule {a.site_rule}; {len(host_sites)} hosts, {cap} quiet sites for up to {len(cand) * a.replicates} implants "
           f"({len(cand)} elements x {a.replicates})", flush=True)
     if cap < len(cand):
         raise SystemExit(f"only {cap} quiet sites for {len(cand)} elements: add hosts or lower --spacing")
@@ -445,6 +450,9 @@ def main() -> None:
     b.add_argument("--spacing", type=int, default=80000)
     b.add_argument("--quiet_flank", type=int, default=20000)
     b.add_argument("--quiet_prob", type=float, default=0.1)
+    b.add_argument("--site_rule", choices=("model", "genomad"), default="model",
+                   help="'model' (821410): sites must also be quiet on the host's score track; "
+                        "'genomad': geNomad elements and spacing only, no model scores")
     b.add_argument("--element_gap", type=int, default=60000)
     b.add_argument("--seed", type=int, default=20260928)
     e = sub.add_parser("eval")

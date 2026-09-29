@@ -1,0 +1,16 @@
+run,subset,n,n_genomes,covered50,boot_lo,boot_hi
+ens/default,all,57,7,0.9122807017543859,0.8804309552969994,0.9705882352941176
+ens/default,author_coordinates_only,41,4,0.926829268292683,0.881578947368421,1.0
+ens/default,no_gene_span_judgement,45,6,0.9333333333333333,0.8888888888888888,1.0
+ens/default,no_remnants,43,7,0.9767441860465116,0.9464285714285714,1.0
+ens/default,named_prophages_author_coordinates,25,4,1.0,1.0,1.0
+ens/exploratory,all,57,7,0.9473684210526315,0.9019607843137255,1.0
+ens/exploratory,author_coordinates_only,41,4,0.9512195121951219,0.9210526315789473,1.0
+ens/exploratory,no_gene_span_judgement,45,6,0.9555555555555556,0.9259259259259259,1.0
+ens/exploratory,no_remnants,43,7,1.0,1.0,1.0
+ens/exploratory,named_prophages_author_coordinates,25,4,1.0,1.0,1.0
+genomad,all,57,7,0.8070175438596491,0.6896551724137931,0.9714285714285714
+genomad,author_coordinates_only,41,4,0.8292682926829268,0.7236842105263158,1.0
+genomad,no_gene_span_judgement,45,6,0.8444444444444444,0.7407407407407407,1.0
+genomad,no_remnants,43,7,0.9534883720930233,0.9431818181818182,1.0
+genomad,named_prophages_author_coordinates,25,4,0.96,0.9473684210526315,1.0

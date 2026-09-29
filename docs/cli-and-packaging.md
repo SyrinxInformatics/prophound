@@ -95,6 +95,8 @@ Reverse-complement handling is *not* a concern: window scores and whole-contig r
 
 Each mode is now a seed threshold **plus** a call-level seed vote (`predict_genome.MODE_THRESHOLDS`, `MODE_MIN_SEED_SUPPORT`). An ensemble call is kept only if at least *k* checkpoints make an overlapping call of their own at the same thresholds; its extent still comes from the `max` track.
 
+Sample roles (`docs/research-integrity.md` C1): the 42 is the **tuning** sample; the 18 is **confirmation after use**. Neither is held out.
+
 | mode | seed | vote *k* | 42: covered50 / calls | 18: covered50 / calls | phage-free calls |
 |---|---|---|---|---|---|
 | exploratory | 0.95 | 1 (all kept, `seed_support` flagged) | 0.983 / 29.1 | 1.000 / 31.2 | 20.6 |

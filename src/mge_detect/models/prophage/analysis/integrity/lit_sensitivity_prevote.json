@@ -1,0 +1,402 @@
+{
+  "coord_class_counts": {
+    "author_coordinates": 41,
+    "gene_span_judgement": 12,
+    "locus_tag_span": 4
+  },
+  "runs": {
+    "ens/default": {
+      "all": {
+        "n": 57,
+        "n_genomes": 7,
+        "covered50": 0.9122807017543859,
+        "wilson95": [
+          0.8105512279941347,
+          0.9619483284628987
+        ],
+        "genome_bootstrap95": [
+          0.8804309552969994,
+          0.9705882352941176
+        ]
+      },
+      "author_coordinates_only": {
+        "n": 41,
+        "n_genomes": 4,
+        "covered50": 0.926829268292683,
+        "wilson95": [
+          0.8057255133716131,
+          0.9748021695624273
+        ],
+        "genome_bootstrap95": [
+          0.881578947368421,
+          1.0
+        ]
+      },
+      "no_gene_span_judgement": {
+        "n": 45,
+        "n_genomes": 6,
+        "covered50": 0.9333333333333333,
+        "wilson95": [
+          0.8214339791946774,
+          0.9770679675793814
+        ],
+        "genome_bootstrap95": [
+          0.8888888888888888,
+          1.0
+        ]
+      },
+      "no_remnants": {
+        "n": 43,
+        "n_genomes": 7,
+        "covered50": 0.9767441860465116,
+        "wilson95": [
+          0.8794100644159603,
+          0.99588291277121
+        ],
+        "genome_bootstrap95": [
+          0.9464285714285714,
+          1.0
+        ]
+      },
+      "named_prophages_author_coordinates": {
+        "n": 25,
+        "n_genomes": 4,
+        "covered50": 1.0,
+        "wilson95": [
+          0.866807747239609,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "covered_beyond_reference": [
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE1",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "Sp16",
+          "class": "prophage",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE3",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE5",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 3",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 6",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        }
+      ],
+      "paired_difference_vs_reference": {
+        "all": {
+          "n": 57,
+          "elements_gained": 6,
+          "elements_lost": 0,
+          "difference": 0.10526315789473684,
+          "genome_bootstrap95": [
+            0.0,
+            0.19718309859154928
+          ]
+        },
+        "author_coordinates_only": {
+          "n": 41,
+          "elements_gained": 4,
+          "elements_lost": 0,
+          "difference": 0.0975609756097561,
+          "genome_bootstrap95": [
+            0.0,
+            0.15789473684210525
+          ]
+        },
+        "no_gene_span_judgement": {
+          "n": 45,
+          "elements_gained": 4,
+          "elements_lost": 0,
+          "difference": 0.08888888888888889,
+          "genome_bootstrap95": [
+            0.0,
+            0.14814814814814814
+          ]
+        },
+        "no_remnants": {
+          "n": 43,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.023255813953488372,
+          "genome_bootstrap95": [
+            0.0,
+            0.04878048780487805
+          ]
+        },
+        "named_prophages_author_coordinates": {
+          "n": 25,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.04,
+          "genome_bootstrap95": [
+            0.0,
+            0.05263157894736842
+          ]
+        }
+      }
+    },
+    "ens/exploratory": {
+      "all": {
+        "n": 57,
+        "n_genomes": 7,
+        "covered50": 0.9473684210526315,
+        "wilson95": [
+          0.8563044950528215,
+          0.9819397045069381
+        ],
+        "genome_bootstrap95": [
+          0.9019607843137255,
+          1.0
+        ]
+      },
+      "author_coordinates_only": {
+        "n": 41,
+        "n_genomes": 4,
+        "covered50": 0.9512195121951219,
+        "wilson95": [
+          0.8386102100596369,
+          0.9865190547563483
+        ],
+        "genome_bootstrap95": [
+          0.9210526315789473,
+          1.0
+        ]
+      },
+      "no_gene_span_judgement": {
+        "n": 45,
+        "n_genomes": 6,
+        "covered50": 0.9555555555555556,
+        "wilson95": [
+          0.8517248911534567,
+          0.987725873403887
+        ],
+        "genome_bootstrap95": [
+          0.9259259259259259,
+          1.0
+        ]
+      },
+      "no_remnants": {
+        "n": 43,
+        "n_genomes": 7,
+        "covered50": 1.0,
+        "wilson95": [
+          0.9179901955865446,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "named_prophages_author_coordinates": {
+        "n": 25,
+        "n_genomes": 4,
+        "covered50": 1.0,
+        "wilson95": [
+          0.866807747239609,
+          1.0
+        ],
+        "genome_bootstrap95": [
+          1.0,
+          1.0
+        ]
+      },
+      "covered_beyond_reference": [
+        {
+          "genome_id": "GCF_000006665.1_ASM666v1_genomic",
+          "name": "CP-933L",
+          "class": "cryptic_prophage",
+          "coord_class": "gene_span_judgement"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE1",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE2",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "Sp16",
+          "class": "prophage",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE3",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000008865.2_ASM886v2_genomic",
+          "name": "SpLE5",
+          "class": "remnant",
+          "coord_class": "author_coordinates"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 3",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        },
+        {
+          "genome_id": "GCF_000009045.1_ASM904v1_genomic",
+          "name": "prophage 6",
+          "class": "remnant",
+          "coord_class": "gene_span_judgement"
+        }
+      ],
+      "paired_difference_vs_reference": {
+        "all": {
+          "n": 57,
+          "elements_gained": 8,
+          "elements_lost": 0,
+          "difference": 0.14035087719298245,
+          "genome_bootstrap95": [
+            0.02857142857142857,
+            0.21428571428571427
+          ]
+        },
+        "author_coordinates_only": {
+          "n": 41,
+          "elements_gained": 5,
+          "elements_lost": 0,
+          "difference": 0.12195121951219512,
+          "genome_bootstrap95": [
+            0.0,
+            0.19736842105263158
+          ]
+        },
+        "no_gene_span_judgement": {
+          "n": 45,
+          "elements_gained": 5,
+          "elements_lost": 0,
+          "difference": 0.1111111111111111,
+          "genome_bootstrap95": [
+            0.0,
+            0.18518518518518517
+          ]
+        },
+        "no_remnants": {
+          "n": 43,
+          "elements_gained": 2,
+          "elements_lost": 0,
+          "difference": 0.046511627906976744,
+          "genome_bootstrap95": [
+            0.0,
+            0.056338028169014086
+          ]
+        },
+        "named_prophages_author_coordinates": {
+          "n": 25,
+          "elements_gained": 1,
+          "elements_lost": 0,
+          "difference": 0.04,
+          "genome_bootstrap95": [
+            0.0,
+            0.05263157894736842
+          ]
+        }
+      }
+    },
+    "genomad": {
+      "all": {
+        "n": 57,
+        "n_genomes": 7,
+        "covered50": 0.8070175438596491,
+        "wilson95": [
+          0.6865930964617099,
+          0.8886725306871449
+        ],
+        "genome_bootstrap95": [
+          0.6896551724137931,
+          0.9714285714285714
+        ]
+      },
+      "author_coordinates_only": {
+        "n": 41,
+        "n_genomes": 4,
+        "covered50": 0.8292682926829268,
+        "wilson95": [
+          0.6873738747186828,
+          0.9147474806875768
+        ],
+        "genome_bootstrap95": [
+          0.7236842105263158,
+          1.0
+        ]
+      },
+      "no_gene_span_judgement": {
+        "n": 45,
+        "n_genomes": 6,
+        "covered50": 0.8444444444444444,
+        "wilson95": [
+          0.7121609100670803,
+          0.922545765573838
+        ],
+        "genome_bootstrap95": [
+          0.7407407407407407,
+          1.0
+        ]
+      },
+      "no_remnants": {
+        "n": 43,
+        "n_genomes": 7,
+        "covered50": 0.9534883720930233,
+        "wilson95": [
+          0.8454450187663708,
+          0.9871507400214253
+        ],
+        "genome_bootstrap95": [
+          0.9431818181818182,
+          1.0
+        ]
+      },
+      "named_prophages_author_coordinates": {
+        "n": 25,
+        "n_genomes": 4,
+        "covered50": 0.96,
+        "wilson95": [
+          0.8045593608838223,
+          0.9929037665766179
+        ],
+        "genome_bootstrap95": [
+          0.9473684210526315,
+          1.0
+        ]
+      }
+    }
+  }
+}

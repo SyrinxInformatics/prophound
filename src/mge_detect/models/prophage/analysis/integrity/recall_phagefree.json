@@ -1,0 +1,34 @@
+{
+  "root": "src/mge_detect/models/prophage/analysis/phagefree",
+  "n_genomes": 20,
+  "bootstrap_resamples": 10000,
+  "modes": {
+    "exploratory": {
+      "threshold": 0.95,
+      "min_seed_support": 1,
+      "calls_per_genome": 20.6,
+      "calls_per_genome_ci": [
+        14.55,
+        26.65
+      ]
+    },
+    "default": {
+      "threshold": 0.98,
+      "min_seed_support": 3,
+      "calls_per_genome": 4.9,
+      "calls_per_genome_ci": [
+        3.0,
+        6.95
+      ]
+    },
+    "conservative": {
+      "threshold": 0.995,
+      "min_seed_support": 3,
+      "calls_per_genome": 2.45,
+      "calls_per_genome_ci": [
+        1.35,
+        3.7
+      ]
+    }
+  }
+}

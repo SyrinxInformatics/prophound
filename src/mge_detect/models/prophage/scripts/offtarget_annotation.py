@@ -142,6 +142,12 @@ def main() -> None:
     ap.add_argument("--genomad_dir", required=True)
     ap.add_argument("--genomes_dir", required=True)
     ap.add_argument("--n_controls", type=int, default=3, help="controls per call")
+    ap.add_argument("--control_busy", choices=("calls_and_elements", "elements_only", "none"),
+                    default="calls_and_elements",
+                    help="what controls must avoid. The default avoids every call, which conditions the "
+                         "background on the model not calling there; 'elements_only' avoids geNomad "
+                         "elements only (model-independent); 'none' is fully random "
+                         "(docs/research-integrity.md F8)")
     ap.add_argument("--seed", type=int, default=20260928)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
@@ -164,8 +170,11 @@ def main() -> None:
         contigs = fasta_contigs(fa)
         genome_gc = float(genes.gc_content.mean()) if "gc_content" in genes else np.nan
         busy = {}
-        for x in [cg[["contig_id", "start", "end"]].values,
-                  ev[ev.accession == g][["contig", "start", "end"]].values]:
+        avoid = {"calls_and_elements": [cg[["contig_id", "start", "end"]].values,
+                                        ev[ev.accession == g][["contig", "start", "end"]].values],
+                 "elements_only": [ev[ev.accession == g][["contig", "start", "end"]].values],
+                 "none": []}[args.control_busy]
+        for x in avoid:
             for c, s, e in x:
                 busy.setdefault(c, []).append((int(s), int(e)))
         for r in cg.itertuples():
@@ -183,7 +192,8 @@ def main() -> None:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.drop(columns=["marker_suffix"], errors="ignore").to_csv(out.with_suffix(".csv"), index=False)
-    summary = {"genes_columns": columns_seen, "missing_genomes": missing, "groups": {}}
+    summary = {"genes_columns": columns_seen, "missing_genomes": missing, "control_busy": args.control_busy,
+               "groups": {}}
     feat = [k for k in ["replicon_plasmid", *TERMS, *FLAG_COLS] if k in df]
     for (mode, grp), sub in df.groupby(["mode", "group"]):
         s = {"n": int(len(sub)),

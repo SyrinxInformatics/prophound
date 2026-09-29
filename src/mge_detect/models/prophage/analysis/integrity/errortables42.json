@@ -1,0 +1,87 @@
+{
+  "threshold": 0.995,
+  "vote": "none",
+  "n_calls": 607,
+  "seed_support_by_target": [
+    {
+      "seed_support": 1,
+      "off_target": 152,
+      "on_target": 2
+    },
+    {
+      "seed_support": 2,
+      "off_target": 97,
+      "on_target": 1
+    },
+    {
+      "seed_support": 3,
+      "off_target": 190,
+      "on_target": 165
+    }
+  ],
+  "covered50_misses": [
+    {
+      "accession": "GCF_000284415.1_ASM28441v2_genomic",
+      "contig": "NC_017059.1",
+      "start": 536696,
+      "end": 548708,
+      "stratum": "10-15kb",
+      "cov_frac": 0.0,
+      "max_window_prob": 0.9882056713104248
+    },
+    {
+      "accession": "GCF_001610875.1_ASM161087v1_genomic",
+      "contig": "NZ_CP011272.1",
+      "start": 6360845,
+      "end": 6398732,
+      "stratum": "30-60kb",
+      "cov_frac": 0.0,
+      "max_window_prob": 0.9832762479782104
+    },
+    {
+      "accession": "GCF_001610875.1_ASM161087v1_genomic",
+      "contig": "NZ_CP011272.1",
+      "start": 6414738,
+      "end": 6479476,
+      "stratum": "60kb+",
+      "cov_frac": 0.370725076462047,
+      "max_window_prob": 0.999980092048645
+    },
+    {
+      "accession": "GCF_028891345.1_ASM2889134v1_genomic",
+      "contig": "NZ_CP118539.1",
+      "start": 1162364,
+      "end": 1178512,
+      "stratum": "15-30kb",
+      "cov_frac": 0.15556106019321278,
+      "max_window_prob": 0.9923580288887024
+    },
+    {
+      "accession": "GCF_032164335.1_ASM3216433v1_genomic",
+      "contig": "NZ_CP134152.1",
+      "start": 2823651,
+      "end": 2831266,
+      "stratum": "5-8kb",
+      "cov_frac": 0.0,
+      "max_window_prob": 0.9905807375907898
+    },
+    {
+      "accession": "GCF_045865535.1_ASM4586553v1_genomic",
+      "contig": "NZ_AP031406.1",
+      "start": 938506,
+      "end": 1006913,
+      "stratum": "60kb+",
+      "cov_frac": 0.12416857923896678,
+      "max_window_prob": 0.9988621473312378
+    },
+    {
+      "accession": "GCF_963931295.1_metabat2_pooled_hifiasm.920_MAG_genomic",
+      "contig": "NZ_OZ007001.1",
+      "start": 2467588,
+      "end": 2487211,
+      "stratum": "15-30kb",
+      "cov_frac": 0.0,
+      "max_window_prob": 0.9105107188224792
+    }
+  ]
+}
