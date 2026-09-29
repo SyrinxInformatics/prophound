@@ -293,6 +293,36 @@ The same 607 Default calls (pre-vote, `calls42.csv`) and the same categories. On
 
 `literature_truth.tsv` carries both `genome_id` and `accession`, and the rename made a duplicate column. The bug is fixed, the lockbox is added as a fifth set (with a per-set genome dir), and the job is to be resubmitted. C6 in the same job was unaffected.
 
+### C7 — spike-in with model-independent implant sites (`822068`, 2026-09-29)
+
+Same 241 hold-out-checked inoviruses, now all placed twice: 482 implants in 28 hosts. Sites use geNomad elements and spacing only, with no model scores. The eval ran under the final modes. `analysis/spikein_siterule/`.
+
+| covered50 (implants) | model-chosen sites, 821410 | model-independent, all | **model-independent, no host call within 20 kb** |
+|---|---|---|---|
+| Default 0.95 / 3 of 3 | 0.320 (n=406) | 0.405 (n=482) | **0.362 (n=420)** |
+| Default, 3–5 / 5–8 / 8–10 kb | 0.14 / 0.27 / 0.68 | 0.23 / 0.37 / 0.75 | **0.17 / 0.32 / 0.73** |
+| Exploratory 0.90 | — (old: 0.95 only) | 0.674 | **0.617 (n=303)** |
+| Conservative | 0.167 | 0.195 | — |
+
+- **Model-independent sites carry the opposite bias.** An implant inside or near a region the unmodified host already calls gets credit from that call. Inside a host call, Default detects 0.833 (30 implants). Within 20 kb of one, 0.694 (62).
+- The clean figure (no host call within 20 kb, host calls from `analysis/multiscale/*_3000` under the same mode) is the one to report.
+- **F7's direction:** the model-conditioned rule *understated* small-element detection a little (0.320 against 0.362). It excluded sites with moderately elevated host background, which seems to help an implant get called.
+- In-situ loci are unchanged by construction (same tracks). The Exploratory comparison against the old sites waits for `822223`'s `results_final`.
+
+### C4 final — literature pilot, final modes, revised classes (`822071`)
+
+| class | n | Exploratory | Default | Conservative | geNomad |
+|---|---|---|---|---|---|
+| **prophage (headline)** | 28 | 28 | **28** | 28 | 27 |
+| cryptic_prophage | 15 | 15 | 15 | 14 | 14 |
+| remnant | 12 | 10 | 7 | 7 | 3 |
+| phage_derived | 2 | 2 | 2 | 2 | 2 |
+| all (covered50) | 57 | 0.965 | **0.912** | 0.895 | 0.807 |
+
+- Paired against geNomad: Default **+6 / −0**, +0.105 (interval 0.029–0.151, now excluding zero); Exploratory +9 / −0 (0.029–0.240).
+- The gains are Sp16, CP-933L (6 kb, missed by every earlier setting), SpLE1, SpLE3, SpLE5 and *B. subtilis* prophage 6. At Default, *B. subtilis* prophage 3 is no longer among them; at Exploratory it is. CP-933P at its gene-cluster extent is fully covered.
+- The headline class is at ceiling for both tools. The difference is in remnants and cryptic prophages, reported as such.
+
 ### Next
 
 C5, C6 and C7 go to ARC now that the cheap fixes are in (user, 2026-09-29). Built the same day:
