@@ -57,7 +57,7 @@ from refine_sweep import covered50, load_run  # noqa: E402
 from shred_genomes import SEP  # noqa: E402
 
 try:  # repo layout
-    from mge_detect.models.prophage.src.predict_genome import build_region_table_coverage
+    from prophound.models.prophage.src.predict_genome import build_region_table_coverage
 except ImportError:  # HPCC data_refactored/ layout
     from src.predict_genome import build_region_table_coverage
 

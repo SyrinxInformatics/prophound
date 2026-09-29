@@ -23,13 +23,13 @@ an element -- so these pin the logic, not the model.
 import pandas as pd
 import pytest
 
-from mge_detect.models.prophage.src.multiscale import (
+from prophound.models.prophage.src.multiscale import (
     plan_fine_windows,
     plan_neighborhoods,
     ramp_alpha,
     refine_regions,
 )
-from mge_detect.models.prophage.src.predict_genome import build_region_table_coverage
+from prophound.models.prophage.src.predict_genome import build_region_table_coverage
 
 G, C, L = "g", "c1", 200_000
 FINE_LEN, FINE_STRIDE = 3000, 250

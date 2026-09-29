@@ -1,13 +1,15 @@
-# mge-detect
+# prophound
 
-`mge-detect` is a database-independent CLI tool for detecting mobile genetic elements (MGEs) in prokaryotic sequences. It combines classical sequence-analysis heuristics with machine learning — the ML model does the heavy lifting — so it can flag both recognized MGE types and novel or divergent ones that reference-database tools miss.
+`prophound` is a recall-first prophage screen for prokaryotic genomes. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is built to run alongside annotation-based tools and to surface what they may not call.
+
+The name is a prophage hound, and a homophone of "profound". The project was called `mge-detect` until 2026-09-29. Other mobile-element types may follow the prophage detector, which is why the code keeps a `models/prophage/` layout.
 
 ## Status
 
 This is research software under active development. The first (and currently only) detector targets **prophages**:
 
 - a reverse-complement CNN scored over sliding windows of nucleotide sequence, with three user-selectable confidence modes (`Exploratory`, `Default`, `Conservative`)
-- wired into a working CLI: `mge-detect predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <r1.pt> <r2.pt> <r3.pt>`. Passing the three training replicates runs them as an ensemble, which is the recommended and evaluated configuration.
+- wired into a working CLI: `prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <r1.pt> <r2.pt> <r3.pt>`. Passing the three training replicates runs them as an ensemble, which is the recommended and evaluated configuration.
 - evaluated against geNomad ground truth at the region level on an **element-size-stratified** sample of 42 genomes / 179 elements, held out from training. Recall counts an element as found only when calls cover at least half of it. With the three-checkpoint ensemble: **97.2% in `Default` (95% interval 94.9–99.4%, resampling genomes; about 14 calls per genome), 99.4% in `Exploratory` (about 36) and 94.4% in `Conservative` (about 8.5)**. Default and Conservative keep a call only when all three checkpoints make it (`docs/cli-and-packaging.md` "Seed vote per mode").
 - **These are not held-out performance figures.** The operating settings were chosen on this 42-genome sample, so its numbers are optimistic by an unknown amount. A second sample (18 genomes / 52 elements) gives 100% / 100% / 96.2% (Default / Exploratory / Conservative) at about 13 / 40 / 6.4 calls per genome, but it had also informed earlier decisions (`docs/research-integrity.md` F1). The interval's lower bound is below 95%, so neither sample establishes a 95% floor. The held-out number will come from a preregistered, genus-disjoint locked test set, scored once after the defaults are frozen (`docs/lockbox.md`).
 - that second sample earlier sat at 94%, with every miss in one genome (*E. coli* O157:H7 EDL933). The cause was a bug, not the genome's prophage density: IUPAC ambiguity codes in the sequence silently collapsed the model's scores to zero. Ambiguity codes are now replaced by in-distribution bases by default (`--ambiguity-policy impute`, a no-op on clean sequence), which turns the missed 37 kb prophage into a confident call. Contigs of 3–10 kb, which were previously skipped without warning, are now scanned with calibrated thresholds. Both matter for draft assemblies and MAGs
@@ -22,8 +24,8 @@ Model training and large-scale evaluation run on the University of Texas at San 
 
 ## Repository layout
 
-- `src/mge_detect/` — the `mge-detect` package and CLI entrypoint
-- `src/mge_detect/models/prophage/` — the prophage detector: model/training/inference code, dev-only validation scripts, and its own detailed research notes
+- `src/prophound/` — the `prophound` package and CLI entrypoint
+- `src/prophound/models/prophage/` — the prophage detector: model/training/inference code, dev-only validation scripts, and its own detailed research notes
 - `CLAUDE.md` — orientation for AI coding agents working in this repo
 - `SESSIONS.md` — running log of what's been done and what's next
 

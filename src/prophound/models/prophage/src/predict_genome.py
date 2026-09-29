@@ -1030,7 +1030,7 @@ def write_metadata(
     extra: dict | None = None,
 ) -> None:
     metadata = {
-        "mge_detect_version": package_version(),
+        "prophound_version": package_version(),
         "run_name": cfg.run_name,
         "checkpoint": checkpoint_path,
         "ensemble": ensemble_mode,
@@ -1174,7 +1174,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 
 def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
-    """Window-size overrides and the fine refinement pass; mirrored in `mge_detect`."""
+    """Window-size overrides and the fine refinement pass; mirrored in `prophound`."""
     parser.add_argument(
         "--window-len",
         type=int,
@@ -1279,7 +1279,7 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
 
 
 def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
-    """`--region-builder` / `--coverage-frac`, shared with `mge_detect`'s CLI."""
+    """`--region-builder` / `--coverage-frac`, shared with `prophound`'s CLI."""
     parser.add_argument(
         "--region-builder",
         choices=REGION_BUILDERS,
@@ -1431,7 +1431,7 @@ def score_windows(
 def run_predict(args: argparse.Namespace) -> None:
     """Run inference end to end from a parsed argument namespace.
 
-    Shared by this module's own CLI and by `mge_detect`'s `predict` subcommand,
+    Shared by this module's own CLI and by `prophound`'s `predict` subcommand,
     so both stay in sync with a single implementation.
     """
     cfg = load_cfg(args.config)
@@ -1787,7 +1787,7 @@ def run_predict(args: argparse.Namespace) -> None:
 
 def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity_policy, n_ckpt) -> None:
     """One human-readable block on stderr: what went in, what came out, what was skipped."""
-    lines = [f"mge-detect {package_version()} | mode {mode} | {n_ckpt} checkpoint(s)",
+    lines = [f"prophound {package_version()} | mode {mode} | {n_ckpt} checkpoint(s)",
              f"input: {inp['n_contigs']} contig(s), {inp['total_bp']:,} bp; "
              f"ambiguity codes {inp['ambiguous_bases']:,} ({inp['ambiguous_ppm']:g} ppm), policy {ambiguity_policy}"]
     if short_meta and short_meta.get("n_short"):

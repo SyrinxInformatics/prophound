@@ -10,7 +10,7 @@ The tool is presented as **a new tool in its own class: novel in concept, even t
 
 **Positioning line** (also in the checklist):
 
-> *mge-detect is a recall-first prophage screen. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is built to run alongside annotation-based tools and to surface what they may not call.*
+> *prophound is a recall-first prophage screen. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is built to run alongside annotation-based tools and to surface what they may not call.*
 
 ### What is not new
 
@@ -22,9 +22,9 @@ The tool is presented as **a new tool in its own class: novel in concept, even t
 ### What is distinct, as far as this survey found
 
 1. **The contract.** Every tool surveyed is tuned so that its calls are trustworthy annotations. None sets a recall target on known elements, prices its modes as follow-up cost (calls/genome), or presents itself as a candidate generator meant to run *alongside* annotation tools. This is the main basis for the "own class" claim.
-2. **It learns integrated elements in their host context.** Jaeger masks prophages out of its training genomes with N, so it learns free phage versus host. LAMBDA and Seeker train on free phage genomes versus bacterial genomes. mge-detect trains on prophages *as they sit in the chromosome*, with host sequence within 5 kb of each element as hard negatives. It learns the actual task, which is telling an integrated element from its own flanking host. The honest counterpart belongs next to it: those tools' positive labels are independent of any prophage caller, while ours come from geNomad.
+2. **It learns integrated elements in their host context.** Jaeger masks prophages out of its training genomes with N, so it learns free phage versus host. LAMBDA and Seeker train on free phage genomes versus bacterial genomes. prophound trains on prophages *as they sit in the chromosome*, with host sequence within 5 kb of each element as hard negatives. It learns the actual task, which is telling an integrated element from its own flanking host. The honest counterpart belongs next to it: those tools' positive labels are independent of any prophage caller, while ours come from geNomad.
 3. **Boundaries come from the score track alone, with no gene calling anywhere in the pipeline.** Jaeger's prophage mode always runs gene prediction (pyrodigal-gv) to snap boundaries to intergenic positions, and it uses tRNAs and integrases when an annotation is supplied. geNomad, PhageBoost and PIDE all start from gene calls. LAMBDA's pipeline is gene-free, but it is not a packaged tool (see 4).
-4. **It is a packaged tool that works on fragmented input.** Jaeger's prophage mode only scans contigs longer than **500 kb** by default (`--lc 500000`), so it is aimed at near-complete genomes. mge-detect scans contigs down to 3 kb with calibrated per-scale thresholds (`--short-contigs scan`). LAMBDA is a SLURM research pipeline: its fine-tuned checkpoints are available on request, and the released ones need the 7 B-parameter Evo2 base model.
+4. **It is a packaged tool that works on fragmented input.** Jaeger's prophage mode only scans contigs longer than **500 kb** by default (`--lc 500000`), so it is aimed at near-complete genomes. prophound scans contigs down to 3 kb with calibrated per-scale thresholds (`--short-contigs scan`). LAMBDA is a SLURM research pipeline: its fine-tuned checkpoints are available on request, and the released ones need the 7 B-parameter Evo2 base model.
 
 Items 2–4 are facts about design, and each should be stated as such. Item 1 is the concept. What the contract delivers in practice rests on the evidence in checklist §3 ("Exploratory-claim evidence").
 
@@ -70,7 +70,7 @@ Items 2–4 are facts about design, and each should be stated as such. Item 1 is
 
 ### Philympics (2021)
 
-A community gold standard: 78 manually curated genomes with CDS-level `is_phage` tags, and a Snakemake framework that accepts new tools as rules (MIT licence). Published CDS-level results: PhiSpy has the best F1 (0.733; recall 0.731), VirSorter2 the highest recall (0.766, precision 0.399), and Seeker, the only nucleotide deep-learning tool included, F1 0.093. geNomad is not in it. Contributing mge-detect as a rule is a credible external route to publishing known accuracy. Genome overlap with our corpus, and the LAMBDA baseline computed from its published per-tool predictions, are in `docs/claims-and-evidence.md`.
+A community gold standard: 78 manually curated genomes with CDS-level `is_phage` tags, and a Snakemake framework that accepts new tools as rules (MIT licence). Published CDS-level results: PhiSpy has the best F1 (0.733; recall 0.731), VirSorter2 the highest recall (0.766, precision 0.399), and Seeker, the only nucleotide deep-learning tool included, F1 0.093. geNomad is not in it. Contributing prophound as a rule is a credible external route to publishing known accuracy. Genome overlap with our corpus, and the LAMBDA baseline computed from its published per-tool predictions, are in `docs/claims-and-evidence.md`.
 
 ## Consequences for the write-up
 

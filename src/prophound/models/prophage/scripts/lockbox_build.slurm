@@ -6,7 +6,7 @@
 #   3. download their FASTAs to ../raw/lockbox/
 #   4. geNomad annotate + find-proviruses -> ../genomad_out_lockbox/
 #   5. write the truth manifest analysis/lockbox/lockbox_elements.csv
-# Scoring with mge-detect is a separate job, run once, after the defaults freeze.
+# Scoring with prophound is a separate job, run once, after the defaults freeze.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/lockbox_build.slurm
 #SBATCH -J lockbox_build

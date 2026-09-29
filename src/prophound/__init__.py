@@ -14,10 +14,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""mge-detect: database-independent detection of mobile genetic elements."""
+"""prophound: a recall-first, database-free prophage screen (formerly mge-detect)."""
 
 try:  # the installed distribution's version (pyproject.toml)
     from importlib.metadata import version as _version
-    __version__ = _version("mge-detect")
+    __version__ = _version("prophound")
 except Exception:  # running from a source tree without installing
     __version__ = "unknown (not installed)"

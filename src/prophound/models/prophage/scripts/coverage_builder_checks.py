@@ -27,7 +27,7 @@ against a coverage-fraction builder (bin is in if >= `frac` of its covering
 windows individually score >= extend_threshold; frac->0 is the union), with
 optional replicate ensembling (mean / max of window probs) and a minimum
 region length. The coverage builder is `predict_genome.build_region_table_coverage`
-(`mge-detect predict --region-builder coverage --coverage-frac F`); this script
+(`prophound predict --region-builder coverage --coverage-frac F`); this script
 just sweeps it. Each variant's regions.tsv is written under --out_dir/<variant>/
 <genome>/ and scored with eval_region_metrics.py.
 
@@ -36,7 +36,7 @@ Usage:
         --out_dir /scratch/variants [--fracs 0.01,0.1,0.3] [--modes default,exploratory] [--min_len 0]
 
 Each --predict_dirs entry must contain <genome>/windows.tsv per genome in
-eval_genome_list.txt (i.e. `mge-detect predict` output dirs). With >=2 entries,
+eval_genome_list.txt (i.e. `prophound predict` output dirs). With >=2 entries,
 mean- and max-ensembles across them are added as extra inputs.
 """
 from __future__ import annotations

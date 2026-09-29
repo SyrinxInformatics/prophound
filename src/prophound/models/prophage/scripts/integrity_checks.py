@@ -206,7 +206,7 @@ def cmd_errortables(a) -> None:
     finally:
         mr.MODE_THRESHOLDS.update(saved)
     try:
-        from mge_detect.models.prophage.src.predict_genome import seed_support
+        from prophound.models.prophage.src.predict_genome import seed_support
     except ImportError:
         from src.predict_genome import seed_support
     support = []

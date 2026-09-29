@@ -20,7 +20,7 @@ import argparse
 import sys
 
 
-# Must match mge_detect.models.prophage.src.predict_genome.MODE_THRESHOLDS.
+# Must match prophound.models.prophage.src.predict_genome.MODE_THRESHOLDS.
 # Kept as a local constant so `--help` doesn't have to import torch.
 PROPHAGE_MODES = ("conservative", "default", "exploratory")
 # Must match predict_genome.REGION_BUILDERS / DEFAULT_COVERAGE_FRAC, same reason.
@@ -349,15 +349,15 @@ def _group_help(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    from mge_detect import __version__
+    from prophound import __version__
     parser = argparse.ArgumentParser(
-        prog="mge-detect",
+        prog="prophound",
         description=(
-            "Database-independent detection of mobile genetic elements in "
-            "prokaryotic sequences."
+            "Recall-first, database-free prophage screen for prokaryotic "
+            "genomes. Calls are candidates for follow-up, not annotations."
         ),
     )
-    parser.add_argument("--version", action="version", version=f"mge-detect {__version__}")
+    parser.add_argument("--version", action="version", version=f"prophound {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
     _add_predict_subparser(subparsers)
     _group_help(subparsers.choices["predict"])
@@ -368,7 +368,7 @@ def main() -> None:
     args = build_parser().parse_args()
 
     if args.command == "predict":
-        from mge_detect.models.prophage.src.predict_genome import run_predict
+        from prophound.models.prophage.src.predict_genome import run_predict
 
         run_predict(args)
     else:  # pragma: no cover - argparse enforces valid choices

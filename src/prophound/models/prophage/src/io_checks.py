@@ -46,7 +46,7 @@ class InputError(SystemExit):
 def package_version() -> str:
     try:
         from importlib.metadata import version
-        return version("mge-detect")
+        return version("prophound")
     except Exception:   # not installed (e.g. run from the HPCC source tree)
         return "unknown (not installed)"
 
@@ -118,7 +118,7 @@ def validate_fasta(path: str) -> dict:
     nuc = sum(v for k, v in letters.items() if k in NUCLEOTIDE | IUPAC_AMBIGUOUS)
     if alpha and nuc / alpha < MIN_NUCLEOTIDE_FRACTION:
         raise InputError(f"{path} looks like protein, not nucleotide, sequence "
-                         f"({100 * nuc / alpha:.0f}% nucleotide letters); mge-detect needs nucleotide FASTA")
+                         f"({100 * nuc / alpha:.0f}% nucleotide letters); prophound needs nucleotide FASTA")
     for k in IUPAC_AMBIGUOUS:
         if letters.get(k):
             ambiguous[k] = letters[k]
@@ -133,7 +133,7 @@ def write_bed(regions: pd.DataFrame, path: Path) -> None:
     with open(path, "w") as fh:
         for i, r in enumerate(regions.itertuples(index=False), 1):
             score = int(round(1000 * float(getattr(r, "max_prob", 0) or 0)))
-            fh.write(f"{r.contig_id}\t{int(r.start)}\t{int(r.end)}\tmge_detect_{i}\t{score}\t.\n")
+            fh.write(f"{r.contig_id}\t{int(r.start)}\t{int(r.end)}\tprophound_{i}\t{score}\t.\n")
 
 
 def write_gff3(regions: pd.DataFrame, path: Path, mode: str, version: str) -> None:
@@ -141,15 +141,15 @@ def write_gff3(regions: pd.DataFrame, path: Path, mode: str, version: str) -> No
     calls are candidates, which the `note` attribute says."""
     with open(path, "w") as fh:
         fh.write("##gff-version 3\n")
-        fh.write(f"# mge-detect {version}, mode {mode}. Calls are candidate prophage regions, not annotations.\n")
+        fh.write(f"# prophound {version}, mode {mode}. Calls are candidate prophage regions, not annotations.\n")
         for i, r in enumerate(regions.itertuples(index=False), 1):
-            attrs = [f"ID=mge_detect_{i}", "note=candidate"]
+            attrs = [f"ID=prophound_{i}", "note=candidate"]
             for k in ("max_prob", "mean_prob", "seed_support", "boundary_kind"):
                 v = getattr(r, k, None)
                 if v is not None and not (isinstance(v, float) and pd.isna(v)):
                     attrs.append(f"{k}={v:.4f}" if isinstance(v, float) else f"{k}={v}")
             score = float(getattr(r, "max_prob", 0) or 0)
-            fh.write(f"{r.contig_id}\tmge-detect\tprophage\t{int(r.start) + 1}\t{int(r.end)}\t{score:.4f}\t.\t.\t"
+            fh.write(f"{r.contig_id}\tprophound\tprophage\t{int(r.start) + 1}\t{int(r.end)}\t{score:.4f}\t.\t.\t"
                      + ";".join(attrs) + "\n")
 
 
@@ -160,7 +160,7 @@ def write_region_fasta(regions: pd.DataFrame, fasta_path: str, path: Path) -> No
         with open(path, "w") as fh:
             for i, r in enumerate(regions.itertuples(index=False), 1):
                 seq = fa[r.contig_id][int(r.start):int(r.end)]
-                fh.write(f">mge_detect_{i} {r.contig_id}:{int(r.start) + 1}-{int(r.end)}\n")
+                fh.write(f">prophound_{i} {r.contig_id}:{int(r.start) + 1}-{int(r.end)}\n")
                 for j in range(0, len(seq), 80):
                     fh.write(seq[j:j + 80] + "\n")
     finally:

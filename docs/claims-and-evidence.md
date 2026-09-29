@@ -16,11 +16,11 @@ The concept (rung 1 below) is new only as a *contract*, and the methods are not 
 
 ### In the gate: all measured by one run, no new tools to install
 
-One ensemble run of mge-detect (all three modes) on LAMBDA's 39 clean genomes, scored locally against the published predictions of the other tools. Prerequisites: a 21-mer containment check against training positives (reuse `small_element_spikein.py`'s `disjoint`) and confirming LAMBDA's coordinate frame. The cost is about one GPU job the size of the 42-genome runs (1–2 h). Scoring against the other tools' predictions is plain Python and **can run on ARC** in the same job or a CPU follow-up (user, 2026-09-28), so it adds no local turnaround. The LAMBDA JSONs are about 20 MB and are pushed alongside.
+One ensemble run of prophound (all three modes) on LAMBDA's 39 clean genomes, scored locally against the published predictions of the other tools. Prerequisites: a 21-mer containment check against training positives (reuse `small_element_spikein.py`'s `disjoint`) and confirming LAMBDA's coordinate frame. The cost is about one GPU job the size of the 42-genome runs (1–2 h). Scoring against the other tools' predictions is plain Python and **can run on ARC** in the same job or a CPU follow-up (user, 2026-09-28), so it adds no local turnaround. The LAMBDA JSONs are about 20 MB and are pushed alongside.
 
 | # | axis | bar to clear (LAMBDA clean subset) | outlook |
 |---|---|---|---|
-| G1 | **Complement to geNomad** | geNomad ∪ mge-detect gains **more than +8** curated elements over geNomad alone (0.809, 123/152). +8 is the best existing pairing (PHASTER), at +3.9 calls/genome. | **Plausible**, most likely in Exploratory. It is the direct test of the concept. Report the extra calls/genome with it. |
+| G1 | **Complement to geNomad** | geNomad ∪ prophound gains **more than +8** curated elements over geNomad alone (0.809, 123/152). +8 is the best existing pairing (PHASTER), at +3.9 calls/genome. | **Plausible**, most likely in Exploratory. It is the direct test of the concept. Report the extra calls/genome with it. |
 | G2 | **Sequence-only, at matched cost** | top-*k* calls per genome (k matched to ~3.5) reach covered50 **above 0.727** (best genomic LM, NTv2; Evo2 0.724) | **Plausible.** It is trained on integrated elements in host context, whereas the LMs trained on free phage genomes. |
 | G3 | **Overall curated recall** | covered50 **above 0.818** (PHASTER; PIDE 0.812, geNomad 0.809), with calls/genome | **Unlikely at Default**, because the model inherits geNomad's misses. Possible in Exploratory, at about 7× the calls/genome, and must be stated that way. |
 | G4 | **Footprint** | install size versus geNomad's database: `genomad_db_v1.9.tar.gz` is **842 MB compressed** (Zenodo 14886553; measure the unpacked size). Our side is 3 checkpoints plus the package. | **Likely.** It counts only alongside a G1–G3 recall figure, since a small tool that finds less is not better. |
@@ -29,7 +29,7 @@ One ensemble run of mge-detect (all three modes) on LAMBDA's 39 clean genomes, s
 
 | # | axis | bar | cost and fallback |
 |---|---|---|---|
-| G5 | **Fragmented input** | on identical MAG-like shreds of the 39 clean genomes, mge-detect retains more complete-genome recall than geNomad and Jaeger `-p` (`--lc` lowered, and stated) | **The most likely win**, but the only axis that needs installing other tools. ARC lacks MMseqs2 and Prodigal (preflight), so run the comparators locally, where both are conda/pip-installable. **Time-box: about one day for installs.** If it slips, fall back to a self-referential figure ("retains X% of its complete-genome recall"), which is measured already on eval genomes (covered 0.939) and needs no comparator. That is not a "better" claim. |
+| G5 | **Fragmented input** | on identical MAG-like shreds of the 39 clean genomes, prophound retains more complete-genome recall than geNomad and Jaeger `-p` (`--lc` lowered, and stated) | **The most likely win**, but the only axis that needs installing other tools. ARC lacks MMseqs2 and Prodigal (preflight), so run the comparators locally, where both are conda/pip-installable. **Time-box: about one day for installs.** If it slips, fall back to a self-referential figure ("retains X% of its complete-genome recall"), which is measured already on eval genomes (covered 0.939) and needs no comparator. That is not a "better" claim. |
 | G6 | **CPU runtime** | wall-clock per genome versus geNomad on the same machine | Comes free with G5's local geNomad install. Without it, use no runtime comparison; published figures come from other hardware. |
 
 ### Measured by the same run, where the tool is probably not better (report plainly)
@@ -43,7 +43,7 @@ One ensemble run of mge-detect (all three modes) on LAMBDA's 39 clean genomes, s
 ### Not in the gate (would cause delay)
 
 - **Ambiguity robustness versus other tools.** It needs spiked input run through every comparator. Our own dose-response (`821396`) is reported as a robustness fact, not a comparison.
-- **Contributing mge-detect to the Philympics framework** (a Snakemake rule and a PR to an external repo, on their timeline). Post-v1. *Scoring* Philympics' 23 clean genomes ourselves can be added to the G1–G4 job if it costs less than a day, since the published CDS-level results are in its repo (`jupyter_notebooks/all_tptn.tsv`).
+- **Contributing prophound to the Philympics framework** (a Snakemake rule and a PR to an external repo, on their timeline). Post-v1. *Scoring* Philympics' 23 clean genomes ourselves can be added to the G1–G4 job if it costs less than a day, since the published CDS-level results are in its repo (`jupyter_notebooks/all_tptn.tsv`).
 - **Anything requiring retraining** (small elements, boundary head): deferred past v1 already.
 
 ### Decision rule
@@ -65,14 +65,14 @@ geNomad covers about 81% of expert-curated prophages. A tool that matches geNoma
 
 ## External curated benchmarks available now (checked 2026-09-28)
 
-Two community gold standards exist. Their genome lists were matched against our corpus by assembly accession. Overlap tables: `src/mge_detect/models/prophage/analysis/external_benchmarks/`.
+Two community gold standards exist. Their genome lists were matched against our corpus by assembly accession. Overlap tables: `src/prophound/models/prophage/analysis/external_benchmarks/`.
 
 | benchmark | genomes | curated elements | not in our corpus | in our test split | in train/val (exclude) |
 |---|---|---|---|---|---|
 | **LAMBDA** (2026; Casjens gold standard, PHASTER manual annotations, Gauthier et al.) | 76 | 344 regions | 34 genomes (118 regions) | 5 | 37 |
 | **Philympics** (2021; 78 manually curated genomes, CDS-level `is_phage` tags) | 73 files with coordinates (69 mapped) | 275 rows (includes 1-gene fragments) | 17 genomes (77 rows) | 6 | 46 |
 
-**LAMBDA is the stronger instrument.** Its per-genome files include the curated truth, **every published tool's predicted regions** (geNomad, PHASTER, VIBRANT, VirSorter2, Phigaro, PhiSpy, PhageBoost, PIDE, and eight genomic language models) and 292 off-truth candidate regions that its authors classified from PHROG gene evidence. A head-to-head comparison therefore needs only an mge-detect run. The other tools are already scored on the same genomes.
+**LAMBDA is the stronger instrument.** Its per-genome files include the curated truth, **every published tool's predicted regions** (geNomad, PHASTER, VIBRANT, VirSorter2, Phigaro, PhiSpy, PhageBoost, PIDE, and eight genomic language models) and 292 off-truth candidate regions that its authors classified from PHROG gene evidence. A head-to-head comparison therefore needs only an prophound run. The other tools are already scored on the same genomes.
 
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb)
 
@@ -102,7 +102,7 @@ Computed 2026-09-28 from the published per-genome predictions, using our own met
 | PIDE | 0.822 | +2 | +8.7 |
 | union of all 7 annotation-type tools | 0.908 | +15 | — |
 
-These are the bars. **mge-detect's complement claim holds only if it gains more than +8 elements over geNomad** (the best existing pairing), and the gain is reported with its extra calls/genome.
+These are the bars. **prophound's complement claim holds only if it gains more than +8 elements over geNomad** (the best existing pairing), and the gain is reported with its extra calls/genome.
 
 ### Caveats that apply to any number from these benchmarks
 
@@ -129,10 +129,10 @@ Each claim gives the evidence it needs, its status, and the strongest wording th
 
 | claim | run needed | wording by outcome |
 |---|---|---|
-| **B1. Recall on independent curated truth** | mge-detect (ensemble, all three modes) on LAMBDA's clean subset, and on Philympics' clean subset | Above 0.818 covered50: "highest recall of the N tools compared, at X calls/genome versus Y". Within the CI of the leaders: "comparable to annotation-based tools without gene calling or a database". Below: report it plainly, since it is still known accuracy. |
+| **B1. Recall on independent curated truth** | prophound (ensemble, all three modes) on LAMBDA's clean subset, and on Philympics' clean subset | Above 0.818 covered50: "highest recall of the N tools compared, at X calls/genome versus Y". Within the CI of the leaders: "comparable to annotation-based tools without gene calling or a database". Below: report it plainly, since it is still known accuracy. |
 | **B1'. Against sequence-only models at matched cost** | same run. Rank calls by score and keep the top *k* per genome, to match the genomic LMs' ~3.5 calls/genome | if higher: "exceeds published sequence-only (genomic language model) approaches at matched follow-up cost". **Matched cost is required.** Comparing Exploratory at 29 calls/genome with models at 3.5 would be an unfair comparison. |
-| **B2. Complement to geNomad** | same run, geNomad ∪ mge-detect | above +8 elements: "adds more curated prophages to geNomad's calls than any other single tool tested, at +Z calls/genome". Otherwise report the gain against the table above. **This is the direct test of the concept.** |
-| **B3. Fragmented input** | shred the clean LAMBDA genomes to a MAG-like contig-length distribution. Run mge-detect, Jaeger `-p` (with `--lc` lowered, and stated) and geNomad on the same shreds | "retains X% of its complete-genome recall on fragmented assemblies". A comparative claim is allowed only with the others run on identical input. It is a good candidate: DEPhT degrades on assemblies with more than 100 contigs, and Jaeger scans only contigs over 500 kb by default. |
+| **B2. Complement to geNomad** | same run, geNomad ∪ prophound | above +8 elements: "adds more curated prophages to geNomad's calls than any other single tool tested, at +Z calls/genome". Otherwise report the gain against the table above. **This is the direct test of the concept.** |
+| **B3. Fragmented input** | shred the clean LAMBDA genomes to a MAG-like contig-length distribution. Run prophound, Jaeger `-p` (with `--lc` lowered, and stated) and geNomad on the same shreds | "retains X% of its complete-genome recall on fragmented assemblies". A comparative claim is allowed only with the others run on identical input. It is a good candidate: DEPhT degrades on assemblies with more than 100 contigs, and Jaeger scans only contigs over 500 kb by default. |
 | **B4. Robustness to ambiguity codes** | `821396` (in flight) | self-referential only ("recall within X at Y ppm"), unless other tools are tested on the same spiked input |
 | **B5. Footprint** | measure the bundled weights (MB) and CPU time per genome. Measure the geNomad database size on ARC (`du -sh` of the DB directory). The survey did not find a documented figure. | plain statement, with both numbers |
 
@@ -158,7 +158,7 @@ The user's second point: the tool itself, not only its claims. Each item below i
 | recommendation | status (checked 2026-09-28) |
 |---|---|
 | print usage with no arguments; `-h` | yes |
-| **`--version`** | **missing**: `mge-detect --version` is rejected. It is needed for reproducibility and should also be written to `run_metadata.json`. |
+| **`--version`** | **missing**: `prophound --version` is rejected. It is needed for reproducibility and should also be written to `run_metadata.json`. |
 | **messages to stderr, not stdout** | **no**: progress and warnings use `print()` to stdout |
 | non-zero exit code on failure | argparse errors exit 2. Runtime failures need checking. |
 | **validate parameters and input** | partial. Missing input, empty file, gzip, protein FASTA and duplicate contig IDs are untested and should fail with clear messages. |

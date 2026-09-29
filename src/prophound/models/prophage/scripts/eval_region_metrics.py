@@ -7,7 +7,7 @@ prophage_v1_positional_boundary) the same rigorous way, instead of trusting
 a handful of hand-picked genomes.
 
 Typical usage, once you have a checkpoint and its regions.tsv outputs for
-each genome in eval_genome_list.txt (run `mge-detect predict` per genome,
+each genome in eval_genome_list.txt (run `prophound predict` per genome,
 one output dir per genome under some --predict_dir):
 
     python eval_region_metrics.py \
@@ -18,7 +18,7 @@ one output dir per genome under some --predict_dir):
 --genomad_dir must contain, per genome accession `G`:
     G/G_find_proviruses/G_provirus.tsv   (geNomad's own output layout)
 --predict_dir must contain, per genome accession `G`:
-    G/regions.tsv                        (mge-detect predict's output)
+    G/regions.tsv                        (prophound predict's output)
 """
 from __future__ import annotations
 

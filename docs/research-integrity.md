@@ -96,7 +96,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 *Guidance:* Weber (neutral benchmarking; "comparing one method with default parameters against another with extensive tuning makes for an unfair comparison").
 
 *What happened:*
-- **Tuning is asymmetric.** mge-detect's settings were tuned on geNomad-labelled data; geNomad ran at its defaults. That favours geNomad-agreement for us, which matters most where geNomad is the truth.
+- **Tuning is asymmetric.** prophound's settings were tuned on geNomad-labelled data; geNomad ran at its defaults. That favours geNomad-agreement for us, which matters most where geNomad is the truth.
 - **The agent built the literature truth.** The 11 `author_genes` rows are not hand-placed. `build_literature_truth.py` collects the genes whose author notes name the element (by regex), groups them into clusters split at gaps over 20 kb, and takes the largest cluster. *Corrected 2026-09-29: an earlier version of this finding called them hand-set after the EDL933 tracks were seen.* The risk is a rule that matches the wrong genes, not boundaries placed with the model's output in view.
 - **The gains sit in the least-defined class.** Five of the six recovered elements are remnants or prophage-like elements.
 

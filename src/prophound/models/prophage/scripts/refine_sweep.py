@@ -56,8 +56,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # data_refactored/
 from compare_variants import score_variant  # noqa: E402
 
 try:  # repo layout
-    from mge_detect.models.prophage.src.multiscale import refine_regions
-    from mge_detect.models.prophage.src.predict_genome import build_region_table_coverage
+    from prophound.models.prophage.src.multiscale import refine_regions
+    from prophound.models.prophage.src.predict_genome import build_region_table_coverage
 except ImportError:  # HPCC data_refactored/ layout
     from src.multiscale import refine_regions
     from src.predict_genome import build_region_table_coverage

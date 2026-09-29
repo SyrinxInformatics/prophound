@@ -17,7 +17,7 @@
 """Short contigs (< --window-len): tiled at the largest scale that fits, never
 silently dropped from the report."""
 
-from mge_detect.models.prophage.src.predict_genome import (
+from prophound.models.prophage.src.predict_genome import (
     MODE_THRESHOLDS,
     SHORT_CONTIG_SCALES,
     SHORT_CONTIG_THRESHOLDS,
@@ -62,7 +62,7 @@ def test_short_contig_thresholds_cover_every_mode_and_scale_and_keep_mode_order(
 
 def test_seed_support_counts_checkpoints_with_an_overlapping_call():
     import pandas as pd
-    from mge_detect.models.prophage.src.predict_genome import seed_support
+    from prophound.models.prophage.src.predict_genome import seed_support
 
     calls = pd.DataFrame({"contig_id": ["a", "a", "b"], "start": [0, 50_000, 0], "end": [20_000, 60_000, 5_000]})
     s1 = pd.DataFrame({"contig_id": ["a", "b"], "start": [10_000, 4_999], "end": [15_000, 9_000]})
@@ -73,7 +73,7 @@ def test_seed_support_counts_checkpoints_with_an_overlapping_call():
 
 def test_apply_seed_vote_keeps_calls_with_enough_support():
     import pandas as pd
-    from mge_detect.models.prophage.src.predict_genome import apply_seed_vote
+    from prophound.models.prophage.src.predict_genome import apply_seed_vote
 
     calls = pd.DataFrame({"contig_id": ["a", "a", "b"], "start": [0, 50_000, 0], "end": [20_000, 60_000, 5_000]})
     s1 = pd.DataFrame({"contig_id": ["a", "b"], "start": [10_000, 4_999], "end": [15_000, 9_000]})
@@ -86,7 +86,7 @@ def test_apply_seed_vote_keeps_calls_with_enough_support():
 
 
 def test_mode_vote_table_covers_every_mode():
-    from mge_detect.models.prophage.src.predict_genome import (
+    from prophound.models.prophage.src.predict_genome import (
         MODE_MIN_SEED_SUPPORT, MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS)
 
     assert set(MODE_MIN_SEED_SUPPORT) == set(MODE_THRESHOLDS) == set(SHORT_CONTIG_THRESHOLDS)

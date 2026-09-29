@@ -14,11 +14,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""`mge-detect predict` mirrors predict_genome's flags without importing torch;
+"""`prophound predict` mirrors predict_genome's flags without importing torch;
 the two parsers must agree on every shared default and choice list."""
 
-from mge_detect.mge_detect import build_parser
-from mge_detect.models.prophage.src.predict_genome import build_arg_parser
+from prophound.cli import build_parser
+from prophound.models.prophage.src.predict_genome import build_arg_parser
 
 
 def _actions(parser):

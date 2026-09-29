@@ -4,28 +4,28 @@ Living doc — update in place, don't append a history here (that's `SESSIONS.md
 
 ## Current CLI shape
 
-`mge-detect predict` (entrypoint `src/mge_detect/mge_detect.py`, dispatching into `src/mge_detect/models/prophage/src/predict_genome.py`):
+`prophound predict` (entrypoint `src/prophound/cli.py`, dispatching into `src/prophound/models/prophage/src/predict_genome.py`):
 
 ```
-mge-detect predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> \
+prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> \
   [--mode exploratory|default|conservative] [--threshold F] [--seed-threshold F] [--extend-threshold F] \
   [--device auto|cpu|cuda|rocm|mps|xpu|intel] [--batch-size N] [--num-workers N] [--num-tiles N]
   [--region-builder strict|coverage] [--coverage-frac F]
 ```
 
-Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json` (+ `bins.tsv` when `--num-tiles > 1`). This matches `src/mge_detect/models/prophage/notes/V1_INFERENCE_CONTRACT.md`.
+Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json` (+ `bins.tsv` when `--num-tiles > 1`). This matches `src/prophound/models/prophage/notes/V1_INFERENCE_CONTRACT.md`.
 
 `--config`/`--checkpoint` are required, with no bundled default weights — model-weight bundling is an open packaging question upstream (`notes/V1_PACKAGE_BOUNDARY.md`) that hasn't been decided, so this doesn't guess at an answer.
 
-`--region-builder` (added 2026-09-17; default `strict` = the frozen v1 builder, byte-identical output to before the flag existed — verified) selects how window scores become regions. `coverage` uses `predict_genome.build_region_table_coverage`: a stride bin is inside if ≥ `--coverage-frac` (default 0.3) of its covering windows individually score ≥ the extend threshold, instead of the strict builder's "mean of all covering windows ≥ extend". On the 18-genome eval set that lifts region recall 76.9%→88.5% (frac 0.3) / 94.2% (frac ≤0.1) and median IoU 0.56→0.75, at 2–4× the calls per genome; `run_metadata.json` records `region_builder: coverage_fraction` and `coverage_frac`. Not combinable with `--num-tiles > 1` (hard error). **Still opt-in, not the shipped default**: frac was chosen on the same 52 regions it was scored on — pending a held-out, size-stratified check (`docs/multi-model-architecture.md` "Cheap checks"). The flags are mirrored in `mge_detect.py` rather than imported so `--help` stays torch-free.
+`--region-builder` (added 2026-09-17; default `strict` = the frozen v1 builder, byte-identical output to before the flag existed — verified) selects how window scores become regions. `coverage` uses `predict_genome.build_region_table_coverage`: a stride bin is inside if ≥ `--coverage-frac` (default 0.3) of its covering windows individually score ≥ the extend threshold, instead of the strict builder's "mean of all covering windows ≥ extend". On the 18-genome eval set that lifts region recall 76.9%→88.5% (frac 0.3) / 94.2% (frac ≤0.1) and median IoU 0.56→0.75, at 2–4× the calls per genome; `run_metadata.json` records `region_builder: coverage_fraction` and `coverage_frac`. Not combinable with `--num-tiles > 1` (hard error). **Still opt-in, not the shipped default**: frac was chosen on the same 52 regions it was scored on — pending a held-out, size-stratified check (`docs/multi-model-architecture.md` "Cheap checks"). The flags are mirrored in `cli.py` rather than imported so `--help` stays torch-free.
 
 `--num-tiles` (default 1 = original frozen v1 behavior, unchanged) controls the multi-tile boundary-refinement mode — **now marked experimental/not-recommended** in its own `--help` text after 3 failed fix attempts; see `docs/boundary-refinement.md` ("Status: paused") before using it for anything but further investigation.
 
-Console script: `[project.scripts] mge-detect = "mge_detect.mge_detect:main"` in `pyproject.toml` (added 2026-09-08, replacing a fragile `python3 src/mge_detect/mge_detect.py` pixi task that broke package-relative imports when run as a bare script).
+Console script: `[project.scripts] prophound = "prophound.cli:main"` in `pyproject.toml` (added 2026-09-08, replacing a fragile `python3 src/prophound/cli.py` pixi task that broke package-relative imports when run as a bare script).
 
 ## Package structure
 
-`src/mge_detect/models/prophage/src/` is a real importable subpackage of `mge_detect` (`__init__.py` added at `models/`, `models/prophage/`, and `models/prophage/src/`; internal imports changed from `from src.X import Y` to relative `from .X import Y`).
+`src/prophound/models/prophage/src/` is a real importable subpackage of `prophound` (`__init__.py` added at `models/`, `models/prophage/`, and `models/prophage/src/`; internal imports changed from `from src.X import Y` to relative `from .X import Y`).
 
 **HPCC copy reconciled (2026-09-08)**: originally the HPCC's copy used the old `from src.X import Y` style while this local copy used relative imports (`from .X import Y`) — a deliberate divergence. As of the model-reengineering work (`docs/model-reengineering.md`), this local (relative-import) version of `model_rc_cnn.py`/`train_prophage.py` was pushed *to* the HPCC, overwriting the old-style copy (timestamped backups made first). Confirmed relative imports work fine there too under `python -m src.train_prophage --config ...` (namespace packages support this without `__init__.py`). The two copies should now match — if they're ever found to differ, treat the HPCC's as authoritative only if you can confirm which one actually trained the checkpoint you're using.
 
@@ -89,7 +89,7 @@ Reverse-complement handling is *not* a concern: window scores and whole-contig r
 
 - `--window-len` / `--stride`: override the checkpoint's trained 10 kb / 1 kb at inference. The pooling accepts any length, but the mode thresholds were calibrated at 10 kb, so a warning is printed whenever the length differs. `run_metadata.json` records both the used and the trained values.
 - `--refine-window-len W` (0 = off), plus `--refine-stride`, `--refine-threshold`, `--refine-margin`, `--edge-alpha`, `--split-min-gap-bp` and `--split-max-prob`: the fine pass that splits conflated calls and places edges. It needs `--region-builder coverage`. It writes an extra `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four".
-- The flags are defined twice, in `predict_genome.add_multiscale_args` and in `mge_detect.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
+- The flags are defined twice, in `predict_genome.add_multiscale_args` and in `cli.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
 
 ## Seed vote per mode (2026-09-29, user decision)
 
@@ -119,9 +119,9 @@ History, all on 2026-09-29:
 
 ## Usability pass (2026-09-29)
 
-From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-evidence.md`). New module: `src/mge_detect/models/prophage/src/io_checks.py`.
+From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-evidence.md`). New module: `src/prophound/models/prophage/src/io_checks.py`.
 
-- **`mge-detect --version`**. The version comes from the installed distribution (`pyproject.toml`); run from an uninstalled source tree it reads "unknown (not installed)". `run_metadata.json` records `mge_detect_version` and the SHA-256 of every checkpoint used.
+- **`prophound --version`**. The version comes from the installed distribution (`pyproject.toml`); run from an uninstalled source tree it reads "unknown (not installed)". `run_metadata.json` records `prophound_version` and the SHA-256 of every checkpoint used.
 - **stdout is empty**. Every `[warn]`, `[done]` and `[summary]` line, and the `tqdm` progress bars, go to stderr.
 - **Input validation** runs before anything touches the file (one streaming pass), with a one-line `error:` message and a nonzero exit. It rejects:
   - a missing or empty file;
@@ -151,6 +151,6 @@ From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-ev
 - **Flagged for later evaluation** (not v1 blockers):
   1. Per-call confidence or ranking for wet-lab prioritisation (today only raw mean/max probability, which per-genome thresholds would make non-comparable across genomes).
   2. Recall claims must name their overlap rule. ≥1 bp credits grazes; see `docs/downstream-postprocessing.md` "Per-element dig" for covered50.
-  3. The duplicated flag definitions in `mge_detect.py` and `predict_genome.py` (kept so the top-level CLI parses without importing torch; checked equal, but a maintenance hazard).
+  3. The duplicated flag definitions in `cli.py` and `predict_genome.py` (kept so the top-level CLI parses without importing torch; checked equal, but a maintenance hazard).
 - CLI surface as of today: one subcommand (`predict`), 29 options, most of them research knobs; `--help` does not yet separate user-facing from experimental options.
 

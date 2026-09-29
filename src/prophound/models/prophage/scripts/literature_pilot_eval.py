@@ -55,7 +55,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mode_recheck import calls, load_tracks, shipped_calls  # noqa: E402
 
 try:  # repo layout
-    from mge_detect.models.prophage.src.predict_genome import MODE_THRESHOLDS
+    from prophound.models.prophage.src.predict_genome import MODE_THRESHOLDS
 except ImportError:  # HPCC data_refactored/ layout
     from src.predict_genome import MODE_THRESHOLDS
 

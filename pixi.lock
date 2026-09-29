@@ -4383,5 +4383,5 @@ packages:
   size: 399979
   timestamp: 1742433432699
 - pypi: ./
-  name: mge-detect
+  name: prophound
   requires_python: '>=3.11'

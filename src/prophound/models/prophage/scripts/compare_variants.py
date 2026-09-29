@@ -18,7 +18,7 @@
 
 """Compare region-level metrics across inference variants (docs/scientific-validity.md).
 
-Consumes directories of `<genome>/regions.tsv` produced by `mge-detect predict`
+Consumes directories of `<genome>/regions.tsv` produced by `prophound predict`
 under different flags and reports, per variant, covered recall against geNomad
 truth plus calls/genome, median IoU and fragmentation. It is deliberately
 variant-agnostic: the ambiguity-policy job and the grid-phase job both use it.

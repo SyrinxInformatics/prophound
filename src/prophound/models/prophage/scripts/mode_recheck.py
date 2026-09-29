@@ -52,7 +52,7 @@ from compare_variants import score_variant  # noqa: E402
 from refine_sweep import covered50  # noqa: E402
 
 try:  # repo layout
-    from mge_detect.models.prophage.src.predict_genome import (
+    from prophound.models.prophage.src.predict_genome import (
         DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_MIN_SEED_SUPPORT,
         MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS, apply_seed_vote, build_region_table_coverage,
         iter_fasta_lengths)

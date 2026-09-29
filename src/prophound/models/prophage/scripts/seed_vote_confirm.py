@@ -91,7 +91,7 @@ def main() -> None:
 
 def mr_support(sub: pd.DataFrame, per: list) -> list:
     try:
-        from mge_detect.models.prophage.src.predict_genome import seed_support
+        from prophound.models.prophage.src.predict_genome import seed_support
     except ImportError:
         from src.predict_genome import seed_support
     return seed_support(sub, per)

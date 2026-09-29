@@ -21,7 +21,7 @@ import gzip
 import pandas as pd
 import pytest
 
-from mge_detect.models.prophage.src.io_checks import (InputError, validate_fasta, write_bed, write_gff3)
+from prophound.models.prophage.src.io_checks import (InputError, validate_fasta, write_bed, write_gff3)
 
 
 def _write(tmp_path, name, text):
@@ -65,7 +65,7 @@ def test_bed_is_zero_based_and_gff3_one_based(tmp_path):
                       "mean_prob": [0.5], "seed_support": [3], "boundary_kind": ["cov"]})
     write_bed(r, tmp_path / "r.bed")
     write_gff3(r, tmp_path / "r.gff3", "default", "0.1.0")
-    assert (tmp_path / "r.bed").read_text() == "c1\t100\t250\tmge_detect_1\t988\t.\n"
+    assert (tmp_path / "r.bed").read_text() == "c1\t100\t250\tprophound_1\t988\t.\n"
     gff = (tmp_path / "r.gff3").read_text().splitlines()
     assert gff[0] == "##gff-version 3"
     f = gff[2].split("\t")

@@ -21,7 +21,7 @@ import random
 
 import torch
 
-from mge_detect.models.prophage.src.predict_genome import (
+from prophound.models.prophage.src.predict_genome import (
     AMBIGUITY_POLICIES,
     DEFAULT_AMBIGUITY_POLICY,
     encode_window,
