@@ -1,5 +1,7 @@
 # Claims and evidence
 
+> **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
+
 Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the v1 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are in `docs/release-checklist.md`.
 
 ## The principle (user, 2026-09-28)
@@ -56,7 +58,7 @@ This is the finding that most changes how results should be written up.
 
 | layer | what it measures | current number |
 |---|---|---|
-| **Agreement with geNomad** | how well the tool reproduces its label source on held-out genomes | covered50 0.961 (ensemble, Default, n=179) |
+| **Agreement with geNomad** | how well the tool reproduces its label source on genomes held out from training | covered50 0.972 (0.949–0.994; ensemble, final Default, n=179). This is the **tuning sample**; the held-out figure comes from the lockbox |
 | **Agreement with curated truth** | how well it finds prophages that experts annotated | **not yet measured**. geNomad itself reaches only **0.81** covered50 on LAMBDA's clean subset (below) |
 
 geNomad covers about 81% of expert-curated prophages. A tool that matches geNomad at 96% will therefore land somewhere near 80% on curated truth. The 0.961 figure measures agreement, not accuracy. **Publishing it alone would oversell the tool, and the release must report both layers.** Curated truth is the number that tells a user how much of what is really there the tool finds.
@@ -120,7 +122,7 @@ Each claim gives the evidence it needs, its status, and the strongest wording th
 |---|---|---|
 | Design concept: recall-first screen, candidates, modes priced in calls/genome, runs alongside annotation tools | the design; survey in `docs/related-tools.md` | "designed as". Not "first". Being recall-leaning is not unique: Philympics characterizes VirSorter, VirSorter2 and DBSCAN-SWA that way, and geNomad has `--conservative`/`--relaxed` presets. What is distinct is stating the recall target explicitly and pricing each mode in follow-up cost. |
 | No gene calling and no reference database at run time | code | plain statement |
-| Agreement with geNomad on held-out genomes, stratified by size | `docs/model-quality-baseline.md` | "agrees with geNomad on 96% of held-out elements (covered50, CI)", **never** "96% accurate" |
+| Agreement with geNomad on held-out genomes, stratified by size | `docs/model-quality-baseline.md` | "agrees with geNomad on 97% of elements in a sample held out from training but used for tuning (covered50, CI)", replaced by the lockbox figure once scored, **never** "96% accurate" |
 | Robustness facts measured so far | RC exact; grid phase 1.7%; short-contig scan recovers covered 0.939 on shredded input; ambiguity `impute` | plain statements, with the numbers |
 
 ### Rung 2: improvement claims that need one new run
@@ -174,7 +176,7 @@ Today `regions.tsv` gives coordinates, `mean_prob`, `max_prob`, `boundary_kind`,
 - **Seed support** (3/3, 2/3, 1/3). Single-seed calls are 99% off-target (`docs/error-analysis.md`), so this is the most informative single column already available.
 - **Flags**: found by a short-contig scan, contains ambiguity codes, touches a contig edge, merged from pieces or possibly conflated.
 - **Size-class caveat**: element size classes with lower measured recall (sub-10 kb) are marked, with the recall figure in the docs.
-- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from held-out data. This must be labelled as agreement with known elements, not as the probability the call is real.
+- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from data held out from tuning (the lockbox). This must be labelled as agreement with known elements, not as the probability the call is real.
 
 ### An optional known-element overlay (proposal, user decision)
 

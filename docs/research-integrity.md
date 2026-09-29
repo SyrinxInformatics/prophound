@@ -182,7 +182,11 @@ Every reported number carries one of these roles. Release text uses the role's w
 | literature pilot, val genomes | checkpoint selection (early stopping) | same, with the caveat |
 | lockbox | **held out**: preregistered, scored once | the only "held-out" figure |
 
-Applied so far: README status, the CLI mode table, and the checklist claim items. `docs/model-quality-baseline.md` tables predate the labels; read them with this table.
+**Applied 2026-09-29, complete:**
+- The README status, the CLI mode table and the checklist claim items.
+- A standard sample-roles banner at the top of the 13 docs that report sample numbers (model-quality-baseline, scientific-validity, downstream-postprocessing, model-reengineering, v1-scope, adaptive-multiscale-detection, error-analysis, multi-model-architecture, gap-filling, claims-and-evidence, final-benchmark, boundary-refinement, related-tools).
+- 29 targeted rewordings wherever the text called a sample "held-out" or "independent" without qualification. The release-claim wording in `docs/claims-and-evidence.md` now says "held out from training but used for tuning" and carries the final-mode figure.
+- Historical results keep their original numbers, marked "held out at the time" where they were.
 
 ### C2 + C3 — intervals and coverage cut-offs
 

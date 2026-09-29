@@ -104,6 +104,11 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
         ),
     )
     parser.add_argument(
+        "--write-region-fasta",
+        action="store_true",
+        help="Also write the called regions' sequences to regions.fna.",
+    )
+    parser.add_argument(
         "--write-seed-scores",
         action="store_true",
         help=(
@@ -314,7 +319,37 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
     )
 
 
+# --help grouping for `predict` (docs/claims-and-evidence.md usability audit):
+# everything not listed here is "advanced".
+BASIC_OPTIONS = ("input_fasta", "outdir", "mode", "config", "checkpoint", "device", "write_region_fasta")
+EXPERIMENTAL_OPTIONS = ("num_tiles", "grid_offset", "window_len", "stride", "refine_window_len", "refine_stride",
+                        "refine_threshold", "refine_margin", "edge_alpha", "edge_alpha_ramp", "split_min_gap_bp",
+                        "split_max_prob", "region_builder", "ensemble")
+
+
+def _group_help(parser: argparse.ArgumentParser) -> None:
+    """Re-file `predict`'s options into basic / advanced / experimental sections of --help.
+
+    Only the help layout changes: every action keeps its definition and default.
+    """
+    groups = {"basic": parser.add_argument_group("basic options"),
+              "advanced": parser.add_argument_group("advanced options (thresholds, ensemble, input handling, outputs)"),
+              "experimental": parser.add_argument_group(
+                  "experimental options (not validated for default use; see docs/)")}
+    for grp in parser._action_groups:
+        if grp in groups.values():
+            continue
+        for action in list(grp._group_actions):
+            if action.dest == "help":
+                continue
+            kind = ("basic" if action.dest in BASIC_OPTIONS else
+                    "experimental" if action.dest in EXPERIMENTAL_OPTIONS else "advanced")
+            grp._group_actions.remove(action)
+            groups[kind]._group_actions.append(action)
+
+
 def build_parser() -> argparse.ArgumentParser:
+    from mge_detect import __version__
     parser = argparse.ArgumentParser(
         prog="mge-detect",
         description=(
@@ -322,8 +357,10 @@ def build_parser() -> argparse.ArgumentParser:
             "prokaryotic sequences."
         ),
     )
+    parser.add_argument("--version", action="version", version=f"mge-detect {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
     _add_predict_subparser(subparsers)
+    _group_help(subparsers.choices["predict"])
     return parser
 
 

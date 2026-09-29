@@ -117,6 +117,32 @@ History, all on 2026-09-29:
 - Per-seed calls are now built from the pre-builder window frame, so they no longer depend on the builder preserving row order (it did, but only by construction).
 - **Short-contig thresholds**: re-derived under the vote (above). `final_modes_rescore.slurm` confirms them under the final modes.
 
+## Usability pass (2026-09-29)
+
+From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-evidence.md`). New module: `src/mge_detect/models/prophage/src/io_checks.py`.
+
+- **`mge-detect --version`**. The version comes from the installed distribution (`pyproject.toml`); run from an uninstalled source tree it reads "unknown (not installed)". `run_metadata.json` records `mge_detect_version` and the SHA-256 of every checkpoint used.
+- **stdout is empty**. Every `[warn]`, `[done]` and `[summary]` line, and the `tqdm` progress bars, go to stderr.
+- **Input validation** runs before anything touches the file (one streaming pass), with a one-line `error:` message and a nonzero exit. It rejects:
+  - a missing or empty file;
+  - gzip (pyfaidx would fail obscurely);
+  - text that isn't FASTA, or a header with no ID;
+  - records with no sequence;
+  - duplicate contig IDs;
+  - protein FASTA (below 90% nucleotide or IUPAC letters).
+
+  The same pass counts ambiguity codes per code into `run_metadata.json` `input`.
+- **Run summary** on stderr at the end of every run: input size and ambiguity load, short contigs scanned or never scanned, calls and the percentage of input called, calls dropped by the seed vote, and the line "calls are candidates for follow-up, not annotations".
+- **Outputs**: `regions.bed` (BED6, 0-based, score = max_prob × 1000) and `regions.gff3` (1-based, SO type `prophage`, with `note=candidate`, `max_prob`, `mean_prob`, `seed_support` and `boundary_kind`) are written every run. `--write-region-fasta` adds `regions.fna`. `run_metadata.json` `outputs` lists what was written.
+- **`predict --help` is grouped**:
+  - basic (7): input, outdir, mode, config, checkpoint, device, region FASTA;
+  - advanced (13): thresholds, seed vote, ambiguity, merging, short contigs, batch size;
+  - experimental (14): tiles, grid offset, window length and stride, refinement, the region builder and the ensemble rule.
+
+  Only the layout changes; definitions and defaults don't, and `tests/test_cli_defaults.py` still checks the two parsers agree.
+- **ARC note**: `predict_genome.py` now imports `io_checks.py`. Any push of `src/predict_genome.py` must include `src/io_checks.py`.
+- Tests: `tests/test_io_checks.py` covers every rejection and the BED/GFF3 coordinate conventions (31 tests in total). An end-to-end check with planted tracks confirmed empty stdout, BED, GFF3 and FASTA agreeing with `regions.tsv`, the metadata blocks, and a clear protein-input error.
+
 ## Decisions 2026-09-24 (user)
 
 - **`--ambiguity-policy` defaults to `impute`** in both CLIs and in the library (`predict_genome.DEFAULT_AMBIGUITY_POLICY`). It is a no-op on ambiguity-free sequence: checked end to end byte-for-byte against the prior commit, and unit-tested in `tests/test_encoding.py` (816446 also showed covered recall identical to 3 dp on the eval sample). Numbers published before 2026-09-24 are reproduced with `--ambiguity-policy n-channel`. Note: `scripts/spikein_harness.py` keeps its own explicit `n-channel` default so its recorded curves stay reproducible.

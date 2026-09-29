@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
@@ -13,6 +14,7 @@ from pyfaidx import Fasta
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
+from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
 from .train_prophage import (
     DataConfig,
@@ -1025,8 +1027,10 @@ def write_metadata(
     refine: dict | None = None,
     short_contigs: dict | None = None,
     seed_support: dict | None = None,
+    extra: dict | None = None,
 ) -> None:
     metadata = {
+        "mge_detect_version": package_version(),
         "run_name": cfg.run_name,
         "checkpoint": checkpoint_path,
         "ensemble": ensemble_mode,
@@ -1046,6 +1050,8 @@ def write_metadata(
         "n_windows": int(len(windows_df)),
         "n_regions": int(len(regions_df)),
     }
+    if extra:
+        metadata.update(extra)
     if short_contigs:
         metadata["short_contigs"] = short_contigs
     if seed_support:
@@ -1113,6 +1119,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
             "default 3, conservative 3). Needs several --checkpoint files; 1 keeps "
             "every call. See docs/error-analysis.md."
         ),
+    )
+    parser.add_argument(
+        "--write-region-fasta",
+        action="store_true",
+        help="Also write the called regions' sequences to regions.fna.",
     )
     parser.add_argument(
         "--write-seed-scores",
@@ -1448,7 +1459,8 @@ def run_predict(args: argparse.Namespace) -> None:
         print(
             f"[warn] --window-len {cfg.data.window_len} differs from the trained "
             f"{trained_window_len}; the mode thresholds were calibrated at "
-            f"{trained_window_len} bp and are not validated at this length."
+            f"{trained_window_len} bp and are not validated at this length.",
+            file=sys.stderr,
         )
 
     num_tiles = max(1, getattr(args, "num_tiles", 1))
@@ -1480,6 +1492,7 @@ def run_predict(args: argparse.Namespace) -> None:
             raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
 
     input_path = Path(args.input_fasta)
+    input_summary = validate_fasta(str(input_path))   # fails early with a clear message
     genome_id = input_path.stem
     windows_df = build_multi_tile_windows(
         str(input_path),
@@ -1501,7 +1514,8 @@ def run_predict(args: argparse.Namespace) -> None:
             f"[warn] {short_report['n_short']} contig(s) shorter than {cfg.data.window_len} bp "
             f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
             f"{short_report['n_too_short']} under {min(SHORT_CONTIG_SCALES)} bp never scanned "
-            f"({short_report['bp_too_short']} bp)."
+            f"({short_report['bp_too_short']} bp).",
+            file=sys.stderr,
         )
     if windows_df.empty and (short_contigs == "skip" or short_windows_df.empty):
         raise RuntimeError("No inference windows were generated from the input FASTA.")
@@ -1529,7 +1543,7 @@ def run_predict(args: argparse.Namespace) -> None:
                else "the vote needs --region-builder coverage and --num-tiles 1")
         print(f"[warn] seed vote of {min_support} requested but {why}: "
               f"{'voting at ' + str(vote_k) if vote_k > 1 else 'no vote applied'}. The '{args.mode}' "
-              "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+              "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.", file=sys.stderr)
     vote_dropped = 0
     write_seed_scores = bool(getattr(args, "write_seed_scores", False)) and len(checkpoints) > 1
     per_seed_regions: List[List[pd.DataFrame]] = [[] for _ in checkpoints]
@@ -1642,7 +1656,7 @@ def run_predict(args: argparse.Namespace) -> None:
 
         if not calibrated:
             print(f"[warn] --short-contig-threshold {float(st):g} overrides the calibrated "
-                  "short-contig thresholds.")
+                  "short-contig thresholds.", file=sys.stderr)
         short_regions, short_windows, used = [], [], {}
         for scale, sw in short_windows_df.groupby("scale"):
             short_seed, short_extend = short_thresholds(int(scale))
@@ -1734,6 +1748,10 @@ def run_predict(args: argparse.Namespace) -> None:
         trained_stride=trained_stride,
         short_contigs=short_meta,
         seed_support=support_meta,
+        extra={"input": input_summary,
+               "checkpoint_sha256": {str(c): sha256(str(c)) for c in checkpoints},
+               "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
+               + (["regions.fna"] if getattr(args, "write_region_fasta", False) else [])},
         refine=(None if not refine_window_len else {
             "window_len": refine_window_len, "stride": refine_stride,
             "threshold": refine_threshold, "margin_bp": refine_margin,
@@ -1744,18 +1762,46 @@ def run_predict(args: argparse.Namespace) -> None:
         }),
     )
 
-    print(f"[done] wrote {windows_out}")
+    print(f"[done] wrote {windows_out}", file=sys.stderr)
     if fine_windows_df is not None:
         fine_out = outdir / "fine_windows.tsv"
         fine_windows_df.to_csv(fine_out, sep="\t", index=False)
-        print(f"[done] wrote {fine_out}")
-    print(f"[done] wrote {regions_out}")
-    print(f"[done] wrote {metadata_out}")
+        print(f"[done] wrote {fine_out}", file=sys.stderr)
+    print(f"[done] wrote {regions_out}", file=sys.stderr)
+    print(f"[done] wrote {metadata_out}", file=sys.stderr)
 
     if bins_df is not None:
         bins_out = outdir / "bins.tsv"
         bins_df.to_csv(bins_out, sep="\t", index=False)
-        print(f"[done] wrote {bins_out}")
+        print(f"[done] wrote {bins_out}", file=sys.stderr)
+
+    write_bed(regions_df, outdir / "regions.bed")
+    write_gff3(regions_df, outdir / "regions.gff3", args.mode, package_version())
+    print(f"[done] wrote {outdir / 'regions.bed'} and {outdir / 'regions.gff3'}", file=sys.stderr)
+    if getattr(args, "write_region_fasta", False):
+        write_region_fasta(regions_df, str(input_path), outdir / "regions.fna")
+        print(f"[done] wrote {outdir / 'regions.fna'}", file=sys.stderr)
+    print_run_summary(args.mode, input_summary, regions_df, short_meta, support_meta, ambiguity_policy,
+                      len(checkpoints))
+
+
+def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity_policy, n_ckpt) -> None:
+    """One human-readable block on stderr: what went in, what came out, what was skipped."""
+    lines = [f"mge-detect {package_version()} | mode {mode} | {n_ckpt} checkpoint(s)",
+             f"input: {inp['n_contigs']} contig(s), {inp['total_bp']:,} bp; "
+             f"ambiguity codes {inp['ambiguous_bases']:,} ({inp['ambiguous_ppm']:g} ppm), policy {ambiguity_policy}"]
+    if short_meta and short_meta.get("n_short"):
+        lines.append(f"short contigs: {short_meta['n_short']} under the window length ({short_meta['bp_short']:,} bp); "
+                     f"{short_meta['n_too_short']} never scanned ({short_meta['bp_too_short']:,} bp)")
+    n = len(regions_df)
+    bp = int((regions_df.end - regions_df.start).sum()) if n else 0
+    lines.append(f"calls: {n} ({bp:,} bp, {100 * bp / max(1, inp['total_bp']):.1f}% of input)")
+    if support_meta:
+        lines.append(f"seed vote: min support {support_meta['min_seed_support']}, "
+                     f"{support_meta['calls_dropped_by_vote']} call(s) dropped; kept by support "
+                     f"{support_meta['calls_by_support']}")
+    lines.append("calls are candidates for follow-up, not annotations")
+    print("\n".join("[summary] " + l for l in lines), file=sys.stderr)
 
 
 def main() -> None:

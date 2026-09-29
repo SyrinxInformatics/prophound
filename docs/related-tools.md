@@ -1,5 +1,7 @@
 # Related tools and positioning
 
+> **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
+
 Living doc, updated in place. Built 2026-09-28 from a web survey, with Jaeger's prophage code read directly from source (v1.26.5, released 2026-09-04). It is the source for the related-work and positioning parts of the planned GitHub write-up (`docs/release-checklist.md` §4). No journal publication is planned, so this repo write-up is the only place the positioning is argued.
 
 ## Positioning (user direction, 2026-09-28)
@@ -77,7 +79,7 @@ A community gold standard: 78 manually curated genomes with CDS-level `is_phage`
 - **State the label trade-off against LAMBDA and Jaeger openly.** Their labels are caller-independent, ours come from geNomad, and ours are in host context. Each choice buys something different.
 - **Claims, benchmarks and the evidence each claim needs are in `docs/claims-and-evidence.md`**, including the two-layer point: 96% agreement with geNomad is not 96% accuracy, since geNomad itself covers about 81% of LAMBDA's curated prophages.
 - **Run on LAMBDA's truth set.** Its 380 curated regions are not geNomad-derived, and published geNomad and gLM numbers exist on the same set, with per-window labels already on Zenodo. It is the cheapest comparison not bounded by geNomad. Check genome overlap with our training split first (*E. coli* K-12 at least is in training) and report the non-overlapping subset. Its 22 reviewed "likely phage" off-truth regions also give a small, external check on candidate calls.
-- **Recall figures are not comparable across truth sets or matching rules.** Our 0.961 covered50 is measured against geNomad on held-out genomes. Only a run on LAMBDA's own truth set, with its matching rule, supports a side-by-side comparison.
+- **Recall figures are not comparable across truth sets or matching rules.** Our covered50 (0.972 under the final Default) is measured against geNomad on the tuning sample, genomes held out from training. Only a run on LAMBDA's own truth set, with its matching rule, supports a side-by-side comparison.
 
 ## Sources
 
