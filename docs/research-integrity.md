@@ -293,6 +293,37 @@ The same 607 Default calls (pre-vote, `calls42.csv`) and the same categories. On
 
 `literature_truth.tsv` carries both `genome_id` and `accession`, and the rename made a duplicate column. The bug is fixed, the lockbox is added as a fifth set (with a per-set genome dir), and the job is to be resubmitted. C6 in the same job was unaffected.
 
+### C5 result (`822223`, 2026-09-30)
+
+Rerun as step 6 of `final_modes_rescore.slurm`. The job was clean: exit 0 and an empty `.err`. `analysis/integrity/containment.tsv` holds 521 evaluation elements against 2,742 training-positive intervals. Containment is 21-mer containment of the element in training positives.
+
+| set | n | median | ≥0.1 | ≥0.5 | ≥0.9 |
+|---|---|---|---|---|---|
+| sizestrat42 | 179 | 0.005 | 42 | 18 | 7 |
+| confirm18 | 52 | 0.008 | 19 | 16 | 4 |
+| litpilot | 57 | **0.723** | 44 | 34 | 6 |
+| insitu | 31 | 0.001 | 5 | 2 | 0 |
+| lockbox | 202 | 0.003 | 16 | 6 | 1 |
+
+Recall by containment: ensemble, final modes (shipped seed vote), covered50. The 42 and the 18 are rebuilt offline with `mode_recheck.shipped_calls`, and the totals reproduce the published 0.994 / 0.972 / 0.944 and 1.000 / 1.000 / 0.962. The literature pilot comes from `litpilot/results_final.elements.csv`.
+
+| set, containment | n | Exploratory | **Default** | Conservative | geNomad |
+|---|---|---|---|---|---|
+| 42, <0.1 | 137 | 0.993 | **0.964** | 0.934 | — |
+| 42, 0.1–0.5 | 24 | 1.000 | 1.000 | 0.958 | — |
+| 42, ≥0.5 | 18 | 1.000 | 1.000 | 1.000 | — |
+| 18, <0.1 | 33 | 1.000 | 1.000 | 0.939 | — |
+| 18, ≥0.1 | 19 | 1.000 | 1.000 | 1.000 | — |
+| literature, <0.1 | 13 | 0.846 | **0.615** | 0.615 | 0.462 |
+| literature, 0.1–0.5 | 10 | 1.000 | 1.000 | 0.900 | 0.600 |
+| literature, ≥0.5 | 34 | 1.000 | 1.000 | 1.000 | 1.000 |
+
+- **The ≥95% figure is not carried by training look-alikes.** Three-quarters of the 42 are essentially novel to training (<0.1). Default's five misses on the 42 are all in that bin, which still reads 0.964.
+- **The literature pilot is the most contained set** (median 0.723). Its pooled 0.912 is flattered: 34 of 57 elements are ≥50% contained, and both tools find all 34. On the 13 novel ones, Default finds 8 and geNomad 6. **Every novel miss is a remnant.** All four novel prophage and cryptic-prophage elements (SPβ, Sp18, Sp2, CP-933I) are found by both tools; Default's +2 over geNomad here are the remnants SpLE1 and *B. subtilis* prophage 6. Default's misses are SpLE2, SpLE4, SpLE6 and *B. subtilis* prophages 1 and 3. Exploratory recovers all but SpLE6 and prophage 1.
+- **In-situ loci are not near-duplicates** (median 0.001; 2 of 31 at ≥0.5). This settles the open question in `docs/v1-scope.md` A.1: the in-situ/implant gap is not a containment artifact.
+- **The lockbox is nearly novel by construction** (median 0.003; 6 of 202 at ≥0.5), as the genus-disjoint build intended.
+- The release reports the literature pilot split by containment, not only pooled.
+
 ### C7 — spike-in with model-independent implant sites (`822068`, 2026-09-29)
 
 Same 241 hold-out-checked inoviruses, now all placed twice: 482 implants in 28 hosts. Sites use geNomad elements and spacing only, with no model scores. The eval ran under the final modes. `analysis/spikein_siterule/`.
@@ -307,7 +338,7 @@ Same 241 hold-out-checked inoviruses, now all placed twice: 482 implants in 28 h
 - **Model-independent sites carry the opposite bias.** An implant inside or near a region the unmodified host already calls gets credit from that call. Inside a host call, Default detects 0.833 (30 implants). Within 20 kb of one, 0.694 (62).
 - The clean figure (no host call within 20 kb, host calls from `analysis/multiscale/*_3000` under the same mode) is the one to report.
 - **F7's direction:** the model-conditioned rule *understated* small-element detection a little (0.320 against 0.362). It excluded sites with moderately elevated host background, which seems to help an implant get called.
-- In-situ loci are unchanged by construction (same tracks). The Exploratory comparison against the old sites waits for `822223`'s `results_final`.
+- In-situ loci are unchanged by construction (same tracks). ~~The Exploratory comparison against the old sites waits for `822223`'s `results_final`.~~ **`822223`:** Exploratory 0.90 at the model-chosen sites detects 0.584 (3–5 / 5–8 / 8–10 kb: 0.18 / 0.55 / 0.92). That is against 0.674 raw and 0.617 clean at model-independent sites, the same direction as Default. The old rule understated detection in both modes.
 
 ### C4 final — literature pilot, final modes, revised classes (`822071`)
 

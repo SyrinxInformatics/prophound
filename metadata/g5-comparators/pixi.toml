@@ -1,0 +1,16 @@
+# Local comparator env for the G5 fragmented-input comparison
+# (docs/claims-and-evidence.md "G5 preregistration"). Jaeger only: geNomad runs
+# on ARC in the labelling env (1.9.4, DB 1.9). Kept apart from the package's
+# own env so TensorFlow never enters prophound's dependency tree.
+# CPU TensorFlow: the darwin-arm extra's tensorflow-metal plugin fails to load under TF 2.21.
+[workspace]
+name = "g5-comparators"
+channels = ["conda-forge", "bioconda"]
+platforms = ["osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+pip = "*"
+
+[pypi-dependencies]
+jaeger-bio = { version = "==1.26.5", extras = ["cpu"] }

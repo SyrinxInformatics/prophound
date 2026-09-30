@@ -32,6 +32,45 @@ One ensemble run of prophound (all three modes) on LAMBDA's 39 clean genomes, sc
 | G5 | **Fragmented input** | on identical MAG-like shreds of the 39 clean genomes, prophound retains more complete-genome recall than geNomad and Jaeger `-p` (`--lc` lowered, and stated) | **The most likely win**, but the only axis that needs installing other tools. ARC lacks MMseqs2 and Prodigal (preflight), so run the comparators locally, where both are conda/pip-installable. **Time-box: about one day for installs.** If it slips, fall back to a self-referential figure ("retains X% of its complete-genome recall"), which is measured already on eval genomes (covered 0.939) and needs no comparator. That is not a "better" claim. |
 | G6 | **CPU runtime** | wall-clock per genome versus geNomad on the same machine | Comes free with G5's local geNomad install. Without it, use no runtime comparison; published figures come from other hardware. |
 
+### G5 preregistration (2026-09-30, before any tool output on the shreds is scored)
+
+Fixed before scoring, like the LAMBDA bars. Changes after this point are dated amendments below it, never edits.
+
+**What was seen beforehand.** On one genome (GCA_000143885.2), Jaeger was run on the complete chromosome and on a single MAG-like shred. That was a format and runtime check: it produced 1 and 2 calls overlapping its one curated element. Nothing else was run or scored. prophound's complete-genome LAMBDA result (`822275`) was already known.
+
+**Correction to the G5 row above.** ARC does have geNomad: the labelling env (`mge_explorer`: geNomad 1.9.4 with DB 1.9, which the lockbox build used) runs it. The "ARC lacks MMseqs2 and Prodigal" note referred to the prophound env. So geNomad runs on ARC in the exact label version, and only Jaeger runs locally.
+
+**Input.** The 39 LAMBDA clean-subset chromosomes (149 curated elements), fetched as in `lambda_fetch.slurm`. MD5s for these and every shred are in `analysis/g5/input_md5.tsv`, and ARC refuses to run on anything that differs. Shreds come from `scripts/shred_genomes.py --dist lognormal --sigma 1.0 --min_contig 1500`. Fragment lengths are log-normal, with the length-weighted median set to the target N50. Fragments under 1.5 kb are dropped, as an assembly or binning cutoff would drop them. Breakpoints are uniform: real assemblies break preferentially at repeats, which this does not model, and the write-up says so.
+
+| condition | N50 target (realized) | fragments | bp kept | role |
+|---|---|---|---|---|
+| `complete` | — | 39 | 1.000 | denominator |
+| `mag_s0`, `mag_s1`, `mag_s2` | 20 kb (20.0–21.0 kb) | 14,570–14,971 | 0.995 | **primary**, pooled over the three shred seeds |
+| `draft_s0` | 100 kb (100.0 kb) | 3,164 | 1.000 | secondary |
+
+The N50 values are chosen as representative of short-read MAG and draft-isolate assemblies. They are not calibrated to any catalogue.
+
+**Tools**, identical settings on every condition:
+- **prophound:** the 3-checkpoint ensemble (SHA-256s as in C8) with shipped defaults (`--short-contigs scan`, `impute`). Modes are rebuilt offline with the shipped seed vote, as for LAMBDA. Contigs under 3 kb are never scanned; that is part of the tool. The complete condition reuses `822275`'s tracks.
+- **geNomad 1.9.4, DB 1.9, `end-to-end`,** default settings (plus `--cleanup`, which does not change results). Calls are every `virus_summary` row: proviruses at their coordinates, and whole-contig viruses at full length. On fragments, an element that fills its contig is reported as a virus rather than a provirus, and scoring only proviruses would penalise geNomad for that. Secondary: the find-proviruses table alone (the labelling pipeline).
+- **Jaeger 1.26.5,** CPU TensorFlow, `predict -p --lc 1500`. `--lc` is lowered from its 500 kb default to the shred minimum; otherwise it scans no fragment. This is stated with every Jaeger number. Calls are non-rejected prophage regions [sstart, eend] (raw_start/raw_end where no att site was found), plus contigs classified `phage` at full length. **Primary model: `jaeger_57341_1.5M_fragment`.** The bundled `default` model is deprecated in 1.26, and the model the README recommends (`jaeger_38341_1.4M_fragment`) is not on the download server. Secondary: `default`.
+
+**Scoring** (`scripts/g5_score.py`). Calls are mapped back to chromosome coordinates. Covered50 is computed against LAMBDA truth on all 39 genomes. Retention = shredded covered50 / complete covered50, per tool. MAG is pooled as elements × 3 shreds. Intervals are 95% paired genome bootstrap (10,000 resamples, seed 20260930), with the same resamples for every tool.
+
+**Primary endpoint:** prophound **Default**, MAG condition, retention against geNomad (virus_summary) and against Jaeger (57341_1.5M).
+
+**Bar: G5 clears only if, against both comparators:**
+1. prophound's retention is higher, with the paired interval of the difference above 0; and
+2. prophound's absolute MAG covered50 is not lower (point estimate).
+
+A higher retention on a lower absolute recall is not a win and is reported as such. Calls/genome and prophound at each comparator's per-genome call count (Exploratory calls ranked by max_prob) are always reported alongside, because the LAMBDA result showed that much of a raw margin can be cost.
+
+**Secondary, reported whatever the outcome:** Exploratory and Conservative; the draft condition; geNomad find-proviruses; Jaeger `default`; the 34 not-in-corpus genomes; elements under 10 kb; the reachable ceiling (elements ≥50% present in the kept fragments); geNomad and prophound wall-clock per run (a start on G6; hardware differs, so this is not the G6 comparison).
+
+**Wording set by outcome.** Cleared: *"on MAG-like fragmented input (N50 20 kb), prophound kept X of its complete-genome recall on LAMBDA's curated prophages, against Y for geNomad and Z for Jaeger, at N calls per genome"*. Not cleared: report the three retention figures plainly, with no comparative claim.
+
+**Runs:** `g5_shred.slurm` (**`822964`**) → `g5_prophound.slurm` (GPU, **`822965`**) and `g5_genomad.slurm` (CPU, **`822966`**) on ARC, submitted 2026-09-30; Jaeger locally with `scripts/g5_jaeger.sh` in `metadata/g5-comparators/` (pixi).
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |

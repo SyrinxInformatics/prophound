@@ -220,3 +220,8 @@ src/prophound/models/prophage/analysis/confirm18/*/
 src/prophound/models/prophage/analysis/phagefree/*/
 src/prophound/models/prophage/analysis/lambda/ens/*/
 src/prophound/models/prophage/analysis/ngap_dose/impute__*/
+# G5 fragmented-input comparison: inputs and raw tool outputs (parsed call tables stay tracked)
+src/prophound/models/prophage/analysis/g5/fasta/
+src/prophound/models/prophage/analysis/g5/shreds/
+src/prophound/models/prophage/analysis/g5/raw/
+metadata/g5-comparators/models/

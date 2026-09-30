@@ -1,0 +1,284 @@
+{
+  "element_free_bp": 174121200.0,
+  "modes": {
+    "exploratory": {
+      "reference": {
+        "threshold": 0.9,
+        "min_seed_support": 1,
+        "covered50_recall": 0.994413407821229,
+        "false_calls_per_mb": 7.603898893414473,
+        "frac_free_bp_called": 0.16527870816419826
+      },
+      "sweep": [
+        {
+          "threshold": 0.9,
+          "covered_recall": 0.9720670391061452,
+          "covered50_recall": 0.8268156424581006,
+          "false_calls_per_mb": 9.682910524393355,
+          "frac_free_bp_called": 0.05497896292926996,
+          "pos_fragment_detect": 0.7084233261339092,
+          "calls_per_genome": 56.904761904761905
+        },
+        {
+          "threshold": 0.95,
+          "covered_recall": 0.9664804469273743,
+          "covered50_recall": 0.7486033519553073,
+          "false_calls_per_mb": 6.547163699767748,
+          "frac_free_bp_called": 0.037774004543961334,
+          "pos_fragment_detect": 0.6565874730021598,
+          "calls_per_genome": 42.42857142857143
+        },
+        {
+          "threshold": 0.97,
+          "covered_recall": 0.9497206703910615,
+          "covered50_recall": 0.7318435754189944,
+          "false_calls_per_mb": 4.910372774825811,
+          "frac_free_bp_called": 0.028545662446617645,
+          "pos_fragment_detect": 0.6166306695464363,
+          "calls_per_genome": 34.714285714285715
+        },
+        {
+          "threshold": 0.98,
+          "covered_recall": 0.9497206703910615,
+          "covered50_recall": 0.6927374301675978,
+          "false_calls_per_mb": 3.9455275980179327,
+          "frac_free_bp_called": 0.02310689910246426,
+          "pos_fragment_detect": 0.5788336933045356,
+          "calls_per_genome": 29.80952380952381
+        },
+        {
+          "threshold": 0.985,
+          "covered_recall": 0.9497206703910615,
+          "covered50_recall": 0.6480446927374302,
+          "false_calls_per_mb": 3.434389379351854,
+          "frac_free_bp_called": 0.020077147412262263,
+          "pos_fragment_detect": 0.5572354211663066,
+          "calls_per_genome": 27.166666666666668
+        },
+        {
+          "threshold": 0.99,
+          "covered_recall": 0.9385474860335196,
+          "covered50_recall": 0.5921787709497207,
+          "false_calls_per_mb": 2.636094858064383,
+          "frac_free_bp_called": 0.015621928863343465,
+          "pos_fragment_detect": 0.5259179265658748,
+          "calls_per_genome": 23.095238095238095
+        },
+        {
+          "threshold": 0.995,
+          "covered_recall": 0.8938547486033519,
+          "covered50_recall": 0.5195530726256983,
+          "false_calls_per_mb": 1.8435434628293397,
+          "frac_free_bp_called": 0.01092221969524676,
+          "pos_fragment_detect": 0.4838012958963283,
+          "calls_per_genome": 18.69047619047619
+        },
+        {
+          "threshold": 0.998,
+          "covered_recall": 0.8268156424581006,
+          "covered50_recall": 0.441340782122905,
+          "false_calls_per_mb": 1.1256527062758586,
+          "frac_free_bp_called": 0.0066140309163961655,
+          "pos_fragment_detect": 0.40280777537796975,
+          "calls_per_genome": 13.785714285714286
+        },
+        {
+          "threshold": 0.999,
+          "covered_recall": 0.7821229050279329,
+          "covered50_recall": 0.37988826815642457,
+          "false_calls_per_mb": 0.6776888741864863,
+          "frac_free_bp_called": 0.004105410484191471,
+          "pos_fragment_detect": 0.3563714902807775,
+          "calls_per_genome": 10.833333333333334
+        }
+      ],
+      "recommended_threshold": 0.95
+    },
+    "default": {
+      "reference": {
+        "threshold": 0.95,
+        "min_seed_support": 3,
+        "covered50_recall": 0.9720670391061452,
+        "false_calls_per_mb": 2.446571698334264,
+        "frac_free_bp_called": 0.08476454906122861
+      },
+      "sweep": [
+        {
+          "threshold": 0.9,
+          "covered_recall": 0.9329608938547486,
+          "covered50_recall": 0.6759776536312849,
+          "false_calls_per_mb": 3.12426057252075,
+          "frac_free_bp_called": 0.020978628679333707,
+          "pos_fragment_detect": 0.5583153347732182,
+          "calls_per_genome": 25.88095238095238
+        },
+        {
+          "threshold": 0.95,
+          "covered_recall": 0.9217877094972067,
+          "covered50_recall": 0.6256983240223464,
+          "false_calls_per_mb": 2.05603912676917,
+          "frac_free_bp_called": 0.013965846777991422,
+          "pos_fragment_detect": 0.5043196544276458,
+          "calls_per_genome": 20.11904761904762
+        },
+        {
+          "threshold": 0.97,
+          "covered_recall": 0.888268156424581,
+          "covered50_recall": 0.5586592178770949,
+          "false_calls_per_mb": 1.4702402694215295,
+          "frac_free_bp_called": 0.010117395239637677,
+          "pos_fragment_detect": 0.4632829373650108,
+          "calls_per_genome": 16.666666666666668
+        },
+        {
+          "threshold": 0.98,
+          "covered_recall": 0.8659217877094972,
+          "covered50_recall": 0.5139664804469274,
+          "false_calls_per_mb": 1.2405152273244155,
+          "frac_free_bp_called": 0.008521908877264802,
+          "pos_fragment_detect": 0.4298056155507559,
+          "calls_per_genome": 14.904761904761905
+        },
+        {
+          "threshold": 0.985,
+          "covered_recall": 0.8435754189944135,
+          "covered50_recall": 0.4748603351955307,
+          "false_calls_per_mb": 1.1141664541710028,
+          "frac_free_bp_called": 0.007690407601142193,
+          "pos_fragment_detect": 0.41252699784017277,
+          "calls_per_genome": 13.976190476190476
+        },
+        {
+          "threshold": 0.99,
+          "covered_recall": 0.8212290502793296,
+          "covered50_recall": 0.4301675977653631,
+          "false_calls_per_mb": 0.8442395297068939,
+          "frac_free_bp_called": 0.00598062728719995,
+          "pos_fragment_detect": 0.3876889848812095,
+          "calls_per_genome": 12.261904761904763
+        },
+        {
+          "threshold": 0.995,
+          "covered_recall": 0.7597765363128491,
+          "covered50_recall": 0.3407821229050279,
+          "false_calls_per_mb": 0.5743126052427849,
+          "frac_free_bp_called": 0.004075373934937274,
+          "pos_fragment_detect": 0.3326133909287257,
+          "calls_per_genome": 9.880952380952381
+        },
+        {
+          "threshold": 0.998,
+          "covered_recall": 0.6703910614525139,
+          "covered50_recall": 0.2737430167597765,
+          "false_calls_per_mb": 0.35607381525052667,
+          "frac_free_bp_called": 0.00248923738177775,
+          "pos_fragment_detect": 0.27645788336933047,
+          "calls_per_genome": 7.642857142857143
+        },
+        {
+          "threshold": 0.999,
+          "covered_recall": 0.5977653631284916,
+          "covered50_recall": 0.2346368715083799,
+          "false_calls_per_mb": 0.24121129420196968,
+          "frac_free_bp_called": 0.001679743764688045,
+          "pos_fragment_detect": 0.23002159827213822,
+          "calls_per_genome": 6.095238095238095
+        }
+      ],
+      "recommended_threshold": 0.95
+    },
+    "conservative": {
+      "reference": {
+        "threshold": 0.995,
+        "min_seed_support": 3,
+        "covered50_recall": 0.9441340782122905,
+        "false_calls_per_mb": 1.0911939499612915,
+        "frac_free_bp_called": 0.04446367817359403
+      },
+      "sweep": [
+        {
+          "threshold": 0.9,
+          "covered_recall": 0.9329608938547486,
+          "covered50_recall": 0.6759776536312849,
+          "false_calls_per_mb": 3.12426057252075,
+          "frac_free_bp_called": 0.020978628679333707,
+          "pos_fragment_detect": 0.5583153347732182,
+          "calls_per_genome": 25.88095238095238
+        },
+        {
+          "threshold": 0.95,
+          "covered_recall": 0.9217877094972067,
+          "covered50_recall": 0.6256983240223464,
+          "false_calls_per_mb": 2.05603912676917,
+          "frac_free_bp_called": 0.013965846777991422,
+          "pos_fragment_detect": 0.5043196544276458,
+          "calls_per_genome": 20.11904761904762
+        },
+        {
+          "threshold": 0.97,
+          "covered_recall": 0.888268156424581,
+          "covered50_recall": 0.5586592178770949,
+          "false_calls_per_mb": 1.4702402694215295,
+          "frac_free_bp_called": 0.010117395239637677,
+          "pos_fragment_detect": 0.4632829373650108,
+          "calls_per_genome": 16.666666666666668
+        },
+        {
+          "threshold": 0.98,
+          "covered_recall": 0.8659217877094972,
+          "covered50_recall": 0.5139664804469274,
+          "false_calls_per_mb": 1.2405152273244155,
+          "frac_free_bp_called": 0.008521908877264802,
+          "pos_fragment_detect": 0.4298056155507559,
+          "calls_per_genome": 14.904761904761905
+        },
+        {
+          "threshold": 0.985,
+          "covered_recall": 0.8435754189944135,
+          "covered50_recall": 0.4748603351955307,
+          "false_calls_per_mb": 1.1141664541710028,
+          "frac_free_bp_called": 0.007690407601142193,
+          "pos_fragment_detect": 0.41252699784017277,
+          "calls_per_genome": 13.976190476190476
+        },
+        {
+          "threshold": 0.99,
+          "covered_recall": 0.8212290502793296,
+          "covered50_recall": 0.4301675977653631,
+          "false_calls_per_mb": 0.8442395297068939,
+          "frac_free_bp_called": 0.00598062728719995,
+          "pos_fragment_detect": 0.3876889848812095,
+          "calls_per_genome": 12.261904761904763
+        },
+        {
+          "threshold": 0.995,
+          "covered_recall": 0.7597765363128491,
+          "covered50_recall": 0.3407821229050279,
+          "false_calls_per_mb": 0.5743126052427849,
+          "frac_free_bp_called": 0.004075373934937274,
+          "pos_fragment_detect": 0.3326133909287257,
+          "calls_per_genome": 9.880952380952381
+        },
+        {
+          "threshold": 0.998,
+          "covered_recall": 0.6703910614525139,
+          "covered50_recall": 0.2737430167597765,
+          "false_calls_per_mb": 0.35607381525052667,
+          "frac_free_bp_called": 0.00248923738177775,
+          "pos_fragment_detect": 0.27645788336933047,
+          "calls_per_genome": 7.642857142857143
+        },
+        {
+          "threshold": 0.999,
+          "covered_recall": 0.5977653631284916,
+          "covered50_recall": 0.2346368715083799,
+          "false_calls_per_mb": 0.24121129420196968,
+          "frac_free_bp_called": 0.001679743764688045,
+          "pos_fragment_detect": 0.23002159827213822,
+          "calls_per_genome": 6.095238095238095
+        }
+      ],
+      "recommended_threshold": 0.99
+    }
+  }
+}
