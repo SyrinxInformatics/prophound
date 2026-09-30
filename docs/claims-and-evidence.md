@@ -71,6 +71,10 @@ A higher retention on a lower absolute recall is not a win and is reported as su
 
 **Runs:** `g5_shred.slurm` (**`822964`**) → `g5_prophound.slurm` (GPU, **`822965`**) and `g5_genomad.slurm` (CPU, **`822966`**) on ARC, submitted 2026-09-30; Jaeger locally with `scripts/g5_jaeger.sh` in `metadata/g5-comparators/` (pixi).
 
+**Amendment 2026-09-30 (same day, before any scoring): Jaeger moves to ARC.** The user installed Jaeger 1.26.5 in `mge_explorer_gpu`, so the Jaeger arm runs as `scripts/g5_jaeger.slurm` on `compute1` (**`822991`**). It uses the same models, the same flags (`-p --lc 1500 --cpu`), the same output layout and collector, and the same MD5-checked inputs. The local run (`scripts/g5_jaeger.sh`) was stopped after 17 of 195 primary-model runs, all on complete genomes. Its outputs were deleted unscored, and the local script stays only as a fallback. The design, endpoint and bar are unchanged. The TensorFlow build differs from the local pip wheel, which is not expected to change predictions.
+
+**Amendment 2026-09-30, second (before any scoring): Jaeger's primary model runs at `--fsize 3077`.** `822991` failed without producing any output, for two reasons: a launcher bug (a missing log directory) and `pyrodigal-gv` missing from the ARC env. The smoke log carried Jaeger's own warning that `jaeger_57341_1.5M_fragment` was trained on 3,077 nt fragments and "may degrade or collapse" at the 2,000 nt default, and that `--fsize 3077` is preferred. Running a comparator against its own documented guidance would handicap it, so the primary model uses `--fsize 3077`. The secondary `default` model keeps its defaults. Contigs shorter than the window are left at Jaeger's default `--min-len` (= `--fsize`). The launcher now also rejects any run whose log contains an ERROR line, because Jaeger exits 0 when its prophage step fails. `pyrodigal-gv` 0.3.2 was installed, matching the local env, and the job was resubmitted as **`823003`**.
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |

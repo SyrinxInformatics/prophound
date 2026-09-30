@@ -225,3 +225,4 @@ src/prophound/models/prophage/analysis/g5/fasta/
 src/prophound/models/prophage/analysis/g5/shreds/
 src/prophound/models/prophage/analysis/g5/raw/
 metadata/g5-comparators/models/
+src/prophound/models/prophage/analysis/g5/prophound/*/

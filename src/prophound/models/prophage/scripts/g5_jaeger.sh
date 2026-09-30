@@ -1,5 +1,6 @@
 #!/bin/bash
 # G5 fragmented-input comparison (docs/claims-and-evidence.md "G5 preregistration"):
+# LOCAL FALLBACK ONLY: superseded 2026-09-30 by scripts/g5_jaeger.slurm (ARC).
 # Jaeger 1.26.5 on the complete LAMBDA chromosomes and the four shred conditions,
 # locally, both models (57341_1.5M primary, bundled `default` secondary), then
 # collects the calls into analysis/g5/jaeger_calls.tsv. Resumable. Inputs are
@@ -10,7 +11,7 @@ set -uo pipefail
 G=analysis/g5
 ENV=../../../../metadata/g5-comparators
 RAW=$G/raw/jaeger
-MODELS="57341_1.5M:jaeger_57341_1.5M_fragment default:default"
+MODELS="57341_1.5M:jaeger_57341_1.5M_fragment:--fsize=3077 default:default:"   # amendment 2026-09-30
 CONDS="complete mag_s0 mag_s1 mag_s2 draft_s0"
 J="pixi run --manifest-path $ENV/pixi.toml jaeger"
 
@@ -28,7 +29,7 @@ echo "[preflight] jaeger $v; all 195 inputs match input_md5.tsv"
 
 mkdir -p "$RAW"
 for m in $MODELS; do
-  label=${m%%:*}; model=${m#*:}
+  IFS=: read -r label model extra <<< "$m"; extra=${extra//=/ }
   for c in $CONDS; do
     src=$([ "$c" = complete ] && echo "$G/fasta" || echo "$G/shreds/$c")
     echo "[$label $c] $(date)"
@@ -36,7 +37,7 @@ for m in $MODELS; do
       o="$RAW/$label/$c/$ASM"
       ls "$o"/*/*.log >/dev/null 2>&1 && ls "$o"/*/"$ASM"*.tsv >/dev/null 2>&1 && continue    # resumable
       rm -rf "$o"; s=$(date +%s)
-      $J predict -m "$model" -i "$src/$ASM.fna" -o "$o" -p --lc 1500 --cpu --workers 8 -f >"$RAW/last.log" 2>&1 \
+      $J predict -m "$model" -i "$src/$ASM.fna" -o "$o" -p --lc 1500 --cpu $extra --workers 8 -f >"$RAW/last.log" 2>&1 \
         && echo -e "$label\t$c\t$ASM\t$(( $(date +%s) - s ))" >> "$RAW/wall_seconds.tsv" \
         || { echo "FAILED $label $c $ASM" | tee -a "$RAW/failures.txt" >&2; }
     done < "$G/genome_list.txt"

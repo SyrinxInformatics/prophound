@@ -1,0 +1,11 @@
+=== job start ===
+Wed Sep 30 13:14:47 CDT 2026
+c011
+[preflight] 39 chromosomes match the local fetch
+[done] 39 genomes -> 14570 fragments in ../raw/g5_shreds/mag_s0.tmp; N50 20951 bp, 0.9954 of input bp kept
+[done] 39 genomes -> 14971 fragments in ../raw/g5_shreds/mag_s1.tmp; N50 19928 bp, 0.9952 of input bp kept
+[done] 39 genomes -> 14823 fragments in ../raw/g5_shreds/mag_s2.tmp; N50 19964 bp, 0.9952 of input bp kept
+[done] 39 genomes -> 3164 fragments in ../raw/g5_shreds/draft_s0.tmp; N50 100045 bp, 1.0000 of input bp kept
+[verify] all 156 shreds identical to the local ones
+=== job end (exit 0) ===
+Wed Sep 30 13:14:56 CDT 2026
