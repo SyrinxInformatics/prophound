@@ -207,6 +207,8 @@ def main() -> None:
     j.add_argument("--out", required=True)
     s = sub.add_parser("score")
     s.add_argument("--lambda_dir", required=True, help="lambda_prepare.py output (truth, genomes)")
+    s.add_argument("--truth_tsv", default=None, help="override <lambda_dir>/lambda_truth.tsv (G5b: g5b_truth.tsv)")
+    s.add_argument("--genomes_tsv", default=None, help="override <lambda_dir>/lambda_genomes.tsv (G5b: g5b_genomes.tsv)")
     s.add_argument("--prophound", action="append", default=[], metavar="COND=RUN_DIR")
     s.add_argument("--calls", action="append", default=[], help="collected call tables")
     s.add_argument("--shreds", default=None, help="dir of <condition>/ shred FASTAs, for the reachable ceiling")
@@ -223,8 +225,8 @@ def main() -> None:
         return
 
     D = Path(a.lambda_dir)
-    G = pd.read_csv(D / "lambda_genomes.tsv", sep="\t")
-    T = pd.read_csv(D / "lambda_truth.tsv", sep="\t")
+    G = pd.read_csv(a.genomes_tsv or D / "lambda_genomes.tsv", sep="\t")
+    T = pd.read_csv(a.truth_tsv or D / "lambda_truth.tsv", sep="\t")
     T["kb"] = (T.end - T.start) / 1000
     calls = [pd.read_csv(c, sep="\t") for c in a.calls]
     calls += [prophound_calls(*x.split("=", 1)) for x in a.prophound]

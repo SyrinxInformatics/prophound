@@ -1,0 +1,9 @@
+Achromobacter_denitrificans_strain_PR1
+GCA_000152565.1_ASM15256v1_genomic
+GCA_002082995.2_ASM208299v2_genomic
+GCA_002813895.1_ASM281389v1_genomic
+Paracoccus_aminophilus_JCM_7686
+Paracoccus_denitrificans_PD1222
+Paracoccus_sanguinis_5503
+Paracoccus_sp._SCN_68-21
+Paracoccus_yeei_TT13

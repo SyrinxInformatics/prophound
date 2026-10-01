@@ -11,6 +11,8 @@
 # /work/$USER/mge_explorer/data_refactored:
 #   sbatch --dependency=afterok:822964 scripts/g5_jaeger.slurm
 # (or plain `sbatch scripts/g5_jaeger.slurm` once 822964 has finished cleanly).
+# Paths come from G5_* environment variables (defaults: G5 on LAMBDA). G5b on Philympics:
+#   sbatch --export=ALL,G5_DIR=analysis/g5b,G5_FNA=analysis/g5b/fasta,G5_SHR=../raw/g5b_shreds,G5_OUT=../g5b_<tool> <script>
 #SBATCH -J g5_jaeger
 #SBATCH -p compute1
 #SBATCH -N 1
@@ -27,10 +29,11 @@ module load miniconda
 conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
-G=analysis/g5
-FNA=../raw/lambda
-SHR=../raw/g5_shreds
-RAW=../g5_jaeger                 # raw outputs stay on ARC
+G=${G5_DIR:-analysis/g5}
+FNA=${G5_FNA:-../raw/lambda}
+SHR=${G5_SHR:-../raw/g5_shreds}
+RAW=${G5_OUT:-../g5_jaeger}      # raw outputs stay on ARC
+N=$(grep -c . "$G/genome_list.txt")
 MODELDIR=/work/$USER/mge_explorer/jaeger_models
 PRIMARY=jaeger_57341_1.5M_fragment
 # label:model:extra flags (the primary model was trained on 3077 nt fragments; Jaeger warns against its 2000 default)
@@ -60,7 +63,7 @@ while IFS=$'\t' read -r path want; do
 done < "$G/input_md5.tsv"
 [ $bad -eq 0 ] || { echo "PREFLIGHT FAIL: $bad inputs differ (has g5_shred.slurm finished?)" >&2; fail=1; }
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
-echo "[preflight] jaeger $v; all 195 inputs match input_md5.tsv"
+echo "[preflight] jaeger $v; all inputs match input_md5.tsv"
 # ---------------------------------------------------------------------------
 
 # the primary model is a separate download (1.26 no longer bundles it). A one-genome
@@ -98,7 +101,7 @@ for m in $MODELS; do
     '
   done
 done
-echo "[jaeger] $(ls -d "$RAW"/*/*/*/ 2>/dev/null | wc -l) of 390 runs present"; date
+echo "[jaeger] $(ls -d "$RAW"/*/*/*/ 2>/dev/null | wc -l) of $((N * 10)) runs present"; date
 
 python scripts/g5_score.py collect-jaeger --root "$RAW" --out "$G/jaeger_calls.tsv"
 rc=$?

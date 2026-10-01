@@ -9,6 +9,8 @@
 #   S=$(sbatch --parsable scripts/g5_shred.slurm) && \
 #   sbatch --dependency=afterok:$S scripts/g5_prophound.slurm && \
 #   sbatch --dependency=afterok:$S scripts/g5_genomad.slurm
+# Paths come from G5_* environment variables (defaults: G5 on LAMBDA). G5b on Philympics:
+#   sbatch --export=ALL,G5_DIR=analysis/g5b,G5_FNA=analysis/g5b/fasta,G5_SHR=../raw/g5b_shreds,G5_OUT=../g5b_<tool> <script>
 #SBATCH -J g5_shred
 #SBATCH -p compute1
 #SBATCH -n 1
@@ -24,9 +26,10 @@ module load miniconda
 conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
-G=analysis/g5
-FNA=../raw/lambda
-SHR=../raw/g5_shreds             # sibling of raw/lambda, kept apart from the corpus
+G=${G5_DIR:-analysis/g5}
+FNA=${G5_FNA:-../raw/lambda}
+SHR=${G5_SHR:-../raw/g5_shreds}   # sibling of raw/lambda, kept apart from the corpus
+N=$(grep -c . "$G/genome_list.txt")
 mkdir -p analysis/_slurm_logs "$SHR"
 
 # ---- preflight (docs/environment.md) ---------------------------------------
@@ -37,14 +40,14 @@ done
 grep -q -- '--dist' scripts/shred_genomes.py \
   || { echo "PREFLIGHT FAIL: scripts/shred_genomes.py lacks --dist lognormal (not pushed?)" >&2; fail=1; }
 n=$(ls "$FNA"/*.fna 2>/dev/null | wc -l)
-[ "$n" -eq 39 ] || { echo "PREFLIGHT FAIL: $FNA has $n/39 sequences" >&2; fail=1; }
+[ "$n" -eq "$N" ] || { echo "PREFLIGHT FAIL: $FNA has $n/$N sequences" >&2; fail=1; }
 # the complete chromosomes must be the ones the local Jaeger runs used
 while IFS=$'\t' read -r path want; do
   case "$path" in fasta/*) got=$(md5sum "$FNA/${path#fasta/}" | cut -d' ' -f1)
     [ "$got" = "$want" ] || { echo "PREFLIGHT FAIL: $FNA/${path#fasta/} md5 $got != $want" >&2; fail=1; } ;; esac
 done < "$G/input_md5.tsv"
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
-echo "[preflight] 39 chromosomes match the local fetch"
+echo "[preflight] $N genomes match the local files"
 # ---------------------------------------------------------------------------
 
 rc=0
@@ -69,7 +72,7 @@ if [ $bad -gt 0 ]; then
   echo "FAILED: $bad shreds differ from the local ones -- the comparison would not be on identical input" >&2
   rc=1
 else
-  echo "[verify] all 156 shreds identical to the local ones"
+  echo "[verify] all $((N * 4)) shreds identical to the local ones"
 fi
 echo "=== job end (exit $rc) ==="; date
 exit $rc

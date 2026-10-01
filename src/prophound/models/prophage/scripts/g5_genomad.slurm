@@ -8,6 +8,8 @@
 # The find-proviruses table is kept too, as a secondary. Then collects every call
 # into one small table, analysis/g5/genomad_calls.tsv, which is all that needs pulling.
 # Submit with the other two steps (g5_shred.slurm has the line).
+# Paths come from G5_* environment variables (defaults: G5 on LAMBDA). G5b on Philympics:
+#   sbatch --export=ALL,G5_DIR=analysis/g5b,G5_FNA=analysis/g5b/fasta,G5_SHR=../raw/g5b_shreds,G5_OUT=../g5b_<tool> <script>
 #SBATCH -J g5_genomad
 #SBATCH -p compute1
 #SBATCH -N 1
@@ -23,10 +25,10 @@ echo "=== job start ==="; date; hostname
 module load miniconda
 cd /work/$USER/mge_explorer/data_refactored
 
-G=analysis/g5
-FNA=../raw/lambda
-SHR=../raw/g5_shreds
-GMD=../g5_genomad                # raw outputs stay on ARC
+G=${G5_DIR:-analysis/g5}
+FNA=${G5_FNA:-../raw/lambda}
+SHR=${G5_SHR:-../raw/g5_shreds}
+GMD=${G5_OUT:-../g5_genomad}    # raw outputs stay on ARC
 DB=/work/$USER/mge_explorer/genomad_db/genomad_db
 PYENV=/home/$USER/.conda/envs/mge_explorer_gpu
 GMDENV=/home/$USER/.conda/envs/mge_explorer
@@ -46,10 +48,11 @@ conda activate "$GMDENV" && command -v genomad >/dev/null \
   || { echo "PREFLIGHT FAIL: genomad not on PATH in $GMDENV" >&2; fail=1; }
 v=$(genomad --version 2>&1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
 [ "$v" = "1.9.4" ] || { echo "PREFLIGHT FAIL: genomad --version gave '$(genomad --version 2>&1)', expected 1.9.4" >&2; fail=1; }
-n=$(ls "$FNA"/*.fna 2>/dev/null | wc -l); [ "$n" -eq 39 ] || { echo "PREFLIGHT FAIL: $FNA has $n/39" >&2; fail=1; }
+N=$(grep -c . "$G/genome_list.txt")
+n=$(ls "$FNA"/*.fna 2>/dev/null | wc -l); [ "$n" -eq "$N" ] || { echo "PREFLIGHT FAIL: $FNA has $n/$N" >&2; fail=1; }
 for c in mag_s0 mag_s1 mag_s2 draft_s0; do
   n=$(ls "$SHR/$c"/*.fna 2>/dev/null | wc -l)
-  [ "$n" -eq 39 ] || { echo "PREFLIGHT FAIL: $SHR/$c has $n/39 shredded genomes (g5_shred.slurm)" >&2; fail=1; }
+  [ "$n" -eq "$N" ] || { echo "PREFLIGHT FAIL: $SHR/$c has $n/$N shredded genomes (g5_shred.slurm)" >&2; fail=1; }
 done
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
 echo "[preflight] geNomad $v, DB 1.9, all inputs present"
@@ -71,7 +74,7 @@ for c in $CONDS; do
       && echo -e "$C\t$b\t$(( $(date +%s) - s ))" >> "$GMD/wall_seconds.tsv" \
       || echo "FAILED genomad $C $b" >> "$GMD/failures.txt"
   '
-  echo "[genomad $c] $(ls "$GMD/$c"/*/*_summary/*_virus_summary.tsv 2>/dev/null | wc -l) of 39"; date
+  echo "[genomad $c] $(ls "$GMD/$c"/*/*_summary/*_virus_summary.tsv 2>/dev/null | wc -l) of $N"; date
 done
 
 conda activate "$PYENV"

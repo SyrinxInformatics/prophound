@@ -113,6 +113,29 @@ prophound leads when an element survives in one or two pieces. It trails once th
 
 **Runtime, toward G6 (different hardware, so not the G6 comparison):** geNomad 340 s per complete genome (4 CPU threads); Jaeger 57341_1.5M 189 s and `default` 55 s (8 CPU workers); prophound about 22 s per genome on one V100 for the MAG shreds.
 
+### G5b preregistration (2026-10-01, before any fix exists)
+
+**Why.** G5 did not clear (above), and its post-hoc look used the LAMBDA shreds. The user decided on 2026-10-01 to fix the fragmented-input weakness and to confirm it on data no part of the work has touched. **The G5 result stands as reported.** A LAMBDA re-run with the fix is reported as post-hoc only and is never evidence for G5b.
+
+**Protocol, in order:**
+1. **Development on corpus shreds only.** The fix is built and tuned on the 42 size-stratified eval genomes, shredded exactly as in G5, with geNomad truth (`scripts/g5dev_prophound.slurm`, `analysis/g5dev/`). It is checked on the 18 confirmation genomes. Only prophound runs; its target is its own retention (shredded / complete covered50) and calls/genome. No LAMBDA or Philympics output is looked at during development.
+2. **Freeze.** Before G5b is scored, an amendment below this section records the git commit, the fix's parameters and its default-on/off state. prophound runs on G5b only after that amendment.
+3. **Comparators** may run on G5b before the freeze (they do not depend on the fix). Their output is collected but not looked at until prophound's G5b run exists.
+3a. **Jobs** (submitted 2026-10-01): development `824148`; G5b shred `824149`, geNomad `824150`, Jaeger `824151`.
+4. **Score once**, with `scripts/g5_score.py score --truth_tsv analysis/g5b/g5b_truth.tsv --genomes_tsv analysis/g5b/g5b_genomes.tsv`.
+
+**Genome set, fixed now:** the 9 Philympics genomes that are outside our corpus *and* not among LAMBDA's 39. Philympics is pinned to `linsalrob/ProphagePredictionComparisons@dacfb153` (GenBank via Git LFS; `genbank/prophageCoords.tsv`). The 9 are *Achromobacter denitrificans* PR1, *Burkholderia cenocepacia* PC184, *Campylobacter jejuni* (GCA_002082995.2), *Cyanobacterium* sp. HL-69, and five *Paracoccus* (*aminophilus* JCM 7686, *denitrificans* PD1222, *sanguinis* 5503, sp. SCN 68-21, *yeei* TT13). The 4 genomes unmapped to our corpus are excluded by rule, because their corpus status cannot be verified cheaply. MD5s for the GenBank files, the coordinates file, the FASTAs and all shreds are in `analysis/g5b/input_md5.tsv`.
+
+**Truth:** Philympics rows with ≥5 genes or ≥5 kb, giving **32 of 36 rows**. Coordinates are converted 1-based inclusive → 0-based half-open. One fuzzy bound (`>1753287`, *C. jejuni*) is taken at face value. Built by `scripts/g5b_prepare.py`. Every record of each GenBank file is kept, and headers are bare accessions. Two genomes are already drafts (*P. sanguinis*: 265 records; *Paracoccus* sp. SCN 68-21, a MAG: 87), so their "complete" condition is the deposited assembly.
+
+**Conditions:** identical rule to G5 (log-normal, sigma 1.0, ≥1.5 kb; MAG N50 20 kb seeds 0–2, draft N50 100 kb seed 0). The drafts cap fragment length, so realized N50 is lower: MAG 18.5–19.4 kb, draft 75 kb. 3,145–3,247 MAG fragments.
+
+**Tools:** exactly as in G5 with its amendments. geNomad 1.9.4 / DB 1.9 end-to-end (`virus_summary`). Jaeger 1.26.5, `57341_1.5M` at `--fsize 3077` (primary) and `default` (secondary), `-p --lc 1500 --cpu`. prophound is the frozen post-fix version.
+
+**Endpoint and bar: unchanged from G5.** prophound Default, MAG pooled over three seeds. G5b clears only if prophound's retention exceeds both geNomad's and Jaeger's with paired genome-bootstrap intervals above 0, *and* its absolute MAG covered50 is not lower than either. Calls/genome and matched cost are reported alongside.
+
+**Power, stated in advance.** There are 32 elements in 9 genomes, against LAMBDA's 149 in 39, so intervals will be roughly twice as wide. Clearing needs a retention lead of about 0.13 over both tools. On LAMBDA, prophound trailed by 0.07–0.11 before any fix. **An inconclusive G5b is the likely outcome** unless the fix is large. If it is inconclusive, the release gets the fix with self-referential retention figures and no comparative claim, as the G5 verdict already requires. Five of the 9 genomes are one genus, and the write-up says so.
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |
