@@ -41,6 +41,12 @@ of element-free sequence do not exceed the shipped pipeline's on the complete
 genomes, in that mode. The 18 then check it; nothing is chosen on them. Ties go
 to the simpler variant (fewer active rules, then smaller d, then larger t and f).
 
+Complete-genome regression check (reported, not part of selection): the
+selected variant's calls on the 20 geNomad-negative test-split genomes
+(--phagefree), against the shipped pipeline's, and on the `complete` condition
+of both sets. By design neither rule should change much on intact chromosomes;
+this measures it.
+
 Inputs: tracks <run_root>/<condition>/<genome>/{windows.tsv, run_metadata.json}
 written with --write-seed-scores (g5dev_prophound.slurm), and a fragment-length
 table (condition, genome, contig_id, length) covering every contig of every
@@ -49,7 +55,7 @@ condition, so whole-contig calls get exact ends.
 Example:
   python scripts/g5dev_eval.py --run_root analysis/g5dev/prophound --lengths analysis/g5dev/contig_lengths.tsv \\
       --set tune=scripts/eval_sizestrat_elements.csv --set check=scripts/eval_confirm18_elements.csv \\
-      --out analysis/g5dev/sweep.json
+      --phagefree analysis/phagefree --out analysis/g5dev/sweep.json
 """
 
 from __future__ import annotations
@@ -129,6 +135,56 @@ def to_genome(reg: pd.DataFrame) -> pd.DataFrame:
                          "end": reg.end.to_numpy().astype(int) + np.array([o for _, o in so], int)})
 
 
+def apply_variant(base: pd.DataFrame, win: pd.DataFrame, lengths: dict, mode: str, d: int, t, f,
+                  cache: dict) -> tuple[pd.DataFrame, int]:
+    """Shipped calls -> calls under variant (d, t, f); returns the calls and the number of WC calls."""
+    reg = edge_snap(base, lengths, d)
+    if t is None:
+        return reg, 0
+    k = mr.MODE_MIN_SEED_SUPPORT[mode]
+    tt = mr.MODE_THRESHOLDS[mode] if t == "mode" else t
+    if (tt, f, k) not in cache:
+        cache[(tt, f, k)] = whole_contig(win, lengths, tt, f, k)
+    wc = cache[(tt, f, k)]
+    if len(wc):
+        key = set(zip(wc.genome_id, wc.contig_id.astype(str)))
+        reg = reg[[(g, str(c)) not in key for g, c in zip(reg.genome_id, reg.contig_id)]]
+        reg = pd.concat([reg, wc], ignore_index=True)
+    return reg, len(wc)
+
+
+def phagefree_check(root: Path, summary_csv: str, modes: list, variants: list) -> dict:
+    """Calls on the 20 geNomad-negative test-split genomes (complete), per mode and variant.
+
+    The tracks keep each checkpoint in its own run dir (<root>/{ens,r1,r2,r3}/<genome>/,
+    from confirm_eval.slurm), joined here row by row. Exact contig lengths are not
+    available locally, so a contig's length is taken as its furthest window end, which
+    is within one stride (1 kb) of the true end; only edge snapping reads it.
+    """
+    ens = mr.load_tracks(str(root / "ens"))
+    seeds = []
+    for r in ("r1", "r2", "r3"):
+        t = mr.load_tracks(str(root / r))
+        for g, (w, _) in t.items():
+            if not (w[["contig_id", "start", "end"]].to_numpy() == ens[g][0][["contig_id", "start", "end"]].to_numpy()).all():
+                raise SystemExit(f"{root}/{r}/{g}: windows do not line up with the ensemble run")
+        seeds.append(t)
+    lengths = {(g, str(c)): int(e) for g, (w, _) in ens.items() for c, e in w.groupby("contig_id").end.max().items()}
+    bp = pd.read_csv(summary_csv).set_index("accession").total_bp.reindex(list(ens))
+    if bp.isna().any():
+        raise SystemExit(f"{summary_csv} lacks total_bp for {list(bp[bp.isna()].index)[:3]}")
+    win = window_table(ens, seeds)
+    out, cache = {}, {}
+    for mode in modes:
+        base = mr.shipped_calls(ens, seeds, mode)
+        for d, t, f in variants:
+            reg, n_wc = apply_variant(base, win, lengths, mode, d, t, f, cache)
+            out[f"{mode}|es={d}|wc={t},{f}"] = {
+                "calls_per_genome": len(reg) / len(ens), "calls_per_mb": len(reg) / (bp.sum() / 1e6),
+                "frac_bp_called": float((reg.end - reg.start).sum() / bp.sum()), "wc_calls": n_wc}
+    return {"n_genomes": len(ens), "cells": out}
+
+
 def metrics(T: pd.DataFrame, calls: pd.DataFrame, genome_bp: pd.Series) -> dict:
     f = cov_frac(T, calls)
     hit = f >= 0.5
@@ -150,6 +206,8 @@ def main() -> None:
     ap.add_argument("--set", action="append", required=True, metavar="NAME=ELEMENTS_CSV",
                     help="tune=... (selection) and check=... (confirmation only)")
     ap.add_argument("--modes", default="default,exploratory,conservative")
+    ap.add_argument("--phagefree", default=None, help="dir with ens/ r1/ r2/ r3/ tracks of geNomad-negative genomes")
+    ap.add_argument("--summary", default="summary.csv", help="accession,total_bp (for --phagefree)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
@@ -179,21 +237,9 @@ def main() -> None:
             win = window_table(ens, seeds)
             wc_cache = {}
             for mode in modes:
-                base = mr.shipped_calls(ens, [s for s in seeds], mode)
-                k = mr.MODE_MIN_SEED_SUPPORT[mode]
+                base = mr.shipped_calls(ens, seeds, mode)
                 for d, t, f in variants:
-                    reg = edge_snap(base, lengths, d)
-                    n_wc = 0
-                    if t is not None:
-                        tt = mr.MODE_THRESHOLDS[mode] if t == "mode" else t
-                        if (tt, f, k) not in wc_cache:
-                            wc_cache[(tt, f, k)] = whole_contig(win, lengths, tt, f, k)
-                        wc = wc_cache[(tt, f, k)]
-                        n_wc = len(wc)
-                        if n_wc:
-                            key = set(zip(wc.genome_id, wc.contig_id.astype(str)))
-                            reg = reg[[(g, str(c)) not in key for g, c in zip(reg.genome_id, reg.contig_id)]]
-                            reg = pd.concat([reg, wc], ignore_index=True)
+                    reg, n_wc = apply_variant(base, win, lengths, mode, d, t, f, wc_cache)
                     m = metrics(T, to_genome(reg), genome_bp)
                     hits[(cond, mode, d, t, f)] = m.pop("_hit")
                     out["cells"][f"{cond}|{mode}|es={d}|wc={t},{f}"] = {**m, "wc_calls": n_wc}
@@ -212,6 +258,8 @@ def main() -> None:
                                                                    for s in ("mag_s0", "mag_s1", "mag_s2")]))}
         out["retention"] = ret
     res.pop("_bp", None)
+    if a.phagefree:
+        res["phagefree"] = phagefree_check(Path(a.phagefree), a.summary, modes, variants)
 
     # selection on `tune` only, per the rule in the docstring
     tune = res["sets"]["tune"]
@@ -250,6 +298,11 @@ def main() -> None:
         print(f"   selected {v['variant']}: retention {v['mag_retention']:.3f}, complete {v['complete']:.3f}, "
               f"MAG {v['mag']:.3f}, draft {v['draft']:.3f}, calls/genome {v['mag_calls_per_genome']:.1f}, "
               f"false/Mb {v['mag_false_per_mb']:.2f}")
+        if "phagefree" in res:
+            pf = res["phagefree"]["cells"]
+            b0, b1 = pf[f"{mode}|es=0|wc=None,None"], pf[v["variant"]]
+            print(f"   phage-free complete genomes (n={res['phagefree']['n_genomes']}): calls/genome "
+                  f"{b1['calls_per_genome']:.2f} vs baseline {b0['calls_per_genome']:.2f}; WC calls {b1['wc_calls']}")
         for s, c in v["check"].items():
             print(f"   check on {s}: retention {c['mag_retention']:.3f} vs baseline {c['baseline']['mag_retention']:.3f}; "
                   f"false/Mb {c['mag_false_per_mb']:.2f} vs {c['baseline']['mag_false_per_mb']:.2f}")
