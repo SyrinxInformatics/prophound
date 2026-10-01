@@ -75,6 +75,44 @@ A higher retention on a lower absolute recall is not a win and is reported as su
 
 **Amendment 2026-09-30, second (before any scoring): Jaeger's primary model runs at `--fsize 3077`.** `822991` failed without producing any output, for two reasons: a launcher bug (a missing log directory) and `pyrodigal-gv` missing from the ARC env. The smoke log carried Jaeger's own warning that `jaeger_57341_1.5M_fragment` was trained on 3,077 nt fragments and "may degrade or collapse" at the 2,000 nt default, and that `--fsize 3077` is preferred. Running a comparator against its own documented guidance would handicap it, so the primary model uses `--fsize 3077`. The secondary `default` model keeps its defaults. Contigs shorter than the window are left at Jaeger's default `--min-len` (= `--fsize`). The launcher now also rejects any run whose log contains an ERROR line, because Jaeger exits 0 when its prophage step fails. `pyrodigal-gv` 0.3.2 was installed, matching the local env, and the job was resubmitted as **`823003`**.
 
+### G5 result (`822964`–`822966`, `823003`; scored once on 2026-10-01)
+
+All runs were clean: every `.err` was empty and every job exited 0. That covers 156/156 prophound, 195/195 geNomad and 390/390 Jaeger runs, with no failures. All shreds were byte-identical across tools, and checkpoint SHA-256s match C8. Every element is reachable in every condition (≥50% of its bp lies in the kept fragments). Scored with `scripts/g5_score.py score`; outputs in `analysis/g5/results.{json,csv}`.
+
+**Covered50 on LAMBDA curated truth, 39 genomes / 149 elements.** MAG is pooled over three shred seeds. Intervals are 95% paired genome bootstrap.
+
+| tool | complete | MAG (N50 20 kb) | **retention** | MAG calls/genome | draft (N50 100 kb) | draft retention |
+|---|---|---|---|---|---|---|
+| prophound Exploratory | 0.946 | 0.908 | 0.960 | 40.4 | 0.946 | 1.000 |
+| **prophound Default** | 0.933 | **0.855** | **0.916 (0.844–0.968)** | 17.6 | 0.933 | 1.000 |
+| prophound Conservative | 0.899 | 0.781 | 0.868 | 11.0 | 0.893 | 0.993 |
+| **geNomad** (end-to-end) | 0.812 | **0.830** | **1.022 (0.991–1.065)** | 14.4 | 0.819 | 1.008 |
+| **Jaeger 57341_1.5M** | 0.859 | **0.848** | **0.987 (0.969–1.009)** | 22.6 | 0.852 | 0.992 |
+| geNomad find-proviruses only | 0.819 | 0.273 | 0.333 | 3.2 | 0.745 | 0.910 |
+| Jaeger `default` model | 0.832 | 0.617 | 0.742 | 11.4 | 0.262 | 0.315 |
+
+**Verdict: G5 does not clear. Its claim is refuted, not just unsupported.**
+- Retention, prophound Default minus each comparator: geNomad **−0.106** (−0.215 to −0.030), Jaeger **−0.071** (−0.148 to −0.013). Both intervals lie below zero.
+- Absolute MAG covered50: +0.025 over geNomad (−0.036 to +0.071) and +0.007 over Jaeger (−0.048 to +0.052). These are ties.
+- Matched cost (Exploratory cut to the comparator's per-genome call count): MAG 0.81–0.85 against geNomad's 0.82–0.84, and 0.83–0.86 against Jaeger's 0.84–0.85. Also ties. prophound's complete-genome lead over both tools does not survive fragmentation. On LAMBDA it was mostly cost already.
+
+**Why (post-hoc, exploratory; not part of the preregistered analysis).** Split by how many MAG fragments overlap an element (elements × 3 seeds), Default vs geNomad vs Jaeger:
+- 1 contig: 0.838 / 0.635 / 0.784 (n=74);
+- 2: 0.886 / 0.829 / 0.814 (70);
+- 3–4: 0.844 / 0.874 / 0.859 (135);
+- 5+: 0.857 / 0.881 / 0.881 (168).
+
+prophound leads when an element survives in one or two pieces. It trails once the element is in three or more, and on 60 kb+ elements (0.767 against 0.800 and 0.800). The comparators classify whole contigs: a fragment lying entirely inside an element is reported as a virus at full length. That is why geNomad's calls rise from 4.2 to 14.4 per genome and its retention exceeds 1. prophound has no contig-level call and never merges across contigs. Skipping contigs under 3 kb is not the cause: the 22 elements only prophound misses have a median of 3% of their bp in such pieces, against a median of 0.47 of the element in their largest piece. A contig-level "this whole fragment is phage" output is a plausible post-v1 fix, untested.
+
+**What the release may say.**
+- **Not supported:** any claim that prophound handles fragmented input better than geNomad or Jaeger.
+- **Supported, self-referential:** *"on MAG-like fragmented input (N50 20 kb), prophound Default kept 0.92 of its complete-genome recall on LAMBDA's curated prophages (0.855 covered50), at 17.6 calls per genome; on draft-like input (N50 100 kb) it kept all of it"*, stated alongside geNomad (1.02) and Jaeger (0.99) on the same input.
+- **Supported, design fact only:** prophound scans fragments by default, while Jaeger's prophage mode needs `--lc` lowered from 500 kb. This is a usability difference, not a performance one.
+- The find-proviruses-only collapse (0.273) is a statement about geNomad's provirus step alone, not about geNomad as users run it, and is not used as a comparison. It does show why the comparator had to be end-to-end.
+- The Jaeger `default` model's collapse on draft input (0.262) is unexplained and secondary. It is reported, not interpreted.
+
+**Runtime, toward G6 (different hardware, so not the G6 comparison):** geNomad 340 s per complete genome (4 CPU threads); Jaeger 57341_1.5M 189 s and `default` 55 s (8 CPU workers); prophound about 22 s per genome on one V100 for the MAG shreds.
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |

@@ -1,0 +1,968 @@
+{
+  "n_genomes": 39,
+  "n_elements": 149,
+  "cells": {
+    "Jaeger 57341_1.5M | complete": {
+      "covered": 0.8993288590604027,
+      "covered50": 0.8590604026845637,
+      "k50": 128,
+      "calls_per_genome": 11.820512820512821,
+      "calls_per_mb": 2.4187286196982103,
+      "genomes_without_calls": 0
+    },
+    "Jaeger 57341_1.5M | draft_s0": {
+      "covered": 0.8926174496644296,
+      "covered50": 0.8523489932885906,
+      "k50": 127,
+      "calls_per_genome": 13.820512820512821,
+      "calls_per_mb": 2.827971206111356,
+      "genomes_without_calls": 0
+    },
+    "Jaeger 57341_1.5M | mag_s0": {
+      "covered": 0.8859060402684564,
+      "covered50": 0.8389261744966443,
+      "k50": 125,
+      "calls_per_genome": 22.307692307692307,
+      "calls_per_mb": 4.564628848454323,
+      "genomes_without_calls": 0
+    },
+    "Jaeger 57341_1.5M | mag_s1": {
+      "covered": 0.9060402684563759,
+      "covered50": 0.8523489932885906,
+      "k50": 127,
+      "calls_per_genome": 22.41025641025641,
+      "calls_per_mb": 4.585615647757561,
+      "genomes_without_calls": 0
+    },
+    "Jaeger 57341_1.5M | mag_s2": {
+      "covered": 0.9060402684563759,
+      "covered50": 0.8523489932885906,
+      "k50": 127,
+      "calls_per_genome": 23.0,
+      "calls_per_mb": 4.7062897437511815,
+      "genomes_without_calls": 0
+    },
+    "Jaeger default | complete": {
+      "covered": 0.8590604026845637,
+      "covered50": 0.8322147651006712,
+      "k50": 124,
+      "calls_per_genome": 5.615384615384615,
+      "calls_per_mb": 1.149027261852295,
+      "genomes_without_calls": 0
+    },
+    "Jaeger default | draft_s0": {
+      "covered": 0.3221476510067114,
+      "covered50": 0.26174496644295303,
+      "k50": 39,
+      "calls_per_genome": 1.5128205128205128,
+      "calls_per_mb": 0.3095552897227644,
+      "genomes_without_calls": 14
+    },
+    "Jaeger default | mag_s0": {
+      "covered": 0.7449664429530202,
+      "covered50": 0.6241610738255033,
+      "k50": 93,
+      "calls_per_genome": 11.102564102564102,
+      "calls_per_mb": 2.271821024575542,
+      "genomes_without_calls": 2
+    },
+    "Jaeger default | mag_s1": {
+      "covered": 0.7651006711409396,
+      "covered50": 0.6375838926174496,
+      "k50": 95,
+      "calls_per_genome": 11.384615384615385,
+      "calls_per_mb": 2.3295347226594476,
+      "genomes_without_calls": 0
+    },
+    "Jaeger default | mag_s2": {
+      "covered": 0.738255033557047,
+      "covered50": 0.5906040268456376,
+      "k50": 88,
+      "calls_per_genome": 11.692307692307692,
+      "calls_per_mb": 2.3924951205691625,
+      "genomes_without_calls": 0
+    },
+    "geNomad | complete": {
+      "covered": 0.8187919463087249,
+      "covered50": 0.8120805369127517,
+      "k50": 121,
+      "calls_per_genome": 4.205128205128205,
+      "calls_per_mb": 0.8604587714327689,
+      "genomes_without_calls": 1
+    },
+    "geNomad | draft_s0": {
+      "covered": 0.8322147651006712,
+      "covered50": 0.8187919463087249,
+      "k50": 122,
+      "calls_per_genome": 6.128205128205129,
+      "calls_per_mb": 1.2539612583684865,
+      "genomes_without_calls": 1
+    },
+    "geNomad | mag_s0": {
+      "covered": 0.8590604026845637,
+      "covered50": 0.8322147651006712,
+      "k50": 124,
+      "calls_per_genome": 13.974358974358974,
+      "calls_per_mb": 2.859451405066214,
+      "genomes_without_calls": 0
+    },
+    "geNomad | mag_s1": {
+      "covered": 0.8523489932885906,
+      "covered50": 0.8389261744966443,
+      "k50": 125,
+      "calls_per_genome": 14.35897435897436,
+      "calls_per_mb": 2.9381519024533573,
+      "genomes_without_calls": 0
+    },
+    "geNomad | mag_s2": {
+      "covered": 0.8657718120805369,
+      "covered50": 0.8187919463087249,
+      "k50": 122,
+      "calls_per_genome": 14.820512820512821,
+      "calls_per_mb": 3.0325924993179294,
+      "genomes_without_calls": 0
+    },
+    "geNomad find-proviruses | complete": {
+      "covered": 0.825503355704698,
+      "covered50": 0.8187919463087249,
+      "k50": 122,
+      "calls_per_genome": 4.230769230769231,
+      "calls_per_mb": 0.8657054712585784,
+      "genomes_without_calls": 1
+    },
+    "geNomad find-proviruses | draft_s0": {
+      "covered": 0.8120805369127517,
+      "covered50": 0.7449664429530202,
+      "k50": 111,
+      "calls_per_genome": 5.205128205128205,
+      "calls_per_mb": 1.065080064639342,
+      "genomes_without_calls": 1
+    },
+    "geNomad find-proviruses | mag_s0": {
+      "covered": 0.5369127516778524,
+      "covered50": 0.2751677852348993,
+      "k50": 41,
+      "calls_per_genome": 3.41025641025641,
+      "calls_per_mb": 0.6978110768326723,
+      "genomes_without_calls": 3
+    },
+    "geNomad find-proviruses | mag_s1": {
+      "covered": 0.5167785234899329,
+      "covered50": 0.24161073825503357,
+      "k50": 36,
+      "calls_per_genome": 3.0256410256410255,
+      "calls_per_mb": 0.6191105794455288,
+      "genomes_without_calls": 4
+    },
+    "geNomad find-proviruses | mag_s2": {
+      "covered": 0.5100671140939598,
+      "covered50": 0.30201342281879195,
+      "k50": 45,
+      "calls_per_genome": 3.3076923076923075,
+      "calls_per_mb": 0.6768242775294341,
+      "genomes_without_calls": 2
+    },
+    "prophound conservative | complete": {
+      "covered": 0.9194630872483222,
+      "covered50": 0.8993288590604027,
+      "k50": 134,
+      "calls_per_genome": 7.102564102564102,
+      "calls_per_mb": 1.4533358517492498,
+      "genomes_without_calls": 0
+    },
+    "prophound conservative | draft_s0": {
+      "covered": 0.9060402684563759,
+      "covered50": 0.8926174496644296,
+      "k50": 133,
+      "calls_per_genome": 8.256410256410257,
+      "calls_per_mb": 1.6894373439106805,
+      "genomes_without_calls": 0
+    },
+    "prophound conservative | mag_s0": {
+      "covered": 0.8859060402684564,
+      "covered50": 0.7919463087248322,
+      "k50": 118,
+      "calls_per_genome": 10.538461538461538,
+      "calls_per_mb": 2.1563936284077316,
+      "genomes_without_calls": 0
+    },
+    "prophound conservative | mag_s1": {
+      "covered": 0.8590604026845637,
+      "covered50": 0.7651006711409396,
+      "k50": 114,
+      "calls_per_genome": 11.58974358974359,
+      "calls_per_mb": 2.371508321265924,
+      "genomes_without_calls": 0
+    },
+    "prophound conservative | mag_s2": {
+      "covered": 0.8926174496644296,
+      "covered50": 0.785234899328859,
+      "k50": 117,
+      "calls_per_genome": 10.948717948717949,
+      "calls_per_mb": 2.240340825620685,
+      "genomes_without_calls": 0
+    },
+    "prophound default | complete": {
+      "covered": 0.959731543624161,
+      "covered50": 0.9328859060402684,
+      "k50": 139,
+      "calls_per_genome": 14.35897435897436,
+      "calls_per_mb": 2.9381519024533573,
+      "genomes_without_calls": 0
+    },
+    "prophound default | draft_s0": {
+      "covered": 0.959731543624161,
+      "covered50": 0.9328859060402684,
+      "k50": 139,
+      "calls_per_genome": 15.051282051282051,
+      "calls_per_mb": 3.0798127977502157,
+      "genomes_without_calls": 0
+    },
+    "prophound default | mag_s0": {
+      "covered": 0.9395973154362416,
+      "covered50": 0.8590604026845637,
+      "k50": 128,
+      "calls_per_genome": 17.435897435897434,
+      "calls_per_mb": 3.567755881550505,
+      "genomes_without_calls": 0
+    },
+    "prophound default | mag_s1": {
+      "covered": 0.912751677852349,
+      "covered50": 0.8523489932885906,
+      "k50": 127,
+      "calls_per_genome": 18.128205128205128,
+      "calls_per_mb": 3.7094167768473634,
+      "genomes_without_calls": 0
+    },
+    "prophound default | mag_s2": {
+      "covered": 0.9261744966442953,
+      "covered50": 0.8523489932885906,
+      "k50": 127,
+      "calls_per_genome": 17.23076923076923,
+      "calls_per_mb": 3.5257822829440286,
+      "genomes_without_calls": 0
+    },
+    "prophound exploratory | complete": {
+      "covered": 0.9798657718120806,
+      "covered50": 0.9463087248322147,
+      "k50": 141,
+      "calls_per_genome": 39.92307692307692,
+      "calls_per_mb": 8.169111628785496,
+      "genomes_without_calls": 0
+    },
+    "prophound exploratory | draft_s0": {
+      "covered": 0.9798657718120806,
+      "covered50": 0.9463087248322147,
+      "k50": 141,
+      "calls_per_genome": 40.84615384615385,
+      "calls_per_mb": 8.357992822514639,
+      "genomes_without_calls": 0
+    },
+    "prophound exploratory | mag_s0": {
+      "covered": 0.9798657718120806,
+      "covered50": 0.9060402684563759,
+      "k50": 135,
+      "calls_per_genome": 40.76923076923077,
+      "calls_per_mb": 8.34225272303721,
+      "genomes_without_calls": 0
+    },
+    "prophound exploratory | mag_s1": {
+      "covered": 0.9798657718120806,
+      "covered50": 0.9060402684563759,
+      "k50": 135,
+      "calls_per_genome": 40.61538461538461,
+      "calls_per_mb": 8.310772524082353,
+      "genomes_without_calls": 0
+    },
+    "prophound exploratory | mag_s2": {
+      "covered": 0.9731543624161074,
+      "covered50": 0.912751677852349,
+      "k50": 136,
+      "calls_per_genome": 39.76923076923077,
+      "calls_per_mb": 8.137631429830638,
+      "genomes_without_calls": 0
+    }
+  },
+  "reachable_covered50": {
+    "draft_s0": 1.0,
+    "mag_s0": 1.0,
+    "mag_s1": 1.0,
+    "mag_s2": 1.0
+  },
+  "summary": {
+    "mag": {
+      "Jaeger 57341_1.5M": {
+        "complete_covered50": 0.8590604026845637,
+        "shredded_covered50": 0.8478747203579419,
+        "retention": 0.9869791666666667,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 22.57264957264957,
+        "retention_boot95": [
+          0.9694989106753813,
+          1.0089285714285714
+        ],
+        "shredded_covered50_boot95": [
+          0.7003180928411633,
+          0.9590657067196292
+        ]
+      },
+      "Jaeger default": {
+        "complete_covered50": 0.8322147651006712,
+        "shredded_covered50": 0.6174496644295302,
+        "retention": 0.7419354838709677,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 11.393162393162394,
+        "retention_boot95": [
+          0.6788990825688074,
+          0.7951399347389557
+        ],
+        "shredded_covered50_boot95": [
+          0.4690540793413174,
+          0.746179652197727
+        ]
+      },
+      "geNomad": {
+        "complete_covered50": 0.8120805369127517,
+        "shredded_covered50": 0.8299776286353467,
+        "retention": 1.022038567493113,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 14.384615384615387,
+        "retention_boot95": [
+          0.9906759906759907,
+          1.0654205607476637
+        ],
+        "shredded_covered50_boot95": [
+          0.6949118507930026,
+          0.9495798319327731
+        ]
+      },
+      "geNomad find-proviruses": {
+        "complete_covered50": 0.8187919463087249,
+        "shredded_covered50": 0.27293064876957496,
+        "retention": 0.3333333333333333,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 3.2478632478632483,
+        "retention_boot95": [
+          0.28134317660550456,
+          0.38
+        ],
+        "shredded_covered50_boot95": [
+          0.21665935672514622,
+          0.3302180685358255
+        ]
+      },
+      "prophound conservative": {
+        "complete_covered50": 0.8993288590604027,
+        "shredded_covered50": 0.7807606263982103,
+        "retention": 0.8681592039800995,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 11.025641025641027,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": -0.11881996268656725,
+            "retention_diff_boot95": [
+              -0.20426900901163966,
+              -0.056157129491181075
+            ],
+            "abs_diff": -0.06711409395973156,
+            "abs_diff_boot95": [
+              -0.1192411924119241,
+              -0.028911564625850317
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.12622372010913174,
+            "retention_diff_boot95": [
+              0.05913701517601536,
+              0.1944661025737434
+            ],
+            "abs_diff": 0.1633109619686801,
+            "abs_diff_boot95": [
+              0.10303030303030303,
+              0.21596461484959123
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.15387936351301346,
+            "retention_diff_boot95": [
+              -0.26842135407246653,
+              -0.07559693793895009
+            ],
+            "abs_diff": -0.04921700223713643,
+            "abs_diff_boot95": [
+              -0.1090342679127726,
+              0.0047654061624650265
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.5348258706467661,
+            "retention_diff_boot95": [
+              0.43726711035866456,
+              0.6146955259435718
+            ],
+            "abs_diff": 0.5078299776286354,
+            "abs_diff_boot95": [
+              0.39735736207016814,
+              0.6084142394822006
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.7876344086021505,
+          0.9259259259259259
+        ],
+        "shredded_covered50_boot95": [
+          0.6304028984729821,
+          0.8980720640101069
+        ]
+      },
+      "prophound default": {
+        "complete_covered50": 0.9328859060402684,
+        "shredded_covered50": 0.854586129753915,
+        "retention": 0.9160671462829737,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 17.5982905982906,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": -0.07091202038369304,
+            "retention_diff_boot95": [
+              -0.14790595590798186,
+              -0.012843181448992875
+            ],
+            "abs_diff": 0.006711409395973145,
+            "abs_diff_boot95": [
+              -0.048484848484848575,
+              0.052208835341365445
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.17413166241200595,
+            "retention_diff_boot95": [
+              0.11461453831880652,
+              0.2407479243002185
+            ],
+            "abs_diff": 0.23713646532438482,
+            "abs_diff_boot95": [
+              0.16981132075471705,
+              0.2920131492999346
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.10597142121013925,
+            "retention_diff_boot95": [
+              -0.21474309575250597,
+              -0.030276458957196682
+            ],
+            "abs_diff": 0.02460850111856827,
+            "abs_diff_boot95": [
+              -0.036414565826330514,
+              0.07051366843033506
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.5827338129496404,
+            "retention_diff_boot95": [
+              0.48888607687793423,
+              0.6655881943420643
+            ],
+            "abs_diff": 0.5816554809843401,
+            "abs_diff_boot95": [
+              0.5033101761675972,
+              0.6590373514108844
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.8435327682985762,
+          0.967741935483871
+        ],
+        "shredded_covered50_boot95": [
+          0.740523538961039,
+          0.945
+        ]
+      },
+      "prophound exploratory": {
+        "complete_covered50": 0.9463087248322147,
+        "shredded_covered50": 0.9082774049217002,
+        "retention": 0.9598108747044917,
+        "n_shreds": 3,
+        "shredded_calls_per_genome": 40.38461538461539,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": -0.027168291962175073,
+            "retention_diff_boot95": [
+              -0.0737569517852362,
+              0.007382641863788564
+            ],
+            "abs_diff": 0.0604026845637583,
+            "abs_diff_boot95": [
+              -0.014184397163120588,
+              0.14492753623188404
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.21787539083352392,
+            "retention_diff_boot95": [
+              0.1728969777926198,
+              0.2748241791155834
+            ],
+            "abs_diff": 0.29082774049217,
+            "abs_diff_boot95": [
+              0.2044025157232705,
+              0.3768776129070247
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.06222769278862128,
+            "retention_diff_boot95": [
+              -0.13990751032073687,
+              -0.008739883012473767
+            ],
+            "abs_diff": 0.07829977628635343,
+            "abs_diff_boot95": [
+              -0.005465609899290976,
+              0.1529218919682837
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.6264775413711583,
+            "retention_diff_boot95": [
+              0.5558113091319009,
+              0.7015940474665984
+            ],
+            "abs_diff": 0.6353467561521252,
+            "abs_diff_boot95": [
+              0.5796289386401328,
+              0.6939406358668654
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.9171168787835454,
+          0.9970501474926253
+        ],
+        "shredded_covered50_boot95": [
+          0.8389683234445416,
+          0.9683544303797469
+        ]
+      }
+    },
+    "draft": {
+      "Jaeger 57341_1.5M": {
+        "complete_covered50": 0.8590604026845637,
+        "shredded_covered50": 0.8523489932885906,
+        "retention": 0.9921875,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 13.820512820512821,
+        "retention_boot95": [
+          0.9714285714285715,
+          1.0
+        ],
+        "shredded_covered50_boot95": [
+          0.7,
+          0.967393513609049
+        ]
+      },
+      "Jaeger default": {
+        "complete_covered50": 0.8322147651006712,
+        "shredded_covered50": 0.26174496644295303,
+        "retention": 0.31451612903225806,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 1.5128205128205128,
+        "retention_boot95": [
+          0.2380952380952381,
+          0.38235294117647056
+        ],
+        "shredded_covered50_boot95": [
+          0.17964071856287425,
+          0.3469387755102041
+        ]
+      },
+      "geNomad": {
+        "complete_covered50": 0.8120805369127517,
+        "shredded_covered50": 0.8187919463087249,
+        "retention": 1.0082644628099173,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 6.128205128205129,
+        "retention_boot95": [
+          0.9844961240310077,
+          1.0392156862745099
+        ],
+        "shredded_covered50_boot95": [
+          0.6765926157697121,
+          0.946969696969697
+        ]
+      },
+      "geNomad find-proviruses": {
+        "complete_covered50": 0.8187919463087249,
+        "shredded_covered50": 0.7449664429530202,
+        "retention": 0.9098360655737705,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 5.205128205128205,
+        "retention_boot95": [
+          0.845360824742268,
+          0.9647887323943662
+        ],
+        "shredded_covered50_boot95": [
+          0.5786163522012578,
+          0.88
+        ]
+      },
+      "prophound conservative": {
+        "complete_covered50": 0.8993288590604027,
+        "shredded_covered50": 0.8926174496644296,
+        "retention": 0.9925373134328358,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 8.256410256410257,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": 0.00034981343283579935,
+            "retention_diff_boot95": [
+              -0.016739248775176855,
+              0.025000225225225353
+            ],
+            "abs_diff": 0.04026845637583898,
+            "abs_diff_boot95": [
+              0.0,
+              0.09756097560975618
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.6780211844005777,
+            "retention_diff_boot95": [
+              0.6050825245430763,
+              0.763639601638254
+            ],
+            "abs_diff": 0.6308724832214765,
+            "abs_diff_boot95": [
+              0.5714285714285714,
+              0.7007299270072992
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.01572714937708153,
+            "retention_diff_boot95": [
+              -0.04838788085341268,
+              0.014185342789598113
+            ],
+            "abs_diff": 0.0738255033557047,
+            "abs_diff_boot95": [
+              0.008130081300812941,
+              0.1283812094217122
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.0827012478590653,
+            "retention_diff_boot95": [
+              0.023226528298560575,
+              0.15463917525773196
+            ],
+            "abs_diff": 0.1476510067114094,
+            "abs_diff_boot95": [
+              0.06896551724137934,
+              0.22959278155706733
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.9698454393178012,
+          1.019047619047619
+        ],
+        "shredded_covered50_boot95": [
+          0.7961783439490446,
+          0.9700598802395209
+        ]
+      },
+      "prophound default": {
+        "complete_covered50": 0.9328859060402684,
+        "shredded_covered50": 0.9328859060402684,
+        "retention": 1.0,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 15.051282051282051,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": 0.0078125,
+            "retention_diff_boot95": [
+              0.0,
+              0.026315789473684077
+            ],
+            "abs_diff": 0.08053691275167785,
+            "abs_diff_boot95": [
+              0.008064516129032251,
+              0.17834394904458606
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.685483870967742,
+            "retention_diff_boot95": [
+              0.6153846153846154,
+              0.7646999822343185
+            ],
+            "abs_diff": 0.6711409395973154,
+            "abs_diff_boot95": [
+              0.6131386861313869,
+              0.7264973958333334
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.008264462809917328,
+            "retention_diff_boot95": [
+              -0.0461264008150066,
+              0.022925505576077365
+            ],
+            "abs_diff": 0.11409395973154357,
+            "abs_diff_boot95": [
+              0.015996825396825412,
+              0.2056101468624833
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.0901639344262295,
+            "retention_diff_boot95": [
+              0.03131940587130526,
+              0.1564016653449643
+            ],
+            "abs_diff": 0.18791946308724827,
+            "abs_diff_boot95": [
+              0.0825688073394496,
+              0.30570030692056366
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.9782608695652175,
+          1.0214285714285714
+        ],
+        "shredded_covered50_boot95": [
+          0.8742138364779874,
+          0.984618320610687
+        ]
+      },
+      "prophound exploratory": {
+        "complete_covered50": 0.9463087248322147,
+        "shredded_covered50": 0.9463087248322147,
+        "retention": 1.0,
+        "n_shreds": 1,
+        "shredded_calls_per_genome": 40.84615384615385,
+        "vs": {
+          "Jaeger 57341_1.5M": {
+            "retention_diff": 0.0078125,
+            "retention_diff_boot95": [
+              -0.012987012987012991,
+              0.03738317757009335
+            ],
+            "abs_diff": 0.09395973154362414,
+            "abs_diff_boot95": [
+              0.009997524752475258,
+              0.2033041060735671
+            ]
+          },
+          "Jaeger default": {
+            "retention_diff": 0.685483870967742,
+            "retention_diff_boot95": [
+              0.6133256171055573,
+              0.7689530891043543
+            ],
+            "abs_diff": 0.6845637583892616,
+            "abs_diff_boot95": [
+              0.6223737373737374,
+              0.7428611332801277
+            ]
+          },
+          "geNomad": {
+            "retention_diff": -0.008264462809917328,
+            "retention_diff_boot95": [
+              -0.05568461520983667,
+              0.03363783393437296
+            ],
+            "abs_diff": 0.12751677852348986,
+            "abs_diff_boot95": [
+              0.02150537634408611,
+              0.22891566265060248
+            ]
+          },
+          "geNomad find-proviruses": {
+            "retention_diff": 0.0901639344262295,
+            "retention_diff_boot95": [
+              0.03496340117113075,
+              0.155314654565921
+            ],
+            "abs_diff": 0.20134228187919456,
+            "abs_diff_boot95": [
+              0.09009009009009017,
+              0.3291925465838509
+            ]
+          }
+        },
+        "retention_boot95": [
+          0.9736842105263159,
+          1.0317460317460319
+        ],
+        "shredded_covered50_boot95": [
+          0.898302547447478,
+          0.9902912621359223
+        ]
+      }
+    }
+  },
+  "matched_cost": {
+    "Jaeger 57341_1.5M | complete": {
+      "competitor_covered50": 0.8590604026845637,
+      "prophound_at_matched_cost": 0.912751677852349
+    },
+    "Jaeger 57341_1.5M | draft_s0": {
+      "competitor_covered50": 0.8523489932885906,
+      "prophound_at_matched_cost": 0.8926174496644296
+    },
+    "Jaeger 57341_1.5M | mag_s0": {
+      "competitor_covered50": 0.8389261744966443,
+      "prophound_at_matched_cost": 0.8456375838926175
+    },
+    "Jaeger 57341_1.5M | mag_s1": {
+      "competitor_covered50": 0.8523489932885906,
+      "prophound_at_matched_cost": 0.825503355704698
+    },
+    "Jaeger 57341_1.5M | mag_s2": {
+      "competitor_covered50": 0.8523489932885906,
+      "prophound_at_matched_cost": 0.8590604026845637
+    },
+    "Jaeger default | complete": {
+      "competitor_covered50": 0.8322147651006712,
+      "prophound_at_matched_cost": 0.8523489932885906
+    },
+    "Jaeger default | draft_s0": {
+      "competitor_covered50": 0.26174496644295303,
+      "prophound_at_matched_cost": 0.28187919463087246
+    },
+    "Jaeger default | mag_s0": {
+      "competitor_covered50": 0.6241610738255033,
+      "prophound_at_matched_cost": 0.7583892617449665
+    },
+    "Jaeger default | mag_s1": {
+      "competitor_covered50": 0.6375838926174496,
+      "prophound_at_matched_cost": 0.7919463087248322
+    },
+    "Jaeger default | mag_s2": {
+      "competitor_covered50": 0.5906040268456376,
+      "prophound_at_matched_cost": 0.8187919463087249
+    },
+    "geNomad | complete": {
+      "competitor_covered50": 0.8120805369127517,
+      "prophound_at_matched_cost": 0.785234899328859
+    },
+    "geNomad | draft_s0": {
+      "competitor_covered50": 0.8187919463087249,
+      "prophound_at_matched_cost": 0.8322147651006712
+    },
+    "geNomad | mag_s0": {
+      "competitor_covered50": 0.8322147651006712,
+      "prophound_at_matched_cost": 0.8120805369127517
+    },
+    "geNomad | mag_s1": {
+      "competitor_covered50": 0.8389261744966443,
+      "prophound_at_matched_cost": 0.8187919463087249
+    },
+    "geNomad | mag_s2": {
+      "competitor_covered50": 0.8187919463087249,
+      "prophound_at_matched_cost": 0.8456375838926175
+    },
+    "geNomad find-proviruses | complete": {
+      "competitor_covered50": 0.8187919463087249,
+      "prophound_at_matched_cost": 0.785234899328859
+    },
+    "geNomad find-proviruses | draft_s0": {
+      "competitor_covered50": 0.7449664429530202,
+      "prophound_at_matched_cost": 0.7785234899328859
+    },
+    "geNomad find-proviruses | mag_s0": {
+      "competitor_covered50": 0.2751677852348993,
+      "prophound_at_matched_cost": 0.3825503355704698
+    },
+    "geNomad find-proviruses | mag_s1": {
+      "competitor_covered50": 0.24161073825503357,
+      "prophound_at_matched_cost": 0.28187919463087246
+    },
+    "geNomad find-proviruses | mag_s2": {
+      "competitor_covered50": 0.30201342281879195,
+      "prophound_at_matched_cost": 0.3691275167785235
+    }
+  },
+  "secondary": {
+    "not_in_corpus": {
+      "Jaeger 57341_1.5M": {
+        "complete": 0.831858407079646,
+        "mag": 0.831858407079646,
+        "draft": 0.8230088495575221
+      },
+      "Jaeger default": {
+        "complete": 0.8141592920353983,
+        "mag": 0.5958702064896756,
+        "draft": 0.24778761061946902
+      },
+      "geNomad": {
+        "complete": 0.7876106194690266,
+        "mag": 0.8200589970501474,
+        "draft": 0.8053097345132744
+      },
+      "geNomad find-proviruses": {
+        "complete": 0.7876106194690266,
+        "mag": 0.2448377581120944,
+        "draft": 0.7079646017699115
+      },
+      "prophound conservative": {
+        "complete": 0.8849557522123894,
+        "mag": 0.7463126843657818,
+        "draft": 0.8761061946902655
+      },
+      "prophound default": {
+        "complete": 0.9203539823008849,
+        "mag": 0.8289085545722714,
+        "draft": 0.911504424778761
+      },
+      "prophound exploratory": {
+        "complete": 0.9380530973451328,
+        "mag": 0.8938053097345132,
+        "draft": 0.9292035398230089
+      },
+      "n_elements": 113
+    },
+    "under_10kb": {
+      "Jaeger 57341_1.5M": {
+        "complete": 0.6153846153846154,
+        "mag": 0.5641025641025642,
+        "draft": 0.6153846153846154
+      },
+      "Jaeger default": {
+        "complete": 0.46153846153846156,
+        "mag": 0.17948717948717952,
+        "draft": 0.07692307692307693
+      },
+      "geNomad": {
+        "complete": 0.38461538461538464,
+        "mag": 0.4871794871794872,
+        "draft": 0.46153846153846156
+      },
+      "geNomad find-proviruses": {
+        "complete": 0.38461538461538464,
+        "mag": 0.2307692307692308,
+        "draft": 0.46153846153846156
+      },
+      "prophound conservative": {
+        "complete": 0.7692307692307693,
+        "mag": 0.5641025641025642,
+        "draft": 0.6923076923076923
+      },
+      "prophound default": {
+        "complete": 0.8461538461538461,
+        "mag": 0.6923076923076924,
+        "draft": 0.8461538461538461
+      },
+      "prophound exploratory": {
+        "complete": 0.8461538461538461,
+        "mag": 0.8205128205128206,
+        "draft": 0.9230769230769231
+      },
+      "n_elements": 13
+    }
+  }
+}

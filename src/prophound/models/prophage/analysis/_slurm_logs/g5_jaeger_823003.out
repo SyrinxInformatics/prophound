@@ -1,0 +1,42 @@
+=== job start ===
+Wed Sep 30 14:05:51 CDT 2026
+c011
+[preflight] jaeger 1.26.5; all 195 inputs match input_md5.tsv
+[model] jaeger_57341_1.5M_fragment loads and runs
+[57341_1.5M complete]
+Wed Sep 30 14:08:55 CDT 2026
+[57341_1.5M mag_s0]
+Wed Sep 30 15:10:49 CDT 2026
+[57341_1.5M mag_s1]
+Wed Sep 30 15:58:53 CDT 2026
+[57341_1.5M mag_s2]
+Wed Sep 30 16:46:56 CDT 2026
+[57341_1.5M draft_s0]
+Wed Sep 30 17:35:04 CDT 2026
+[default complete]
+Wed Sep 30 18:28:51 CDT 2026
+[default mag_s0]
+Wed Sep 30 18:46:37 CDT 2026
+[default mag_s1]
+Wed Sep 30 19:03:05 CDT 2026
+[default mag_s2]
+Wed Sep 30 19:19:37 CDT 2026
+[default draft_s0]
+Wed Sep 30 19:36:16 CDT 2026
+[jaeger] 390 of 390 runs present
+Wed Sep 30 19:53:18 CDT 2026
+                             nunique  size
+tool              condition               
+Jaeger 57341_1.5M complete        39   461
+                  draft_s0        39   539
+                  mag_s0          39   870
+                  mag_s1          39   874
+                  mag_s2          39   897
+Jaeger default    complete        39   219
+                  draft_s0        25    59
+                  mag_s0          37   433
+                  mag_s1          39   444
+                  mag_s2          39   456
+[done] wrote analysis/g5/jaeger_calls.tsv
+=== job end (exit 0) ===
+Wed Sep 30 19:53:23 CDT 2026
