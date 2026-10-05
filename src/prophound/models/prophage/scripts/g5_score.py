@@ -137,13 +137,36 @@ def collect_jaeger(root: Path) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=COLS)
 
 
-def prophound_calls(cond: str, run_dir: str) -> pd.DataFrame:
+def prophound_calls(cond: str, run_dir: str, lengths: pd.DataFrame | None = None,
+                    edge_snap_frac: float = 0.0) -> pd.DataFrame:
+    """Calls rebuilt offline from the tracks, as predict_genome ships them. With
+    `edge_snap_frac` > 0, the shipped edge snap (predict_genome.snap_contig_edges, at
+    that fraction of the run's window length) is applied, using exact contig lengths
+    from `lengths` (condition, genome, contig_id, length); every contig of every run
+    must be in it."""
     import mode_recheck as mr
     ens = mr.load_tracks(run_dir)
     seeds = [mr.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
+    if edge_snap_frac > 0:
+        try:
+            from prophound.models.prophage.src.predict_genome import snap_contig_edges
+        except ImportError:  # HPCC data_refactored/ layout
+            from src.predict_genome import snap_contig_edges
+        if lengths is None:
+            raise SystemExit("--edge_snap_frac > 0 needs --lengths (exact contig lengths per condition)")
+        lc = lengths[lengths.condition == cond]
+        L = {g: dict(zip(x.contig_id.astype(str), x.length.astype(int))) for g, x in lc.groupby("genome")}
+        for g, (w, _) in ens.items():
+            miss = set(w.contig_id.astype(str)) - set(L.get(g, {}))
+            if miss:
+                raise SystemExit(f"--lengths lacks {len(miss)} contig(s) of {cond}/{g}, e.g. {sorted(miss)[:2]}")
     out = []
     for mode in mr.MODE_THRESHOLDS:
         reg = mr.shipped_calls(ens, seeds, mode)
+        if edge_snap_frac > 0 and len(reg):
+            reg = pd.concat([snap_contig_edges(x.assign(contig_id=x.contig_id.astype(str)), L[g],
+                                               int(edge_snap_frac * ens[g][1]))[0]
+                             for g, x in reg.groupby("genome_id")], ignore_index=True)
         so = reg.contig_id.astype(str).map(split_frag)
         seq = [s.split(".")[0] for s, _ in so]
         off = np.array([o for _, o in so], dtype=int)
@@ -212,6 +235,10 @@ def main() -> None:
     s.add_argument("--prophound", action="append", default=[], metavar="COND=RUN_DIR")
     s.add_argument("--calls", action="append", default=[], help="collected call tables")
     s.add_argument("--shreds", default=None, help="dir of <condition>/ shred FASTAs, for the reachable ceiling")
+    s.add_argument("--lengths", default=None, help="condition, genome, contig_id, length (tsv) for --edge_snap_frac")
+    s.add_argument("--edge_snap_frac", type=float, default=0.0,
+                   help="apply the shipped edge snap to prophound calls (G5b: 0.5, the frozen default; "
+                        "0 reproduces G5, which predates it)")
     s.add_argument("--seed", type=int, default=20260930)
     s.add_argument("--out", required=True)
     a = ap.parse_args()
@@ -229,7 +256,8 @@ def main() -> None:
     T = pd.read_csv(a.truth_tsv or D / "lambda_truth.tsv", sep="\t")
     T["kb"] = (T.end - T.start) / 1000
     calls = [pd.read_csv(c, sep="\t") for c in a.calls]
-    calls += [prophound_calls(*x.split("=", 1)) for x in a.prophound]
+    Lt = pd.read_csv(a.lengths, sep="\t", dtype={"contig_id": str}) if a.lengths else None
+    calls += [prophound_calls(*x.split("=", 1), lengths=Lt, edge_snap_frac=a.edge_snap_frac) for x in a.prophound]
     C = pd.concat(calls, ignore_index=True)
     genomes = list(G.assembly)
     mb = G.set_index("assembly").genome_length / 1e6

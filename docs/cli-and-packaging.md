@@ -133,13 +133,14 @@ From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-ev
 
   The same pass counts ambiguity codes per code into `run_metadata.json` `input`.
 - **Run summary** on stderr at the end of every run: input size and ambiguity load, short contigs scanned or never scanned, calls and the percentage of input called, calls dropped by the seed vote, and the line "calls are candidates for follow-up, not annotations".
-- **Outputs**: `regions.bed` (BED6, 0-based, score = max_prob × 1000) and `regions.gff3` (1-based, SO type `prophage`, with `note=candidate`, `max_prob`, `mean_prob`, `seed_support` and `boundary_kind`) are written every run. `--write-region-fasta` adds `regions.fna`. `run_metadata.json` `outputs` lists what was written.
+- **Outputs**: `regions.bed` (BED6, 0-based, score = max_prob × 1000) and `regions.gff3` (1-based, SO type `prophage`, with `note=candidate`, `max_prob`, `mean_prob`, `seed_support`, `n_frac`, `contig_edge` and `boundary_kind`) are written every run. `--write-region-fasta` adds `regions.fna`. `run_metadata.json` `outputs` lists what was written.
 - **`predict --help` is grouped**:
   - basic (7): input, outdir, mode, config, checkpoint, device, region FASTA;
   - advanced (13): thresholds, seed vote, ambiguity, merging, short contigs, batch size;
   - experimental (14): tiles, grid offset, window length and stride, refinement, the region builder and the ensemble rule.
 
   Only the layout changes; definitions and defaults don't, and `tests/test_cli_defaults.py` still checks the two parsers agree.
+- **Edge snap (2026-10-05, on by default)**: `--edge-snap-frac` (default 0.5, so 5 kb at the 10 kb window; 0 = off). A call edge within that fraction of `--window-len` of a contig end is moved onto it. Short-contig calls use the same distance, so any call on a contig of 10 kb or less spans that contig. `regions.tsv` and the GFF3 gain `contig_edge` (none/start/end/both). It marks every edge on a contig end, snapped or not, meaning the reported boundary is the end of the sequence and the element may continue on another contig. Applied after the short-contig merge and before the N-gap filter. `run_metadata.json` `edge_snap`. The fix for fragmented input: `docs/claims-and-evidence.md` "Amendment 2026-10-05: freeze".
 - **N-gap filter (2026-09-29)**: calls that are ≥50% N are dropped (`MAX_CALL_N_FRAC`). `n_frac` is in `regions.tsv` and the GFF3; the counts are in `run_metadata.json` `n_gap_filter` and in the summary (`docs/v1-scope.md` A.3).
 - **ARC note**: `predict_genome.py` now imports `io_checks.py`. Any push of `src/predict_genome.py` must include `src/io_checks.py`.
 - Tests: `tests/test_io_checks.py` covers every rejection and the BED/GFF3 coordinate conventions (31 tests in total). An end-to-end check with planted tracks confirmed empty stdout, BED, GFF3 and FASTA agreeing with `regions.tsv`, the metadata blocks, and a clear protein-input error.

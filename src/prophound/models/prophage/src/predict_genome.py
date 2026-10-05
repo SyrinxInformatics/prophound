@@ -507,6 +507,17 @@ DEFAULT_SPLIT_MAX_PROB = 0.05
 # inside 20 kb gaps). Masking the gap's windows instead cost most of the
 # recall near every gap, because windows are 10 kb (docs/v1-scope.md A.3).
 MAX_CALL_N_FRAC = 0.5
+# Edge snapping for fragmented input (user decision 2026-10-05; docs/claims-and-evidence.md
+# "G5b" amendments). A call edge within this fraction of --window-len of a contig end
+# is moved to that end: a breakpoint cut the element, and the windows that would
+# reach the end score it only partly. Relative to --window-len so it scales with
+# larger windows; short-contig calls use the same distance (snapping them by their
+# own 5/3 kb scale instead lost 1 of 156 element-seeds on the 18). Measured at the
+# trained 10 kb window (5 kb snap) on corpus shreds: Default MAG covered50 0.808 ->
+# 0.827 (42) / 0.878 -> 0.904 (18), calls unchanged, about 6.5% more bp called on
+# MAG input. Other window lengths are untested, as for the thresholds. 0 = off.
+DEFAULT_EDGE_SNAP_FRAC = 0.5
+CONTIG_EDGE_VALUES = ("none", "start", "end", "both")
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -1194,6 +1205,18 @@ def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
         ),
     )
     parser.add_argument(
+        "--edge-snap-frac",
+        type=float,
+        default=DEFAULT_EDGE_SNAP_FRAC,
+        help=(
+            "Move a call edge within this fraction of --window-len of a contig "
+            "end onto that end (short contigs included): "
+            "on fragmented input an element cut by a breakpoint is only partly "
+            "scored near the end. Default %(default)s, i.e. 5 kb at 10 kb windows; "
+            "0 disables. Edges on a contig end are flagged in contig_edge either way."
+        ),
+    )
+    parser.add_argument(
         "--stride",
         type=int,
         default=None,
@@ -1388,6 +1411,32 @@ def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
         fa.close()
 
 
+def snap_contig_edges(regions_df: pd.DataFrame, contig_lengths: Dict[str, int],
+                      snap_bp: int) -> Tuple[pd.DataFrame, int]:
+    """Move call edges within `snap_bp` of a contig end onto that end, and flag
+    every edge that sits on a contig end afterwards.
+
+    `contig_edge` is one of none/start/end/both whether or not the edge moved:
+    either way the reported boundary is the end of the sequence, not a detected
+    element edge, and the element may continue on another contig. Returns the
+    calls and how many moved.
+    """
+    if regions_df.empty:
+        return regions_df.assign(contig_edge=pd.Series(dtype=str)), 0
+    out = regions_df.copy()
+    L = out["contig_id"].astype(str).map(contig_lengths).to_numpy(dtype=np.int64)
+    start, end = out["start"].to_numpy(dtype=np.int64), out["end"].to_numpy(dtype=np.int64)
+    new_start = np.where(start <= snap_bp, 0, start)
+    new_end = np.where(end >= L - snap_bp, L, end)
+    moved = int(((new_start != start) | (new_end != end)).sum())
+    out["start"], out["end"] = new_start, new_end
+    if "region_len_bp" in out.columns:
+        out["region_len_bp"] = new_end - new_start
+    at_s, at_e = new_start == 0, new_end == L
+    out["contig_edge"] = np.select([at_s & at_e, at_s, at_e], ["both", "start", "end"], "none")
+    return out, moved
+
+
 def label_windows(windows_df: pd.DataFrame, regions_df: pd.DataFrame) -> pd.DataFrame:
     """Set region_pred_label to 1 on windows overlapping any call, else 0."""
     windows_df = windows_df.copy()
@@ -1508,6 +1557,10 @@ def run_predict(args: argparse.Namespace) -> None:
             raise SystemExit("--refine-window-len must be smaller than --window-len")
         if refine_stride <= 0 or not 0.0 <= edge_alpha <= 1.0 or refine_margin < 0:
             raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
+
+    edge_snap_frac = float(getattr(args, "edge_snap_frac", DEFAULT_EDGE_SNAP_FRAC))
+    if not 0.0 <= edge_snap_frac <= 1.0:
+        raise SystemExit("--edge-snap-frac must be between 0 and 1")
 
     input_path = Path(args.input_fasta)
     input_summary = validate_fasta(str(input_path))   # fails early with a clear message
@@ -1728,6 +1781,14 @@ def run_predict(args: argparse.Namespace) -> None:
     regions_out = outdir / "regions.tsv"
     metadata_out = outdir / "run_metadata.json"
 
+    # before the N filter, so n_frac describes the reported coordinates
+    snap_bp = int(edge_snap_frac * cfg.data.window_len)
+    regions_df, n_snapped = snap_contig_edges(regions_df, dict(iter_fasta_lengths(str(input_path))), snap_bp)
+    if n_snapped:
+        windows_df = label_windows(windows_df, regions_df)
+    edge_meta = {"frac": edge_snap_frac, "snap_bp": snap_bp, "calls_moved": n_snapped,
+                 "calls_on_contig_edge": int((regions_df["contig_edge"] != "none").sum()) if len(regions_df) else 0}
+
     # calls made mostly of N (imputed scaffold gaps) are not candidates
     n_frac = call_n_fraction(regions_df, str(input_path))
     n_dropped = int((n_frac >= MAX_CALL_N_FRAC).sum())
@@ -1778,7 +1839,7 @@ def run_predict(args: argparse.Namespace) -> None:
         trained_stride=trained_stride,
         short_contigs=short_meta,
         seed_support=support_meta,
-        extra={"input": input_summary, "n_gap_filter": gap_filter_meta,
+        extra={"input": input_summary, "n_gap_filter": gap_filter_meta, "edge_snap": edge_meta,
                "checkpoint_sha256": {str(c): sha256(str(c)) for c in checkpoints},
                "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
                + (["regions.fna"] if getattr(args, "write_region_fasta", False) else [])},

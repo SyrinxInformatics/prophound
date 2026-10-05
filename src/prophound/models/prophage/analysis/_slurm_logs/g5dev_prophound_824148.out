@@ -1,0 +1,23 @@
+=== job start ===
+Thu Oct  1 14:40:10 CDT 2026
+gpu002
+Tesla V100S-PCIE-32GB
+[preflight] 60 genomes (42 + 18, deduplicated); checkpoint checksums match
+[done] 60 genomes -> 20284 fragments in ../raw/g5dev_shreds/mag_s0.tmp; N50 19838 bp, 0.9951 of input bp kept
+[done] 60 genomes -> 20358 fragments in ../raw/g5dev_shreds/mag_s1.tmp; N50 19707 bp, 0.9951 of input bp kept
+[done] 60 genomes -> 19944 fragments in ../raw/g5dev_shreds/mag_s2.tmp; N50 20480 bp, 0.9952 of input bp kept
+[done] 60 genomes -> 4364 fragments in ../raw/g5dev_shreds/draft_s0.tmp; N50 97060 bp, 1.0000 of input bp kept
+[complete]
+Thu Oct  1 14:40:22 CDT 2026
+[mag_s0]
+Thu Oct  1 15:11:44 CDT 2026
+[mag_s1]
+Thu Oct  1 15:32:00 CDT 2026
+[mag_s2]
+Thu Oct  1 15:52:07 CDT 2026
+[draft_s0]
+Thu Oct  1 16:12:26 CDT 2026
+[done] 300 of 300 genome runs
+Thu Oct  1 16:39:56 CDT 2026
+=== job end (exit 0) ===
+Thu Oct  1 16:39:56 CDT 2026

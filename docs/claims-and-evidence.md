@@ -136,6 +136,91 @@ prophound leads when an element survives in one or two pieces. It trails once th
 
 **Power, stated in advance.** There are 32 elements in 9 genomes, against LAMBDA's 149 in 39, so intervals will be roughly twice as wide. Clearing needs a retention lead of about 0.13 over both tools. On LAMBDA, prophound trailed by 0.07–0.11 before any fix. **An inconclusive G5b is the likely outcome** unless the fix is large. If it is inconclusive, the release gets the fix with self-referential retention figures and no comparative claim, as the G5 verdict already requires. Five of the 9 genomes are one genus, and the write-up says so.
 
+### Amendment 2026-10-05: development result (not the freeze)
+
+`824148` was clean: 300 of 300 runs (60 genomes × 5 conditions), no failures. `scripts/g5dev_eval.py` ran unchanged, using the selection rule from its docstring. Output: `analysis/g5dev/sweep.json`. No LAMBDA or Philympics output was read.
+
+**No variant changes complete-genome recall** (Default 0.972 tune / 1.000 check for every variant), so every retention gain below is a gain in MAG recall, not an artifact of the ratio.
+
+| mode | variant | set | MAG covered50 | retention | draft | MAG calls/genome | MAG false/Mb (cap) |
+|---|---|---|---|---|---|---|---|
+| Default | shipped | tune (42) | 0.808 | 0.831 | 0.955 | 17.2 | 2.22 |
+| Default | ES 10 kb only | tune | 0.832 | 0.856 | 0.961 | 17.2 | 2.22 |
+| Default | **ES 10 kb + WC(0.8, 0.7)**, selected | tune | **0.840** | **0.864** | 0.966 | 18.2 | 2.39 (2.46) |
+| Default | shipped | check (18) | 0.878 | 0.878 | 0.981 | 15.1 | 1.93 |
+| Default | ES 10 kb only | check | 0.904 | 0.904 | 0.981 | 15.1 | 1.92 |
+| Default | selected | check | 0.904 | 0.904 | 0.981 | 15.9 | 2.06 |
+| Exploratory | selected: ES 10 kb + WC(0.8, 0.7) | tune / check | 0.937 / 0.949 | 0.942 / 0.949 | — | 41.3 / 40.4 | 7.51 (7.63) |
+| Conservative | selected: ES 10 kb only (every WC variant exceeds the cap) | tune / check | 0.732 / 0.808 | 0.775 / 0.840 | — | 10.4 / 8.7 | 0.91 (1.10) |
+
+Reading:
+- **Edge snapping does most of the work, and costs nothing** (calls and false/Mb unchanged). The whole-contig call adds +0.008 MAG recall on the tune set, about 1 call/genome, and **nothing on the check set**. Its Default false/Mb sits just under the cap (2.39 vs 2.46).
+- **ES = 10 kb is the edge of the grid** (0 / 2 / 5 / 10 kb), so the optimum may lie beyond it. Extending the grid now would mean choosing after seeing results, and needs its own amendment if done.
+- **Phage-free regression:** on the 20 geNomad-negative genomes the selected variants leave calls/genome unchanged in all three modes (Default 7.40, Exploratory 27.15, Conservative 2.45). WC fires on 2 contigs there and replaces the calls already on them.
+- **Per-mode selection:** the rule was applied per mode, so Conservative gets ES only. The preregistered endpoint is Default only. Whether the other modes get the same fix or their own is a user decision taken at the freeze.
+- **Expected G5b outcome:** a retention gain of +0.033 (tune) / +0.026 (check) covers about a third of the 0.07–0.11 deficit to the comparators seen on LAMBDA. Clearing G5b needs a lead of about 0.13, so **inconclusive or not clearing remains the expected result**, as the power note above says.
+
+### Amendment 2026-10-05 (later): ES vs ES+WC, one fix for all modes
+
+**User decisions, same day:** the fix applies to **all modes** (no per-mode variants). It is **on by default if the gain is meaningful.** ES and ES+WC were compared before choosing. Script: `scripts/g5dev_compare.py` (same post-processing code as the sweep) → `analysis/g5dev/compare.json`.
+
+**Under one fix for all modes, the rule has to hold in every mode.** Applied jointly, the docstring rule (best Default MAG retention, with each mode's MAG false/Mb at or below its own complete-genome false/Mb) picks **ES 10 kb with no whole-contig call**. ES+WC(0.8, 0.7) is out because it raises Conservative's MAG false/Mb to 1.33, above its cap of 1.10. WC variants at the mode's own threshold tie with ES alone and lose the tie-break on simplicity.
+
+MAG covered50, three shred seeds pooled. Paired genome bootstrap, 95% interval:
+
+| set | mode | shipped | ES | ES+WC | ES − shipped | (ES+WC) − ES |
+|---|---|---|---|---|---|---|
+| tune (42) | Default | 0.808 | 0.832 | 0.840 | +0.024 (+0.012, +0.038) | +0.007 (+0.002, +0.015) |
+| tune | Exploratory | 0.916 | 0.931 | 0.937 | +0.015 (+0.004, +0.027) | +0.006 (0.000, +0.012) |
+| tune | Conservative | 0.709 | 0.732 | 0.778 | +0.022 (+0.011, +0.036) | +0.047 (+0.027, +0.070), **over the cap** |
+| check (18) | Default | 0.878 | 0.904 | 0.904 | +0.026 (+0.005, +0.057) | 0.000 |
+| check | Exploratory | 0.929 | 0.936 | 0.949 | +0.006 (0.000, +0.024) | +0.013 (0.000, +0.037) |
+| check | Conservative | 0.795 | 0.808 | 0.821 | +0.013 (0.000, +0.027) | +0.013 (0.000, +0.033) |
+
+- **ES is free.** Complete-genome recall, calls/genome and false/Mb are unchanged in every mode and on both sets. The gain sits entirely in elements cut into 3 or more fragments (Default, tune: 0.765 → 0.806), the split G5's post-hoc analysis pointed to.
+- **In Default, WC recovers 4 element-seeds on the tune set (about 1.3 elements) and none on the check set.** It costs about 1 call/genome on MAG input. About a third of WC calls touch no element: 383 of 1,057 in Default, and more than half in Exploratory.
+- WC never loses an element that ES finds.
+
+**Trade-offs ES has but the selection metrics cannot see** (user asked, 2026-10-05). Covered50 and false/Mb count elements and calls, not call length. ES never adds a call, but it lengthens calls. Measured by `g5dev_compare.py` (now with bp and IoU) and `scripts/g5dev_es_distance.py`:
+- **It moves most calls on MAG input.** Fragments have an N50 of 20 kb, so in Default 85–90% of MAG calls lie within 10 kb of a fragment end. About half the moved calls touch no element. The median extension is under 1 kb, but the tail is long.
+- **The extra sequence is mostly off-element.** Default MAG bp called rises 12.8% (tune) / 13.0% (check), and about 88% of the added bp lies outside geNomad elements. Exploratory rises about 20%, Conservative about 11%. Calls/genome does not change.
+- **Boundaries get slightly worse on MAG input.** Median IoU of detected elements: Default 0.496 → 0.486 (tune), 0.466 → 0.465 (check). Complete genomes are unaffected (IoU unchanged; 19 of 596 calls move, +96 kb in total).
+- **Snapped edges are not detected boundaries.** A snapped edge reports a fragment end, not where the element stops. This needs an output flag (for example an `edge_snapped` column per side). The flag also tells the user the element may continue on another contig.
+- **The endpoint cannot see the cost.** G5b scores covered50, so the longer the snap distance, the better G5b looks, and the bp cost never registers. That is a reason not to pick the distance by the endpoint alone.
+
+**Snap distance, MAG covered50 / bp called vs shipped** (Default; Exploratory and Conservative follow the same shape):
+
+| d | tune | check |
+|---|---|---|
+| 0 (shipped) | 0.808 / — | 0.878 / — |
+| 1 kb | 0.819 / +2.0% | 0.891 / +1.8% |
+| 2 kb | 0.823 / +3.0% | 0.891 / +2.8% |
+| 5 kb | 0.827 / +6.6% | 0.904 / +6.4% |
+| 10 kb | 0.832 / +12.8% | 0.904 / +13.0% |
+
+Recall rises roughly with log d while added sequence rises roughly linearly. On the check set, 5 kb equals 10 kb in every mode. **Choosing a distance below 10 kb on bp grounds would add a criterion after the rule was fixed.** It is still on corpus data only, with G5b unseen, but the freeze amendment must say so.
+
+### Amendment 2026-10-05: freeze of the fragmented-input fix (before prophound runs on G5b)
+
+**Commit: `<fill in after the user commits>`.** prophound does not run on G5b until this line holds a hash.
+
+- **The fix: edge snap only, on by default in all three modes.** `--edge-snap-frac 0.5` (`DEFAULT_EDGE_SNAP_FRAC`) moves a call edge within 0.5 × `--window-len` of a contig end onto that end. At the trained 10 kb window that is **5 kb**. Short-contig calls use the same distance. Off with `--edge-snap-frac 0`. No whole-contig call.
+- **Flag:** a `contig_edge` column (none/start/end/both) in `regions.tsv` and the GFF3. It marks every edge on a contig end, snapped or not. `run_metadata.json` `edge_snap` records `frac`, `snap_bp`, `calls_moved` and `calls_on_contig_edge`.
+- **Departures from the preregistered selection rule, all user decisions on 2026-10-05, all on corpus data with G5b unseen:**
+  1. One fix for all modes, so the cap applies to every mode. The rule's per-mode pick for Default and Exploratory (ES 10 kb + WC) breaks Conservative's cap. The joint rule picks ES 10 kb.
+  2. **5 kb, not 10 kb, chosen on a criterion added after the rule was fixed:** sequence called. 10 kb adds about 13% more MAG bp (Default), mostly off-element. 5 kb adds 6.5% and equals 10 kb on the check set. Default MAG covered50 on the tune set is 0.827 at 5 kb against 0.832 at 10 kb.
+  3. **Distance relative to `--window-len`**, so it scales with larger windows. Snapping short-contig calls by their own 5 kb or 3 kb scale was tried and lost 1 of 156 element-seeds on the check set, so they use the coarse distance. Window lengths other than 10 kb are untested, like the thresholds.
+- **Verified:** the shipped `snap_contig_edges` reproduces the measured flat 5 kb exactly, in every mode, on both sets and on the phage-free genomes (`scripts/g5dev_snap_check.py` → `analysis/g5dev/snap_check.json`).
+
+| Default, MAG covered50 | shipped | frozen fix |
+|---|---|---|
+| tune (42) | 0.808 | 0.827 |
+| check (18) | 0.878 | 0.904 |
+
+  Complete-genome recall, calls/genome and false/Mb are unchanged. Unit tests: `tests/test_edge_snap.py`. End-to-end smoke run (random weights): the column, the GFF3 attribute and the metadata are written.
+- **Scoring G5b with the fix:** `g5_score.py` rebuilds prophound calls offline from the tracks, so it now applies the shipped snap: `--edge_snap_frac 0.5 --lengths <table>`. The table gives exact contig lengths for every G5b condition, built on ARC like `analysis/g5dev/contig_lengths.tsv`. At 0 it reproduces G5. Cross-checked: on the 18, `mag_s0`, it matches the dev pipeline (0.846 → 0.885, 269 calls).
+- **Expected G5b outcome: inconclusive or not clearing.** The gain is about a quarter of the LAMBDA deficit.
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |

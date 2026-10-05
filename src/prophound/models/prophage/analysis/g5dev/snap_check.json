@@ -1,0 +1,297 @@
+{
+ "tune": {
+  "default": {
+   "shipped": {
+    "complete": 0.9720670391061452,
+    "mag": 0.8081936685288641,
+    "draft": 0.9553072625698324,
+    "mag_calls_per_genome": 17.206349206349206,
+    "mag_false_per_mb": 2.2206754069387684,
+    "complete_false_per_mb": 2.4580579504391196,
+    "mag_bp_called": 33704000,
+    "mag_bp_off_element": 20771994,
+    "complete_bp_called": 20693000,
+    "mag_median_iou": 0.49624562621385726,
+    "complete_median_iou": 0.6791427955000459
+   },
+   "flat5kb": {
+    "complete": 0.9720670391061452,
+    "mag": 0.8268156424581006,
+    "draft": 0.9608938547486033,
+    "mag_calls_per_genome": 17.206349206349206,
+    "mag_false_per_mb": 2.218761031587959,
+    "complete_false_per_mb": 2.4580579504391196,
+    "mag_bp_called": 35916193,
+    "mag_bp_off_element": 22549045,
+    "complete_bp_called": 20720029,
+    "mag_median_iou": 0.4990669675092026,
+    "complete_median_iou": 0.6791427955000459
+   },
+   "frac": {
+    "complete": 0.9720670391061452,
+    "mag": 0.8268156424581006,
+    "draft": 0.9608938547486033,
+    "mag_calls_per_genome": 17.206349206349206,
+    "mag_false_per_mb": 2.218761031587959,
+    "complete_false_per_mb": 2.4580579504391196,
+    "mag_bp_called": 35916193,
+    "mag_bp_off_element": 22549045,
+    "complete_bp_called": 20720029,
+    "mag_median_iou": 0.4990669675092026,
+    "complete_median_iou": 0.6791427955000459
+   }
+  },
+  "exploratory": {
+   "shipped": {
+    "complete": 0.994413407821229,
+    "mag": 0.9162011173184358,
+    "draft": 0.9832402234636871,
+    "mag_calls_per_genome": 39.48412698412699,
+    "mag_false_per_mb": 7.165506938079147,
+    "complete_false_per_mb": 7.632614523676612,
+    "mag_bp_called": 64405000,
+    "mag_bp_off_element": 50028275,
+    "complete_bp_called": 34895000,
+    "mag_median_iou": 0.4779557247852652,
+    "complete_median_iou": 0.6644890187001555
+   },
+   "flat5kb": {
+    "complete": 0.994413407821229,
+    "mag": 0.925512104283054,
+    "draft": 0.9832402234636871,
+    "mag_calls_per_genome": 39.48412698412699,
+    "mag_false_per_mb": 7.1559350613251,
+    "complete_false_per_mb": 7.632614523676612,
+    "mag_bp_called": 70913536,
+    "mag_bp_off_element": 55924794,
+    "complete_bp_called": 34931471,
+    "mag_median_iou": 0.4791320406278855,
+    "complete_median_iou": 0.6644890187001555
+   },
+   "frac": {
+    "complete": 0.994413407821229,
+    "mag": 0.925512104283054,
+    "draft": 0.9832402234636871,
+    "mag_calls_per_genome": 39.48412698412699,
+    "mag_false_per_mb": 7.1559350613251,
+    "complete_false_per_mb": 7.632614523676612,
+    "mag_bp_called": 70913536,
+    "mag_bp_off_element": 55924794,
+    "complete_bp_called": 34931471,
+    "mag_median_iou": 0.4791320406278855,
+    "complete_median_iou": 0.6644890187001555
+   }
+  },
+  "conservative": {
+   "shipped": {
+    "complete": 0.9441340782122905,
+    "mag": 0.7094972067039106,
+    "draft": 0.8938547486033519,
+    "mag_calls_per_genome": 10.365079365079366,
+    "mag_false_per_mb": 0.9131570423360281,
+    "complete_false_per_mb": 1.0969370760137191,
+    "mag_bp_called": 21278000,
+    "mag_bp_off_element": 9850982,
+    "complete_bp_called": 13445000,
+    "mag_median_iou": 0.516136279749009,
+    "complete_median_iou": 0.7289696969696969
+   },
+   "flat5kb": {
+    "complete": 0.9441340782122905,
+    "mag": 0.7262569832402235,
+    "draft": 0.8994413407821229,
+    "mag_calls_per_genome": 10.365079365079366,
+    "mag_false_per_mb": 0.9112426669852188,
+    "complete_false_per_mb": 1.0969370760137191,
+    "mag_bp_called": 22574068,
+    "mag_bp_off_element": 10756918,
+    "complete_bp_called": 13469236,
+    "mag_median_iou": 0.5163446020655118,
+    "complete_median_iou": 0.7295217391304348
+   },
+   "frac": {
+    "complete": 0.9441340782122905,
+    "mag": 0.7262569832402235,
+    "draft": 0.8994413407821229,
+    "mag_calls_per_genome": 10.365079365079366,
+    "mag_false_per_mb": 0.9112426669852188,
+    "complete_false_per_mb": 1.0969370760137191,
+    "mag_bp_called": 22574068,
+    "mag_bp_off_element": 10756918,
+    "complete_bp_called": 13469236,
+    "mag_median_iou": 0.5163446020655118,
+    "complete_median_iou": 0.7295217391304348
+   }
+  }
+ },
+ "check": {
+  "default": {
+   "shipped": {
+    "complete": 1.0,
+    "mag": 0.8782051282051282,
+    "draft": 0.9807692307692307,
+    "mag_calls_per_genome": 15.074074074074074,
+    "mag_false_per_mb": 1.9259291987467868,
+    "complete_false_per_mb": 2.4836643513250416,
+    "mag_bp_called": 13196500,
+    "mag_bp_off_element": 8369320,
+    "complete_bp_called": 7904000,
+    "mag_median_iou": 0.46552326258197196,
+    "complete_median_iou": 0.6658261648745519
+   },
+   "flat5kb": {
+    "complete": 1.0,
+    "mag": 0.9038461538461539,
+    "draft": 0.9807692307692307,
+    "mag_calls_per_genome": 15.074074074074074,
+    "mag_false_per_mb": 1.921571892867269,
+    "complete_false_per_mb": 2.4836643513250416,
+    "mag_bp_called": 14042120,
+    "mag_bp_off_element": 9077305,
+    "complete_bp_called": 7904077,
+    "mag_median_iou": 0.46983162645374066,
+    "complete_median_iou": 0.6658261648745519
+   },
+   "frac": {
+    "complete": 1.0,
+    "mag": 0.9038461538461539,
+    "draft": 0.9807692307692307,
+    "mag_calls_per_genome": 15.074074074074074,
+    "mag_false_per_mb": 1.921571892867269,
+    "complete_false_per_mb": 2.4836643513250416,
+    "mag_bp_called": 14042120,
+    "mag_bp_off_element": 9077305,
+    "complete_bp_called": 7904077,
+    "mag_median_iou": 0.46983162645374066,
+    "complete_median_iou": 0.6658261648745519
+   }
+  },
+  "exploratory": {
+   "shipped": {
+    "complete": 1.0,
+    "mag": 0.9294871794871795,
+    "draft": 1.0,
+    "mag_calls_per_genome": 38.574074074074076,
+    "mag_false_per_mb": 7.215698536481173,
+    "complete_false_per_mb": 8.653609476721986,
+    "mag_bp_called": 27620500,
+    "mag_bp_off_element": 22522551,
+    "complete_bp_called": 15300000,
+    "mag_median_iou": 0.45466666666666666,
+    "complete_median_iou": 0.6640375175315567
+   },
+   "flat5kb": {
+    "complete": 1.0,
+    "mag": 0.9358974358974359,
+    "draft": 1.0,
+    "mag_calls_per_genome": 38.574074074074076,
+    "mag_false_per_mb": 7.215698536481173,
+    "complete_false_per_mb": 8.653609476721986,
+    "mag_bp_called": 30381437,
+    "mag_bp_off_element": 25118018,
+    "complete_bp_called": 15310123,
+    "mag_median_iou": 0.45273562333698025,
+    "complete_median_iou": 0.6640375175315567
+   },
+   "frac": {
+    "complete": 1.0,
+    "mag": 0.9358974358974359,
+    "draft": 1.0,
+    "mag_calls_per_genome": 38.574074074074076,
+    "mag_false_per_mb": 7.215698536481173,
+    "complete_false_per_mb": 8.653609476721986,
+    "mag_bp_called": 30381437,
+    "mag_bp_off_element": 25118018,
+    "complete_bp_called": 15310123,
+    "mag_median_iou": 0.45273562333698025,
+    "complete_median_iou": 0.6640375175315567
+   }
+  },
+  "conservative": {
+   "shipped": {
+    "complete": 0.9615384615384616,
+    "mag": 0.7948717948717948,
+    "draft": 0.9230769230769231,
+    "mag_calls_per_genome": 8.685185185185185,
+    "mag_false_per_mb": 0.636166658409572,
+    "complete_false_per_mb": 0.8758184817830409,
+    "mag_bp_called": 7778000,
+    "mag_bp_off_element": 3342328,
+    "complete_bp_called": 4542000,
+    "mag_median_iou": 0.5036911055661905,
+    "complete_median_iou": 0.7697662037037037
+   },
+   "flat5kb": {
+    "complete": 0.9615384615384616,
+    "mag": 0.8076923076923077,
+    "draft": 0.9230769230769231,
+    "mag_calls_per_genome": 8.685185185185185,
+    "mag_false_per_mb": 0.636166658409572,
+    "complete_false_per_mb": 0.8758184817830409,
+    "mag_bp_called": 8173738,
+    "mag_bp_off_element": 3614957,
+    "complete_bp_called": 4543077,
+    "mag_median_iou": 0.4999898788101599,
+    "complete_median_iou": 0.7697662037037037
+   },
+   "frac": {
+    "complete": 0.9615384615384616,
+    "mag": 0.8076923076923077,
+    "draft": 0.9230769230769231,
+    "mag_calls_per_genome": 8.685185185185185,
+    "mag_false_per_mb": 0.636166658409572,
+    "complete_false_per_mb": 0.8758184817830409,
+    "mag_bp_called": 8173738,
+    "mag_bp_off_element": 3614957,
+    "complete_bp_called": 4543077,
+    "mag_median_iou": 0.4999898788101599,
+    "complete_median_iou": 0.7697662037037037
+   }
+  }
+ },
+ "phagefree": {
+  "n_genomes": 20,
+  "default": {
+   "shipped": {
+    "calls_per_genome": 7.4,
+    "bp_called": 3324500
+   },
+   "flat5kb": {
+    "calls_per_genome": 7.4,
+    "bp_called": 3329500
+   },
+   "frac": {
+    "calls_per_genome": 7.4,
+    "bp_called": 3329500
+   }
+  },
+  "exploratory": {
+   "shipped": {
+    "calls_per_genome": 27.15,
+    "bp_called": 9144500
+   },
+   "flat5kb": {
+    "calls_per_genome": 27.15,
+    "bp_called": 9147500
+   },
+   "frac": {
+    "calls_per_genome": 27.15,
+    "bp_called": 9147500
+   }
+  },
+  "conservative": {
+   "shipped": {
+    "calls_per_genome": 2.45,
+    "bp_called": 1085500
+   },
+   "flat5kb": {
+    "calls_per_genome": 2.45,
+    "bp_called": 1090500
+   },
+   "frac": {
+    "calls_per_genome": 2.45,
+    "bp_called": 1090500
+   }
+  }
+ }
+}

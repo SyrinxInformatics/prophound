@@ -39,6 +39,8 @@ DEFAULT_REFINE_STRIDE = 250
 DEFAULT_EDGE_ALPHA = 1.0
 DEFAULT_SPLIT_MIN_GAP_BP = 4000
 DEFAULT_SPLIT_MAX_PROB = 0.05
+# mirrors predict_genome.DEFAULT_EDGE_SNAP_FRAC
+DEFAULT_EDGE_SNAP_FRAC = 0.5
 
 
 def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
@@ -226,6 +228,18 @@ def _add_predict_subparser(subparsers: "argparse._SubParsersAction") -> None:
             "trades resolution for context. EXPERIMENTAL away from the trained "
             "length: mode thresholds were calibrated at it, and negative scores "
             "drift upward as windows shrink."
+        ),
+    )
+    parser.add_argument(
+        "--edge-snap-frac",
+        type=float,
+        default=DEFAULT_EDGE_SNAP_FRAC,
+        help=(
+            "Move a call edge within this fraction of --window-len of a contig "
+            "end onto that end (short contigs included): "
+            "on fragmented input an element cut by a breakpoint is only partly "
+            "scored near the end. Default %(default)s, i.e. 5 kb at 10 kb windows; "
+            "0 disables. Edges on a contig end are flagged in contig_edge either way."
         ),
     )
     parser.add_argument(
