@@ -229,4 +229,6 @@ src/prophound/models/prophage/analysis/g5/prophound/*/
 src/prophound/models/prophage/analysis/g5b/genbank/
 src/prophound/models/prophage/analysis/g5b/fasta/
 src/prophound/models/prophage/analysis/g5b/shreds/
+src/prophound/models/prophage/analysis/g5b/raw/
+src/prophound/models/prophage/analysis/g5b/prophound/*/
 src/prophound/models/prophage/analysis/g5dev/prophound/*/*/

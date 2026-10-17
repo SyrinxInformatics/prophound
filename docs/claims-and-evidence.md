@@ -222,6 +222,46 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
 - **Expected G5b outcome: inconclusive or not clearing.** The gain is about a quarter of the LAMBDA deficit.
 - **G5b run (2026-10-05):** `826741`. `g5_prophound.slurm` is parameterized for G5b and also runs the complete genomes, since no earlier run exists. Its preflight requires the frozen snap, and the push was verified on ARC (`predict_genome.py` md5 `62a40e2c38c0a22dbb5d8fa45e82b492`). The contig-length table `analysis/g5b/contig_lengths.tsv` was built locally from inputs that match `analysis/g5b/input_md5.tsv` (all 55 files). MAG fragment counts are 3,145–3,247, as preregistered. The comparator outputs (`824150`/`824151`) are still unread.
 
+### G5b result (`826741`, `824150`, `824151`; scored once on 2026-10-16)
+
+**Runs were clean.** prophound 45/45 (`.err` empty, exit 0, preflight checkpoint checksums matched). Every `run_metadata.json` has `edge_snap.frac` 0.5 / `snap_bp` 5000, Default mode, `impute`, and one checkpoint-hash set. geNomad 45/45 and Jaeger 45/45 per model, both exit 0 with empty `.err`. The comparator tables collected locally match the ARC job summaries call for call. The scorer was run once as preregistered (`g5_score.py score … --edge_snap_frac 0.5 --lengths analysis/g5b/contig_lengths.tsv`). Outputs are in `analysis/g5b/results.{json,csv}`, and every element is reachable in every condition.
+
+**Covered50 on Philympics truth, 9 genomes / 32 elements.** MAG is pooled over three seeds. Intervals are 95% paired genome bootstrap.
+
+| tool | complete | MAG | **retention** | MAG calls/genome | draft | draft retention |
+|---|---|---|---|---|---|---|
+| prophound Exploratory | 1.000 | 0.969 | 0.969 | 41.1 | 1.000 | 1.000 |
+| **prophound Default** | 1.000 | **0.938** | **0.938 (0.889–0.983)** | 20.2 | 1.000 | 1.000 |
+| prophound Conservative | 1.000 | 0.875 | 0.875 | 13.5 | 1.000 | 1.000 |
+| **geNomad** (end-to-end) | 1.000 | **0.958** | **0.958 (0.911–1.000)** | 14.9 | 0.969 | 0.969 |
+| **Jaeger 57341_1.5M** | 0.875 | **0.771** | **0.881 (0.750–1.000)** | 14.9 | 0.906 | 1.036 |
+| geNomad find-proviruses only | 0.969 | 0.323 | 0.333 | 2.5 | 0.781 | 0.806 |
+| Jaeger `default` model | 0.375 | 0.229 | 0.611 | 7.4 | 0.094 | 0.250 |
+
+**Verdict: G5b does not clear.** Both preregistered conditions fail against geNomad.
+- Retention, prophound Default minus each comparator: geNomad **−0.021** (−0.074 to +0.026), Jaeger **+0.057** (−0.064 to +0.165). Neither interval lies above 0.
+- Absolute MAG covered50: geNomad **−0.021** (−0.074 to +0.026), so prophound is not ahead of geNomad. Jaeger **+0.167** (+0.070 to +0.256).
+- Matched cost (prophound cut to the comparator's per-genome call count), MAG s0/s1/s2: 0.875 / 0.969 / 0.906 against geNomad's 0.969 / 1.000 / 0.906, and 0.844 / 1.000 / 0.844 against Jaeger's 0.781 / 0.813 / 0.719.
+- This is the expected outcome stated in advance (inconclusive or not clearing). Unlike G5, it is **not a refutation**: retention against geNomad is a tie, where on LAMBDA it was −0.106 with its interval below zero. But this test was not built to show that the fix closed the gap. Both prophound and geNomad sit at the 1.000 ceiling on complete genomes, so retention reduces to absolute MAG recall. There are only 32 elements, and five of the 9 genomes are *Paracoccus*.
+
+**What the release may say (unchanged from G5, with G5b added):**
+- **Not supported:** any comparative fragmented-input claim against geNomad.
+- **Supported, self-referential:** on held-out MAG-like input, prophound Default kept 0.94 of its complete-genome recall on Philympics curated prophages at 20.2 calls/genome, and kept all of it on draft-like input. Report geNomad (0.96) and Jaeger (0.88) on the same input alongside. The LAMBDA G5 figures (0.92, pre-fix) stay as reported.
+- **Not claimed:** prophound's absolute lead over Jaeger's primary model (+0.167, interval above 0). Jaeger was not the axis the gate tested alone, and it misses 4 of 32 elements even on complete genomes. It is reported, not headlined.
+
+**Post-hoc (2026-10-16, after scoring; not evidence for G5b): the fix's effect on G5b.** The same tracks were rescored with the snap off (`--edge_snap_frac 0`, giving `analysis/g5b/results_posthoc_snapoff.json`). The result is **byte-identical to the snap-on score in every mode and condition.** The snap does act: `scripts/g5b_snap_posthoc.py` shows it raises coverage on 20–26 elements per MAG seed, by at most +0.153. But none of them crosses the 50% line. Its cost matches the development estimate (+6.6% at 5 kb):
+
+| Default | bp called, off → on | added | of which on-element |
+|---|---|---|---|
+| complete | 3,884 → 3,904 kb (+0.5%) | 20 kb | 2 kb (10%) |
+| MAG s0 / s1 / s2 | +7.4% / +6.2% / +6.0% | 180 / 170 / 151 kb | 24 / 21 / 34 kb (12–22%) |
+| draft | 3,478 → 3,556 kb (+2.3%) | 79 kb | 10 kb (13%) |
+
+- **On fresh data the fix bought no recall at the endpoint.** Its development gain (+0.019 tune / +0.026 check) did not reproduce on 32 elements. Here an element only counts if it crosses 50% coverage, and none did.
+- **So G5b's tie with geNomad is not the fix's doing.** Without the snap, prophound already scores 0.938 against geNomad's 0.958 on this set. The change from G5 (−0.106) to G5b (−0.021) comes from the genome set (Philympics: smaller, with both tools at the complete-genome ceiling), not from the fix. Never write it up as "the fix closed the gap".
+- **The fix's measured cost is real:** about 6–7% more MAG sequence called, and 78–88% of the added sequence lies off-element. The `contig_edge` flag marks every snapped edge, so a user can discount them.
+- The decision to ship it on by default stands as frozen. Reopening it would mean tuning after G5b, which the agreed order forbids. Whether to revisit the default post-v1 is a user decision.
+
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |

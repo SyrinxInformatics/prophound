@@ -1,0 +1,39 @@
+=== job start ===
+Thu Oct  1 08:50:41 CDT 2026
+c064
+[preflight] geNomad 1.9.4, DB 1.9, all inputs present
+[genomad complete]
+Thu Oct  1 08:50:46 CDT 2026
+[genomad complete] 9 of 9
+Thu Oct  1 09:06:37 CDT 2026
+[genomad mag_s0]
+Thu Oct  1 09:06:37 CDT 2026
+[genomad mag_s0] 9 of 9
+Thu Oct  1 09:21:45 CDT 2026
+[genomad mag_s1]
+Thu Oct  1 09:21:45 CDT 2026
+[genomad mag_s1] 9 of 9
+Thu Oct  1 09:36:47 CDT 2026
+[genomad mag_s2]
+Thu Oct  1 09:36:47 CDT 2026
+[genomad mag_s2] 9 of 9
+Thu Oct  1 09:51:50 CDT 2026
+[genomad draft_s0]
+Thu Oct  1 09:51:50 CDT 2026
+[genomad draft_s0] 9 of 9
+Thu Oct  1 10:06:50 CDT 2026
+                                   nunique  size
+tool                    condition               
+geNomad                 complete         9    51
+                        draft_s0         9    59
+                        mag_s0           9   132
+                        mag_s1           9   130
+                        mag_s2           9   139
+geNomad find-proviruses complete         9    43
+                        draft_s0         8    40
+                        mag_s0           8    21
+                        mag_s1           8    23
+                        mag_s2           8    23
+[done] wrote analysis/g5b/genomad_calls.tsv
+=== job end (exit 0) ===
+Thu Oct  1 10:06:52 CDT 2026
