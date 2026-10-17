@@ -202,7 +202,7 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
 
 ### Amendment 2026-10-05: freeze of the fragmented-input fix (before prophound runs on G5b)
 
-**Commit: `<fill in after the user commits>`.** prophound does not run on G5b until this line holds a hash.
+**Commit: `ad5b28ba26bfb6d4ab9b4f12160e9d112ea02f39`** (2026-10-05). The fix is frozen at this commit, and prophound runs on G5b from it.
 
 - **The fix: edge snap only, on by default in all three modes.** `--edge-snap-frac 0.5` (`DEFAULT_EDGE_SNAP_FRAC`) moves a call edge within 0.5 × `--window-len` of a contig end onto that end. At the trained 10 kb window that is **5 kb**. Short-contig calls use the same distance. Off with `--edge-snap-frac 0`. No whole-contig call.
 - **Flag:** a `contig_edge` column (none/start/end/both) in `regions.tsv` and the GFF3. It marks every edge on a contig end, snapped or not. `run_metadata.json` `edge_snap` records `frac`, `snap_bp`, `calls_moved` and `calls_on_contig_edge`.
@@ -220,6 +220,7 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
   Complete-genome recall, calls/genome and false/Mb are unchanged. Unit tests: `tests/test_edge_snap.py`. End-to-end smoke run (random weights): the column, the GFF3 attribute and the metadata are written.
 - **Scoring G5b with the fix:** `g5_score.py` rebuilds prophound calls offline from the tracks, so it now applies the shipped snap: `--edge_snap_frac 0.5 --lengths <table>`. The table gives exact contig lengths for every G5b condition, built on ARC like `analysis/g5dev/contig_lengths.tsv`. At 0 it reproduces G5. Cross-checked: on the 18, `mag_s0`, it matches the dev pipeline (0.846 → 0.885, 269 calls).
 - **Expected G5b outcome: inconclusive or not clearing.** The gain is about a quarter of the LAMBDA deficit.
+- **G5b run (2026-10-05):** `826741`. `g5_prophound.slurm` is parameterized for G5b and also runs the complete genomes, since no earlier run exists. Its preflight requires the frozen snap, and the push was verified on ARC (`predict_genome.py` md5 `62a40e2c38c0a22dbb5d8fa45e82b492`). The contig-length table `analysis/g5b/contig_lengths.tsv` was built locally from inputs that match `analysis/g5b/input_md5.tsv` (all 55 files). MAG fragment counts are 3,145–3,247, as preregistered. The comparator outputs (`824150`/`824151`) are still unread.
 
 ### Measured by the same run, where the tool is probably not better (report plainly)
 

@@ -1,0 +1,19 @@
+=== job start ===
+Mon Oct  5 15:57:52 CDT 2026
+gpu009
+Tesla V100S-PCIE-32GB
+[preflight] all inputs present; checkpoint checksums match
+[complete]
+Mon Oct  5 15:57:56 CDT 2026
+[mag_s0]
+Mon Oct  5 16:02:28 CDT 2026
+[mag_s1]
+Mon Oct  5 16:05:22 CDT 2026
+[mag_s2]
+Mon Oct  5 16:08:21 CDT 2026
+[draft_s0]
+Mon Oct  5 16:11:17 CDT 2026
+[done] 45 of 45 genome runs
+Mon Oct  5 16:15:11 CDT 2026
+=== job end (exit 0) ===
+Mon Oct  5 16:15:11 CDT 2026

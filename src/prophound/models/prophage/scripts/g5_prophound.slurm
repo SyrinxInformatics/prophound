@@ -6,6 +6,9 @@
 # LAMBDA (lambda_run.slurm). The complete-genome condition reuses 822275's tracks
 # (analysis/lambda/ens): same checkpoints, same defaults.
 # Submit with the other two steps (g5_shred.slurm has the line).
+# Paths come from G5_* environment variables (defaults: G5 on LAMBDA). G5b runs the
+# complete genomes here too (no earlier run exists), from the frozen fix (ad5b28b):
+#   sbatch --export=ALL,G5_DIR=analysis/g5b,G5_SHR=../raw/g5b_shreds,G5_FNA=analysis/g5b/fasta scripts/g5_prophound.slurm
 #SBATCH -J g5_prophound
 #SBATCH -p gpu1v100
 #SBATCH -N 1
@@ -22,10 +25,13 @@ module load miniconda
 conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
-G=analysis/g5
-SHR=../raw/g5_shreds
+G=${G5_DIR:-analysis/g5}
+SHR=${G5_SHR:-../raw/g5_shreds}
+FNA=${G5_FNA:-}                    # set: also run the complete genomes, from $FNA/<genome>.fna
 OUT=$G/prophound
 CONDS="mag_s0 mag_s1 mag_s2 draft_s0"
+[ -n "$FNA" ] && CONDS="complete $CONDS"
+N=$(grep -c . "$G/genome_list.txt")
 mkdir -p analysis/_slurm_logs "$OUT"
 
 declare -A SHA=(
@@ -43,6 +49,10 @@ grep -q '"exploratory": 0.90' src/predict_genome.py \
   || { echo "PREFLIGHT FAIL: src/predict_genome.py lacks the final modes" >&2; fail=1; }
 grep -q -- '--write-seed-scores' src/predict_genome.py \
   || { echo "PREFLIGHT FAIL: src/predict_genome.py lacks --write-seed-scores" >&2; fail=1; }
+if [ "$G" != analysis/g5 ]; then   # G5b and later: the frozen fragmented-input fix must be on ARC
+  grep -q 'DEFAULT_EDGE_SNAP_FRAC = 0.5' src/predict_genome.py \
+    || { echo "PREFLIGHT FAIL: src/predict_genome.py lacks the frozen edge snap (ad5b28b)" >&2; fail=1; }
+fi
 for R in r1 r2 r3; do
   C=runs/prophage_v2_pool_$R/checkpoints/best.pt
   [ -s "$C" ] || { echo "PREFLIGHT FAIL: missing $C" >&2; fail=1; continue; }
@@ -50,8 +60,10 @@ for R in r1 r2 r3; do
   [ "$got" = "${SHA[$R]}" ] || { echo "PREFLIGHT FAIL: $C sha256 $got != recorded ${SHA[$R]}" >&2; fail=1; }
 done
 for c in $CONDS; do
-  n=$(ls "$SHR/$c"/*.fna 2>/dev/null | wc -l)
-  [ "$n" -eq 39 ] || { echo "PREFLIGHT FAIL: $SHR/$c has $n/39 shredded genomes (g5_shred.slurm)" >&2; fail=1; }
+  d=$SHR/$c; [ "$c" = complete ] && d=$FNA
+  while read -r ASM; do
+    [ -s "$d/$ASM.fna" ] || { echo "PREFLIGHT FAIL: missing $d/$ASM.fna" >&2; fail=1; }
+  done < "$G/genome_list.txt"
 done
 [ $fail -eq 0 ] || { echo "PREFLIGHT FAILED -- nothing run" >&2; exit 1; }
 echo "[preflight] all inputs present; checkpoint checksums match"
@@ -65,13 +77,14 @@ for c in $CONDS; do
     D="$OUT/$c/$ASM"
     [ -s "$D/run_metadata.json" ] && continue                        # resumable
     s=$(date +%s)
-    python -m src.predict_genome --input_fasta "$SHR/$c/$ASM.fna" --outdir "$D" --config "$CFG" --checkpoint $CKPT \
+    IN=$SHR/$c/$ASM.fna; [ "$c" = complete ] && IN=$FNA/$ASM.fna
+    python -m src.predict_genome --input_fasta "$IN" --outdir "$D" --config "$CFG" --checkpoint $CKPT \
       --mode default --device cuda --write-seed-scores >>"$OUT/run.log" 2>&1 \
       && echo -e "$c\t$ASM\t$(( $(date +%s) - s ))" >> "$OUT/wall_seconds.tsv" \
       || echo "FAILED $c $ASM" >> "$OUT/failures.txt"
   done < "$G/genome_list.txt"
 done
-echo "[done] $(ls -d "$OUT"/*/*/ 2>/dev/null | wc -l) of 156 genome runs"; date
+echo "[done] $(ls -d "$OUT"/*/*/ 2>/dev/null | wc -l) of $(( N * $(echo $CONDS | wc -w) )) genome runs"; date
 
 rc=0
 if [ -s "$OUT/failures.txt" ]; then

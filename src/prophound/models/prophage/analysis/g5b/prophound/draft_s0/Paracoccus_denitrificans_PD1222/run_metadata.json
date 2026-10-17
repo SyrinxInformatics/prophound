@@ -1,0 +1,92 @@
+{
+  "prophound_version": "unknown (not installed)",
+  "run_name": "prophage_v2_pool_r1",
+  "checkpoint": [
+    "runs/prophage_v2_pool_r1/checkpoints/best.pt",
+    "runs/prophage_v2_pool_r2/checkpoints/best.pt",
+    "runs/prophage_v2_pool_r3/checkpoints/best.pt"
+  ],
+  "ensemble": "max",
+  "input_fasta": "../raw/g5b_shreds/draft_s0/Paracoccus_denitrificans_PD1222.fna",
+  "mode": "default",
+  "threshold": 0.95,
+  "seed_threshold": 0.95,
+  "extend_threshold": 0.95,
+  "device": "cuda",
+  "window_len": 10000,
+  "stride": 1000,
+  "trained_window_len": 10000,
+  "trained_stride": 1000,
+  "num_tiles": 1,
+  "ambiguity_policy": "impute",
+  "grid_offset": 0,
+  "n_windows": 3895,
+  "n_regions": 27,
+  "input": {
+    "n_contigs": 84,
+    "total_bp": 4582379,
+    "ambiguous_bases": 0,
+    "ambiguous_ppm": 0.0,
+    "ambiguous_by_code": {}
+  },
+  "n_gap_filter": {
+    "max_call_n_frac": 0.5,
+    "calls_dropped": 0,
+    "calls_with_any_n": 0
+  },
+  "edge_snap": {
+    "frac": 0.5,
+    "snap_bp": 5000,
+    "calls_moved": 9,
+    "calls_on_contig_edge": 14
+  },
+  "checkpoint_sha256": {
+    "runs/prophage_v2_pool_r1/checkpoints/best.pt": "3259673877ced18e79a92227f898b2009f69cfe82b692c59cb355d74dc27655f",
+    "runs/prophage_v2_pool_r2/checkpoints/best.pt": "7a50701a0be0f9cca87f000b428341e67d55242f77807321b3237ee73f31e59c",
+    "runs/prophage_v2_pool_r3/checkpoints/best.pt": "541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484"
+  },
+  "outputs": [
+    "windows.tsv",
+    "regions.tsv",
+    "regions.bed",
+    "regions.gff3",
+    "run_metadata.json"
+  ],
+  "short_contigs": {
+    "mode": "scan",
+    "n_short": 14,
+    "bp_short": 104386,
+    "n_scannable": 14,
+    "n_too_short": 0,
+    "bp_too_short": 0,
+    "thresholds": {
+      "5000": {
+        "seed": 0.95,
+        "extend": 0.95
+      }
+    },
+    "scales": [
+      5000,
+      3000
+    ],
+    "stride": 500,
+    "n_regions": 1,
+    "calibrated": true
+  },
+  "seed_support": {
+    "n_checkpoints": 3,
+    "min_seed_support": 3,
+    "requested_min_seed_support": 3,
+    "calls_dropped_by_vote": 23,
+    "calls_by_support": {
+      "3": 27
+    }
+  },
+  "region_builder": "coverage_fraction",
+  "boundary_refinement": "none_bin_edges",
+  "coverage_frac": 0.1,
+  "fragment_merge": {
+    "max_gap_bp": 50000,
+    "bridge_prob": 0.1
+  }
+}
