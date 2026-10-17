@@ -219,9 +219,19 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | shreds approximate MAG input | §6 | uniform breakpoints; N50 not calibrated to a catalogue | **untested**; stated |
 | one inovirus family stands in for small prophages | the small-element limitation | none: the corpus is mostly tailed phages | **untested**; stated as a limit |
 
+## Footprint (G4, reported only alongside recall)
+
+| run-time data | size | source |
+|---|---|---|
+| prophound: 3 checkpoints | **49.5 MB** (49,538,986 bytes) | `du -sb` on ARC, 2026-10-16 |
+| geNomad database v1.9 | **1.47 GB** unpacked (1,471,630,421 bytes); 842 MB compressed | same; Zenodo 14886553 |
+
+prophound needs about 30× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The 49.5 MB is an upper bound if the checkpoints also hold optimizer state (to be checked at packaging). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64), and both tools' environments are measured from their install recipes at packaging.
+
 ## Not yet measured (blocks wording, not the release)
 
-- **Footprint (G4)** and **CPU runtime (G6)**. They come from the hardware baseline after the freeze (`docs/release-checklist.md` §5). They will be reported only alongside recall. G5's timings came from different hardware and are not a comparison.
+- **CPU runtime (G6)** comes from the hardware baseline after the freeze (`docs/release-checklist.md` §5). G5's timings came from different hardware and are not a comparison.
+- **Installed-environment size** for both tools, at packaging.
 - **Lockbox** (`841208`): every `[LOCKBOX]` above.
 
 ## Reproduction
