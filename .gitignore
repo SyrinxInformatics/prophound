@@ -231,4 +231,5 @@ src/prophound/models/prophage/analysis/g5b/fasta/
 src/prophound/models/prophage/analysis/g5b/shreds/
 src/prophound/models/prophage/analysis/g5b/raw/
 src/prophound/models/prophage/analysis/g5b/prophound/*/
+src/prophound/models/prophage/analysis/lockbox/prophound/*/
 src/prophound/models/prophage/analysis/g5dev/prophound/*/*/
