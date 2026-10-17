@@ -1,0 +1,152 @@
+{
+ "prophound exploratory": {
+  "n_genomes": 39,
+  "n_elements": 149,
+  "covered50": 0.9463087248322147,
+  "fraction_called": 0.17538668177716216,
+  "chance_covered50": 0.2141476510067114,
+  "chance_95": [
+   0.1476510067114094,
+   0.2953020134228188
+  ],
+  "above_chance": 0.7321610738255033
+ },
+ "prophound default": {
+  "n_genomes": 39,
+  "n_elements": 149,
+  "covered50": 0.9328859060402684,
+  "fraction_called": 0.09766207055761926,
+  "chance_covered50": 0.14053691275167784,
+  "chance_95": [
+   0.08053691275167785,
+   0.21476510067114093
+  ],
+  "above_chance": 0.7923489932885905
+ },
+ "prophound conservative": {
+  "n_genomes": 39,
+  "n_elements": 149,
+  "covered50": 0.8993288590604027,
+  "fraction_called": 0.058873218745409135,
+  "chance_covered50": 0.08941610738255033,
+  "chance_95": [
+   0.040268456375838924,
+   0.15436241610738255
+  ],
+  "above_chance": 0.8099127516778524
+ },
+ "geNomad": {
+  "n_genomes": 37,
+  "n_elements": 146,
+  "covered50": 0.821917808219178,
+  "fraction_called": 0.03654225406661503,
+  "chance_covered50": 0.051541095890410955,
+  "chance_95": [
+   0.0136986301369863,
+   0.10273972602739725
+  ],
+  "above_chance": 0.770376712328767
+ },
+ "PHASTER": {
+  "n_genomes": 38,
+  "n_elements": 148,
+  "covered50": 0.8243243243243243,
+  "fraction_called": 0.03354575945299293,
+  "chance_covered50": 0.05220945945945947,
+  "chance_95": [
+   0.013513513513513514,
+   0.10810810810810811
+  ],
+  "above_chance": 0.7721148648648649
+ },
+ "PIDE": {
+  "n_genomes": 38,
+  "n_elements": 148,
+  "covered50": 0.8243243243243243,
+  "fraction_called": 0.037600686999400494,
+  "chance_covered50": 0.048,
+  "chance_95": [
+   0.013513513513513514,
+   0.10135135135135136
+  ],
+  "above_chance": 0.7763243243243243
+ },
+ "VIBRANT": {
+  "n_genomes": 37,
+  "n_elements": 146,
+  "covered50": 0.7876712328767124,
+  "fraction_called": 0.03327028327984951,
+  "chance_covered50": 0.04861643835616438,
+  "chance_95": [
+   0.0136986301369863,
+   0.10273972602739725
+  ],
+  "above_chance": 0.739054794520548
+ },
+ "paired_above_chance": {
+  "prophound default - geNomad": {
+   "n_genomes": 37,
+   "diff": 0.018397260273972555,
+   "boot95": [
+    -0.036894086438923314,
+    0.07815213412173073
+   ]
+  },
+  "prophound default - PHASTER": {
+   "n_genomes": 38,
+   "diff": 0.019020270270270256,
+   "boot95": [
+    -0.03301736570247949,
+    0.08024640269151141
+   ]
+  },
+  "prophound default - PIDE": {
+   "n_genomes": 38,
+   "diff": 0.014810810810810572,
+   "boot95": [
+    -0.044793369320012766,
+    0.0812961398668768
+   ]
+  },
+  "prophound default - VIBRANT": {
+   "n_genomes": 37,
+   "diff": 0.049719178082191784,
+   "boot95": [
+    -0.016048305380852494,
+    0.11297610827664385
+   ]
+  },
+  "prophound conservative - geNomad": {
+   "n_genomes": 37,
+   "diff": 0.035952054794520516,
+   "boot95": [
+    -0.017202142110762972,
+    0.09050046992481213
+   ]
+  },
+  "prophound conservative - PHASTER": {
+   "n_genomes": 38,
+   "diff": 0.03660135135135146,
+   "boot95": [
+    -0.01257759741877619,
+    0.09196211421653099
+   ]
+  },
+  "prophound conservative - PIDE": {
+   "n_genomes": 38,
+   "diff": 0.032391891891891775,
+   "boot95": [
+    -0.02566316297249139,
+    0.09171305657733408
+   ]
+  },
+  "prophound conservative - VIBRANT": {
+   "n_genomes": 37,
+   "diff": 0.06727397260273975,
+   "boot95": [
+    0.0011312254901960487,
+    0.12789835267871574
+   ]
+  }
+ }
+}
