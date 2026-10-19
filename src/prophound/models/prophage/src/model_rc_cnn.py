@@ -12,6 +12,34 @@ DEFAULT_CHANNELS = [64, 128, 256]
 DEFAULT_KERNEL_SIZES = [15, 11, 7]
 
 
+def adaptive_max_pool1d_by_bins(x: torch.Tensor, output_size: int) -> torch.Tensor:
+    """Adaptive max pooling over the last axis, one `amax` per bin.
+
+    Bin i spans floor(i*L/n) to ceil((i+1)*L/n), PyTorch's own bin edges, so the
+    result equals `F.adaptive_max_pool1d` exactly: a max needs no rounding.
+    """
+    length = x.size(-1)
+    bins = [x[..., (i * length) // output_size: -((-(i + 1) * length) // output_size)].amax(dim=-1)
+            for i in range(output_size)]
+    return torch.stack(bins, dim=-1)
+
+
+class AdaptiveMaxPool1dMPSSafe(nn.AdaptiveMaxPool1d):
+    """`nn.AdaptiveMaxPool1d` that is also correct on MPS.
+
+    On MPS, PyTorch's kernel returns wrong values for lengths that are not a
+    multiple of the output size, including every input shape the shipped model
+    scores (torch 2.13; docs/tech-debt-audit.md S10). There the pooling is computed
+    by `adaptive_max_pool1d_by_bins`. Other devices keep the native kernel, so
+    their outputs and gradients are unchanged.
+    """
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.device.type != "mps":
+            return super().forward(x)
+        return adaptive_max_pool1d_by_bins(x, int(self.output_size))
+
+
 class CNNEncoder1D(nn.Module):
     """Encode one-hot DNA windows into a pooled embedding."""
 
@@ -70,7 +98,7 @@ class CNNEncoder1D(nn.Module):
                 raise ValueError("global_max pooling requires pool_bins=1")
             self.pool = None
         elif pooling == "adaptive_max":
-            self.pool = nn.AdaptiveMaxPool1d(pool_bins)
+            self.pool = AdaptiveMaxPool1dMPSSafe(pool_bins)
         elif pooling == "adaptive_mean":
             self.pool = nn.AdaptiveAvgPool1d(pool_bins)
         else:

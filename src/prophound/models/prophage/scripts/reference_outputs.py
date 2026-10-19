@@ -24,7 +24,9 @@ tree against it.
   inputs   build the reference inputs from a local genome (deterministic)
   run      run every case through `prophound predict` from a given source tree
   compare  compare two run directories: output files byte for byte, run_metadata.json
-           as JSON, the user-facing stderr lines ([warn], [summary], error:), exit codes
+           as JSON, the user-facing stderr lines ([warn], [summary], error:), exit codes.
+           With --across-devices, the CPU/MPS/CUDA agreement check instead: the same calls
+           and messages, scores within --tolerance
 
 Run from the repo root. CPU is the binding check; MPS is allowed for quick iteration only if two
 MPS runs of the same tree are identical. Runs on different devices are never compared:
@@ -226,12 +228,37 @@ def compare_case(a: Path, b: Path, ignore_keys: set[str]) -> list[str]:
     return diffs
 
 
+def compare_case_across_devices(a: Path, b: Path, tol: float) -> list[str]:
+    """Same calls and metadata (device aside); scores within `tol`."""
+    import pandas as pd
+
+    diffs = []
+    for name in ("regions.tsv", "windows.tsv"):
+        ta, tb = (pd.read_csv(d / name, sep="\t") for d in (a, b))
+        if list(ta.columns) != list(tb.columns) or len(ta) != len(tb):
+            diffs.append(f"{name}: shape or columns differ ({ta.shape} vs {tb.shape})")
+            continue
+        prob_cols = [c for c in ta.columns if "prob" in c]
+        exact_cols = [c for c in ta.columns if c not in prob_cols]
+        if not ta[exact_cols].equals(tb[exact_cols]):
+            bad = [c for c in exact_cols if not ta[c].equals(tb[c])]
+            diffs.append(f"{name}: columns differ beyond tolerance: {bad}")
+        worst = max(((ta[c] - tb[c]).abs().max() for c in prob_cols), default=0.0)
+        if worst > tol:
+            diffs.append(f"{name}: max score difference {worst:.2e} > {tol:g}")
+    ma, mb = (json.loads((d / "run_metadata.json").read_text()) for d in (a, b))
+    for key in sorted((set(ma) | set(mb)) - {"device"}):
+        if ma.get(key) != mb.get(key):
+            diffs.append(f"run_metadata.json[{key}] differs")
+    return diffs
+
+
 def cmd_compare(args: argparse.Namespace) -> None:
     a, b = Path(args.a), Path(args.b)
     ma, mb = (json.loads((d / "manifest.json").read_text()) for d in (a, b))
     if ma["inputs"]["files"] != mb["inputs"]["files"]:
         raise SystemExit("the two runs used different inputs")
-    if (ma["device"], ma["threads"]) != (mb["device"], mb["threads"]):
+    if not args.across_devices and (ma["device"], ma["threads"]) != (mb["device"], mb["threads"]):
         raise SystemExit(f"device/threads differ: {ma['device']}/{ma['threads']} vs {mb['device']}/{mb['threads']}")
     ignore = set(args.ignore_metadata_key)
     names = set(ma["cases"]) & set(mb["cases"]) if args.common_only else set(ma["cases"]) | set(mb["cases"])
@@ -247,7 +274,10 @@ def cmd_compare(args: argparse.Namespace) -> None:
             diffs.append(f"exit code {ca['exit_code']} != {cb['exit_code']}")
         if ca["messages"] != cb["messages"]:
             diffs.append(f"messages differ:\n    a: {ca['messages']}\n    b: {cb['messages']}")
-        diffs += compare_case(a / name, b / name, ignore)
+        if ca["exit_code"] == 0 and args.across_devices:
+            diffs += compare_case_across_devices(a / name, b / name, args.tolerance)
+        elif ca["exit_code"] == 0:
+            diffs += compare_case(a / name, b / name, ignore)
         n_bad += bool(diffs)
         print(f"[compare] {name}: " + ("identical" if not diffs else "DIFFERS\n  " + "\n  ".join(diffs)))
     print(f"[compare] {len(names) - n_bad} identical, {n_bad} differ"
@@ -274,6 +304,9 @@ def main() -> None:
     s.add_argument("--ignore-metadata-key", action="append", default=[],
                    help="a run_metadata.json key expected to change (state why in the amendment)")
     s.add_argument("--common-only", action="store_true", help="compare only the cases both runs have")
+    s.add_argument("--across-devices", action="store_true",
+                   help="CPU/MPS/CUDA agreement: same calls and messages, scores within --tolerance")
+    s.add_argument("--tolerance", type=float, default=1e-4)
     args = ap.parse_args()
     {"inputs": cmd_inputs, "run": cmd_run, "compare": cmd_compare}[args.cmd](args)
 
