@@ -149,6 +149,20 @@ Ordered by how much each could mislead a reader of the release numbers.
 
 The analyses, their interpretation and the method changes are all proposed by the same coding agent. The user makes every decision, which helps, but the framing of the options is the agent's. The lockbox rule, that the agent sees no model output on it before the freeze, addresses this for the final number only. Recommendation: for the release claims, the user reads the lockbox result and the literature truth directly, not only through the agent's summaries.
 
+### F13. Early local runs did not record their device, and one device was wrong (moderate; found 2026-10-19)
+
+*What happened:*
+- MPS gave wrong scores for adaptive-max models (`docs/tech-debt-audit.md` S10).
+- Local evaluations from 2026-09-17 to 09-20 ran on this Mac, at least one explicitly on MPS, and their tracks were not kept.
+- Every run kept in the repo records its device, and all 1,769 are CUDA.
+
+*Consequence:* design choices drawn from those early tables (the `pool` architecture, the first coverage-builder candidates) rest on possibly wrong scores. The held-out figures do not: the lockbox, LAMBDA and the 42/18 tracks are all CUDA.
+
+*Correction:*
+- the MPS fix, verified against CPU (30/30 reference cases);
+- `docs/benchmarks.md` cross-device agreement;
+- going forward, any evaluation used for a decision keeps its `run_metadata.json`, which records the device.
+
 ## Proposed corrective analyses (awaiting user review; none run)
 
 | # | analysis | addresses | cost |

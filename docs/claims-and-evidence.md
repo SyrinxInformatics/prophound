@@ -488,7 +488,12 @@ A short `summary.tsv` (or a block in `run_metadata.json`) with mode, number of c
 
 ### Determinism
 
-A golden `regions.tsv` on a fixed genome (checklist §6), plus a CPU / MPS / CUDA agreement check, so the published accuracy numbers can be reproduced on the user's hardware.
+A golden `regions.tsv` on a fixed genome (checklist §6), plus a CPU / MPS / CUDA agreement check, so the published accuracy numbers can be reproduced on the user's hardware. **Status 2026-10-19 (`docs/benchmarks.md`):**
+- The check found MPS giving wrong scores (S10). It is fixed.
+- CPU and MPS now give identical calls on the 30 Phase 0 reference cases. Scores agree to 1.7e-5, against CUDA to 8e-6.
+- Outputs are not byte-identical across devices (float order). The release wording is "the same calls" on the verified devices: Apple M4 CPU and GPU, and NVIDIA V100S.
+- x86 CPU and other GPUs are untested; ARC jobs are proposed.
+- The golden output is the Phase 0 harness (`scripts/reference_outputs.py`).
 
 ## Sources
 

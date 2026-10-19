@@ -35,6 +35,22 @@ Console script: `[project.scripts] prophound = "prophound.cli:main"` in `pyproje
 
 **Fixed 2026-09-15**: `metadata/conda/mge_detect_05_11_2025.yaml` (a fully build-string-pinned, linux-64-only export of the TF-era `mge_explorer` HPCC env, still listing `tensorflow`/`keras` plus unrelated tooling like geNomad/xgboost/mmseqs2) was replaced by `metadata/conda/environment.yaml` — a clean, loosely-pinned spec mirroring `[tool.pixi.dependencies]` (torch, pandas, pyfaidx, tqdm, pyyaml, biopython, scikit-learn, plus dev tools) with an editable `pip: -e ../..` install. Keep it in sync with `pyproject.toml` when deps change. **Status (user, 2026-09-15): pixi is the supported dev/local setup; the conda yaml is an optional backup only, stored but not actively solve-tested. Eventual release distribution will be via bioconda, so neither file is the release artifact — a bioconda recipe will be.** Nothing referenced the old file; the HPCC SLURM launchers activate a separate `mge_explorer_gpu` env that neither file ever described.
 
+## Packaging fix (2026-10-19)
+
+`docs/tech-debt-audit.md` P1, exclude-only (user decision).
+- `[project] dependencies` now lists the runtime packages: torch, numpy, pandas, pyfaidx, tqdm, pyyaml and, until inference stops importing `train_prophage`, scikit-learn. Before this the wheel declared none.
+- Hatch excludes the research tree from the wheel and the sdist. The wheel went from ~28 MB to 60 KB.
+- The sdist holds only `src/`, `tests/`, README and licence files, so internal `docs/` stay out.
+- `LICENSE` and `NOTICE` now ship: `license-files` had named a non-existent `LICENSE.txt`.
+- `ruff` is a dev dependency with a `[tool.ruff]` lint target.
+
+## Devices (2026-10-19)
+
+- `--device auto` prefers CUDA, then MPS, then XPU, then CPU. On Apple Silicon it picks MPS.
+- **MPS gave wrong scores until 2026-10-19:** adaptive max pooling (`docs/tech-debt-audit.md` S10). It is fixed in `model_rc_cnn.py`.
+- Calls are the same on M4 CPU, M4 MPS and V100S CUDA. Scores agree to ~1e-5 but not byte for byte (`docs/benchmarks.md`).
+- Speed on the M4: ~9 s/Mb on MPS, ~9.6 min/Mb on CPU with the generic conda-forge torch build.
+
 ## Positional-pooling experiment (found, evaluated, not yet promoted)
 
 `runs/prophage_v1_positional/` (config + checkpoint pulled from HPCC to local scratch, not into the repo) was scaffolded by a prior agent, actually trained to completion (12 epochs, early-stopped) and test-evaluated — but the results were never written up, so they'd been sitting unused. Evaluated locally 2026-09-08 by running `analyze_boundary_slices.py` against its `test_predictions.csv` at the Default threshold:

@@ -243,9 +243,26 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 
 prophound needs about 30× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The 49.5 MB is an upper bound if the checkpoints also hold optimizer state (to be checked at packaging). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64), and both tools' environments are measured from their install recipes at packaging.
 
+## Run time and hardware
+
+Measured 2026-10-19 on a MacBook Pro (Apple M4, 16 GB). This is the kind of machine most users will run it on, so it is the headline. Default mode, 3-checkpoint ensemble, shipped defaults. These are figures from before the Phase 3 speed work; the release quotes the re-run (`docs/benchmarks.md`).
+
+| | wall time | memory |
+|---|---|---|
+| typical 5 Mb complete genome, Apple GPU (`--device auto` picks it) | **~45 s** (43.5 s median, 4.97 Mb) | ~0.6 GB |
+| the same genome as a MAG-like assembly (374 contigs) | ~26 s | ~0.6 GB |
+| 10 genomes, 49 Mb | 7.4 min | ~0.6 GB |
+| typical 5 Mb genome, CPU only | [CPU benchmark] | |
+| on an NVIDIA V100S (cluster) | ~27 s for a median 3.6 Mb genome (4.5 s + 6.1 s/Mb) | |
+
+On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s with its G5 primary model and 56 s with `default`. It ran on CPU, because its TensorFlow Metal plugin does not load. geNomad took 342 s on a cluster CPU node (4 threads, different hardware). These are context, not a G6 claim.
+
+**Devices.** Calls were the same on Apple M4 CPU and GPU, and scores agree with an NVIDIA V100S to about 1e-5. Outputs are not byte-identical across devices, because floating-point order differs. A call can differ only where a score sits within about 1e-5 of a threshold ([cross-device check]). Other platforms (x86 CPUs, other GPUs, Windows) are expected to agree but are untested.
+
 ## Not yet measured (blocks wording, not the release)
 
-- **CPU runtime (G6)** comes from the hardware baseline after the freeze (`docs/release-checklist.md` §5). G5's timings came from different hardware and are not a comparison.
+- **CPU runtime (G6) against geNomad on one machine.** prophound's own hardware baseline is measured (above, `docs/benchmarks.md`). The G6 comparison still needs geNomad timed on the same machine; G5's geNomad timings came from ARC.
+- **The post-Phase-3 benchmark re-run**, which the run-time table quotes.
 - **Installed-environment size** for both tools, at packaging.
 
 ## Reproduction

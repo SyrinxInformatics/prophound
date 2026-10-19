@@ -1,0 +1,124 @@
+# Benchmarks: run time, memory and cross-device agreement
+
+Written 2026-10-19. What a user should expect when they run prophound, measured on a current laptop (user, 2026-10-19: "this laptop has hardware that most other users will likely have similar or slightly more / less computing power, so users know what they are in for"). The cluster GPU figures are secondary: most users will not have a V100.
+
+These numbers describe the code at `0a8abaa`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targets speed, so **the benchmarks are re-run after Phase 3**, and the release text quotes that run. The figures below become its "before".
+
+## The machine
+
+| | |
+|---|---|
+| model | MacBook Pro, Mac16,1 |
+| chip | Apple M4: 10 cores (4 performance + 6 efficiency), integrated GPU |
+| memory | 16 GB |
+| OS | macOS 27.0.1, native arm64 (not Rosetta) |
+| power | mains (AC attached), otherwise idle |
+| software | torch 2.13.0 from conda-forge (pixi), Python 3.14, 4 torch CPU threads |
+| prophound | `0a8abaa`, Default mode, 3-checkpoint ensemble, shipped defaults |
+
+## Headline: Apple M4 GPU (`--device mps`)
+
+Protocol: one warm-up run, then 3 timed runs per input, each a fresh `prophound predict` process. Wall time includes start-up and model loading; peak memory is the process's maximum resident set (`/usr/bin/time -l`). Every repeat wrote byte-identical `regions.tsv`. Scripts and raw results: `scripts/benchmark.py`, `analysis/benchmarks/mps_{typical,batch,profile}.json`.
+
+| input | size | median wall time (range) | per Mb | peak memory |
+|---|---|---|---|---|
+| typical complete genome (`GCF_000146165.2`) | 4.97 Mb, 1 contig | **43.5 s** (43.1–44.5) | 8.8 s | 610 MB |
+| the same genome as a MAG-like shred (`mag_s0`) | 4.95 Mb, 374 contigs | **25.6 s** (25.5–25.6) | 5.2 s | 637 MB |
+| 10 genomes spanning the corpus size range | 1.8–7.0 Mb, 48.9 Mb total | **7.4 min** in total; median 46.5 s per genome | 8.9 s, plus 1.0 s fixed per genome | ≤620 MB |
+
+**In plain terms: about 45 seconds for a typical 5 Mb bacterial genome, about 9 seconds per Mb, and well under 1 GB of memory.** A batch of 100 genomes of that size is roughly 75 minutes.
+
+Fragmented assemblies are faster per Mb than complete genomes. Fewer full 10 kb windows fit, and fragments under 3 kb are never scanned.
+
+**Where the time goes** (typical genome, profiled in process, `mps_profile.json`):
+
+| stage | time | share |
+|---|---|---|
+| model forward pass on the GPU (3 checkpoints × 4,960 windows; 2.2 ms per window per checkpoint) | 33.3 s | 76% |
+| reading and one-hot encoding windows on the CPU (0.68 ms per window, done once per checkpoint, so 3×) | 10.2 s | 23% |
+| loading checkpoints, moving batches to the GPU | 0.2 s | <1% |
+
+So the GPU does most of the work, and encoding is the one cheap target. A vectorised encoder (13× faster on its own, `docs/tech-debt-audit.md` S9), run once rather than once per checkpoint, would save about 9 s, to roughly 34 s per 5 Mb genome. That is Phase 3.
+
+## CPU only (`--device cpu`)
+
+For users without an Apple Silicon or NVIDIA GPU. Protocol: 2 timed runs of the typical genome, no warm-up; a warm-up is small next to the run time.
+
+**[Pending. The first attempt was stopped at 16:00 on 2026-10-19 before its first run finished (the machine was needed); it is to be re-run on a quiet machine with the same protocol.]**
+
+Earlier measurement on the same machine, for scale: `GCF_000027305.1` (1.83 Mb) took 1,053 s, 17.6 minutes (about 9.6 minutes per Mb) on 4 threads. Two causes, neither fixed yet:
+- **The torch build.** The pixi/conda-forge build is generic arm64 with oneDNN off (`torch.backends.mkldnn.is_available()` is False).
+- **The model.** Its 10 kb convolutions run twice per window (forward and reverse complement), for three checkpoints. Measured in process: about 0.2 s per window per checkpoint on CPU.
+
+Whether pip's torch wheels or more threads help is a Phase 3 question.
+
+## Cluster GPU: NVIDIA V100S (ARC, secondary)
+
+From the lockbox run (`841208`, `analysis/lockbox/prophound/wall_seconds.tsv`): 150 genomes × 3 modes, one process per genome and mode, including start-up.
+
+| | |
+|---|---|
+| genome sizes | median 3.6 Mb (0.23–13.4) |
+| median wall time per genome | 27 s (90th percentile 42 s); the same in every mode, since all modes score the same windows |
+| linear fit | 4.5 s fixed + 6.1 s per Mb |
+
+The M4 GPU is about 1.45× slower per Mb than a V100S.
+
+## Against other tools on the same genomes
+
+The 10 benchmark genomes are G5 genomes, so the G5 timings apply to exactly these inputs (`analysis/g5/{jaeger,genomad}_wall_seconds.tsv`, `docs/claims-and-evidence.md` "G5"). Medians over the 10:
+
+| tool | hardware | median per genome (~5.1 Mb) |
+|---|---|---|
+| **prophound** (3 checkpoints, Default) | this M4, GPU | **46.5 s** |
+| Jaeger 1.26.5, `57341_1.5M` (the G5 primary model) | this M4, CPU, 8 workers | 206.5 s |
+| Jaeger 1.26.5, `default` model | this M4, CPU, 8 workers | 55.5 s |
+| geNomad 1.9.4 | ARC CPU node, 4 threads (different hardware) | 342 s |
+
+Caveats:
+- **Jaeger ran on CPU here** because its TensorFlow Metal plugin fails to load under TF 2.21 (`metadata/g5-comparators/pixi.toml`). So this is not Jaeger's best case on a Mac.
+- **geNomad was timed on different hardware** and with a 1.47 GB database, so its row is context, not a comparison. The G6 comparison needs both tools on one machine (`docs/release-checklist.md` §5).
+- The Jaeger runs date from 2026-09-30/10-01, not today.
+
+## Cross-device agreement
+
+**Outputs are not byte-identical across devices, and cannot be in general.** Each device's convolution kernels accumulate in a different order, so scores differ in the last few significant figures. What was measured:
+
+| comparison | data | largest score difference | calls |
+|---|---|---|---|
+| CPU vs CUDA (V100) | 200 windows × 3 checkpoints from G5b, recorded CUDA scores | 8e-6 | no window crosses 0.95 |
+| CPU vs MPS, after the pooling fix | Phase 0 reference matrix, 30 cases | 1.7e-5 | identical in 30 of 30 cases, with identical messages |
+| CPU vs MPS, before the fix | the same | 0.34 | different in 8 of 29 cases |
+
+A call can differ between devices only when a decision value lands within about 1e-5 of a threshold. At a margin of 1e-4 (6× the largest difference seen), 289 of 536,280 window scores in the 45 G5b runs sit near a threshold (0.90 / 0.95 / 0.99 / 0.995), as do 42 of 153,583 bin means near the 0.1 bridge gate. Most runs have a few such values. Whether any of them decides a call is the next measurement:
+
+**[Pending: MPS vs recorded CUDA calls on all 45 G5b runs (`scripts/cross_device_g5b.py`; the inputs are verified identical to ARC's). Runs after the CPU re-run.]**
+
+**What can be said about other platforms.** Verified so far: Apple M4 CPU, Apple M4 GPU (MPS, after the fix) and NVIDIA V100S (CUDA). Not verified:
+- x86 CPUs (Intel and AMD, with MKL or oneDNN);
+- other NVIDIA generations;
+- AMD ROCm and Intel XPU;
+- Windows.
+
+The S10 bug shows why "it should be the same" is not evidence. Proposed coverage is in the next section.
+
+## Proposed cross-platform coverage (pending the user)
+
+1. **ARC, one GPU job and one CPU job.** Run `reference_outputs.py run` on the Phase 0 inputs:
+   - on a V100 (CUDA);
+   - on an x86 CPU node: Intel or AMD, Linux, the conda-forge or pip torch the ARC env has.
+
+   Then `compare --across-devices` each against the M4 CPU references. This covers CUDA and x86 CPU on identical inputs. The CPU job is slow, so a 6-case subset is enough there.
+2. **CI on Linux x86** once the model is bundled (§5): a small subset on every release candidate, against stored references with `--across-devices`.
+3. **Release wording until then:** "Verified to give the same calls on Apple M4 (CPU and GPU) and NVIDIA V100S; scores agree to about 1e-5 across these devices; other platforms are expected to agree but are untested."
+
+## Re-running these
+
+```
+pixi run python src/prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \
+    --input typical=<genome.fna> --workdir <scratch> --out analysis/benchmarks/<name>.json
+pixi run python src/prophound/models/prophage/scripts/benchmark.py profile --code . --device mps \
+    --input <genome.fna> --out analysis/benchmarks/<name>_profile.json
+```
+
+Needs the three checkpoints under `src/prophound/models/prophage/runs/` (gitignored). Run on a quiet machine on mains power. Every result records the machine, power source, torch build and code commit.
