@@ -62,6 +62,7 @@ def test_short_contig_thresholds_cover_every_mode_and_scale_and_keep_mode_order(
 
 def test_seed_support_counts_checkpoints_with_an_overlapping_call():
     import pandas as pd
+
     from prophound.models.prophage.src.predict_genome import seed_support
 
     calls = pd.DataFrame({"contig_id": ["a", "a", "b"], "start": [0, 50_000, 0], "end": [20_000, 60_000, 5_000]})
@@ -73,6 +74,7 @@ def test_seed_support_counts_checkpoints_with_an_overlapping_call():
 
 def test_apply_seed_vote_keeps_calls_with_enough_support():
     import pandas as pd
+
     from prophound.models.prophage.src.predict_genome import apply_seed_vote
 
     calls = pd.DataFrame({"contig_id": ["a", "a", "b"], "start": [0, 50_000, 0], "end": [20_000, 60_000, 5_000]})
@@ -87,7 +89,10 @@ def test_apply_seed_vote_keeps_calls_with_enough_support():
 
 def test_mode_vote_table_covers_every_mode():
     from prophound.models.prophage.src.predict_genome import (
-        MODE_MIN_SEED_SUPPORT, MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS)
+        MODE_MIN_SEED_SUPPORT,
+        MODE_THRESHOLDS,
+        SHORT_CONTIG_THRESHOLDS,
+    )
 
     assert set(MODE_MIN_SEED_SUPPORT) == set(MODE_THRESHOLDS) == set(SHORT_CONTIG_THRESHOLDS)
     assert MODE_MIN_SEED_SUPPORT["exploratory"] == 1   # discovery mode never drops a call

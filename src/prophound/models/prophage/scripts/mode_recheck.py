@@ -53,14 +53,28 @@ from refine_sweep import covered50  # noqa: E402
 
 try:  # repo layout
     from prophound.models.prophage.src.predict_genome import (
-        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_MIN_SEED_SUPPORT,
-        MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS, apply_seed_vote, build_region_table_coverage,
-        iter_fasta_lengths)
+        DEFAULT_BRIDGE_PROB,
+        DEFAULT_COVERAGE_FRAC,
+        DEFAULT_MAX_GAP_BP,
+        MODE_MIN_SEED_SUPPORT,
+        MODE_THRESHOLDS,
+        SHORT_CONTIG_THRESHOLDS,
+        apply_seed_vote,
+        build_region_table_coverage,
+        iter_fasta_lengths,
+    )
 except ImportError:  # HPCC data_refactored/ layout
     from src.predict_genome import (
-        DEFAULT_BRIDGE_PROB, DEFAULT_COVERAGE_FRAC, DEFAULT_MAX_GAP_BP, MODE_MIN_SEED_SUPPORT,
-        MODE_THRESHOLDS, SHORT_CONTIG_THRESHOLDS, apply_seed_vote, build_region_table_coverage,
-        iter_fasta_lengths)
+        DEFAULT_BRIDGE_PROB,
+        DEFAULT_COVERAGE_FRAC,
+        DEFAULT_MAX_GAP_BP,
+        MODE_MIN_SEED_SUPPORT,
+        MODE_THRESHOLDS,
+        SHORT_CONTIG_THRESHOLDS,
+        apply_seed_vote,
+        build_region_table_coverage,
+        iter_fasta_lengths,
+    )
 
 
 def load_tracks(d: str, prob_col: str = "prob") -> dict:

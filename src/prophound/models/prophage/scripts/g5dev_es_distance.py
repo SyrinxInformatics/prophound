@@ -22,13 +22,16 @@ Covered50 and false/Mb cannot see how much longer calls get; this does.
 Run from src/prophound/models/prophage:  python scripts/g5dev_es_distance.py
 """
 import sys
+
 sys.path.insert(0, "scripts")
 from pathlib import Path
-import numpy as np, pandas as pd
+
 import mode_recheck as mr
+import pandas as pd
 from g5_score import cov_frac
-from g5dev_eval import load, window_table, edge_snap, to_genome
 from g5dev_compare import off_element_bp
+from g5dev_eval import edge_snap, load, to_genome
+
 Lt=pd.read_csv('analysis/g5dev/contig_lengths.tsv',sep='\t',dtype={'contig_id':str})
 for sname,path in [('tune','scripts/eval_sizestrat_elements.csv'),('check','scripts/eval_confirm18_elements.csv')]:
     T=pd.read_csv(path).rename(columns={'accession':'assembly','contig':'sequence'})[['assembly','sequence','start','end']].reset_index(drop=True)

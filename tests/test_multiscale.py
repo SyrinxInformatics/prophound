@@ -100,7 +100,7 @@ def test_edges_interpolate_between_fine_core_and_coarse_edge():
     f = fine_track([(50_000, 60_000)], 35_000, 75_000)
     core = run(c, f, alpha=0.0).iloc[0]
     half = run(c, f, alpha=0.5).iloc[0]
-    assert 45_000 <= core.start and core.end <= 65_000           # never wider than coarse
+    assert core.start >= 45_000 and core.end <= 65_000           # never wider than coarse
     assert half.start == round(core.start - 0.5 * (core.start - 45_000))
     assert half.end == round(core.end + 0.5 * (65_000 - core.end))
     assert half.start <= core.start and half.end >= core.end     # never narrower than core

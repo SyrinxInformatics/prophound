@@ -175,7 +175,7 @@ def main() -> None:
 
         # annotate this genome's new loci with BED overlap
         for L in loci[first_new:]:
-            ov = {k: 0 for k in LABELS}
+            ov = dict.fromkeys(LABELS, 0)
             pos_len = 0
             key = bed_key(L["contig"], bed) if bed else None
             if bed and key is None:

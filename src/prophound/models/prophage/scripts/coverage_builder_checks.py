@@ -42,7 +42,6 @@ mean- and max-ensembles across them are added as extra inputs.
 from __future__ import annotations
 
 import argparse
-import math
 import subprocess
 import sys
 from pathlib import Path

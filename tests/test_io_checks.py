@@ -21,7 +21,7 @@ import gzip
 import pandas as pd
 import pytest
 
-from prophound.models.prophage.src.io_checks import (InputError, validate_fasta, write_bed, write_gff3)
+from prophound.models.prophage.src.io_checks import InputError, validate_fasta, write_bed, write_gff3
 
 
 def _write(tmp_path, name, text):

@@ -25,6 +25,7 @@ dependencies:
   # dev / tooling
   - pytest>=9.0.0,<10
   - mypy>=1.18.2,<2
+  - ruff>=0.6,<1
   - sphinx>=8.2.3,<9
   - pip
   - pip:

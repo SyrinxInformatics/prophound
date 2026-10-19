@@ -233,3 +233,6 @@ src/prophound/models/prophage/analysis/g5b/raw/
 src/prophound/models/prophage/analysis/g5b/prophound/*/
 src/prophound/models/prophage/analysis/lockbox/prophound/*/
 src/prophound/models/prophage/analysis/g5dev/prophound/*/*/
+
+# checkpoints and training outputs live on ARC; local copies only for the reference-output test
+src/prophound/models/prophage/runs/

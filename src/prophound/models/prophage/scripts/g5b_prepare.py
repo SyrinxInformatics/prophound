@@ -72,7 +72,7 @@ def main() -> None:
                 org = org or rec.annotations.get("organism", "")
                 fo.write(f">{acc}\n{str(rec.seq).upper()}\n")
                 total += len(rec.seq)
-        c = coords[coords.FILE == gb.name]
+        c = coords[gb.name == coords.FILE]
         missing = set(c.ACCESSION.map(bare)) - seen
         if missing:
             raise SystemExit(f"{gb.name}: truth on accessions absent from the GenBank file: {sorted(missing)}")

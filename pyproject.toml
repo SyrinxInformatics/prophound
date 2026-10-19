@@ -9,7 +9,19 @@ version = "0.1.0"
 description = "Recall-first, database-free prophage screen for prokaryotic genomes"
 readme = "README.md"
 license = "Apache-2.0"
-license-files = ["LICENSE.txt"]
+license-files = ["LICENSE", "NOTICE"]
+# Runtime only; dev tools stay in [tool.pixi.dependencies]. scikit-learn is
+# pulled in by train_prophage until inference stops importing it
+# (docs/tech-debt-audit.md S6).
+dependencies = [
+    "torch>=2.4,<3",
+    "numpy>=1.26",
+    "pandas>=2.2,<3",
+    "pyfaidx>=0.8,<1",
+    "tqdm>=4.66,<5",
+    "pyyaml>=6,<7",
+    "scikit-learn>=1.7.2,<2",
+]
 
 [project.scripts]
 prophound = "prophound.cli:main"
@@ -17,6 +29,30 @@ prophound = "prophound.cli:main"
 [build-system]
 build-backend = "hatchling.build"
 requires = ["hatchling"]
+
+# The research tree lives inside the package directory; keep it out of the
+# wheel and sdist (docs/tech-debt-audit.md P1). The bundled model config and
+# weights are added with packaging (docs/release-checklist.md §5).
+[tool.hatch.build]
+exclude = [
+    "src/prophound/models/prophage/analysis",
+    "src/prophound/models/prophage/scripts",
+    "src/prophound/models/prophage/notes",
+    "src/prophound/models/prophage/splits",
+    "src/prophound/models/prophage/runs",
+    "src/prophound/models/prophage/summary.csv",
+    "src/prophound/models/prophage/README.md",
+    "src/prophound/models/prophage/src/configs",
+    "*.slurm",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prophound"]
+
+# docs/ holds internal planning docs (the release checklist among them); keep
+# the sdist to code, tests and licence files.
+[tool.hatch.build.targets.sdist]
+only-include = ["src", "tests", "README.md", "LICENSE", "NOTICE", "pyproject.toml"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge", "bioconda"]
@@ -34,8 +70,24 @@ biopython = ">=1.86,<2"
 pytest = ">=9.0.0,<10"
 sphinx = ">=8.2.3,<9"
 mypy = ">=1.18.2,<2"
+ruff = ">=0.6,<1"
 scikit-learn = ">=1.7.2,<2"
 pandas = ">=2.2,<3"
 pyfaidx = ">=0.8,<1"
 tqdm = ">=4.66,<5"
 pyyaml = ">=6.0,<7"
+
+# Lint target for the whole codebase (docs/tech-debt-audit.md X5). Uppercase
+# locals (L for a length, G for a genome list) are allowed; everything else in
+# the selection is meant to pass.
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["archive", "src/prophound/models/prophage/notes"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "B", "C4", "UP", "SIM", "I", "PIE", "C90", "N"]
+ignore = ["N806", "N803", "B905"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15

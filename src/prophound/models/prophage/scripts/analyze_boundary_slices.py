@@ -1,11 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-
 
 GROUP_KEYS = ["genome_id", "contig_id"]
 
@@ -38,7 +52,7 @@ def nearest_positive_window_distance(labels: np.ndarray) -> np.ndarray:
     return boundary_distance
 
 
-def positive_block_positions(labels: np.ndarray) -> Dict[str, np.ndarray]:
+def positive_block_positions(labels: np.ndarray) -> dict[str, np.ndarray]:
     n = len(labels)
     edge = np.zeros(n, dtype=bool)
     core = np.zeros(n, dtype=bool)
@@ -59,7 +73,7 @@ def positive_block_positions(labels: np.ndarray) -> Dict[str, np.ndarray]:
 
 
 def assign_boundary_category(predictions_df: pd.DataFrame) -> pd.DataFrame:
-    annotated_parts: List[pd.DataFrame] = []
+    annotated_parts: list[pd.DataFrame] = []
 
     for _, group_df in predictions_df.groupby(GROUP_KEYS, sort=False):
         group_df = group_df.sort_values(["start", "end"]).copy()
@@ -101,16 +115,16 @@ def assign_boundary_category(predictions_df: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(annotated_parts, ignore_index=True)
 
 
-def maybe_metric(group_df: pd.DataFrame, column_name: str) -> Optional[float]:
+def maybe_metric(group_df: pd.DataFrame, column_name: str) -> float | None:
     if column_name not in group_df.columns or len(group_df) == 0:
         return None
     return float(group_df[column_name].mean())
 
 
-def summarize_by_category(annotated_df: pd.DataFrame) -> List[Dict[str, object]]:
-    rows: List[Dict[str, object]] = []
+def summarize_by_category(annotated_df: pd.DataFrame) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
     for category, category_df in annotated_df.groupby("boundary_category", sort=False):
-        row: Dict[str, object] = {
+        row: dict[str, object] = {
             "boundary_category": category,
             "rows": int(len(category_df)),
             "positive_rate": float(category_df["label"].mean()),

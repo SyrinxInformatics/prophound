@@ -113,7 +113,7 @@ def select(pool: pd.DataFrame, max_genomes: int) -> list:
             for lab in targets}
 
     chosen: list = []
-    got = {lab: 0 for lab in targets}
+    got = dict.fromkeys(targets, 0)
 
     # Phase 1 -- every genome holding an element in a take-everything stratum.
     must = sorted(pool[pool.stratum.isin([l for l, _, _, t in STRATA if t is None])].accession.unique())

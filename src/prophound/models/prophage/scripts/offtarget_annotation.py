@@ -120,7 +120,7 @@ def features(genes: pd.DataFrame, contigs: dict, genome_gc: float, contig: str, 
 
 def controls(rng, contigs: dict, busy: dict, length: int, n: int, tries: int = 200) -> list:
     """n random [s, e) of `length` on contigs long enough, clear of `busy` intervals."""
-    pool = [(c, L) for c, (L, _) in contigs.items() if L > length]
+    pool = [(c, L) for c, (L, _) in contigs.items() if length < L]
     out = []
     if not pool:
         return out

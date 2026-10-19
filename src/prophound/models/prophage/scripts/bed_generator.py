@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 """
 Build per-accession BED files from FASTA inputs and geNomad provirus calls.
 
@@ -8,16 +24,15 @@ accessions with at least one positive region.
 """
 import argparse
 import csv
-import shutil
-import sys
-import re
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-import subprocess
 import io
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
 # Types
-Interval = Tuple[int, int]  # half-open [start, end)
+Interval = tuple[int, int]  # half-open [start, end)
 
 # FASTA utilities
 
@@ -36,7 +51,7 @@ def _iter_fasta_lines_text(path: Path):
             return str(p).endswith(".gz")
 
     if not _is_gzip(path):
-        with open(path, "rt", encoding="utf-8", errors="ignore") as f:
+        with open(path, encoding="utf-8", errors="ignore") as f:
             for line in f:
                 yield line.rstrip("\n")
         return
@@ -86,11 +101,11 @@ def _iter_fasta_lines_text(path: Path):
             return
 
 
-def read_fasta_lengths(fasta_path: Path) -> Dict[str, int]:
+def read_fasta_lengths(fasta_path: Path) -> dict[str, int]:
     """Return {contig_name: length} for a (possibly multi-contig) FASTA.
     Supports plain text and .gz (even if truncated)."""
-    lengths: Dict[str, int] = {}
-    name: Optional[str] = None
+    lengths: dict[str, int] = {}
+    name: str | None = None
     length = 0
 
     for line in _iter_fasta_lines_text(fasta_path):
@@ -119,12 +134,12 @@ def infer_accession_from_filename(p: Path) -> str:
 
 
 # Interval helpers
-def merge_intervals(intervals: List[Interval], min_gap: int = 0) -> List[Interval]:
+def merge_intervals(intervals: list[Interval], min_gap: int = 0) -> list[Interval]:
     """Merge overlapping or nearly adjacent intervals (gap <= min_gap)."""
     if not intervals:
         return []
     ints = sorted(intervals)
-    merged: List[Interval] = [ints[0]]
+    merged: list[Interval] = [ints[0]]
     for s, e in ints[1:]:
         last_s, last_e = merged[-1]
         if s <= last_e + min_gap:
@@ -134,10 +149,10 @@ def merge_intervals(intervals: List[Interval], min_gap: int = 0) -> List[Interva
     return merged
 
 
-def subtract_intervals(domain: Interval, blocks: List[Interval]) -> List[Interval]:
+def subtract_intervals(domain: Interval, blocks: list[Interval]) -> list[Interval]:
     """Return domain \\ union(blocks), all half-open."""
     (D0, D1) = domain
-    result: List[Interval] = []
+    result: list[Interval] = []
     cur = D0
     for s, e in merge_intervals([b for b in blocks if not (b[1] <= D0 or b[0] >= D1)]):
         if s > cur:
@@ -150,7 +165,7 @@ def subtract_intervals(domain: Interval, blocks: List[Interval]) -> List[Interva
     return result
 
 
-def clip_interval(iv: Interval, bounds: Interval) -> Optional[Interval]:
+def clip_interval(iv: Interval, bounds: Interval) -> Interval | None:
     """Clip an interval to bounds; return None if empty after clipping."""
     s = max(bounds[0], iv[0])
     e = min(bounds[1], iv[1])
@@ -165,7 +180,7 @@ def _normalize(s: str) -> str:
 
 def find_genomad_provirus_tsv(
     genomad_root: Path, accession: str, debug: bool = False
-) -> Optional[Path]:
+) -> Path | None:
     """
     Try several strategies to find <ACC>_find_proviruses/<ACC>_provirus.tsv:
     1) Exact match: {root}/{ACC}_find_proviruses/{ACC}_provirus.tsv
@@ -219,13 +234,13 @@ def find_genomad_provirus_tsv(
 
 def load_provirus_tsv(
     tsv_path: Path, is_one_based: bool = True
-) -> Dict[str, List[Interval]]:
+) -> dict[str, list[Interval]]:
     """
     Load geNomad <ACC>_provirus.tsv into {contig: [(start,end), ...]} in 0-based, half-open.
     geNomad typically reports 1-based inclusive; set is_one_based=True by default.
     """
-    calls: Dict[str, List[Interval]] = {}
-    with open(tsv_path, "r", newline="") as f:
+    calls: dict[str, list[Interval]] = {}
+    with open(tsv_path, newline="") as f:
         sample = f.read(4096)
         f.seek(0)
         # Be tolerant to delimiters.
@@ -244,7 +259,7 @@ def load_provirus_tsv(
             )
         hdr = {h.lower().strip(): h for h in reader.fieldnames}
 
-        def pick(*opts: str) -> Optional[str]:
+        def pick(*opts: str) -> str | None:
             for o in opts:
                 if o in hdr:
                     return hdr[o]
@@ -288,15 +303,15 @@ def load_provirus_tsv(
 # Core logic per accession and contig
 def build_bed_for_accession(
     accession: str,
-    contig_lengths: Dict[str, int],
-    calls_by_contig: Dict[str, List[Interval]],
+    contig_lengths: dict[str, int],
+    calls_by_contig: dict[str, list[Interval]],
     flank_len: int = 5000,
-) -> List[Tuple[str, int, int, str]]:
+) -> list[tuple[str, int, int, str]]:
     """
     Return BED rows [(contig, start, end, label)] for all contigs in this accession.
     Labels: 'positive', 'near_neg', 'far_neg'.
     """
-    rows: List[Tuple[str, int, int, str]] = []
+    rows: list[tuple[str, int, int, str]] = []
 
     for contig, L in contig_lengths.items():
         domain = (0, L)
@@ -307,7 +322,7 @@ def build_bed_for_accession(
         pos = [iv for iv in pos if iv is not None]
 
         # Build flanking near-negative intervals beside each positive block.
-        near_blocks: List[Interval] = []
+        near_blocks: list[Interval] = []
         for s, e in pos:
             left = clip_interval((s - flank_len, s), domain)
             right = clip_interval((e, e + flank_len), domain)
@@ -318,7 +333,7 @@ def build_bed_for_accession(
 
         # Remove any overlap with positives, then merge again.
         if near_blocks:
-            cleaned: List[Interval] = []
+            cleaned: list[Interval] = []
             for nb in near_blocks:
                 remaining = subtract_intervals(nb, pos)
                 cleaned.extend(remaining)
@@ -349,7 +364,7 @@ def build_bed_for_accession(
 
 
 # File-level operations
-def write_bed(path: Path, rows: List[Tuple[str, int, int, str]]) -> None:
+def write_bed(path: Path, rows: list[tuple[str, int, int, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
         for contig, s, e, label in rows:
@@ -404,7 +419,7 @@ def _separate_by_one(rows_for_contig, contig_len):
     return out
 
 
-def write_summary_csv(path: Path, rows: List[Dict[str, object]]) -> None:
+def write_summary_csv(path: Path, rows: list[dict[str, object]]) -> None:
     header = [
         "accession",
         "total_bp",
@@ -481,7 +496,7 @@ def main():
     out_bed_pos.mkdir(parents=True, exist_ok=True)
 
     # Scan FASTAs, gather lengths, and copy them into sequences/.
-    fasta_paths: List[Path] = sorted(
+    fasta_paths: list[Path] = sorted(
         [
             p
             for p in fasta_dir.iterdir()
@@ -497,7 +512,7 @@ def main():
         sys.exit(1)
 
     # Build outputs accession by accession.
-    summary_rows: List[Dict[str, object]] = []
+    summary_rows: list[dict[str, object]] = []
     for fp in fasta_paths:
         contig_lengths = read_fasta_lengths(fp)
         # Copy FASTA to sequences/.
@@ -513,7 +528,7 @@ def main():
                 f"[WARN] Missing geNomad TSV for {accession}. Tried fuzzy search under: {genomad_root}",
                 file=sys.stderr,
             )
-            calls_for_acc: Dict[str, List[Interval]] = {}
+            calls_for_acc: dict[str, list[Interval]] = {}
             tsv_path_str = ""
         else:
             try:

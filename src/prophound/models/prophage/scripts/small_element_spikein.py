@@ -229,7 +229,7 @@ def quiet_sites(w: pd.DataFrame, contig_len: dict, elements: pd.DataFrame, a, rn
     sites = []
     model_rule = getattr(a, "site_rule", "model") == "model"
     for c, L in contig_len.items():
-        if L < 4 * a.quiet_flank:
+        if 4 * a.quiet_flank > L:
             continue
         x = w[w.contig_id == c]
         hot = np.zeros(L // 1000 + 1, bool)       # 1 kb bins touched by a window above quiet_prob
