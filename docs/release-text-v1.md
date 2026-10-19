@@ -1,6 +1,6 @@
 # prophound v1 — release text (DRAFT)
 
-> **Draft, 2026-10-16.** Internal until the lockbox is scored (`841208`, `docs/lockbox.md`). Every `[LOCKBOX]` marks a figure filled in from that one scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
+> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
 
 ---
 
@@ -47,7 +47,7 @@ It rests on three design facts, each checked against the nearest tools:
 
 ### 1. Agreement with geNomad on held-out genomes
 
-⟂ **Default covered50 [LOCKBOX] (Wilson [LOCKBOX]; genome bootstrap [LOCKBOX]), n = 202 elements in 80 genomes, at [LOCKBOX] calls per genome.** Exploratory [LOCKBOX] and Conservative [LOCKBOX]. Lockbox, held out, preregistered primary endpoint.
+⟂ **Default covered50 0.960 (194 of 202; Wilson 0.924–0.980; genome bootstrap 0.929–0.984), n = 202 elements in 80 genomes, at 11.0 calls per genome.** Exploratory 0.965 (0.930–0.983 Wilson; 0.937–0.988 bootstrap) at 32.4, and Conservative 0.901 (0.852–0.935; 0.860–0.941) at 4.9. Lockbox, held out, preregistered primary endpoint. Covered (≥1 bp): 0.975 / 0.980 / 0.916. Default's 8 misses fall in 8 different genomes; 5 have no overlapping call and 3 are covered 18–39%.
 
 The lockbox is nearly novel to training by construction: median containment 0.003, with 6 of 202 elements at ≥0.5 (C5). It cannot speak below 10 kb (3 elements). Those rows are reported as n = 1, not as claims.
 
@@ -57,9 +57,10 @@ For comparison, on the reused samples (Default, ensemble):
 |---|---|---|---|
 | tuning (42 / 179) | 0.972 | 0.949–0.994 (bootstrap); 0.936–0.988 (Wilson) | 14.1 (12.1–16.3) |
 | second sample (18 / 52) | 1.000 | 0.931–1.000 (Wilson) | 13.3 (9.7–17.3) |
-| lockbox gap to the 42 / the 18 | [LOCKBOX] / [LOCKBOX] | | |
+| lockbox (150 / 202) | 0.960 | 0.929–0.984 (bootstrap); 0.924–0.980 (Wilson) | 11.0 |
+| lockbox gap to the 42 / the 18 | +0.012 / +0.040 | | |
 
-- **≥95% is a point estimate on the reused samples, not an established floor.** The tuning sample's lower bound is 0.949. ⟂ Whether the lockbox establishes it: [LOCKBOX]. The release says ≥95% only if the lockbox's lower bound is ≥0.95. Otherwise it gives the number and its interval.
+- **≥95% is a point estimate on the reused samples, not an established floor.** The tuning sample's lower bound is 0.949. ⟂ **The lockbox does not establish it:** its lower bound is 0.924 (Wilson) / 0.929 (bootstrap). By the rule fixed beforehand (≥95% only if the lockbox's lower bound is ≥0.95), the release gives the number and its interval, 0.960 (0.924–0.980), and does not say ≥95%. The optimism of the reused samples is small for Default: the lockbox reads 0.012 below the tuning sample, well inside either interval.
 - **Not carried by training look-alikes.** On the tuning sample, the 137 elements with containment <0.1 read 0.964, and all five Default misses are in that bin (C5). Covered recall on clade-novel elements (MinHash, k = 21) is flat at 0.966–0.975 from ~3.5% out to ~20% nucleotide divergence, with the same four misses at every threshold. That was measured under the 2026-09-22 builder, at ≥1 bp (`docs/scientific-validity.md` 2a).
 - **By size, tuning sample, Default** (Wilson intervals; `analysis/integrity/recall42.json`). The ≥95%-per-stratum target is an engineering target; no stratum below 30 kb establishes it:
 
@@ -71,7 +72,20 @@ For comparison, on the reused samples (Default, ensemble):
 | 15–30 kb | 41 | 0.951 | 0.839–0.987 |
 | 30–60 kb | 69 | 0.986 | 0.922–0.997 |
 | 60 kb+ | 21 | 1.000 | 0.845–1.000 |
-| lockbox, per stratum | | [LOCKBOX] | |
+
+- **By size, lockbox, Default** (Wilson intervals; `analysis/lockbox/results.json`). Below 10 kb n = 1 per stratum, reported as counts, not claims:
+
+| stratum | n | covered50 | Wilson 95% |
+|---|---|---|---|
+| <5 kb | 1 | 1 of 1 | — |
+| 5–8 kb | 1 | 1 of 1 | — |
+| 8–10 kb | 1 | 1 of 1 | — |
+| 10–15 kb | 18 | 1.000 | 0.824–1.000 |
+| 15–30 kb | 49 | 0.918 | 0.808–0.968 |
+| 30–60 kb | 99 | 0.970 | 0.915–0.990 |
+| 60 kb+ | 33 | 0.970 | 0.847–0.995 |
+
+15–30 kb is the weakest lockbox stratum (4 of the 8 misses); on the tuning sample it was the second weakest.
 
 Wording: *"agrees with geNomad on X of held-out elements (covered50, 95% interval Y–Z)"*. Never "X% accurate".
 
@@ -169,7 +183,8 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 |---|---|---|---|
 | rule | score 0.90, every call kept, flagged by `seed_support` | 0.95, all 3 checkpoints agree | 0.995, all 3 agree |
 | short contigs (3–10 kb) | 0.95 | 0.95 | 0.99 |
-| lockbox covered50 / calls per genome | [LOCKBOX] | [LOCKBOX] | [LOCKBOX] |
+| lockbox covered50 / calls per genome | 0.965 / 32.4 | 0.960 / 11.0 | 0.901 / 4.9 |
+| lockbox, genomes with no geNomad element (70), calls per genome | 24.4 | 6.8 | 2.5 |
 | tuning sample covered50 / calls per genome | 0.994 / 35.6 | 0.972 / 14.1 | 0.944 / 8.5 |
 | geNomad-negative genomes, calls per genome | 27.1 (19.1–35.5) | 7.4 (4.7–10.2) | 2.45 (1.35–3.7) |
 | LAMBDA covered50 / calls per genome | 0.946 / 39.9 | 0.933 / 14.4 | 0.899 / 7.1 |
@@ -188,7 +203,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 - **No claim that it is more accurate than** geNomad, PHASTER or any tool. Per unit of cost it is level with them (§2).
 - **No comparative claim on fragmented input** (§6).
 - **No claim about the mechanism.** Composition alone does not explain the model, but which biology it uses is unmeasured (item 1b). Containment is nucleotide-level and cannot see protein homology.
-- **No ≥95% per-stratum claim**, and no measured claim below 10 kb from geNomad truth (§1).
+- **No ≥95% claim, pooled or per stratum.** The lockbox's lower bound is 0.924, so ≥95% is not established (§1). No measured claim below 10 kb from geNomad truth.
 - **No "first" and no "guarantee"**.
 
 ## Limitations
@@ -196,8 +211,8 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 - **Labels are geNomad-derived.** Training and every agreement figure use geNomad 1.9.4 with DB 1.9. The model inherits geNomad's misses, and agreement figures measure fidelity to it. geNomad's ~3.5 kb floor means geNomad truth holds almost no elements under 10 kb (3 of 202 in the lockbox). Of 89 confident inovirus loci in the corpus, geNomad labels 43 negative, median 5.6 kb (`docs/data-reliability.md`).
 - **Small elements.** Real inoviruses implanted at model-independent sites are detected at **0.362** at Default (Wilson 0.317–0.409, n = 420; implants share 28 hosts, so the true interval is wider): 0.17 at 3–5 kb, 0.32 at 5–8 kb, 0.73 at 8–10 kb (C7). Evidence below 10 kb is partly synthetic and covers one phage family.
 - **Boundaries are coarser than gene-based tools'.** They come from 1 kb bins of the score track. In the literature pilot, median IoU is 0.59–0.62, against 0.71–0.94 for geNomad. On LAMBDA, the annotation tools reach a median IoU of 0.83–0.92.
-- **Conflation.** Several elements may fall under one call. On the tuning sample, 6 calls absorb 13 of 179 elements (7.3%; ensemble, 2026-09-24 defaults). Lockbox: [LOCKBOX]. Covered recall cannot see conflation, which is why conflated and absorbed counts are reported.
-- **Cost.** Default makes ~14 calls per genome, against 3.4–4.6 for annotation tools. On genomes with no geNomad provirus, it makes 7.4 per genome (4.7–10.2), which is the floor cost.
+- **Conflation.** Several elements may fall under one call. On the tuning sample, 6 calls absorb 13 of 179 elements (7.3%; ensemble, 2026-09-24 defaults). Lockbox: 9 calls absorb 19 of 202 elements (9.4%), the same in every mode. Covered recall cannot see conflation, which is why conflated and absorbed counts are reported.
+- **Cost.** Default makes ~14 calls per genome on the tuning sample and 11.0 on the lockbox, against 3.4–4.6 for annotation tools. On genomes with no geNomad provirus, it makes 7.4 per genome (4.7–10.2; lockbox 6.8), which is the floor cost.
 - **Short contigs** under 3 kb are never scanned. Recall on 3–10 kb contigs falls with element size: on fully shredded input, 60 kb+ elements read 0.286 at covered50, against 0.905 on complete genomes (calibration run `818235`, before the final modes; `docs/adaptive-multiscale-detection.md` Part 4).
 - **Large internal N gaps** cost recall: 6 of 179 elements at 20 kb.
 - **Calibration.** Mode thresholds are a user-facing trade-off between recall and cost, tuned on geNomad agreement. They are not probabilities that a call is real.
@@ -215,7 +230,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | the model uses more than composition | that it is not a GC detector | AUPRC ≤0.16 against 0.60 (1c) | **holds** at this budget (k ≤ 4, no ORF density) |
 | calls per genome is the right cost unit | how modes are priced | a product decision (user, 2026-09-21): wet-lab follow-up scales with calls | design choice, stated |
 | a random-rotation baseline is fair chance | §2's cost adjustment | rotation keeps each tool's call lengths, count and spacing; reproduces the original estimate (0.141 vs 0.144) | stated method; one choice among several |
-| the tuning sample's optimism is small | how far reused numbers transfer | lockbox gap to the 42 and 18: [LOCKBOX] | **measured once, by the lockbox** |
+| the tuning sample's optimism is small | how far reused numbers transfer | lockbox gap to the 42 and 18 (Default): +0.012 and +0.040; Exploratory +0.029 / +0.035; Conservative +0.043 / +0.061 | **holds for Default and Exploratory; larger for Conservative.** Measured once, by the lockbox |
 | shreds approximate MAG input | §6 | uniform breakpoints; N50 not calibrated to a catalogue | **untested**; stated |
 | one inovirus family stands in for small prophages | the small-element limitation | none: the corpus is mostly tailed phages | **untested**; stated as a limit |
 
@@ -232,7 +247,6 @@ prophound needs about 30× less run-time data than geNomad. That matters only be
 
 - **CPU runtime (G6)** comes from the hardware baseline after the freeze (`docs/release-checklist.md` §5). G5's timings came from different hardware and are not a comparison.
 - **Installed-environment size** for both tools, at packaging.
-- **Lockbox** (`841208`): every `[LOCKBOX]` above.
 
 ## Reproduction
 

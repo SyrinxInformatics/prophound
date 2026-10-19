@@ -1,0 +1,15 @@
+=== job start ===
+Fri Oct 16 21:54:00 CDT 2026
+gpu002
+Tesla V100S-PCIE-32GB
+[preflight] list, frozen code, checkpoints and all 150 FASTAs verified
+[default]
+Fri Oct 16 21:54:02 CDT 2026
+[exploratory]
+Fri Oct 16 23:04:37 CDT 2026
+[conservative]
+Sat Oct 17 00:14:46 CDT 2026
+[done] 450 of 450 genome runs
+Sat Oct 17 01:24:59 CDT 2026
+=== job end (exit 0) ===
+Sat Oct 17 01:24:59 CDT 2026

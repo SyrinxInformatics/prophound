@@ -53,7 +53,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 *Consequence:* every headline number is a tuning-sample number or a partly used confirmation number. The 0.961 (42) and 0.981 (18) figures should not be presented as held-out performance.
 
 *Correction:*
-- (a) The lockbox (`docs/lockbox.md`, built, not yet scored).
+- (a) The lockbox (`docs/lockbox.md`; scored once 2026-10-19, see "C9 result").
 - (b) Label every reported number by the role its sample played: tuning, confirmation-after-use, or lockbox.
 - (c) Report the lockbox-minus-42 gap as the measured optimism.
 
@@ -218,7 +218,7 @@ Ensemble covered recall at four coverage cut-offs. Intervals are 95% genome boot
 | 18, Conservative | 6.4 (4.7–8.5) | 0.981 | 0.981 | **0.962 (0.881–1.000)** | 0.923 |
 | phage-free, Exploratory / Default / Conservative | 20.6 (14.6–26.7) / 4.9 (3.0–7.0) / 2.45 (1.35–3.7) | — | — | — | — |
 
-- **No sample establishes ≥95%.** Default's lower bound is 0.935 on the 42 and 0.922 on the 18. The ≥95% criterion holds for the point estimate only. The release must say so, and the lockbox is the only chance of a tighter, held-out interval.
+- **No sample establishes ≥95%.** Default's lower bound is 0.935 on the 42 and 0.922 on the 18. The ≥95% criterion holds for the point estimate only. The release must say so, and the lockbox is the only chance of a tighter, held-out interval. **The lockbox (2026-10-19) does not establish it either:** Default 0.960, lower bound 0.924 (Wilson) / 0.929 (bootstrap).
 - **The mode order is robust to the cut-off**: every cut-off orders Exploratory > Default > Conservative. The ≥75% cut costs 1–3 points relative to ≥50%, most for Conservative. Covered50 is not a flattering choice among nearby cut-offs.
 - **Genome-level intervals are not always wider than Wilson.** Misses are spread thinly, and most genomes have none. The genome bootstrap is still the one to report, because it is the right unit.
 - Caveat: with 18 or 20 genomes, the bootstrap intervals are rough, and a 1.000 estimate yields a degenerate [1.000, 1.000] interval. Report the Wilson interval there.
@@ -363,3 +363,12 @@ C5, C6 and C7 go to ARC now that the cheap fixes are in (user, 2026-09-29). Buil
 - Launchers: `scripts/integrity_cpu.slurm` (C5 + C6), submitted as **`822067`**, and `scripts/spikein_siterule.slurm` (C7, GPU), submitted as **`822068`**.
 
 Both new options default to the old behaviour, so earlier results still reproduce. C8's version and checksum record goes in the same SSH call as the submission.
+
+### C9 result — lockbox (`841208`, scored once 2026-10-19)
+
+Default covered50 **0.960** (194/202; Wilson 0.924–0.980, genome bootstrap 0.929–0.984) at 11.0 calls/genome. Exploratory 0.965 / 32.4, and Conservative 0.901 / 4.9. Full table and pre-scoring checks: `docs/lockbox.md` "Result".
+
+- **F1 (no untouched sample) is now closed for the headline:** the release carries one held-out figure from a preregistered, scored-once sample.
+- **Measured optimism (F1(c)).** Reused figure minus lockbox: Default +0.012 against the 42 and +0.040 against the 18; Exploratory +0.029 / +0.035; Conservative +0.043 / +0.061. For Default the tuning sample's optimism is small, inside either interval. It grows with stringency, so Conservative's tuning-sample figure should not be quoted without the lockbox's.
+- **≥95% is not established held-out.** By the rule fixed beforehand, the release gives 0.960 (0.924–0.980) and not "≥95%".
+- **What it does not fix.** Truth is still geNomad (F3, circularity), and the lockbox holds 3 elements under 10 kb.

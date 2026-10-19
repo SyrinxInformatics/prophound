@@ -288,7 +288,7 @@ This is the finding that most changes how results should be written up.
 
 | layer | what it measures | current number |
 |---|---|---|
-| **Agreement with geNomad** | how well the tool reproduces its label source on genomes held out from training | covered50 0.972 (0.949–0.994; ensemble, final Default, n=179). This is the **tuning sample**; the held-out figure comes from the lockbox |
+| **Agreement with geNomad** | how well the tool reproduces its label source on genomes held out from training | covered50 0.972 (0.949–0.994; ensemble, final Default, n=179). This is the **tuning sample**. **Held out (lockbox, 2026-10-19): 0.960 (0.924–0.980 Wilson; 0.929–0.984 bootstrap; n=202, 150 genomes) at 11.0 calls/genome** (`docs/lockbox.md` "Result") |
 | **Agreement with curated truth** | how well it finds prophages that experts annotated | **not yet measured**. geNomad itself reaches only **0.81** covered50 on LAMBDA's clean subset (below) |
 
 geNomad covers about 81% of expert-curated prophages. A tool that matches geNomad at 96% will therefore land somewhere near 80% on curated truth. The 0.961 figure measures agreement, not accuracy. **Publishing it alone would oversell the tool, and the release must report both layers.** Curated truth is the number that tells a user how much of what is really there the tool finds.
