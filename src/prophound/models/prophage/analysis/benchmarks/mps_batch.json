@@ -1,0 +1,239 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.0.1",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22675555)\t80%; AC attached; not charging present: true",
+    "omp_num_threads": null,
+    "code_commit": "0a8abaa6e394e310a3df36a010850da42f804580",
+    "code_dirty": true,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "mps",
+  "mode": "default",
+  "repeats": 1,
+  "warmup": false,
+  "inputs": {
+    "GCF_000027305.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000027305.1.fna",
+      "n_contigs": 1,
+      "bp": 1830138,
+      "runs": [
+        {
+          "wall_s": 17.27,
+          "peak_rss_mb": 594.2,
+          "n_windows": 1821,
+          "n_regions": 4,
+          "regions_sha256": "c3d126fa4539c0f9069a29e751729dd5bc887169b6fb1482d4ec926a93fa5215",
+          "warmup": false
+        }
+      ],
+      "median_s": 17.27,
+      "min_s": 17.27,
+      "max_s": 17.27,
+      "median_s_per_mb": 9.44,
+      "median_peak_rss_mb": 594.2,
+      "regions_identical": true
+    },
+    "GCF_000007625.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000007625.1.fna",
+      "n_contigs": 1,
+      "bp": 2799251,
+      "runs": [
+        {
+          "wall_s": 25.82,
+          "peak_rss_mb": 609.1,
+          "n_windows": 2790,
+          "n_regions": 16,
+          "regions_sha256": "2f22fce214bda59806a85e6608c9ff9e695958fd5cf059478281070ff892b3f1",
+          "warmup": false
+        }
+      ],
+      "median_s": 25.82,
+      "min_s": 25.82,
+      "max_s": 25.82,
+      "median_s_per_mb": 9.22,
+      "median_peak_rss_mb": 609.1,
+      "regions_identical": true
+    },
+    "GCA_013348785.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCA_013348785.1.fna",
+      "n_contigs": 1,
+      "bp": 3747033,
+      "runs": [
+        {
+          "wall_s": 34.53,
+          "peak_rss_mb": 609.6,
+          "n_windows": 3738,
+          "n_regions": 8,
+          "regions_sha256": "e599e86ba08d6c0e897b4318548edcf1f91f89c8845423fc586762c366e00480",
+          "warmup": false
+        }
+      ],
+      "median_s": 34.53,
+      "min_s": 34.53,
+      "max_s": 34.53,
+      "median_s_per_mb": 9.22,
+      "median_peak_rss_mb": 609.6,
+      "regions_identical": true
+    },
+    "GCF_000146165.2": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 44.8,
+          "peak_rss_mb": 610.0,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "6a24c9eb696dffc1d30a1978e3aaa972ad0880a4726fedf661e322a8e140db09",
+          "warmup": false
+        }
+      ],
+      "median_s": 44.8,
+      "min_s": 44.8,
+      "max_s": 44.8,
+      "median_s_per_mb": 9.01,
+      "median_peak_rss_mb": 610.0,
+      "regions_identical": true
+    },
+    "GCA_017183835.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCA_017183835.1.fna",
+      "n_contigs": 1,
+      "bp": 5107403,
+      "runs": [
+        {
+          "wall_s": 46.69,
+          "peak_rss_mb": 609.7,
+          "n_windows": 5098,
+          "n_regions": 11,
+          "regions_sha256": "3a3cd95967eb495dc08e6ff79ae645985a46daba24f680c53e280b1aecc7b0b9",
+          "warmup": false
+        }
+      ],
+      "median_s": 46.69,
+      "min_s": 46.69,
+      "max_s": 46.69,
+      "median_s_per_mb": 9.14,
+      "median_peak_rss_mb": 609.7,
+      "regions_identical": true
+    },
+    "GCA_017189375.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCA_017189375.1.fna",
+      "n_contigs": 1,
+      "bp": 5120346,
+      "runs": [
+        {
+          "wall_s": 46.3,
+          "peak_rss_mb": 610.7,
+          "n_windows": 5111,
+          "n_regions": 13,
+          "regions_sha256": "ea8236747501e23eb2741ed1a86eebe80385d74e0ec837f3b771141e39c0f4e9",
+          "warmup": false
+        }
+      ],
+      "median_s": 46.3,
+      "min_s": 46.3,
+      "max_s": 46.3,
+      "median_s_per_mb": 9.04,
+      "median_peak_rss_mb": 610.7,
+      "regions_identical": true
+    },
+    "GCA_017190795.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCA_017190795.1.fna",
+      "n_contigs": 1,
+      "bp": 5352395,
+      "runs": [
+        {
+          "wall_s": 49.07,
+          "peak_rss_mb": 610.9,
+          "n_windows": 5343,
+          "n_regions": 20,
+          "regions_sha256": "ed817b3b9057392ef6d89cd3b2fb364d93d3e1d661c63ac84d6358b3148d9c08",
+          "warmup": false
+        }
+      ],
+      "median_s": 49.07,
+      "min_s": 49.07,
+      "max_s": 49.07,
+      "median_s_per_mb": 9.17,
+      "median_peak_rss_mb": 610.9,
+      "regions_identical": true
+    },
+    "GCF_000226155.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000226155.1.fna",
+      "n_contigs": 1,
+      "bp": 6327754,
+      "runs": [
+        {
+          "wall_s": 57.1,
+          "peak_rss_mb": 619.9,
+          "n_windows": 6318,
+          "n_regions": 10,
+          "regions_sha256": "1bf7b85b0e53bca5262bb59928bb727ce83c5c9d77221bb5c18c5610a9bb25e5",
+          "warmup": false
+        }
+      ],
+      "median_s": 57.1,
+      "min_s": 57.1,
+      "max_s": 57.1,
+      "median_s_per_mb": 9.02,
+      "median_peak_rss_mb": 619.9,
+      "regions_identical": true
+    },
+    "GCF_000026645.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000026645.1.fna",
+      "n_contigs": 1,
+      "bp": 6601757,
+      "runs": [
+        {
+          "wall_s": 59.75,
+          "peak_rss_mb": 610.9,
+          "n_windows": 6592,
+          "n_regions": 13,
+          "regions_sha256": "45bdf5507f0464a790b5b9a35d77d3c2de93b0e89a0c08a8ef1066f2ab855e96",
+          "warmup": false
+        }
+      ],
+      "median_s": 59.75,
+      "min_s": 59.75,
+      "max_s": 59.75,
+      "median_s_per_mb": 9.05,
+      "median_peak_rss_mb": 610.9,
+      "regions_identical": true
+    },
+    "GCF_000009625.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000009625.1.fna",
+      "n_contigs": 1,
+      "bp": 7036071,
+      "runs": [
+        {
+          "wall_s": 63.54,
+          "peak_rss_mb": 611.3,
+          "n_windows": 7027,
+          "n_regions": 21,
+          "regions_sha256": "8a336645b70f287eeb134a8721d7a8e9a5e51168dfc165ccd9dd09d3c4f515be",
+          "warmup": false
+        }
+      ],
+      "median_s": 63.54,
+      "min_s": 63.54,
+      "max_s": 63.54,
+      "median_s_per_mb": 9.03,
+      "median_peak_rss_mb": 611.3,
+      "regions_identical": true
+    }
+  }
+}
