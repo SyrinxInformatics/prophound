@@ -68,7 +68,7 @@ def test_standalone_main_accepts_input_fasta(monkeypatch):
     from prophound.models.prophage.src import predict_genome
     seen = {}
     monkeypatch.setattr(predict_genome, "run_predict", lambda args: seen.update(vars(args)))
-    predict_genome.main(["--input_fasta", "g.fna", "--outdir", "o", "--config", "c.yaml", "--checkpoint", "a.pt"])
-    assert seen["input_fasta"] == "g.fna"
-    predict_genome.main(["--input_fasta=h.fna", "--outdir", "o", "--config", "c.yaml", "--checkpoint", "a.pt"])
-    assert seen["input_fasta"] == "h.fna"
+    for argv, expected in ((["--input_fasta", "g.fna"], "g.fna"), (["--input_fasta=h.fna"], "h.fna")):
+        with pytest.raises(SystemExit) as exc:
+            predict_genome.main([*argv, "--outdir", "o", "--config", "c.yaml", "--checkpoint", "a.pt"])
+        assert exc.value.code == 0 and seen["input_fasta"] == expected

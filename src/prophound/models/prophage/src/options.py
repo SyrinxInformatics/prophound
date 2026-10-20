@@ -87,6 +87,10 @@ DEVICES = ("auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel")
 DEFAULT_BATCH_SIZE = 128
 
 
+class PredictError(Exception):
+    """A failure the user can fix: printed as one `error:` line, without a traceback."""
+
+
 @dataclass(frozen=True)
 class PredictOptions:
     """A `predict` run's settings, resolved against the checkpoint and validated once."""
@@ -126,6 +130,7 @@ class PredictOptions:
     edge_alpha_ramp: tuple[int, int] | None
     split_min_gap_bp: int
     split_max_prob: float
+    verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
 
     @property
     def n_checkpoints(self) -> int:
@@ -157,23 +162,23 @@ class PredictOptions:
         window_len = int(args.window_len) if args.window_len else trained_window_len
         stride = int(args.stride) if args.stride else trained_stride
         if window_len <= 0 or stride <= 0:
-            raise SystemExit("--window-len and --stride must be positive")
+            raise PredictError("--window-len and --stride must be positive")
         ramp = (int(args.edge_alpha_ramp[0]), int(args.edge_alpha_ramp[1])) if args.edge_alpha_ramp else None
         if ramp and not 0 < ramp[0] < ramp[1]:
-            raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
+            raise PredictError("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
         refine_threshold = DEFAULT_REFINE_THRESHOLD if args.refine_threshold is None else float(args.refine_threshold)
         refine_margin = window_len if args.refine_margin is None else int(args.refine_margin)
         refine_window_len = int(args.refine_window_len or 0)
         if refine_window_len:
             if refine_window_len >= window_len:
-                raise SystemExit("--refine-window-len must be smaller than --window-len")
+                raise PredictError("--refine-window-len must be smaller than --window-len")
             if args.refine_stride <= 0 or not 0.0 <= args.edge_alpha <= 1.0 or refine_margin < 0:
-                raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
+                raise PredictError("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
         if not 0.0 <= args.edge_snap_frac <= 1.0:
-            raise SystemExit("--edge-snap-frac must be between 0 and 1")
+            raise PredictError("--edge-snap-frac must be between 0 and 1")
         min_support = MODE_MIN_SEED_SUPPORT[args.mode] if args.min_seed_support is None else int(args.min_seed_support)
         if min_support < 1:
-            raise SystemExit("--min-seed-support must be >= 1")
+            raise PredictError("--min-seed-support must be >= 1")
         checkpoints = tuple(args.checkpoint) if isinstance(args.checkpoint, list) else (args.checkpoint,)
         return cls(
             input_fasta=str(Path(args.input_fasta)), outdir=str(args.outdir), mode=args.mode, config=args.config,
@@ -192,6 +197,7 @@ class PredictOptions:
             refine_stride=int(args.refine_stride), refine_threshold=refine_threshold, refine_margin=refine_margin,
             edge_alpha=float(args.edge_alpha), edge_alpha_ramp=ramp,
             split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
+            verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
         )
 
 
@@ -199,47 +205,38 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
     """Add every `predict` option to `parser`, in basic / advanced / experimental --help sections."""
     basic = parser.add_argument_group("basic options")
     advanced = parser.add_argument_group("advanced options (thresholds, ensemble, input handling, outputs)")
-    experimental = parser.add_argument_group("experimental options (not validated for default use; see docs/)")
+    experimental = parser.add_argument_group("experimental options (not validated for default use)")
 
-    basic.add_argument("--input", required=True, dest="input_fasta", help="Nucleotide FASTA to scan.")
-    basic.add_argument("--outdir", required=True, help="Directory to write outputs into.")
+    basic.add_argument("--input", required=True, dest="input_fasta", help="Genome to scan, as a nucleotide FASTA.")
+    basic.add_argument("--outdir", required=True, help="Directory for the outputs (created if missing).")
     basic.add_argument(
         "--mode",
         choices=sorted(MODE_THRESHOLDS),
         default="default",
         help=(
-            "Operating mode: seed threshold plus seed vote. exploratory 0.90, every "
-            "call kept (~36 calls/genome); default 0.95, all 3 checkpoints agree "
-            "(~14); conservative 0.995, all 3 agree (~8)."
+            "How many calls to make (default: default). exploratory: seed threshold 0.90, every call kept, "
+            "about 32 calls per genome. default: 0.95, a call is kept only if all 3 checkpoints make it, "
+            "about 11 per genome. conservative: 0.995, all 3 checkpoints, about 5 per genome. The call "
+            "counts are from a held-out test on 150 complete bacterial genomes."
         ),
     )
-    basic.add_argument(
-        "--config",
-        required=True,
-        help="Training config YAML for the checkpoint (defines model/window architecture).",
-    )
+    basic.add_argument("--config", required=True, help="Model config (YAML) that comes with the checkpoints.")
     basic.add_argument(
         "--checkpoint",
         required=True,
         nargs="+",
         help=(
-            "Trained checkpoint(s). Passing more than one runs a seed ensemble "
-            "over them (see --ensemble) -- recommended, since it removes the "
-            "dependence of recall on which replicate was packaged."
+            "Model checkpoint file(s). Pass all three shipped checkpoints: the modes' seed vote needs them, "
+            "and a single checkpoint makes more calls."
         ),
     )
-    advanced.add_argument("--threshold", type=float, default=None, help="Override the mode's score threshold.")
-    advanced.add_argument("--seed-threshold", type=float, default=None)
-    advanced.add_argument("--extend-threshold", type=float, default=None)
-    advanced.add_argument(
-        "--min-seed-support",
-        type=int,
-        default=None,
+    basic.add_argument(
+        "--device",
+        default="auto",
+        choices=DEVICES,
         help=(
-            "Keep an ensemble call only if at least this many checkpoints make an "
-            "overlapping call on their own (default: the mode's; exploratory 1, "
-            "default 3, conservative 3). Needs several --checkpoint files; 1 keeps "
-            "every call."
+            "Where to run the model. auto (default) picks CUDA, then Apple MPS, then Intel XPU, then CPU. "
+            "rocm runs on an AMD GPU through PyTorch's CUDA interface; intel is the same as xpu."
         ),
     )
     basic.add_argument(
@@ -247,48 +244,64 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Also write the called regions' sequences to regions.fna.",
     )
+    chatter = basic.add_mutually_exclusive_group()
+    chatter.add_argument("-q", "--quiet", action="store_true",
+                         help="Print only warnings, errors and the summary.")
+    chatter.add_argument("-v", "--verbose", action="store_true",
+                         help="Also print each stage's timing, and the full traceback of an unexpected error.")
+
+    advanced.add_argument(
+        "--threshold", type=float, default=None,
+        help="Override the mode's seed threshold (sets --seed-threshold, and --extend-threshold through it).",
+    )
+    advanced.add_argument(
+        "--seed-threshold", type=float, default=None,
+        help="Score a window needs to start a call (default: the mode's threshold).",
+    )
+    advanced.add_argument(
+        "--extend-threshold", type=float, default=None,
+        help="Score windows need to extend a call (default: the seed threshold, at most 0.99).",
+    )
+    advanced.add_argument(
+        "--min-seed-support",
+        type=int,
+        default=None,
+        help=(
+            "Keep a call only if at least this many checkpoints make an overlapping call on their own "
+            "(default: the mode's; 1 for exploratory, 3 otherwise). 1 keeps every call."
+        ),
+    )
     advanced.add_argument(
         "--write-seed-scores",
         action="store_true",
-        help=(
-            "With several --checkpoint files, also write each checkpoint's score to "
-            "windows.tsv (prob_ckpt1, ...) for offline re-analysis."
-        ),
+        help="With several checkpoints, also write each one's window scores to windows.tsv (prob_ckpt1, ...).",
     )
-    basic.add_argument("--device", default="auto", choices=DEVICES)
     advanced.add_argument(
         "--ambiguity-policy",
         choices=AMBIGUITY_POLICIES,
         default=DEFAULT_AMBIGUITY_POLICY,
         help=(
-            "How IUPAC ambiguity codes (N, R, Y, ...) are encoded. 'impute' (default "
-            "since 2026-09-24) replaces each with a deterministic concrete base and is "
-            "a no-op on ambiguity-free sequence. 'n-channel' is the training-time "
-            "encoding and reproduces numbers published before then, but two contiguous "
-            "ambiguity codes can take a confident window from 1.000 to 0.000. 'uniform' "
-            "spreads each ambiguous base as 0.25 across A/C/G/T."
+            "How IUPAC ambiguity codes (N, R, Y, ...) reach the model. impute (default) replaces each with a "
+            "fixed, reproducible base and changes nothing on sequence without them. n-channel is the "
+            "training-time encoding, but two ambiguous bases in a row can drop a window's score from 1 to 0. "
+            "uniform gives each ambiguous base 0.25 on A, C, G and T."
         ),
     )
-    experimental.add_argument(
-        "--grid-offset",
-        type=int,
-        default=0,
-        help=(
-            "Shift the inference window grid by this many bp. Default 0. For measuring "
-            "phase sensitivity: marginal calls can appear or vanish when the grid moves "
-            "(see docs/scientific-validity.md 'Input-robustness standing check')."
-        ),
+    advanced.add_argument(
+        "--batch-size", type=int, default=DEFAULT_BATCH_SIZE,
+        help="Windows scored at once (default %(default)s). Lower it if the device runs out of memory.",
     )
-    advanced.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
-    advanced.add_argument("--num-workers", type=int, default=0)
+    advanced.add_argument(
+        "--num-workers", type=int, default=0,
+        help="Extra processes reading windows from the FASTA (default 0: read in the main process).",
+    )
     advanced.add_argument(
         "--coverage-frac",
         type=float,
         default=DEFAULT_COVERAGE_FRAC,
         help=(
-            "Minimum fraction of a bin's covering windows that must score at least the "
-            "extend threshold for the bin to count as inside a call (0 -> union of high "
-            "windows, 1 -> intersection). Default %(default)s."
+            "Fraction of the windows covering a position that must reach the extend threshold for it to be "
+            "inside a call (default %(default)s; 0 is the union of high windows, 1 the intersection)."
         ),
     )
     advanced.add_argument(
@@ -296,14 +309,9 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         type=int,
         default=DEFAULT_MAX_GAP_BP,
         help=(
-            "Merge two calls separated by at "
-            "most this many bp into one, repairing elements fragmented by an "
-            "internal dip in the score track (worst for 60 kb+ elements, where "
-            "it lifts median IoU from ~0.38 to ~0.85). Default %(default)s; 0 "
-            "disables merging. Always pair with --bridge-prob -- an ungated "
-            "merge bridges genuinely separate neighbouring elements. Above "
-            "~50000 the gate binds before the distance budget does. See "
-            "docs/gap-filling.md."
+            "Merge calls separated by at most this many bp when the gap still looks element-like (see "
+            "--bridge-prob). This repairs large elements whose score dips partway through. "
+            "Default %(default)s; 0 disables."
         ),
     )
     advanced.add_argument(
@@ -311,22 +319,8 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         type=float,
         default=DEFAULT_BRIDGE_PROB,
         help=(
-            "For --max-gap-bp: only merge across a gap whose every bin has mean "
-            "covering-window probability >= this (0 = distance-only). The "
-            "anti-overextension guard -- docs/anti-overextension.md. "
-            "Default %(default)s."
-        ),
-    )
-    experimental.add_argument(
-        "--window-len",
-        type=int,
-        default=None,
-        help=(
-            "Inference window length in bp (default: the checkpoint's trained "
-            "length, 10000). The model's max pooling accepts any length, so this "
-            "trades resolution for context. EXPERIMENTAL away from the trained "
-            "length: mode thresholds were calibrated at it, and negative scores "
-            "drift upward as windows shrink."
+            "Merge across a gap only if its mean window score stays at least this high everywhere "
+            "(default %(default)s). 0 merges on distance alone, which can join separate neighbouring elements."
         ),
     )
     advanced.add_argument(
@@ -334,70 +328,86 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         type=float,
         default=DEFAULT_EDGE_SNAP_FRAC,
         help=(
-            "Move a call edge within this fraction of --window-len of a contig "
-            "end onto that end (short contigs included): "
-            "on fragmented input an element cut by a breakpoint is only partly "
-            "scored near the end. Default %(default)s, i.e. 5 kb at 10 kb windows; "
-            "0 disables. Edges on a contig end are flagged in contig_edge either way."
+            "Move a call edge within this fraction of --window-len of a contig end onto the end (default "
+            "%(default)s, 5 kb at 10 kb windows; 0 disables). On a fragmented assembly an element cut by a "
+            "contig break is only partly scored near the break. The contig_edge column flags calls that "
+            "touch a contig end either way."
         ),
-    )
-    experimental.add_argument(
-        "--stride",
-        type=int,
-        default=None,
-        help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
     )
     advanced.add_argument(
         "--short-contigs",
         choices=SHORT_CONTIG_MODES,
         default=DEFAULT_SHORT_CONTIGS,
         help=(
-            "Contigs shorter than --window-len: 'scan' (default) tiles each with a 5 kb or "
-            "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
-            "leaves them unscanned. Either way a warning reports them. Reduced-scale "
-            "thresholds are calibrated per mode to the 10 kb false-positive load "
-            "(0.95 / 0.95 / 0.99, with the mode's seed vote)."
+            "Contigs shorter than --window-len. scan (default) tiles each with 5 kb or 3 kb windows, "
+            "whichever fits, at thresholds set to give the same false-call rate as full-length windows; "
+            "skip leaves them unscanned. Contigs under 3 kb are never scanned. A warning reports them either way."
         ),
     )
     advanced.add_argument(
         "--short-contig-threshold",
         type=float,
         default=None,
-        help="Override the calibrated seed/extend threshold for --short-contigs scan.",
+        help="Override the short-contig seed and extend threshold.",
+    )
+
+    experimental.add_argument(
+        "--ensemble",
+        choices=ENSEMBLE_MODES,
+        default=DEFAULT_ENSEMBLE,
+        help=(
+            "How to combine the checkpoints' window scores: max (default) or mean. mean pulls borderline "
+            "windows under the seed threshold and costs recall."
+        ),
+    )
+    experimental.add_argument(
+        "--grid-offset",
+        type=int,
+        default=0,
+        help="Shift the window grid by this many bp (default 0), to test how calls depend on window placement.",
+    )
+    experimental.add_argument(
+        "--window-len",
+        type=int,
+        default=None,
+        help=(
+            "Window length in bp (default: the trained length, 10000). The mode thresholds were set at the "
+            "trained length, and scores on non-phage sequence rise as windows shrink."
+        ),
+    )
+    experimental.add_argument(
+        "--stride",
+        type=int,
+        default=None,
+        help="Window step in bp (default: the trained step, 1000).",
     )
     experimental.add_argument(
         "--refine-window-len",
         type=int,
         default=DEFAULT_REFINE_WINDOW_LEN,
         help=(
-            "EXPERIMENTAL fine-scale pass (default 0 = off). Re-score each call "
-            "+/- --refine-margin at this window length, then split calls whose fine "
-            "track shows a background gap (conflated elements) and place edges "
-            "between the fine core and the coarse edge (--edge-alpha). Never drops "
-            "a call. See docs/adaptive-multiscale-detection.md."
+            "Fine-scale pass, off by default (0). Re-scores each call and its surroundings with windows of "
+            "this length, splits calls whose fine scores show a background gap, and places edges between "
+            "the fine and coarse estimates (--edge-alpha). Never drops a call."
         ),
     )
     experimental.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
-                              help="Fine-pass stride in bp. Default %(default)s.")
+                              help="Fine-pass window step in bp (default %(default)s).")
     experimental.add_argument(
         "--refine-threshold",
         type=float,
         default=None,
-        help=(
-            "Fine-pass score threshold (default 0.95, calibrated at 5 kb for the "
-            "tight-boundaries setting; 0.6-0.8 keeps recall unchanged)."
-        ),
+        help=f"Fine-pass score threshold (default {DEFAULT_REFINE_THRESHOLD}).",
     )
     experimental.add_argument("--refine-margin", type=int, default=None,
-                              help="bp re-scored either side of each call (default: --window-len).")
+                              help="bp re-scored on either side of each call (default: --window-len).")
     experimental.add_argument(
         "--edge-alpha",
         type=float,
         default=DEFAULT_EDGE_ALPHA,
         help=(
-            "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
-            "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
-            "the fine core (truncates). Default %(default)s."
+            "Where refined edges go, from 0 (the fine core, which truncates) to 1 (the coarse edge, which "
+            "overextends by about half a window). Default %(default)s."
         ),
     )
     experimental.add_argument(
@@ -407,35 +417,22 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         metavar=("LO_BP", "HI_BP"),
         default=None,
         help=(
-            "Make --edge-alpha size-dependent: 0 for pieces whose fine core is at "
-            "most LO_BP, --edge-alpha at HI_BP and above, linear in log length "
-            "between. Small elements are best served by the fine core and large "
-            "ones by edges near the coarse call. Default off (constant alpha)."
+            "Scale --edge-alpha with size: 0 for pieces whose fine core is at most LO_BP, --edge-alpha at "
+            "HI_BP and above, log-linear between. Small elements suit the fine core, large ones the coarse edge."
         ),
     )
     experimental.add_argument(
         "--split-min-gap-bp",
         type=int,
         default=DEFAULT_SPLIT_MIN_GAP_BP,
-        help="Minimum fine-track gap (bp) that can split a call. Default %(default)s.",
+        help="Shortest fine-score gap (bp) that can split a call (default %(default)s).",
     )
     experimental.add_argument(
         "--split-max-prob",
         type=float,
         default=DEFAULT_SPLIT_MAX_PROB,
         help=(
-            "Split only across a gap whose fine windows average below this -- the "
-            "mirror of --bridge-prob, so splitting cannot undo gap-filling. "
-            "Default %(default)s."
-        ),
-    )
-    experimental.add_argument(
-        "--ensemble",
-        choices=ENSEMBLE_MODES,
-        default=DEFAULT_ENSEMBLE,
-        help=(
-            "How to combine multiple --checkpoint score tracks. 'max' "
-            "(default) preserves borderline detections; 'mean' dilutes them "
-            "below the seed threshold and measurably costs recall."
+            "Split only across a gap whose fine windows average below this (default %(default)s). It sits "
+            "under --bridge-prob, so splitting cannot undo a merge."
         ),
     )

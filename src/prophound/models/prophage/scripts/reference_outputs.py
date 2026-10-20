@@ -41,6 +41,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -61,6 +62,8 @@ SHRED_SEED = 20261019
 # Shred piece lengths, cycled: under 3 kb (never scanned), 3-10 kb (short-contig scan), 10 kb+.
 SHRED_LENGTHS = (2_500, 6_000, 9_000, 4_000, 25_000, 15_000, 3_500, 40_000, 7_500, 12_000)
 STDERR_PREFIXES = ("[warn]", "[summary]", "error:")
+# volatile parts of a kept line, replaced before comparing
+VOLATILE = [(re.compile(r"^\[summary\] ran on \S+ in .*$"), "[summary] ran on <device> in <time>")]
 
 
 @dataclass(frozen=True)
@@ -176,6 +179,8 @@ def user_messages(stderr: str, outdir: Path, exit_code: int) -> list[str]:
     """The lines a user acts on; on failure, also the last line (the exception message)."""
     lines = [ln.replace(str(outdir), "<OUT>") for ln in stderr.splitlines()]
     kept = [ln for ln in lines if ln.startswith(STDERR_PREFIXES)]
+    for pattern, repl in VOLATILE:
+        kept = [pattern.sub(repl, ln) for ln in kept]
     if exit_code and lines and lines[-1] not in kept:
         kept.append(lines[-1])
     return kept
@@ -272,7 +277,7 @@ def cmd_compare(args: argparse.Namespace) -> None:
         diffs = []
         if ca["exit_code"] != cb["exit_code"]:
             diffs.append(f"exit code {ca['exit_code']} != {cb['exit_code']}")
-        if ca["messages"] != cb["messages"]:
+        if ca["messages"] != cb["messages"] and not args.files_only:
             diffs.append(f"messages differ:\n    a: {ca['messages']}\n    b: {cb['messages']}")
         if ca["exit_code"] == 0 and args.across_devices:
             diffs += compare_case_across_devices(a / name, b / name, args.tolerance)
@@ -307,6 +312,8 @@ def main() -> None:
     s.add_argument("--across-devices", action="store_true",
                    help="CPU/MPS/CUDA agreement: same calls and messages, scores within --tolerance")
     s.add_argument("--tolerance", type=float, default=1e-4)
+    s.add_argument("--files-only", action="store_true",
+                   help="skip the stderr messages (for a change that rewords them on purpose)")
     args = ap.parse_args()
     {"inputs": cmd_inputs, "run": cmd_run, "compare": cmd_compare}[args.cmd](args)
 

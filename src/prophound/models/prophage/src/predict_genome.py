@@ -24,13 +24,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+import time
+import traceback
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
 import numpy as np
 import pandas as pd
 import torch
+import yaml
 from pyfaidx import Fasta
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
@@ -67,6 +71,7 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
     SHORT_CONTIG_SCALES,
     SHORT_CONTIG_STRIDE,
     SHORT_CONTIG_THRESHOLDS,
+    PredictError,
     PredictOptions,
     add_predict_arguments,
 )
@@ -74,8 +79,42 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
 WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
 
-def warn(msg: str) -> None:
-    print(f"[warn] {msg}", file=sys.stderr)
+class Log:
+    """stderr output at the run's verbosity: warnings always, progress lines unless
+    --quiet, `[info]` stage details only with --verbose."""
+
+    def __init__(self, verbosity: int = 0):
+        self.verbosity = verbosity
+
+    def warn(self, msg: str) -> None:
+        print(f"[warn] {msg}", file=sys.stderr)
+
+    def info(self, msg: str) -> None:
+        if self.verbosity >= 0:
+            print(msg, file=sys.stderr)
+
+    def detail(self, msg: str) -> None:
+        if self.verbosity > 0:
+            print(f"[info] {msg}", file=sys.stderr)
+
+
+class Progress:
+    """One progress bar for every scoring pass of a run (hidden with --quiet or off a terminal)."""
+
+    def __init__(self, total: int, quiet: bool):
+        self.bar = tqdm(total=total, unit="window", unit_scale=True, desc="scoring", leave=False,
+                        file=sys.stderr, dynamic_ncols=True, disable=True if quiet else None)
+
+    def add(self, n: int) -> None:
+        """Grow the total once a pass's size is known (the refinement pass)."""
+        self.bar.total += n
+        self.bar.refresh()
+
+    def update(self, n: int) -> None:
+        self.bar.update(n)
+
+    def close(self) -> None:
+        self.bar.close()
 
 
 class GenomeWindowDataset(Dataset):
@@ -126,13 +165,17 @@ def predict_probs(
     model: torch.nn.Module,
     loader: DataLoader,
     device: torch.device,
+    on_batch=None,
 ) -> np.ndarray:
+    """Score every batch of `loader`; `on_batch(n)` is called after each batch of n windows."""
     model.eval()
     all_logits: List[np.ndarray] = []
-    for batch_x, _ in tqdm(loader, desc="predict", leave=False):
+    for batch_x, _ in loader:
         batch_x = batch_x.to(device, non_blocking=True)
         logits = model(batch_x).view(-1)
         all_logits.append(logits.detach().cpu().numpy())
+        if on_batch is not None:
+            on_batch(len(batch_x))
     if not all_logits:
         return np.array([], dtype=np.float32)
     return stable_sigmoid(np.concatenate(all_logits))
@@ -216,37 +259,61 @@ def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
         fa.close()
 
 
-def score_windows(
-    model: torch.nn.Module,
-    windows_df: pd.DataFrame,
-    window_len: int,
-    opts: PredictOptions,
-    device: torch.device,
-) -> Tuple[np.ndarray, List[np.ndarray]]:
-    """Score `windows_df` with every checkpoint: the ensemble track and each checkpoint's own."""
-    dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=opts.ambiguity_policy)
-    loader = DataLoader(
-        dataset,
-        batch_size=opts.batch_size,
-        shuffle=False,
-        num_workers=opts.num_workers,
-        collate_fn=collate_batch,
-        pin_memory=(device.type == "cuda"),
-    )
-    per_checkpoint = []
-    for ckpt_path in opts.checkpoints:
-        checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
-        model.load_state_dict(checkpoint["model"])
-        per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
-    dataset.close()
+def load_checkpoints(model: torch.nn.Module, paths: Tuple[str, ...], device: torch.device,
+                     config_path: str) -> List[dict]:
+    """Read each checkpoint's weights once, checking that they fit the model the config describes."""
+    states = []
+    for path in paths:
+        try:
+            state = torch.load(path, map_location=device, weights_only=False)["model"]
+        except (KeyError, TypeError, IndexError):
+            raise PredictError(f"{path} is not a prophound checkpoint (it has no model weights)") from None
+        except Exception as e:  # unreadable, truncated, not a torch file
+            raise PredictError(f"cannot read checkpoint {path}: {e}") from None
+        try:
+            model.load_state_dict(state)
+        except RuntimeError as e:
+            # torch's first line is generic; the next names the first mismatched weight
+            detail = next((ln.strip() for ln in str(e).splitlines()[1:] if ln.strip()), str(e))
+            raise PredictError(f"checkpoint {path} does not fit the model described by {config_path} "
+                               f"({detail.rstrip('.')})") from None
+        states.append(state)
+    return states
 
-    if len(per_checkpoint) == 1:
-        return per_checkpoint[0], per_checkpoint
-    stacked = np.stack(per_checkpoint)
-    # max, not mean: averaging pulls borderline seeds under the seed threshold and
-    # costs recall (docs/cli-and-packaging.md "Defaults changed + seed ensembling added")
-    ensemble = stacked.max(axis=0) if opts.ensemble == "max" else stacked.mean(axis=0)
-    return ensemble, per_checkpoint
+
+class Scorer:
+    """The model with every checkpoint's weights, and the run's progress bar."""
+
+    def __init__(self, model: torch.nn.Module, states: List[dict], device: torch.device, opts: PredictOptions,
+                 progress: Progress):
+        self.model, self.states, self.device, self.opts, self.progress = model, states, device, opts, progress
+
+    def score(self, windows_df: pd.DataFrame, window_len: int) -> Tuple[np.ndarray, List[np.ndarray]]:
+        """Score `windows_df` with every checkpoint: the ensemble track and each checkpoint's own."""
+        opts, device = self.opts, self.device
+        dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=opts.ambiguity_policy)
+        loader = DataLoader(
+            dataset,
+            batch_size=opts.batch_size,
+            shuffle=False,
+            num_workers=opts.num_workers,
+            collate_fn=collate_batch,
+            pin_memory=(device.type == "cuda"),
+        )
+        per_checkpoint = []
+        for state in self.states:
+            self.model.load_state_dict(state)
+            probs = predict_probs(self.model, loader, device, on_batch=self.progress.update)
+            per_checkpoint.append(np.asarray(probs, dtype=np.float64))
+        dataset.close()
+
+        if len(per_checkpoint) == 1:
+            return per_checkpoint[0], per_checkpoint
+        stacked = np.stack(per_checkpoint)
+        # max, not mean: averaging pulls borderline seeds under the seed threshold and
+        # costs recall (docs/cli-and-packaging.md "Defaults changed + seed ensembling added")
+        ensemble = stacked.max(axis=0) if opts.ensemble == "max" else stacked.mean(axis=0)
+        return ensemble, per_checkpoint
 
 
 def scored(windows_df: pd.DataFrame, ensemble: np.ndarray, per_checkpoint: List[np.ndarray],
@@ -261,18 +328,18 @@ def scored(windows_df: pd.DataFrame, ensemble: np.ndarray, per_checkpoint: List[
     return out
 
 
-def call_coarse(model, device, windows_df: pd.DataFrame, opts: PredictOptions, rules: CallRules) -> PassCalls:
+def call_coarse(scorer: Scorer, windows_df: pd.DataFrame, opts: PredictOptions, rules: CallRules) -> PassCalls:
     """The full-length window pass: score, build calls with fragment merging, vote."""
     if windows_df.empty:   # every contig is short
         empty = pd.DataFrame(columns=REGION_COLUMNS)
         return PassCalls(pd.DataFrame(columns=WINDOW_COLUMNS), empty, empty.assign(filter=pd.Series(dtype=str)), [])
-    ensemble, per_checkpoint = score_windows(model, windows_df, opts.window_len, opts, device)
+    ensemble, per_checkpoint = scorer.score(windows_df, opts.window_len)
     return build_pass(scored(windows_df, ensemble, per_checkpoint, opts.threshold, opts), per_checkpoint,
                       opts.seed_threshold, opts.extend_threshold, rules,
                       max_gap_bp=opts.max_gap_bp, bridge_prob=opts.bridge_prob)
 
 
-def refine(model, device, calls: pd.DataFrame, contig_lengths: Dict[str, int], genome_id: str,
+def refine(scorer: Scorer, calls: pd.DataFrame, contig_lengths: Dict[str, int], genome_id: str,
            opts: PredictOptions) -> Tuple[pd.DataFrame, pd.DataFrame | None, dict | None]:
     """Fine-scale pass over the coarse calls (off unless --refine-window-len). Never drops a call.
 
@@ -289,7 +356,8 @@ def refine(model, device, calls: pd.DataFrame, contig_lengths: Dict[str, int], g
         )
         if not fine_windows_df.empty:
             fine_windows_df = fine_windows_df.copy()
-            fine_windows_df["prob"] = score_windows(model, fine_windows_df, opts.refine_window_len, opts, device)[0]
+            scorer.progress.add(len(fine_windows_df) * len(opts.checkpoints))
+            fine_windows_df["prob"] = scorer.score(fine_windows_df, opts.refine_window_len)[0]
             # one threshold for seed and extend at the fine scale; no merging
             # here -- merging belongs to the coarse track (merge coarse, split fine)
             fine_windows_df, fine_regions_df = build_region_table_coverage(
@@ -326,8 +394,8 @@ def refine(model, device, calls: pd.DataFrame, contig_lengths: Dict[str, int], g
     return calls, fine_windows_df, meta
 
 
-def call_short_contigs(model, device, short_windows_df: pd.DataFrame, opts: PredictOptions,
-                       rules: CallRules) -> Tuple[List[PassCalls], dict]:
+def call_short_contigs(scorer: Scorer, short_windows_df: pd.DataFrame, opts: PredictOptions,
+                       rules: CallRules, log: Log) -> Tuple[List[PassCalls], dict]:
     """Contigs shorter than --window-len, one pass per scale (5 or 3 kb), no merging.
 
     Returns the passes and the metadata additions (thresholds used, etc.); no passes
@@ -336,14 +404,14 @@ def call_short_contigs(model, device, short_windows_df: pd.DataFrame, opts: Pred
     if opts.short_contigs != "scan" or short_windows_df.empty:
         return [], {}
     if opts.short_contig_threshold is not None:
-        warn(f"--short-contig-threshold {float(opts.short_contig_threshold):g} overrides the calibrated "
+        log.warn(f"--short-contig-threshold {float(opts.short_contig_threshold):g} overrides the calibrated "
              "short-contig thresholds.")
     passes, used = [], {}
     for scale, sw in short_windows_df.groupby("scale"):
         t = opts.short_threshold(int(scale))
         used[str(int(scale))] = {"seed": t, "extend": t}
         sw = sw.drop(columns="scale").reset_index(drop=True)
-        ensemble, per_checkpoint = score_windows(model, sw, int(scale), opts, device)
+        ensemble, per_checkpoint = scorer.score(sw, int(scale))
         # per-contig windows share one length, so the coverage builder's
         # per-contig window_len/stride inference holds
         passes.append(build_pass(scored(sw, ensemble, per_checkpoint, t, opts), per_checkpoint, t, t, rules,
@@ -358,12 +426,12 @@ def combine_passes(coarse: PassCalls, coarse_calls: pd.DataFrame,
     """Windows, calls and filtered candidates of every pass, coarse first."""
     windows_df, calls, filtered = coarse.windows, coarse_calls, coarse.filtered
     if short:
-        short_calls = pd.concat([p.calls for p in short], ignore_index=True)
+        short_calls = concat_nonempty([p.calls for p in short])
         if "refine_status" in calls.columns:
             short_calls = short_calls.assign(refine_status="short_contig", coarse_start=short_calls["start"],
                                              coarse_end=short_calls["end"], n_pieces=1)
         # concatenating onto an empty frame would change the column dtypes
-        calls = pd.concat([calls, short_calls], ignore_index=True) if not calls.empty else short_calls
+        calls = concat_nonempty([calls, short_calls]) if not calls.empty else short_calls
         short_windows = [p.windows for p in short]
         windows_df = pd.concat([windows_df, *short_windows], ignore_index=True) \
             if not windows_df.empty else pd.concat(short_windows, ignore_index=True)
@@ -381,16 +449,53 @@ def call_rules(opts: PredictOptions) -> CallRules:
     )
 
 
+def _load_config(path: str):
+    try:
+        return load_cfg(path)
+    except FileNotFoundError:
+        raise PredictError(f"config not found: {path}") from None
+    except ValueError as e:   # load_cfg's messages start with the path
+        raise PredictError(f"config {e}") from None
+    except (OSError, yaml.YAMLError) as e:
+        raise PredictError(f"cannot read config {path}: {e}") from None
+
+
+def _check_paths(opts: PredictOptions) -> None:
+    """Fail before any work on a missing checkpoint or an outdir that cannot be written."""
+    missing = [c for c in opts.checkpoints if not Path(c).is_file()]
+    if missing:
+        raise PredictError(f"checkpoint not found: {', '.join(missing)}")
+    out = Path(opts.outdir)
+    if out.exists() and not out.is_dir():
+        raise PredictError(f"--outdir {out} exists and is not a directory")
+    existing = next(p for p in (out, *out.parents) if p.exists())
+    if not os.access(existing, os.W_OK | os.X_OK):
+        raise PredictError(f"cannot write to --outdir {out}: no write permission on {existing}")
+
+
+def _nothing_to_scan(opts: PredictOptions, contig_lengths: Dict[str, int]) -> PredictError:
+    longest = max(contig_lengths.values())
+    if opts.short_contigs == "skip":
+        return PredictError(f"nothing to scan: every contig is shorter than --window-len ({opts.window_len:,} bp), "
+                            f"and --short-contigs skip leaves those unscanned (the longest is {longest:,} bp)")
+    return PredictError(f"nothing to scan: every contig is shorter than {min(SHORT_CONTIG_SCALES):,} bp, the "
+                        f"smallest window (the longest is {longest:,} bp)")
+
+
 def run_predict(args: argparse.Namespace) -> None:
     """Run inference end to end from parsed `predict` arguments."""
-    cfg = load_cfg(args.config)
+    started = time.perf_counter()
+    cfg = _load_config(args.config)
     device = resolve_device(args.device)
     opts = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
+    log = Log(opts.verbosity)
+    _check_paths(opts)
     if opts.window_len != opts.trained_window_len:
         # the model accepts any length, but its scores on negatives rise as windows
         # shrink, so the thresholds don't transfer (docs/adaptive-multiscale-detection.md)
-        warn(f"--window-len {opts.window_len} differs from the trained {opts.trained_window_len}; the mode "
-             f"thresholds were calibrated at {opts.trained_window_len} bp and are not validated at this length.")
+        log.warn(f"--window-len {opts.window_len:,} differs from the trained {opts.trained_window_len:,}; the "
+                 f"mode thresholds were calibrated at {opts.trained_window_len:,} bp and are not validated "
+                 "at this length.")
 
     input_summary = validate_fasta(opts.input_fasta)   # fails early with a clear message
     contig_lengths = dict(iter_fasta_lengths(opts.input_fasta))
@@ -401,26 +506,45 @@ def run_predict(args: argparse.Namespace) -> None:
         opts.input_fasta, genome_id, window_len=opts.window_len, contig_lengths=contig_lengths)
     if short_report["n_short"]:
         # never silent (docs/cli-and-packaging.md "Input robustness")
-        verb = "scanned at reduced scale" if opts.short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
-        warn(f"{short_report['n_short']} contig(s) shorter than {opts.window_len} bp "
-             f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
-             f"{short_report['n_too_short']} under {min(SHORT_CONTIG_SCALES)} bp never scanned "
-             f"({short_report['bp_too_short']} bp).")
-    if windows_df.empty and (opts.short_contigs == "skip" or short_windows_df.empty):
-        raise RuntimeError("No inference windows were generated from the input FASTA.")
+        verb = "scanned with shorter windows" if opts.short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
+        log.warn(f"{_plural(short_report['n_short'], 'contig')} shorter than {opts.window_len:,} bp "
+                 f"({short_report['bp_short']:,} bp): {short_report['n_scannable']:,} {verb}; "
+                 f"{short_report['n_too_short']:,} under {min(SHORT_CONTIG_SCALES):,} bp never scanned "
+                 f"({short_report['bp_too_short']:,} bp).")
+    scan_short = opts.short_contigs == "scan" and not short_windows_df.empty
+    if windows_df.empty and not scan_short:
+        raise _nothing_to_scan(opts, contig_lengths)
 
     model = build_model(cfg, device)
+    states = load_checkpoints(model, opts.checkpoints, device, opts.config)
     if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
         # never silent: the mode thresholds were set with the vote over 3 checkpoints
         k = opts.min_seed_support
-        warn(f"seed vote of {opts.requested_min_seed_support} requested but only {opts.n_checkpoints} "
-             f"checkpoint(s): {'voting at ' + str(k) if k > 1 else 'no vote applied'}. The '{opts.mode}' "
-             "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+        log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only {opts.n_checkpoints} "
+                 f"checkpoint(s): {'voting at ' + str(k) if k > 1 else 'no vote applied'}. The '{opts.mode}' "
+                 "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
     rules = call_rules(opts)
+    n_short = len(short_windows_df) if scan_short else 0
+    log.detail(f"{len(windows_df):,} windows of {opts.window_len:,} bp and {n_short:,} short-contig windows, "
+               f"{_plural(opts.n_checkpoints, 'checkpoint')}, on {device}")
 
-    coarse = call_coarse(model, device, windows_df, opts, rules)
-    coarse_calls, fine_windows_df, refine_meta = refine(model, device, coarse.calls, contig_lengths, genome_id, opts)
-    short, short_scan_meta = call_short_contigs(model, device, short_windows_df, opts, rules)
+    progress = Progress((len(windows_df) + n_short) * opts.n_checkpoints, quiet=opts.verbosity < 0)
+    scorer = Scorer(model, states, device, opts, progress)
+    try:
+        t = time.perf_counter()
+        coarse = call_coarse(scorer, windows_df, opts, rules)
+        log.detail(f"full-length windows: {_plural(len(coarse.calls), 'call')} in {_duration(time.perf_counter() - t)}")
+        t = time.perf_counter()
+        coarse_calls, fine_windows_df, refine_meta = refine(scorer, coarse.calls, contig_lengths, genome_id, opts)
+        if refine_meta:
+            log.detail(f"refinement: {_plural(len(coarse_calls), 'call')} in {_duration(time.perf_counter() - t)}")
+        t = time.perf_counter()
+        short, short_scan_meta = call_short_contigs(scorer, short_windows_df, opts, rules, log)
+        if short:
+            log.detail(f"short contigs: {_plural(sum(len(p.calls) for p in short), 'call')} "
+                       f"in {_duration(time.perf_counter() - t)}")
+    finally:
+        progress.close()
     windows_df, calls, filtered = combine_passes(coarse, coarse_calls, short)
 
     per_seed = [[p.per_seed[k] for p in (coarse, *short) if p.per_seed] for k in range(opts.n_checkpoints)] \
@@ -430,14 +554,16 @@ def run_predict(args: argparse.Namespace) -> None:
                      requested_min_seed_support=opts.requested_min_seed_support)
     gap_meta = final.meta["n_gap_filter"]
     if gap_meta["calls_dropped"]:
-        warn(f"{gap_meta['calls_dropped']} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N "
-             "(imputed gap sequence).")
+        log.warn(f"{gap_meta['calls_dropped']} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N "
+                 "(imputed gap sequence).")
     windows_df = label_windows(windows_df, final.calls)
 
     short_meta = {"mode": opts.short_contigs, **short_report, **short_scan_meta}
-    write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, final.calls, fine_windows_df,
-                  short_meta, final.meta, refine_meta)
-    print_run_summary(opts, input_summary, final.calls, short_meta, final.meta.get("seed_support"), gap_meta)
+    written = write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, final.calls,
+                            fine_windows_df, short_meta, final.meta, refine_meta)
+    log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
+    print_run_summary(opts, input_summary, final.calls, short_meta, final.meta.get("seed_support"), gap_meta,
+                      str(device), time.perf_counter() - started)
 
 
 def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
@@ -485,7 +611,8 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary
 
 def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
                   calls: pd.DataFrame, fine_windows_df: pd.DataFrame | None, short_meta: dict, call_meta: dict,
-                  refine_meta: dict | None) -> None:
+                  refine_meta: dict | None) -> List[str]:
+    """Write every output file; returns their names."""
     outdir = Path(opts.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     windows_df.to_csv(outdir / "windows.tsv", sep="\t", index=False)
@@ -493,42 +620,100 @@ def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summar
     metadata = run_metadata(opts, run_name, device, input_summary, windows_df, calls, short_meta, call_meta,
                             refine_meta)
     (outdir / "run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    print(f"[done] wrote {outdir / 'windows.tsv'}", file=sys.stderr)
+    written = ["windows.tsv", "regions.tsv", "run_metadata.json"]
     if fine_windows_df is not None:
         fine_windows_df.to_csv(outdir / "fine_windows.tsv", sep="\t", index=False)
-        print(f"[done] wrote {outdir / 'fine_windows.tsv'}", file=sys.stderr)
-    print(f"[done] wrote {outdir / 'regions.tsv'}", file=sys.stderr)
-    print(f"[done] wrote {outdir / 'run_metadata.json'}", file=sys.stderr)
+        written.append("fine_windows.tsv")
     write_bed(calls, outdir / "regions.bed")
     write_gff3(calls, outdir / "regions.gff3", opts.mode, package_version())
-    print(f"[done] wrote {outdir / 'regions.bed'} and {outdir / 'regions.gff3'}", file=sys.stderr)
+    written += ["regions.bed", "regions.gff3"]
     if opts.write_region_fasta:
         write_region_fasta(calls, opts.input_fasta, outdir / "regions.fna")
-        print(f"[done] wrote {outdir / 'regions.fna'}", file=sys.stderr)
+        written.append("regions.fna")
+    return written
+
+
+def _plural(n: int, word: str, plural: str | None = None) -> str:
+    return f"{n:,} {word if n == 1 else (plural or word + 's')}"
+
+
+def _duration(seconds: float) -> str:
+    if seconds < 60:
+        return f"{seconds:.1f} s"
+    minutes, sec = divmod(int(round(seconds)), 60)
+    if minutes < 60:
+        return f"{minutes} min {sec} s"
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours} h {minutes} min"
 
 
 def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame, short_meta: dict,
-                      support_meta: dict | None, gap_meta: dict) -> None:
+                      support_meta: dict | None, gap_meta: dict, device: str, elapsed: float) -> None:
     """One human-readable block on stderr: what went in, what came out, what was skipped."""
-    lines = [f"prophound {package_version()} | mode {opts.mode} | {opts.n_checkpoints} checkpoint(s)",
-             f"input: {inp['n_contigs']} contig(s), {inp['total_bp']:,} bp; "
-             f"ambiguity codes {inp['ambiguous_bases']:,} ({inp['ambiguous_ppm']:g} ppm), "
+    lines = [f"prophound {package_version()} | mode {opts.mode} | {_plural(opts.n_checkpoints, 'checkpoint')}",
+             f"input: {_plural(inp['n_contigs'], 'contig')}, {inp['total_bp']:,} bp; "
+             f"{_plural(inp['ambiguous_bases'], 'ambiguity code')} ({inp['ambiguous_ppm']:,g} ppm), "
              f"policy {opts.ambiguity_policy}"]
     if short_meta.get("n_short"):
-        lines.append(f"short contigs: {short_meta['n_short']} under the window length ({short_meta['bp_short']:,} bp); "
-                     f"{short_meta['n_too_short']} never scanned ({short_meta['bp_too_short']:,} bp)")
+        lines.append(f"short contigs: {short_meta['n_short']:,} under the window length "
+                     f"({short_meta['bp_short']:,} bp); {short_meta['n_too_short']:,} never scanned "
+                     f"({short_meta['bp_too_short']:,} bp)")
     n = len(regions_df)
     bp = int((regions_df.end - regions_df.start).sum()) if n else 0
-    lines.append(f"calls: {n} ({bp:,} bp, {100 * bp / max(1, inp['total_bp']):.1f}% of input)")
+    lines.append(f"calls: {n:,} ({bp:,} bp, {100 * bp / max(1, inp['total_bp']):.1f}% of input)")
     if support_meta:
-        lines.append(f"seed vote: min support {support_meta['min_seed_support']}, "
-                     f"{support_meta['calls_dropped_by_vote']} call(s) dropped; kept by support "
-                     f"{support_meta['calls_by_support']}")
+        k, total = support_meta["min_seed_support"], support_meta["n_checkpoints"]
+        dropped = support_meta["calls_dropped_by_vote"]
+        if k > 1:
+            lines.append(f"seed vote: kept calls made by at least {k} of {total} checkpoints; "
+                         f"{_plural(dropped, 'call')} dropped")
+        else:
+            lines.append("seed vote: off, every call kept")
+        by_support = support_meta["calls_by_support"]
+        if len(by_support) > 1:
+            lines.append("calls by checkpoint support: " + ", ".join(
+                f"{s} of {total}: {c:,}" for s, c in sorted(by_support.items(), key=lambda kv: -int(kv[0]))))
     if gap_meta["calls_dropped"] or gap_meta["calls_with_any_n"]:
-        lines.append(f"N gaps: {gap_meta['calls_dropped']} call(s) dropped as >= {gap_meta['max_call_n_frac']:.0%} N; "
-                     f"{gap_meta['calls_with_any_n']} kept call(s) contain some N (see n_frac)")
+        parts = []
+        if gap_meta["calls_dropped"]:
+            parts.append(f"{_plural(gap_meta['calls_dropped'], 'call')} dropped as at least "
+                         f"{gap_meta['max_call_n_frac']:.0%} N")
+        if gap_meta["calls_with_any_n"]:
+            n_any = gap_meta["calls_with_any_n"]
+            parts.append(f"{_plural(n_any, 'kept call')} {'contains' if n_any == 1 else 'contain'} some N "
+                         "(see n_frac)")
+        lines.append("N gaps: " + "; ".join(parts))
     lines.append("calls are candidates for follow-up, not annotations")
+    lines.append(f"ran on {device} in {_duration(elapsed)}")
     print("\n".join("[summary] " + line for line in lines), file=sys.stderr)
+
+
+def _out_of_memory(e: BaseException) -> bool:
+    return isinstance(e, getattr(torch.cuda, "OutOfMemoryError", ())) or "out of memory" in str(e).lower()
+
+
+def run_cli(args: argparse.Namespace) -> int:
+    """Run `predict` and turn failures into one `error:` line; returns the exit code."""
+    verbose = bool(getattr(args, "verbose", False))
+    try:
+        run_predict(args)
+        return 0
+    except KeyboardInterrupt:
+        print("error: interrupted", file=sys.stderr)
+        return 130
+    except PredictError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        if verbose:
+            traceback.print_exc()
+        if _out_of_memory(e):
+            print(f"error: the device ran out of memory; try a smaller --batch-size (it was {args.batch_size})",
+                  file=sys.stderr)
+        else:
+            print(f"error: unexpected {type(e).__name__}: {e}"
+                  + ("" if verbose else " (rerun with --verbose for the traceback)"), file=sys.stderr)
+        return 1
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -543,7 +728,7 @@ def main(argv: List[str] | None = None) -> None:
     argv = sys.argv[1:] if argv is None else list(argv)
     argv = ["--input" + a[len("--input_fasta"):] if a == "--input_fasta" or a.startswith("--input_fasta=") else a
             for a in argv]
-    run_predict(build_arg_parser().parse_args(argv))
+    sys.exit(run_cli(build_arg_parser().parse_args(argv)))
 
 
 if __name__ == "__main__":

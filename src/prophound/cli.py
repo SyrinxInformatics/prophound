@@ -49,9 +49,9 @@ def main() -> None:
     args = build_parser().parse_args()
 
     if args.command == "predict":
-        from prophound.models.prophage.src.predict_genome import run_predict
+        from prophound.models.prophage.src.predict_genome import run_cli
 
-        run_predict(args)
+        sys.exit(run_cli(args))
     else:  # pragma: no cover - argparse enforces valid choices
         print(f"Unknown command: {args.command}", file=sys.stderr)
         sys.exit(1)

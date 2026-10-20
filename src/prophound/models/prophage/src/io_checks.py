@@ -29,6 +29,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from .options import PredictError
+
 NUCLEOTIDE = set("ACGTUN")
 IUPAC_AMBIGUOUS = set("RYKMSWBDHVN")
 # fraction of letters that must be nucleotide or IUPAC codes; protein FASTA is
@@ -36,11 +38,8 @@ IUPAC_AMBIGUOUS = set("RYKMSWBDHVN")
 MIN_NUCLEOTIDE_FRACTION = 0.9
 
 
-class InputError(SystemExit):
-    """Raised for an unusable input, with a message meant for the user."""
-
-    def __init__(self, msg: str):
-        super().__init__(f"error: {msg}")
+class InputError(PredictError):
+    """An unusable input, with a message meant for the user."""
 
 
 def package_version() -> str:

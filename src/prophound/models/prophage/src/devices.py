@@ -20,6 +20,13 @@ from __future__ import annotations
 
 import torch
 
+from .options import PredictError
+
+
+def _unavailable(name: str) -> PredictError:
+    return PredictError(f"device '{name}' is not available on this machine or PyTorch build; "
+                        "use --device auto to pick one that is, or --device cpu")
+
 
 def mps_available() -> bool:
     return bool(
@@ -54,27 +61,25 @@ def resolve_device(requested_device: str) -> torch.device:
 
     if requested == "cuda":
         if not torch.cuda.is_available():
-            raise RuntimeError("Requested device 'cuda' is not available.")
+            raise _unavailable("cuda")
         return torch.device("cuda")
 
     if requested == "rocm":
         if not rocm_available():
-            raise RuntimeError(
-                "Requested device 'rocm' is not available through the installed PyTorch backend."
-            )
+            raise _unavailable("rocm")
         return torch.device("cuda")
 
     if requested == "mps":
         if not mps_available():
-            raise RuntimeError("Requested device 'mps' is not available.")
+            raise _unavailable("mps")
         return torch.device("mps")
 
     if requested in {"xpu", "intel"}:
         if not xpu_available():
-            raise RuntimeError("Requested device 'xpu' is not available.")
+            raise _unavailable(requested)
         return torch.device("xpu")
 
-    raise ValueError(f"Unsupported device request: {requested_device}")
+    raise PredictError(f"unknown device '{requested_device}'")
 
 
 def device_supports_amp(device: torch.device) -> bool:
