@@ -13,7 +13,7 @@ prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkp
   [--coverage-frac F] [--max-gap-bp N] [--bridge-prob F] [--write-region-fasta] ...
 ```
 
-Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json`, `regions.bed`, `regions.gff3`, plus `regions.fna` (`--write-region-fasta`) and `fine_windows.tsv` (refinement on). The frozen `notes/V1_INFERENCE_CONTRACT.md` predates most of this.
+Outputs: `regions.tsv`, `regions.filtered.tsv`, `regions.bed`, `regions.gff3`, `windows.tsv`, `run_metadata.json`, plus `regions.fna` (`--write-region-fasta`) and `fine_windows.tsv` (refinement on). **Every column is described in `docs/output-files.md`**, the output contract. The frozen `notes/V1_INFERENCE_CONTRACT.md` and `notes/V1_OUTPUT_FILES.md` predate it.
 
 **Removed 2026-10-20** (`docs/tech-debt-audit.md`, decision 4): `--region-builder` (the `strict` builder; `coverage` is now the only one, and `run_metadata.json` still records `region_builder: coverage_fraction`), `--num-tiles` with the multi-tile builder and `bins.tsv`, and the boundary-regression head. Default outputs are byte-identical. The paragraphs below on those options are history. The strict builder survives as a private copy in `scripts/coverage_builder_checks.py`, the one script that compares against it.
 

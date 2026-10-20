@@ -131,38 +131,39 @@ def validate_fasta(path: str) -> dict:
 
 
 def write_bed(regions: pd.DataFrame, path: Path) -> None:
-    """BED6: 0-based half-open, as regions.tsv. Score is max_prob scaled to 0-1000."""
+    """BED6: 0-based half-open, as regions.tsv; named by call_id. The score is mean_prob
+    scaled to 0-1000, which ranks calls (max_prob is about 1 for almost every call)."""
     with open(path, "w") as fh:
-        for i, r in enumerate(regions.itertuples(index=False), 1):
-            score = int(round(1000 * float(getattr(r, "max_prob", 0) or 0)))
-            fh.write(f"{r.contig_id}\t{int(r.start)}\t{int(r.end)}\tprophound_{i}\t{score}\t.\n")
+        for r in regions.itertuples(index=False):
+            score = int(round(1000 * float(r.mean_prob)))
+            fh.write(f"{r.contig_id}\t{int(r.start)}\t{int(r.end)}\t{r.call_id}\t{score}\t.\n")
 
 
 def write_gff3(regions: pd.DataFrame, path: Path, mode: str, version: str) -> None:
-    """GFF3, 1-based inclusive. Type is the Sequence Ontology `prophage` term;
-    calls are candidates, which the `note` attribute says."""
+    """GFF3, 1-based inclusive. Type is the Sequence Ontology `prophage` term; the score
+    is mean_prob. Calls are candidates, which the `note` attribute says."""
     with open(path, "w") as fh:
         fh.write("##gff-version 3\n")
         fh.write(f"# prophound {version}, mode {mode}. Calls are candidate prophage regions, not annotations.\n")
-        for i, r in enumerate(regions.itertuples(index=False), 1):
-            attrs = [f"ID=prophound_{i}", "note=candidate"]
-            for k in ("max_prob", "mean_prob", "seed_support", "n_frac", "contig_edge", "boundary_kind"):
+        for r in regions.itertuples(index=False):
+            attrs = [f"ID={r.call_id}", "note=candidate"]
+            for k in ("mean_prob", "max_prob", "seed_support", "n_frac", "contig_edge", "window_bp"):
                 v = getattr(r, k, None)
                 if v is not None and not (isinstance(v, float) and pd.isna(v)):
                     attrs.append(f"{k}={v:.4f}" if isinstance(v, float) else f"{k}={v}")
-            score = float(getattr(r, "max_prob", 0) or 0)
-            fh.write(f"{r.contig_id}\tprophound\tprophage\t{int(r.start) + 1}\t{int(r.end)}\t{score:.4f}\t.\t.\t"
-                     + ";".join(attrs) + "\n")
+            fh.write(f"{r.contig_id}\tprophound\tprophage\t{int(r.start) + 1}\t{int(r.end)}\t{float(r.mean_prob):.4f}"
+                     "\t.\t.\t" + ";".join(attrs) + "\n")
 
 
 def write_region_fasta(regions: pd.DataFrame, fasta_path: str, path: Path) -> None:
+    """Each call's sequence, named by call_id, with its 1-based location in the header."""
     from pyfaidx import Fasta
     fa = Fasta(fasta_path, as_raw=True)
     try:
         with open(path, "w") as fh:
-            for i, r in enumerate(regions.itertuples(index=False), 1):
+            for r in regions.itertuples(index=False):
                 seq = fa[r.contig_id][int(r.start):int(r.end)]
-                fh.write(f">prophound_{i} {r.contig_id}:{int(r.start) + 1}-{int(r.end)}\n")
+                fh.write(f">{r.call_id} {r.contig_id}:{int(r.start) + 1}-{int(r.end)}\n")
                 for j in range(0, len(seq), 80):
                     fh.write(seq[j:j + 80] + "\n")
     finally:

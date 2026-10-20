@@ -25,9 +25,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import platform
+import re
+import shlex
 import sys
 import time
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
@@ -68,6 +72,7 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
     MAX_CALL_N_FRAC,
     MODE_MIN_SEED_SUPPORT,
     MODE_THRESHOLDS,
+    PREDICT_EPILOG,
     SHORT_CONTIG_SCALES,
     SHORT_CONTIG_STRIDE,
     SHORT_CONTIG_THRESHOLDS,
@@ -76,6 +81,9 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
     add_predict_arguments,
 )
 
+# every file `predict` can write; --force removes all of them before writing
+OUTPUT_FILES = ("windows.tsv", "regions.tsv", "regions.filtered.tsv", "run_metadata.json", "regions.bed",
+                "regions.gff3", "regions.fna", "fine_windows.tsv")
 WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
 
@@ -471,6 +479,22 @@ def _check_paths(opts: PredictOptions) -> None:
     existing = next(p for p in (out, *out.parents) if p.exists())
     if not os.access(existing, os.W_OK | os.X_OK):
         raise PredictError(f"cannot write to --outdir {out}: no write permission on {existing}")
+    held = _held_outputs(out)
+    if held and not opts.force:
+        raise PredictError(f"--outdir {out} already holds prophound outputs ({', '.join(held)}); "
+                           f"use a new directory such as {_next_free(out)}, or --force to replace them")
+
+
+def _held_outputs(d: Path) -> List[str]:
+    return [name for name in OUTPUT_FILES if (d / name).exists()] if d.is_dir() else []
+
+
+def _next_free(out: Path) -> Path:
+    """The first of out_1, out_2, ... that holds no outputs."""
+    k = 1
+    while _held_outputs(out.with_name(f"{out.name}_{k}")):
+        k += 1
+    return out.with_name(f"{out.name}_{k}")
 
 
 def _nothing_to_scan(opts: PredictOptions, contig_lengths: Dict[str, int]) -> PredictError:
@@ -485,6 +509,7 @@ def _nothing_to_scan(opts: PredictOptions, contig_lengths: Dict[str, int]) -> Pr
 def run_predict(args: argparse.Namespace) -> None:
     """Run inference end to end from parsed `predict` arguments."""
     started = time.perf_counter()
+    started_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
     cfg = _load_config(args.config)
     device = resolve_device(args.device)
     opts = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
@@ -554,28 +579,75 @@ def run_predict(args: argparse.Namespace) -> None:
                      requested_min_seed_support=opts.requested_min_seed_support)
     gap_meta = final.meta["n_gap_filter"]
     if gap_meta["calls_dropped"]:
-        log.warn(f"{gap_meta['calls_dropped']} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N "
-                 "(imputed gap sequence).")
+        log.warn(f"{_plural(gap_meta['calls_dropped'], 'call')} set aside in regions.filtered.tsv: at least "
+                 f"{MAX_CALL_N_FRAC:.0%} N (imputed gap sequence).")
     windows_df = label_windows(windows_df, final.calls)
 
     short_meta = {"mode": opts.short_contigs, **short_report, **short_scan_meta}
-    written = write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, final.calls,
-                            fine_windows_df, short_meta, final.meta, refine_meta)
+    contig_order = {c: i for i, c in enumerate(contig_lengths)}
+    calls_out = call_table(final.calls, contig_order, "prophound_", opts.window_len)
+    filtered_out = call_table(final.filtered, contig_order, "filtered_", opts.window_len)
+    filtered_out = filtered_out.reindex(columns=[*calls_out.columns, "filter"])
+    run_info = {"started_utc": started_utc, "elapsed_s": round(time.perf_counter() - started, 1)}
+    written = write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, calls_out, filtered_out,
+                            fine_windows_df, short_meta, final.meta, refine_meta, run_info)
     log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
-    print_run_summary(opts, input_summary, final.calls, short_meta, final.meta.get("seed_support"), gap_meta,
+    print_run_summary(opts, input_summary, calls_out, short_meta, final.meta.get("seed_support"), gap_meta,
                       str(device), time.perf_counter() - started)
 
 
+_SHORT_SCALE = re.compile(r"_short(\d+)")
+
+
+def call_table(calls: pd.DataFrame, contig_order: Dict[str, int], prefix: str, window_len: int) -> pd.DataFrame:
+    """Calls as written: sorted by contig (input order) then start, numbered `<prefix>1..N`
+    in a leading call_id column, probabilities to 4 dp, and the internal `boundary_kind`
+    replaced by `window_bp`, the window length that made the call."""
+    out = calls.copy()
+    if "boundary_kind" in out.columns:
+        kinds = out["boundary_kind"].astype(str)
+        window_bp = [int(m.group(1)) if (m := _SHORT_SCALE.search(k)) else window_len for k in kinds]
+        out.insert(out.columns.get_loc("boundary_kind"), "window_bp", window_bp)
+        out = out.drop(columns="boundary_kind")
+    out = (out.assign(_order=out["contig_id"].map(contig_order))
+              .sort_values(["_order", "start", "end"], kind="stable")
+              .drop(columns="_order").reset_index(drop=True))
+    out.insert(0, "call_id", [f"{prefix}{i}" for i in range(1, len(out) + 1)])
+    for col in ("mean_prob", "max_prob"):
+        if col in out.columns:
+            out[col] = out[col].astype(float).round(4)
+    return out
+
+
+def _shown(path: str) -> str:
+    """A path for run_metadata.json, with the home directory written as ~."""
+    p, home = str(path), str(Path.home())
+    return "~" + p[len(home):] if p == home or p.startswith(home + os.sep) else p
+
+
+def _command_line(argv: List[str]) -> str:
+    """The command as a user would type it, home directory as ~ (left unquoted so it expands)."""
+    def arg(a: str) -> str:
+        shown = _shown(a)
+        return "~/" + shlex.quote(shown[2:]) if shown.startswith("~/") else shlex.quote(shown)
+    program = "prophound" if argv[:1] == ["predict"] else "python -m src.predict_genome"
+    return " ".join([program, *map(arg, argv)])
+
+
 def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
-                 calls: pd.DataFrame, short_meta: dict, call_meta: dict, refine_meta: dict | None) -> dict:
-    """The run_metadata.json contents."""
+                 calls: pd.DataFrame, short_meta: dict, call_meta: dict, refine_meta: dict | None,
+                 run_info: dict, outputs: List[str]) -> dict:
+    """The run_metadata.json contents. Paths show the home directory as ~."""
     many = opts.n_checkpoints > 1
+    checkpoints = [_shown(c) for c in opts.checkpoints]
     metadata = {
         "prophound_version": package_version(),
         "run_name": run_name,
-        "checkpoint": list(opts.checkpoints) if many else opts.checkpoints[0],
+        "config": _shown(opts.config),
+        "checkpoint": checkpoints if many else checkpoints[0],
         "ensemble": opts.ensemble if many else "single",
-        "input_fasta": opts.input_fasta,
+        "input_fasta": _shown(opts.input_fasta),
+        "input_sha256": sha256(opts.input_fasta),
         "mode": opts.mode,
         "threshold": opts.threshold,
         "seed_threshold": opts.seed_threshold,
@@ -592,9 +664,8 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary
         "input": input_summary,
         "n_gap_filter": call_meta["n_gap_filter"],
         "edge_snap": call_meta["edge_snap"],
-        "checkpoint_sha256": {c: sha256(c) for c in opts.checkpoints},
-        "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
-        + (["regions.fna"] if opts.write_region_fasta else []),
+        "checkpoint_sha256": {_shown(c): sha256(c) for c in opts.checkpoints},
+        "outputs": outputs,
         "short_contigs": short_meta,
     }
     if "seed_support" in call_meta:
@@ -606,31 +677,64 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary
         metadata["fragment_merge"] = {"max_gap_bp": opts.max_gap_bp, "bridge_prob": opts.bridge_prob}
     if refine_meta:
         metadata["refine"] = refine_meta
+    metadata.update(run_info)
+    metadata["command"] = _command_line(sys.argv[1:])
+    metadata["platform"] = {"python": platform.python_version(), "system": platform.system(),
+                            "release": platform.release(), "machine": platform.machine(), "torch": torch.__version__}
     return metadata
 
 
+class StagedOutputs:
+    """Write each output under a temporary name in the outdir, then rename them all at
+    once, so a failed run leaves no partial set (and, with --force, no stale file)."""
+
+    def __init__(self, outdir: Path, force: bool):
+        self.outdir, self.force = outdir, force
+        self.staged: Dict[str, Path] = {}
+
+    def path(self, name: str) -> Path:
+        self.staged[name] = self.outdir / f".{name}.prophound-tmp"
+        return self.staged[name]
+
+    def commit(self) -> None:
+        if self.force:
+            for name in OUTPUT_FILES:
+                (self.outdir / name).unlink(missing_ok=True)
+        for name, tmp in self.staged.items():
+            os.replace(tmp, self.outdir / name)
+
+    def discard(self) -> None:
+        for tmp in self.staged.values():
+            tmp.unlink(missing_ok=True)
+
+
 def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
-                  calls: pd.DataFrame, fine_windows_df: pd.DataFrame | None, short_meta: dict, call_meta: dict,
-                  refine_meta: dict | None) -> List[str]:
-    """Write every output file; returns their names."""
+                  calls: pd.DataFrame, filtered: pd.DataFrame, fine_windows_df: pd.DataFrame | None,
+                  short_meta: dict, call_meta: dict, refine_meta: dict | None, run_info: dict) -> List[str]:
+    """Write every output file atomically; returns their names."""
     outdir = Path(opts.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
-    windows_df.to_csv(outdir / "windows.tsv", sep="\t", index=False)
-    calls.to_csv(outdir / "regions.tsv", sep="\t", index=False)
-    metadata = run_metadata(opts, run_name, device, input_summary, windows_df, calls, short_meta, call_meta,
-                            refine_meta)
-    (outdir / "run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    written = ["windows.tsv", "regions.tsv", "run_metadata.json"]
-    if fine_windows_df is not None:
-        fine_windows_df.to_csv(outdir / "fine_windows.tsv", sep="\t", index=False)
-        written.append("fine_windows.tsv")
-    write_bed(calls, outdir / "regions.bed")
-    write_gff3(calls, outdir / "regions.gff3", opts.mode, package_version())
-    written += ["regions.bed", "regions.gff3"]
-    if opts.write_region_fasta:
-        write_region_fasta(calls, opts.input_fasta, outdir / "regions.fna")
-        written.append("regions.fna")
-    return written
+    stage = StagedOutputs(outdir, opts.force)
+    try:
+        windows_df.drop(columns="fasta_path").to_csv(stage.path("windows.tsv"), sep="\t", index=False)
+        calls.to_csv(stage.path("regions.tsv"), sep="\t", index=False)
+        filtered.to_csv(stage.path("regions.filtered.tsv"), sep="\t", index=False)
+        if fine_windows_df is not None:
+            fine_windows_df.drop(columns="fasta_path", errors="ignore").to_csv(
+                stage.path("fine_windows.tsv"), sep="\t", index=False)
+        write_bed(calls, stage.path("regions.bed"))
+        write_gff3(calls, stage.path("regions.gff3"), opts.mode, package_version())
+        if opts.write_region_fasta:
+            write_region_fasta(calls, opts.input_fasta, stage.path("regions.fna"))
+        outputs = [*stage.staged, "run_metadata.json"]
+        metadata = run_metadata(opts, run_name, device, input_summary, windows_df, calls, short_meta, call_meta,
+                                refine_meta, run_info, outputs)
+        stage.path("run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        stage.commit()
+    except BaseException:
+        stage.discard()
+        raise
+    return outputs
 
 
 def _plural(n: int, word: str, plural: str | None = None) -> str:
@@ -666,7 +770,7 @@ def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame,
         dropped = support_meta["calls_dropped_by_vote"]
         if k > 1:
             lines.append(f"seed vote: kept calls made by at least {k} of {total} checkpoints; "
-                         f"{_plural(dropped, 'call')} dropped")
+                         f"{_plural(dropped, 'call')} set aside in regions.filtered.tsv")
         else:
             lines.append("seed vote: off, every call kept")
         by_support = support_meta["calls_by_support"]
@@ -676,7 +780,7 @@ def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame,
     if gap_meta["calls_dropped"] or gap_meta["calls_with_any_n"]:
         parts = []
         if gap_meta["calls_dropped"]:
-            parts.append(f"{_plural(gap_meta['calls_dropped'], 'call')} dropped as at least "
+            parts.append(f"{_plural(gap_meta['calls_dropped'], 'call')} set aside as at least "
                          f"{gap_meta['max_call_n_frac']:.0%} N")
         if gap_meta["calls_with_any_n"]:
             n_any = gap_meta["calls_with_any_n"]
@@ -718,7 +822,8 @@ def run_cli(args: argparse.Namespace) -> int:
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run prophage inference on a genome FASTA (same as `prophound predict`).")
+        description="Run prophage inference on a genome FASTA (same as `prophound predict`).",
+        epilog=PREDICT_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
     add_predict_arguments(parser)
     return parser
 

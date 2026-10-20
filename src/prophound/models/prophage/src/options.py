@@ -131,6 +131,7 @@ class PredictOptions:
     split_min_gap_bp: int
     split_max_prob: float
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
+    force: bool = False             # replace outputs already in outdir
 
     @property
     def n_checkpoints(self) -> int:
@@ -198,7 +199,22 @@ class PredictOptions:
             edge_alpha=float(args.edge_alpha), edge_alpha_ramp=ramp,
             split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
             verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
+            force=bool(getattr(args, "force", False)),
         )
+
+
+PREDICT_EPILOG = """\
+outputs (in --outdir; coordinates 0-based half-open, as BED):
+  regions.tsv           the calls, one row each: call_id, contig_id, start, end, mean_prob (rank by
+                        this), max_prob, window_bp, contig_edge, n_frac, seed_support
+  regions.filtered.tsv  candidates set aside, same columns plus filter (seed_vote, n_gap)
+  regions.bed/.gff3     the calls for genome browsers; BED score = 1000 x mean_prob
+  windows.tsv           every window's score (prob; prob_ckpt1.. with --write-seed-scores)
+  run_metadata.json     settings, hashes, counts, timing and the command
+  regions.fna           the calls' sequences (--write-region-fasta)
+
+calls are candidates for follow-up, not annotations.
+"""
 
 
 def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
@@ -208,7 +224,14 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
     experimental = parser.add_argument_group("experimental options (not validated for default use)")
 
     basic.add_argument("--input", required=True, dest="input_fasta", help="Genome to scan, as a nucleotide FASTA.")
-    basic.add_argument("--outdir", required=True, help="Directory for the outputs (created if missing).")
+    basic.add_argument(
+        "--outdir", required=True,
+        help="Directory for the outputs (created if missing). A directory that already holds outputs is refused.",
+    )
+    basic.add_argument(
+        "--force", action="store_true",
+        help="Replace the outputs already in --outdir. Every file prophound writes there is removed first.",
+    )
     basic.add_argument(
         "--mode",
         choices=sorted(MODE_THRESHOLDS),

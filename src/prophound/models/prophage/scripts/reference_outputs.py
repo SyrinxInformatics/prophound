@@ -249,7 +249,8 @@ def compare_case_across_devices(a: Path, b: Path, tol: float) -> list[str]:
             bad = [c for c in exact_cols if not ta[c].equals(tb[c])]
             diffs.append(f"{name}: columns differ beyond tolerance: {bad}")
         worst = max(((ta[c] - tb[c]).abs().max() for c in prob_cols), default=0.0)
-        if worst > tol:
+        # regions.tsv rounds probabilities to 4 dp, so a tiny score difference can round 1e-4 apart
+        if worst > tol + (1e-4 if name == "regions.tsv" else 0.0):
             diffs.append(f"{name}: max score difference {worst:.2e} > {tol:g}")
     ma, mb = (json.loads((d / "run_metadata.json").read_text()) for d in (a, b))
     for key in sorted((set(ma) | set(mb)) - {"device"}):

@@ -19,7 +19,7 @@
 import argparse
 import sys
 
-from prophound.models.prophage.src.options import add_predict_arguments
+from prophound.models.prophage.src.options import PREDICT_EPILOG, add_predict_arguments
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -38,8 +38,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Detect prophage-like regions in a nucleotide FASTA.",
         description=(
             "Score sliding windows of a genome FASTA with the DNA-only prophage "
-            "model and emit windows.tsv, regions.tsv, and run_metadata.json."
+            "model and write the candidate prophage regions it finds."
         ),
+        epilog=PREDICT_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     add_predict_arguments(predict)
     return parser

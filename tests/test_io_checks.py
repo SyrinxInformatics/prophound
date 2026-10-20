@@ -61,16 +61,17 @@ def test_rejects_missing_and_gzip(tmp_path):
 
 
 def test_bed_is_zero_based_and_gff3_one_based(tmp_path):
-    r = pd.DataFrame({"contig_id": ["c1"], "start": [100], "end": [250], "max_prob": [0.9876],
-                      "mean_prob": [0.5], "seed_support": [3], "boundary_kind": ["cov"]})
+    r = pd.DataFrame({"call_id": ["prophound_1"], "contig_id": ["c1"], "start": [100], "end": [250],
+                      "max_prob": [0.9876], "mean_prob": [0.6543], "seed_support": [3], "window_bp": [10000]})
     write_bed(r, tmp_path / "r.bed")
     write_gff3(r, tmp_path / "r.gff3", "default", "0.1.0")
-    assert (tmp_path / "r.bed").read_text() == "c1\t100\t250\tprophound_1\t988\t.\n"
+    assert (tmp_path / "r.bed").read_text() == "c1\t100\t250\tprophound_1\t654\t.\n"   # score = mean_prob
     gff = (tmp_path / "r.gff3").read_text().splitlines()
     assert gff[0] == "##gff-version 3"
     f = gff[2].split("\t")
     assert f[2] == "prophage" and (f[3], f[4]) == ("101", "250")
-    assert "seed_support=3" in f[8] and "note=candidate" in f[8]
+    assert f[5] == "0.6543" and f[8].startswith("ID=prophound_1;note=candidate")
+    assert "seed_support=3" in f[8] and "window_bp=10000" in f[8]
 
 
 def test_call_n_fraction_counts_gap_bases(tmp_path):
