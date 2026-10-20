@@ -25,3 +25,16 @@ Old location: `src/prophound/models/prophage/<dir>/<file>`.
 | `analyze_prediction_protein_join.py` | `src/` | older copy of the `scripts/` file above |
 
 The training-data builders that made the corpus stay in place: `src/make_manifest_from_bed.py` (`notes/RUNBOOK.md` step 2), `src/make_splits.py`, `scripts/bed_generator.py`, `scripts/generate_negatives.py`, `scripts/make_hard_negatives.py` and `scripts/make_manifest.py`.
+
+## The boundary-regression head (2026-10-20)
+
+Removed from the shipped code by user decision 4 of the audit (`docs/tech-debt-audit.md`): the auxiliary boundary head was shelved in `docs/model-reengineering.md`, and no shipped checkpoint has it. `load_cfg` now rejects a config with `model.predict_boundary: true`. These files trained or fed that head:
+
+| file | old dir | what it was |
+|---|---|---|
+| `add_boundary_distance.py` | `scripts/` | adds the `boundary_dist_bp` target column to the window manifest |
+| `add_boundary_distance.slurm` | `scripts/` | launcher for the above |
+| `prophage_v1_positional_boundary_gpu.slurm` | `src/` | training launcher, boundary head on |
+| `prophage_v1_positional_boundary_lowweight_gpu.slurm` | `src/` | the same at a lower boundary-loss weight |
+| `configs/prophage_v1_positional_boundary.yaml` | `src/configs/` | its config |
+| `configs/prophage_v1_positional_boundary_lowweight.yaml` | `src/configs/` | its config |

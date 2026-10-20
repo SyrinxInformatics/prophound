@@ -4,16 +4,18 @@ Living doc — update in place, don't append a history here (that's `SESSIONS.md
 
 ## Current CLI shape
 
-`prophound predict` (entrypoint `src/prophound/cli.py`, dispatching into `src/prophound/models/prophage/src/predict_genome.py`):
+`prophound predict` (entrypoint `src/prophound/cli.py`, dispatching into `src/prophound/models/prophage/src/predict_genome.py`). Every option, default and mode table is defined once, in the torch-free `src/prophound/models/prophage/src/options.py` (`add_predict_arguments`). `prophound predict` and `python -m src.predict_genome` both use it; the latter still accepts `--input_fasta` for the HPCC launchers. `prophound predict --help` lists the full set in basic, advanced and experimental sections. The core:
 
 ```
-prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> \
+prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> [<best.pt> ...] \
   [--mode exploratory|default|conservative] [--threshold F] [--seed-threshold F] [--extend-threshold F] \
-  [--device auto|cpu|cuda|rocm|mps|xpu|intel] [--batch-size N] [--num-workers N] [--num-tiles N]
-  [--region-builder strict|coverage] [--coverage-frac F]
+  [--device auto|cpu|cuda|rocm|mps|xpu|intel] [--batch-size N] [--num-workers N] \
+  [--coverage-frac F] [--max-gap-bp N] [--bridge-prob F] [--write-region-fasta] ...
 ```
 
-Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json` (+ `bins.tsv` when `--num-tiles > 1`). This matches `src/prophound/models/prophage/notes/V1_INFERENCE_CONTRACT.md`.
+Outputs: `windows.tsv`, `regions.tsv`, `run_metadata.json`, `regions.bed`, `regions.gff3`, plus `regions.fna` (`--write-region-fasta`) and `fine_windows.tsv` (refinement on). The frozen `notes/V1_INFERENCE_CONTRACT.md` predates most of this.
+
+**Removed 2026-10-20** (`docs/tech-debt-audit.md`, decision 4): `--region-builder` (the `strict` builder; `coverage` is now the only one, and `run_metadata.json` still records `region_builder: coverage_fraction`), `--num-tiles` with the multi-tile builder and `bins.tsv`, and the boundary-regression head. Default outputs are byte-identical. The paragraphs below on those options are history. The strict builder survives as a private copy in `scripts/coverage_builder_checks.py`, the one script that compares against it.
 
 `--config`/`--checkpoint` are required, with no bundled default weights — model-weight bundling is an open packaging question upstream (`notes/V1_PACKAGE_BOUNDARY.md`) that hasn't been decided, so this doesn't guess at an answer.
 

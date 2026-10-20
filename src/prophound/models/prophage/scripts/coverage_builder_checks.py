@@ -42,6 +42,7 @@ mean- and max-ensembles across them are added as extra inputs.
 from __future__ import annotations
 
 import argparse
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -51,10 +52,160 @@ import pandas as pd
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from src.predict_genome import build_region_table, build_region_table_coverage  # noqa: E402
+from src.predict_genome import build_region_table_coverage  # noqa: E402
 
 MODES = {"conservative": (0.999, 0.99), "default": (0.995, 0.99), "exploratory": (0.95, 0.95)}
 
+
+# The `strict` builder this comparison measures against. It was removed from predict_genome.py
+# on 2026-10-20 (docs/tech-debt-audit.md, decision 4) and is kept here verbatim so the
+# comparison stays reproducible.
+def build_hysteresis_windows(
+    prob_values: list[float],
+    seed_threshold: float,
+    extend_threshold: float,
+) -> list[int]:
+    if not prob_values:
+        return []
+
+    positive_values = [0] * len(prob_values)
+    for seed_index, seed_prob in enumerate(prob_values):
+        if seed_prob < seed_threshold or positive_values[seed_index] == 1:
+            continue
+
+        left_index = seed_index
+        while left_index - 1 >= 0 and prob_values[left_index - 1] >= extend_threshold:
+            left_index -= 1
+
+        right_index = seed_index
+        while (
+            right_index + 1 < len(prob_values)
+            and prob_values[right_index + 1] >= extend_threshold
+        ):
+            right_index += 1
+
+        for region_index in range(left_index, right_index + 1):
+            positive_values[region_index] = 1
+
+    return positive_values
+
+
+def build_region_table(
+    windows_df: pd.DataFrame,
+    seed_threshold: float,
+    extend_threshold: float,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    annotated_parts: list[pd.DataFrame] = []
+    region_rows: list[dict[str, object]] = []
+
+    for (genome_id, contig_id), contig_df in windows_df.groupby(
+        ["genome_id", "contig_id"],
+        sort=False,
+    ):
+        contig_df = contig_df.sort_values(["start", "end"]).reset_index(drop=True).copy()
+        contig_df["region_pred_label"] = build_hysteresis_windows(
+            contig_df["prob"].astype(float).to_list(),
+            seed_threshold=seed_threshold,
+            extend_threshold=extend_threshold,
+        )
+        annotated_parts.append(contig_df)
+
+        stride_values = contig_df["start"].astype(int).diff().dropna()
+        stride = int(stride_values.mode().iloc[0]) if not stride_values.empty else int(
+            contig_df["end"].iloc[0] - contig_df["start"].iloc[0]
+        )
+        window_len = int(contig_df["end"].iloc[0] - contig_df["start"].iloc[0])
+        contig_end = int(contig_df["end"].max())
+        n_bins = int(math.ceil(contig_end / stride))
+        bins_per_window = max(1, int(math.ceil(window_len / stride)))
+
+        bin_score_sum = np.zeros(n_bins, dtype=np.float64)
+        bin_score_count = np.zeros(n_bins, dtype=np.int32)
+        seed_bin_mask = np.zeros(n_bins, dtype=bool)
+
+        for row in contig_df.itertuples(index=False):
+            start_bin = int(row.start // stride)
+            end_bin = min(n_bins, start_bin + bins_per_window)
+            bin_score_sum[start_bin:end_bin] += float(row.prob)
+            bin_score_count[start_bin:end_bin] += 1
+            if float(row.prob) >= seed_threshold:
+                seed_bin_mask[start_bin:end_bin] = True
+
+        bin_scores = np.zeros(n_bins, dtype=np.float64)
+        covered_bins = bin_score_count > 0
+        bin_scores[covered_bins] = bin_score_sum[covered_bins] / bin_score_count[covered_bins]
+        extend_bin_mask = covered_bins & (bin_scores >= extend_threshold)
+
+        region_bin_ranges: list[tuple[int, int]] = []
+        used_bins = np.zeros(n_bins, dtype=bool)
+        for bin_index in range(n_bins):
+            if used_bins[bin_index] or not seed_bin_mask[bin_index] or not extend_bin_mask[bin_index]:
+                continue
+
+            left_bin = bin_index
+            while left_bin - 1 >= 0 and extend_bin_mask[left_bin - 1]:
+                left_bin -= 1
+
+            right_bin = bin_index
+            while right_bin + 1 < n_bins and extend_bin_mask[right_bin + 1]:
+                right_bin += 1
+
+            used_bins[left_bin : right_bin + 1] = True
+            region_bin_ranges.append((left_bin, right_bin))
+
+        previous_end = 0
+        for left_bin, right_bin in region_bin_ranges:
+            refined_start = left_bin * stride
+            refined_end = min(contig_end, (right_bin + 1) * stride)
+
+            if left_bin > 0:
+                left_score = bin_scores[left_bin - 1]
+                right_score = bin_scores[left_bin]
+                if right_score > left_score and left_score < extend_threshold <= right_score:
+                    frac = (extend_threshold - left_score) / (right_score - left_score)
+                    refined_start = int(round(((left_bin - 1) + frac) * stride))
+
+            if right_bin + 1 < n_bins:
+                left_score = bin_scores[right_bin]
+                right_score = bin_scores[right_bin + 1]
+                if left_score > right_score and right_score < extend_threshold <= left_score:
+                    frac = (left_score - extend_threshold) / (left_score - right_score)
+                    refined_end = int(round((right_bin + 1 - frac) * stride))
+
+            refined_start = max(previous_end, max(0, refined_start))
+            refined_end = max(refined_start + 1, min(contig_end, refined_end))
+            previous_end = refined_end
+
+            overlapping_windows = contig_df[
+                (contig_df["end"].astype(int) > refined_start)
+                & (contig_df["start"].astype(int) < refined_end)
+                & (contig_df["region_pred_label"].astype(int) == 1)
+            ].copy()
+            if overlapping_windows.empty:
+                overlapping_windows = contig_df[
+                    (contig_df["start"].astype(int) // stride <= right_bin)
+                    & (contig_df["end"].astype(int) // stride >= left_bin + 1)
+                    & (contig_df["region_pred_label"].astype(int) == 1)
+                ].copy()
+            if overlapping_windows.empty:
+                continue
+
+            region_rows.append(
+                {
+                    "genome_id": genome_id,
+                    "contig_id": contig_id,
+                    "start": int(refined_start),
+                    "end": int(refined_end),
+                    "n_windows": int(len(overlapping_windows)),
+                    "region_len_bp": int(refined_end - refined_start),
+                    "mean_prob": float(overlapping_windows["prob"].astype(float).mean()),
+                    "max_prob": float(overlapping_windows["prob"].astype(float).max()),
+                    "boundary_kind": "non_overlapping_base_estimate",
+                }
+            )
+
+    annotated_windows_df = pd.concat(annotated_parts, ignore_index=True)
+    return annotated_windows_df, pd.DataFrame(region_rows)
 
 def coverage_builder(
     w: pd.DataFrame, frac: float, seed: float, ext: float, gap: int = 0, bridge: float = 0.0

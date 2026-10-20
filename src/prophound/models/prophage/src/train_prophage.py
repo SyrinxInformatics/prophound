@@ -78,18 +78,11 @@ class ModelConfig:
     fc_dim: int = 256
     pooling: str = "global_max"
     pool_bins: int = 1
-    predict_boundary: bool = False
 
 
 @dataclass
 class LossConfig:
     pos_weight: str | float = "auto"
-    # Auxiliary boundary-regression loss (only used when model.predict_boundary
-    # is true). boundary_weight=0 effectively disables the term even if the
-    # head exists. boundary_max_dist_bp normalizes the "distance to nearest
-    # true region edge" target: 0 at an edge, 1 at or beyond this distance.
-    boundary_weight: float = 0.0
-    boundary_max_dist_bp: int = 10_000
 
 
 @dataclass
@@ -156,14 +149,11 @@ def load_cfg(path: str) -> ProphageTrainConfig:
         fc_dim=int(model.get("fc_dim", 256)),
         pooling=model.get("pooling", "global_max"),
         pool_bins=int(model.get("pool_bins", 1)),
-        predict_boundary=bool(model.get("predict_boundary", False)),
     )
+    if model.get("predict_boundary"):
+        raise ValueError(f"{path}: model.predict_boundary is no longer supported (the boundary head was removed)")
 
-    loss_config = LossConfig(
-        pos_weight=loss.get("pos_weight", "auto"),
-        boundary_weight=float(loss.get("boundary_weight", 0.0)),
-        boundary_max_dist_bp=int(loss.get("boundary_max_dist_bp", 10_000)),
-    )
+    loss_config = LossConfig(pos_weight=loss.get("pos_weight", "auto"))
 
     return ProphageTrainConfig(
         run_name=raw.get("run_name", "prophage_v0"),
@@ -366,20 +356,9 @@ class WindowDataset(Dataset):
         self,
         df: pd.DataFrame,
         window_len: int,
-        boundary_max_dist_bp: Optional[int] = None,
     ):
         self.df = df.reset_index(drop=True)
         self.window_len = window_len
-        # None: yield (x, y) as before. Set: also yield a normalized [0, 1]
-        # boundary-distance target (see LossConfig.boundary_max_dist_bp),
-        # requiring a "boundary_dist_bp" column in df.
-        self.boundary_max_dist_bp = boundary_max_dist_bp
-        if boundary_max_dist_bp is not None and "boundary_dist_bp" not in self.df.columns:
-            raise ValueError(
-                "boundary_max_dist_bp was set but the manifest has no "
-                "boundary_dist_bp column -- run the boundary-distance "
-                "preprocessing script first."
-            )
         self._fa: "OrderedDict[str, Fasta]" = OrderedDict()
         self._fa_max = 32
         self._fa_index: Dict[str, Dict[str, str]] = {}
@@ -470,29 +449,14 @@ class WindowDataset(Dataset):
             seq = seq[: self.window_len]
 
         x = onehot_encode(seq)  # (5, L)
-        if self.boundary_max_dist_bp is None:
-            return x, torch.tensor(y, dtype=torch.float32)
-
-        raw_dist = float(row["boundary_dist_bp"])
-        normalized_dist = min(raw_dist, self.boundary_max_dist_bp) / self.boundary_max_dist_bp
-        return (
-            x,
-            torch.tensor(y, dtype=torch.float32),
-            torch.tensor(normalized_dist, dtype=torch.float32),
-        )
+        return x, torch.tensor(y, dtype=torch.float32)
 
 
 def collate_batch(batch):
-    if len(batch[0]) == 2:
-        xs, ys = zip(*batch)
-        x = torch.stack(xs, dim=0)  # (B, 5, L)
-        y = torch.stack(ys, dim=0)  # (B,)
-        return x, y
-    xs, ys, bs = zip(*batch)
+    xs, ys = zip(*batch)
     x = torch.stack(xs, dim=0)  # (B, 5, L)
     y = torch.stack(ys, dim=0)  # (B,)
-    b = torch.stack(bs, dim=0)  # (B,) normalized boundary-distance target
-    return x, y, b
+    return x, y
 
 
 # Metrics
@@ -506,11 +470,10 @@ def evaluate(
     all_y: List[np.ndarray] = []
 
     for batch in tqdm(loader, desc="eval", leave=False):
-        x, y = batch[0], batch[1]  # ignore an optional 3rd (boundary target) element
+        x, y = batch
         x = x.to(device, non_blocking=True)
         y = y.to(device, non_blocking=True)
-        output = model(x)
-        logits = (output[0] if isinstance(output, tuple) else output).view(-1)
+        logits = model(x).view(-1)
         y = y.view(-1)
         all_logits.append(logits.detach().cpu().numpy())
         all_y.append(y.detach().cpu().numpy())
@@ -556,8 +519,7 @@ def predict_logits(
     for batch in tqdm(loader, desc="predict", leave=False):
         x = batch[0]
         x = x.to(device, non_blocking=True)
-        output = model(x)
-        logits = (output[0] if isinstance(output, tuple) else output).view(-1)
+        logits = model(x).view(-1)
         all_logits.append(logits.detach().cpu().numpy())
     if not all_logits:
         return np.array([], dtype=np.float32)
@@ -587,16 +549,7 @@ def make_dfs(
         "neg_type",
         "fasta_path",
     ]
-    header_columns = set(pd.read_csv(manifest_csv, nrows=0).columns)
-    has_boundary_column = "boundary_dist_bp" in header_columns
-    usecols = required_columns + (["boundary_dist_bp"] if has_boundary_column else [])
-    manifest_df = pd.read_csv(manifest_csv, usecols=usecols)
-    if not has_boundary_column:
-        print(
-            "[data] note: manifest has no boundary_dist_bp column -- boundary "
-            "regression targets unavailable (fine unless model.predict_boundary "
-            "is enabled)."
-        )
+    manifest_df = pd.read_csv(manifest_csv, usecols=required_columns)
 
     manifest_df["label"] = manifest_df["label"].astype(np.int8)
     manifest_df["neg_type"] = manifest_df["neg_type"].astype("category")
@@ -648,7 +601,6 @@ def build_model(cfg: ProphageTrainConfig, device: torch.device) -> nn.Module:
         combine=cfg.model.combine,
         pooling=cfg.model.pooling,
         pool_bins=cfg.model.pool_bins,
-        predict_boundary=cfg.model.predict_boundary,
     ).to(device)
 
 
@@ -817,14 +769,7 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
     pos_weight = torch.tensor([pos_weight_value], dtype=torch.float32, device=device)
 
     # datasets/loaders
-    train_boundary_max_dist_bp = (
-        cfg.loss.boundary_max_dist_bp if cfg.model.predict_boundary else None
-    )
-    train_ds = WindowDataset(
-        train_df,
-        window_len=cfg.data.window_len,
-        boundary_max_dist_bp=train_boundary_max_dist_bp,
-    )
+    train_ds = WindowDataset(train_df, window_len=cfg.data.window_len)
     val_ds = (
         WindowDataset(val_df, window_len=cfg.data.window_len) if len(val_df) else None
     )
@@ -862,7 +807,6 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
         model.parameters(), lr=cfg.training.lr, weight_decay=cfg.training.weight_decay
     )
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-    boundary_criterion = nn.SmoothL1Loss() if cfg.model.predict_boundary else None
     amp_enabled = cfg.training.amp and device_supports_amp(device)
     scaler = torch.amp.GradScaler("cuda", enabled=amp_enabled)
     print(
@@ -1031,26 +975,14 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
             if epoch_resume_step and step <= epoch_resume_step:
                 continue
 
-            if cfg.model.predict_boundary:
-                x, y, boundary_target = batch
-                boundary_target = boundary_target.to(device, non_blocking=True).view(-1)
-            else:
-                x, y = batch
+            x, y = batch
             x = x.to(device, non_blocking=True)
             y = y.to(device, non_blocking=True).view(-1)
 
             optimizer.zero_grad(set_to_none=True)
             with torch.amp.autocast("cuda", enabled=amp_enabled):
-                if cfg.model.predict_boundary:
-                    logits, boundary_raw = model(x)
-                    logits = logits.view(-1)
-                    loss = criterion(logits, y)
-                    boundary_pred = nn.functional.softplus(boundary_raw.view(-1))
-                    boundary_loss = boundary_criterion(boundary_pred, boundary_target)
-                    loss = loss + cfg.loss.boundary_weight * boundary_loss
-                else:
-                    logits = model(x).view(-1)
-                    loss = criterion(logits, y)
+                logits = model(x).view(-1)
+                loss = criterion(logits, y)
 
             if not torch.isfinite(loss):
                 nonfinite_loss_skips += 1
@@ -1068,13 +1000,8 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
                 loss.backward()
 
             if step == 1 or step % 1000 == 0:
-                if cfg.model.predict_boundary:
-                    cls_component = loss.item() - cfg.loss.boundary_weight * boundary_loss.item()
-                    extra = f" cls={cls_component:.5f} boundary={boundary_loss.item():.5f}"
-                else:
-                    extra = ""
                 print(
-                    f"[epoch {epoch}] step {step}/{len(train_loader)} loss={loss.item():.5f}{extra}",
+                    f"[epoch {epoch}] step {step}/{len(train_loader)} loss={loss.item():.5f}",
                     flush=True,
                 )
 

@@ -16,6 +16,24 @@ from tqdm import tqdm
 
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
+from .options import (  # noqa: F401 -- MODE_THRESHOLDS, DEFAULT_EDGE_SNAP_FRAC, MAX_CALL_N_FRAC are imported from here by scripts
+    AMBIGUITY_POLICIES,
+    DEFAULT_AMBIGUITY_POLICY,
+    DEFAULT_BRIDGE_PROB,
+    DEFAULT_COVERAGE_FRAC,
+    DEFAULT_EDGE_SNAP_FRAC,
+    DEFAULT_MAX_GAP_BP,
+    DEFAULT_REFINE_THRESHOLD,
+    ENSEMBLE_MODES,
+    MAX_CALL_N_FRAC,
+    MODE_MIN_SEED_SUPPORT,
+    MODE_THRESHOLDS,
+    SHORT_CONTIG_MODES,
+    SHORT_CONTIG_SCALES,
+    SHORT_CONTIG_STRIDE,
+    SHORT_CONTIG_THRESHOLDS,
+    add_predict_arguments,
+)
 from .train_prophage import (
     DataConfig,
     ProphageTrainConfig,
@@ -28,76 +46,6 @@ from .train_prophage import (
 )
 
 
-# Fraction of the way from local background to a region's plateau score at
-# which the true (geNomad-called) boundary tends to sit -- see
-# `build_region_table_multi_tile`. Calibrated 2026-09-08 from 10 boundary
-# crossings (5 regions x 2 edges) in one genome (E. coli K-12 MG1655):
-# mean 0.79, median 0.77, std 0.11. A small sample from a single genome --
-# treat as a reasonable starting point, not a settled constant. Recalibrate
-# against more genomes before relying on it heavily.
-RAMP_MIDPOINT_FRACTION = 0.77
-
-# Seed threshold and call-level seed vote per mode. Re-derived 2026-09-29 (user
-# decision) from the vote frontier (docs/error-analysis.md "Seed-vote
-# confirmation"): an ensemble call is kept only if at least MODE_MIN_SEED_SUPPORT
-# checkpoints make an overlapping call of their own at the same thresholds.
-# Ensemble covered50 / calls per genome, 42-genome tuning sample and the 18
-# (docs/research-integrity.md C1: neither is held out):
-#   exploratory 0.90, keep all (flagged) -> 0.994 / 35.6 and 1.000 / 39.6
-#   default     0.95, 3 of 3            -> 0.972 / 14.1 and 1.000 / 13.3
-#   conservative 0.995, 3 of 3          -> 0.944 /  8.5 and 0.962 /  6.4
-# Default was 0.98 / 3 of 3 for part of 2026-09-29; moved to 0.95 the same day
-# (user) because 0.98 lost small and geNomad-negative elements that 0.95 keeps
-# (docs/error-analysis.md "Cost on evidence that isn't geNomad agreement").
-# Exploratory then moved 0.95 -> 0.90 (user) so it keeps a reach beyond Default:
-# recall saturates at 0.90 (lower thresholds add calls, not elements).
-# Before 2026-09-29: 0.95 / 0.995 / 0.999 with no vote (reproduce with
-# --threshold and --min-seed-support 1).
-MODE_THRESHOLDS = {
-    "exploratory": 0.90,
-    "default": 0.95,
-    "conservative": 0.995,
-}
-MODE_MIN_SEED_SUPPORT = {
-    "exploratory": 1,
-    "default": 3,
-    "conservative": 3,
-}
-
-
-AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
-# Default flipped to impute 2026-09-24 (user decision): n-channel silently zeroes
-# scores on ambiguity codes; impute is in-distribution and a no-op on clean
-# sequence (816446: covered recall identical to 3 dp on the 42-genome sample).
-DEFAULT_AMBIGUITY_POLICY = "impute"
-# Contigs shorter than --window-len (docs/adaptive-multiscale-detection.md Part 4).
-# 'scan' (default since 2026-09-28, user decision) tiles each with the largest
-# scale that fits; 'skip' leaves them unscanned. Either way they are reported.
-SHORT_CONTIG_MODES = ("skip", "scan")
-DEFAULT_SHORT_CONTIGS = "scan"
-SHORT_CONTIG_SCALES = (5000, 3000)   # below ~3 kb a window cannot judge (spike-in floor)
-SHORT_CONTIG_STRIDE = 500
-# Seed/extend threshold per mode and short-contig scale. Calibrated 2026-09-28
-# (818235, scripts/short_contig_sweep.py): the 42-genome size-stratified sample
-# shredded into 27,719 fragments of 3-10 kb; each threshold is the one whose false
-# calls per Mb of element-free sequence match the intact-genome 10 kb pipeline in
-# the same mode (shipped merging). Ensemble, short vs 10 kb reference (false/Mb):
-# exploratory 0.95 -> 6.55 vs 6.04; default 0.99 -> 2.64 vs 2.52; conservative
-# 0.998 -> 1.13 vs 1.33 (0.995 overshoots at 1.84). Single seeds agree. The sweep
-# applied one threshold to both scales, so they share a value; a
-# fragment-length-normalised split puts 5 kb ~13% above the reference and 3 kb
-# below it, inside the reference's own seed spread.
-# Re-derived 2026-09-29 under the seed vote (822053, short_contig_vote_sweep.py;
-# rule "never exceed", user): the lowest threshold whose shredded false calls/Mb,
-# with the mode's vote, do not exceed the intact 10 kb pipeline's in that mode.
-#   default 0.95/3-of-3: shredded 2.06 vs reference 2.45 (0.90 gives 3.12)
-#   conservative 0.995/3-of-3: shredded 0.84 at 0.99 vs 1.09 (0.985 gives 1.11)
-#   exploratory 0.90/keep all: shredded 6.55 at 0.95 vs reference 7.60 (0.90 gives 9.68)
-SHORT_CONTIG_THRESHOLDS = {
-    "exploratory": {5000: 0.95, 3000: 0.95},
-    "default": {5000: 0.95, 3000: 0.95},
-    "conservative": {5000: 0.99, 3000: 0.99},
-}
 REGION_COLUMNS = ["genome_id", "contig_id", "start", "end", "n_windows",
                   "region_len_bp", "mean_prob", "max_prob", "boundary_kind"]
 
@@ -207,12 +155,7 @@ def predict_probs(
     all_logits: List[np.ndarray] = []
     for batch_x, _ in tqdm(loader, desc="predict", leave=False):
         batch_x = batch_x.to(device, non_blocking=True)
-        output = model(batch_x)
-        # A checkpoint trained with model.predict_boundary=True returns a
-        # (classification_logit, boundary_raw) tuple; the boundary head isn't
-        # wired into inference yet (see docs/boundary-refinement.md), so only
-        # the classification output is used here for now.
-        logits = (output[0] if isinstance(output, tuple) else output).view(-1)
+        logits = model(batch_x).view(-1)
         all_logits.append(logits.detach().cpu().numpy())
     if not all_logits:
         return np.array([], dtype=np.float32)
@@ -288,236 +231,6 @@ def build_short_contig_windows(
                          "end": int(start + scale), "fasta_path": fasta_path, "scale": int(scale)})
     cols = ["genome_id", "contig_id", "start", "end", "fasta_path", "scale"]
     return pd.DataFrame(rows, columns=cols), report
-
-
-def build_multi_tile_windows(
-    fasta_path: str,
-    genome_id: str,
-    data_config: DataConfig,
-    num_tiles: int,
-    grid_offset: int = 0,
-) -> pd.DataFrame:
-    """Generate windows from `num_tiles` phase-shifted grids over the same stride.
-
-    A single grid (num_tiles=1, i.e. `build_windows`) can only place a region
-    boundary as precisely as `data_config.stride`. Scoring several offset
-    copies of the grid and merging them (see `build_region_table_multi_tile`)
-    lets boundaries land at a finer effective resolution of
-    `stride // num_tiles`, at the cost of ~`num_tiles`x more model calls.
-
-    This is opt-in (see POST_V1_BACKLOG.md's "randomized windowing" idea) and
-    must never change output when num_tiles <= 1.
-    """
-    if num_tiles <= 1:
-        return build_windows(fasta_path, genome_id, data_config, offset=grid_offset)
-
-    tile_stride = max(1, data_config.stride // num_tiles)
-    tiles = []
-    for tile_index in range(num_tiles):
-        tile_df = build_windows(
-            fasta_path, genome_id, data_config, offset=grid_offset + tile_index * tile_stride
-        )
-        tile_df["tile"] = tile_index
-        tiles.append(tile_df)
-    return pd.concat(tiles, ignore_index=True)
-
-
-def build_hysteresis_windows(
-    prob_values: List[float],
-    seed_threshold: float,
-    extend_threshold: float,
-) -> List[int]:
-    if not prob_values:
-        return []
-
-    positive_values = [0] * len(prob_values)
-    for seed_index, seed_prob in enumerate(prob_values):
-        if seed_prob < seed_threshold or positive_values[seed_index] == 1:
-            continue
-
-        left_index = seed_index
-        while left_index - 1 >= 0 and prob_values[left_index - 1] >= extend_threshold:
-            left_index -= 1
-
-        right_index = seed_index
-        while (
-            right_index + 1 < len(prob_values)
-            and prob_values[right_index + 1] >= extend_threshold
-        ):
-            right_index += 1
-
-        for region_index in range(left_index, right_index + 1):
-            positive_values[region_index] = 1
-
-    return positive_values
-
-
-def build_region_table(
-    windows_df: pd.DataFrame,
-    seed_threshold: float,
-    extend_threshold: float,
-) -> pd.DataFrame:
-    annotated_parts: List[pd.DataFrame] = []
-    region_rows: List[Dict[str, object]] = []
-
-    for (genome_id, contig_id), contig_df in windows_df.groupby(
-        ["genome_id", "contig_id"],
-        sort=False,
-    ):
-        contig_df = contig_df.sort_values(["start", "end"]).reset_index(drop=True).copy()
-        contig_df["region_pred_label"] = build_hysteresis_windows(
-            contig_df["prob"].astype(float).to_list(),
-            seed_threshold=seed_threshold,
-            extend_threshold=extend_threshold,
-        )
-        annotated_parts.append(contig_df)
-
-        stride_values = contig_df["start"].astype(int).diff().dropna()
-        stride = int(stride_values.mode().iloc[0]) if not stride_values.empty else int(
-            contig_df["end"].iloc[0] - contig_df["start"].iloc[0]
-        )
-        window_len = int(contig_df["end"].iloc[0] - contig_df["start"].iloc[0])
-        contig_end = int(contig_df["end"].max())
-        n_bins = int(math.ceil(contig_end / stride))
-        bins_per_window = max(1, int(math.ceil(window_len / stride)))
-
-        bin_score_sum = np.zeros(n_bins, dtype=np.float64)
-        bin_score_count = np.zeros(n_bins, dtype=np.int32)
-        seed_bin_mask = np.zeros(n_bins, dtype=bool)
-
-        for row in contig_df.itertuples(index=False):
-            start_bin = int(row.start // stride)
-            end_bin = min(n_bins, start_bin + bins_per_window)
-            bin_score_sum[start_bin:end_bin] += float(row.prob)
-            bin_score_count[start_bin:end_bin] += 1
-            if float(row.prob) >= seed_threshold:
-                seed_bin_mask[start_bin:end_bin] = True
-
-        bin_scores = np.zeros(n_bins, dtype=np.float64)
-        covered_bins = bin_score_count > 0
-        bin_scores[covered_bins] = bin_score_sum[covered_bins] / bin_score_count[covered_bins]
-        extend_bin_mask = covered_bins & (bin_scores >= extend_threshold)
-
-        region_bin_ranges: List[Tuple[int, int]] = []
-        used_bins = np.zeros(n_bins, dtype=bool)
-        for bin_index in range(n_bins):
-            if used_bins[bin_index] or not seed_bin_mask[bin_index] or not extend_bin_mask[bin_index]:
-                continue
-
-            left_bin = bin_index
-            while left_bin - 1 >= 0 and extend_bin_mask[left_bin - 1]:
-                left_bin -= 1
-
-            right_bin = bin_index
-            while right_bin + 1 < n_bins and extend_bin_mask[right_bin + 1]:
-                right_bin += 1
-
-            used_bins[left_bin : right_bin + 1] = True
-            region_bin_ranges.append((left_bin, right_bin))
-
-        previous_end = 0
-        for left_bin, right_bin in region_bin_ranges:
-            refined_start = left_bin * stride
-            refined_end = min(contig_end, (right_bin + 1) * stride)
-
-            if left_bin > 0:
-                left_score = bin_scores[left_bin - 1]
-                right_score = bin_scores[left_bin]
-                if right_score > left_score and left_score < extend_threshold <= right_score:
-                    frac = (extend_threshold - left_score) / (right_score - left_score)
-                    refined_start = int(round(((left_bin - 1) + frac) * stride))
-
-            if right_bin + 1 < n_bins:
-                left_score = bin_scores[right_bin]
-                right_score = bin_scores[right_bin + 1]
-                if left_score > right_score and right_score < extend_threshold <= left_score:
-                    frac = (left_score - extend_threshold) / (left_score - right_score)
-                    refined_end = int(round((right_bin + 1 - frac) * stride))
-
-            refined_start = max(previous_end, max(0, refined_start))
-            refined_end = max(refined_start + 1, min(contig_end, refined_end))
-            previous_end = refined_end
-
-            overlapping_windows = contig_df[
-                (contig_df["end"].astype(int) > refined_start)
-                & (contig_df["start"].astype(int) < refined_end)
-                & (contig_df["region_pred_label"].astype(int) == 1)
-            ].copy()
-            if overlapping_windows.empty:
-                overlapping_windows = contig_df[
-                    (contig_df["start"].astype(int) // stride <= right_bin)
-                    & (contig_df["end"].astype(int) // stride >= left_bin + 1)
-                    & (contig_df["region_pred_label"].astype(int) == 1)
-                ].copy()
-            if overlapping_windows.empty:
-                continue
-
-            region_rows.append(
-                {
-                    "genome_id": genome_id,
-                    "contig_id": contig_id,
-                    "start": int(refined_start),
-                    "end": int(refined_end),
-                    "n_windows": int(len(overlapping_windows)),
-                    "region_len_bp": int(refined_end - refined_start),
-                    "mean_prob": float(overlapping_windows["prob"].astype(float).mean()),
-                    "max_prob": float(overlapping_windows["prob"].astype(float).max()),
-                    "boundary_kind": "non_overlapping_base_estimate",
-                }
-            )
-
-    annotated_windows_df = pd.concat(annotated_parts, ignore_index=True)
-    return annotated_windows_df, pd.DataFrame(region_rows)
-
-
-REGION_BUILDERS = ("strict", "coverage")
-ENSEMBLE_MODES = ("max", "mean")
-DEFAULT_ENSEMBLE = "max"
-# Defaults changed 2026-09-21 to the measured operating point for the ">=95%
-# recall on known regions" contract -- docs/model-quality-baseline.md
-# "Operating point". `strict` remains fully supported as the conservative,
-# database-agreement path; `coverage` + merging is the discovery path.
-DEFAULT_REGION_BUILDER = "coverage"
-DEFAULT_COVERAGE_FRAC = 0.1
-# Fragment merging (docs/gap-filling.md). 0 = off, which is the shipped default
-# until a held-out sweep picks a value -- see `_close_gaps`.
-DEFAULT_MAX_GAP_BP = 50000
-DEFAULT_BRIDGE_PROB = 0.1
-# Fine-scale refinement, pass B (multiscale.py; docs/adaptive-multiscale-detection.md).
-# Off by default: 0 = no refinement, and with it off output is byte-identical.
-DEFAULT_REFINE_WINDOW_LEN = 0
-DEFAULT_REFINE_STRIDE = 250
-# Fine-pass threshold for the opt-in "tight boundaries" setting (5 kb, alpha 0.6,
-# ramp 15000 60000). Swept 2026-09-28 on the 42-genome tracks at 5 kb (ensemble):
-# 0.95 gives median IoU 0.785 at covered50 0.955 (vs 0.713 / 0.961 unrefined); the
-# previous fallback, the mode's extend threshold (0.99), gave 0.793 / 0.916. 0.6-0.8
-# is recall-neutral (+0.04-0.06 IoU) and is being confirmed on the 18-genome
-# sample. Default mode only; docs/downstream-postprocessing.md.
-DEFAULT_REFINE_THRESHOLD = 0.95
-DEFAULT_EDGE_ALPHA = 1.0        # 1 = keep coarse edges; calibrate before lowering
-# Split gates as swept for the tight-boundaries setting (sweep_ramp, 2026-09-24):
-# 4 kb / 0.05 adds ~0.3-0.9 fragmented elements; 0.2 added ~4.7. Were 2000 / 0.1,
-# which no ramp sweep measured. Below DEFAULT_BRIDGE_PROB, so splitting cannot undo
-# a merge; 0.05-0.1 is a dead band where neither acts.
-DEFAULT_SPLIT_MIN_GAP_BP = 4000
-DEFAULT_SPLIT_MAX_PROB = 0.05
-# Calls that are at least this fraction N are dropped (user decision 2026-09-29).
-# `impute` fills an N run with random bases; over a long scaffold gap that reads
-# as foreign sequence and gets called (822054: Exploratory 2.7 calls/genome
-# inside 20 kb gaps). Masking the gap's windows instead cost most of the
-# recall near every gap, because windows are 10 kb (docs/v1-scope.md A.3).
-MAX_CALL_N_FRAC = 0.5
-# Edge snapping for fragmented input (user decision 2026-10-05; docs/claims-and-evidence.md
-# "G5b" amendments). A call edge within this fraction of --window-len of a contig end
-# is moved to that end: a breakpoint cut the element, and the windows that would
-# reach the end score it only partly. Relative to --window-len so it scales with
-# larger windows; short-contig calls use the same distance (snapping them by their
-# own 5/3 kb scale instead lost 1 of 156 element-seeds on the 18). Measured at the
-# trained 10 kb window (5 kb snap) on corpus shreds: Default MAG covered50 0.808 ->
-# 0.827 (42) / 0.878 -> 0.904 (18), calls unchanged, about 6.5% more bp called on
-# MAG input. Other window lengths are untested, as for the thresholds. 0 = off.
-DEFAULT_EDGE_SNAP_FRAC = 0.5
-CONTIG_EDGE_VALUES = ("none", "start", "end", "both")
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
@@ -598,7 +311,7 @@ def build_region_table_coverage(
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Coverage-fraction region builder (2026-09-17, docs/multi-model-architecture.md).
 
-    `build_region_table` marks a stride-sized bin as inside a region only if
+    The removed `strict` builder marked a stride-sized bin as inside a region only if
     the MEAN of the ~window_len/stride windows covering it is >= `extend_threshold`
     -- effectively the intersection of high-scoring windows. Because the model's
     score track inside real elements is spiky (islands of high windows amid
@@ -613,7 +326,7 @@ def build_region_table_coverage(
     / 94.2% (frac <= 0.1) and median IoU 0.56 -> 0.75-0.77, at the cost of
     2-4x more calls per genome. frac 0.3 is where start/end errors are
     symmetric; the union brackets true edges by ~4.5 kb a side. Same output
-    contract as `build_region_table`; `region_pred_label` marks windows that
+    contract as the strict builder had; `region_pred_label` marks windows that
     overlap a called region.
 
     `max_gap_bp` / `bridge_prob` (both default off) additionally merge calls
@@ -726,284 +439,6 @@ def build_region_table_coverage(
     return annotated_windows_df, regions_df
 
 
-def _walk_to_ramp_crossing(
-    bin_scores: np.ndarray,
-    covered_bins: np.ndarray,
-    from_bin: int,
-    direction: int,
-    crossing_threshold: float,
-    max_steps: int,
-    n_bins: int,
-) -> int:
-    """Walk outward (direction=-1 left, +1 right) from `from_bin` while the
-    score stays at or above `crossing_threshold`, and return the last such bin
-    index.
-
-    Used to locate where a region's score ramp crosses a calibrated fraction
-    of the way between its plateau and local background
-    (`RAMP_MIDPOINT_FRACTION`), rather than a single fixed threshold -- see
-    `build_region_table_multi_tile` docstring for why this tracks true
-    boundaries much better than a strict high-confidence threshold does.
-    """
-    bin_index = from_bin
-    steps = 0
-    while steps < max_steps:
-        next_index = bin_index + direction
-        if next_index < 0 or next_index >= n_bins:
-            break
-        if not covered_bins[next_index] or bin_scores[next_index] < crossing_threshold:
-            break
-        bin_index = next_index
-        steps += 1
-    return bin_index
-
-
-def build_region_table_multi_tile(
-    windows_df: pd.DataFrame,
-    bin_size: int,
-    seed_threshold: float,
-    extend_threshold: float,
-    window_len: int,
-    stride: int,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Hybrid region construction: seed on the trusted single grid, refine
-    boundaries on the finer multi-tile score track.
-
-    Two earlier approaches were tried and both failed at scale (see
-    docs/boundary-refinement.md and docs/model-quality-baseline.md):
-    - Seeding directly from the *mean* multi-tile bin score under-detects:
-      more tiles means more overlapping windows averaged into each bin
-      (~10 per tile), which dilutes a single well-aligned strong window's
-      score toward its worse-aligned neighbors. Measured region recall
-      dropped from 76.9% (single-grid) to 67.3% (mean multi-tile) on an
-      18-genome eval.
-    - Seeding from the *max* multi-tile bin score over-detects badly: with
-      ~4x more overlapping windows contributing to each bin, the chance that
-      at least one of them exceeds a strict threshold by pure noise goes up
-      accordingly (classic multiple-comparisons peak inflation). This
-      hallucinated a dozen spurious regions in a genome with exactly one true
-      region in a quick 3-genome check.
-
-    So seeding and boundary refinement are deliberately decoupled here:
-    - WHICH regions exist is decided using only the tile-0 windows (`tile`
-      column == 0), replicating `build_region_table`'s seeding rule exactly:
-      a bin is a seed if ANY single covering window clears `seed_threshold`,
-      and extends while the bin MEAN clears `extend_threshold`. This carries
-      over the frozen v1 detection behavior with no new false positives and
-      no new dilution -- seeding is not where the finer tiling should help
-      anyway. (Until 2026-09-15 this tested the bin mean against
-      `seed_threshold`, which is stricter than the frozen path and dropped
-      regions -- see docs/boundary-refinement.md "Discrepancy resolved".)
-    - HOW PRECISELY each already-seeded region's boundaries are drawn uses
-      the full multi-tile mean-based fine-grained bin track (`bin_size` =
-      `stride / num_tiles`), walking outward from the seed to where the score
-      crosses a calibrated fraction (`RAMP_MIDPOINT_FRACTION`) of the way from
-      local background up to the region's plateau, rather than where it
-      crosses `extend_threshold`.
-
-    Why a ramp-crossing fraction instead of `extend_threshold` at all: the
-    model's score does not jump sharply at a true biological boundary -- a
-    window straddling the edge sees a mix of positive/negative sequence and
-    scores roughly in proportion, so the score ramps smoothly over about one
-    `window_len` on each side. Requiring the score to stay above a strict
-    threshold like 0.99 before extending only claims the saturated middle of
-    that ramp, landing the boundary roughly `window_len / 2` inside the true
-    edge. A naive 50%-of-the-way midpoint overcorrects the other way (every
-    region ends up bracketing the true call instead of sitting inside it).
-    `RAMP_MIDPOINT_FRACTION` (0.77) was calibrated from 10 boundary crossings
-    in one genome (E. coli K-12) -- a small sample, not a proven constant.
-
-    Also returns a per-bin diagnostic track (`bins_df`) with a `bin_stability`
-    heuristic (1 - stdev of per-window scores landing in that bin): closer to
-    1 means tiles agreed on that position's score, closer to 0 means they
-    disagreed. This is a heuristic, not a calibrated confidence interval.
-    """
-    region_rows: List[Dict[str, object]] = []
-    bin_frames: List[pd.DataFrame] = []
-
-    for (genome_id, contig_id), contig_df in windows_df.groupby(
-        ["genome_id", "contig_id"], sort=False
-    ):
-        contig_df = contig_df.sort_values(["start", "end"]).reset_index(drop=True)
-        contig_end = int(contig_df["end"].max())
-        n_bins = int(math.ceil(contig_end / bin_size))
-
-        # --- Fine-grained mean-based track from ALL tiles (refinement only) ---
-        bin_score_sum = np.zeros(n_bins, dtype=np.float64)
-        bin_score_sq_sum = np.zeros(n_bins, dtype=np.float64)
-        bin_score_count = np.zeros(n_bins, dtype=np.int32)
-
-        for row in contig_df.itertuples(index=False):
-            start_bin = int(row.start // bin_size)
-            end_bin = min(n_bins, int(math.ceil(row.end / bin_size)))
-            prob = float(row.prob)
-            bin_score_sum[start_bin:end_bin] += prob
-            bin_score_sq_sum[start_bin:end_bin] += prob * prob
-            bin_score_count[start_bin:end_bin] += 1
-
-        covered_bins = bin_score_count > 0
-        bin_scores = np.zeros(n_bins, dtype=np.float64)
-        bin_scores[covered_bins] = bin_score_sum[covered_bins] / bin_score_count[covered_bins]
-        bin_variance = np.zeros(n_bins, dtype=np.float64)
-        bin_variance[covered_bins] = np.clip(
-            bin_score_sq_sum[covered_bins] / bin_score_count[covered_bins]
-            - bin_scores[covered_bins] ** 2,
-            0.0,
-            None,
-        )
-        bin_stability = np.full(n_bins, np.nan, dtype=np.float64)
-        bin_stability[covered_bins] = 1.0 - np.sqrt(bin_variance[covered_bins])
-
-        # --- Coarse single-grid (tile 0) track: decides WHICH regions exist ---
-        tile0_df = contig_df[contig_df["tile"] == 0] if "tile" in contig_df.columns else contig_df
-        coarse_n_bins = int(math.ceil(contig_end / stride))
-        coarse_sum = np.zeros(coarse_n_bins, dtype=np.float64)
-        coarse_count = np.zeros(coarse_n_bins, dtype=np.int32)
-        # Seeding must mirror `build_region_table` exactly: a bin is a seed
-        # candidate if ANY single window covering it clears `seed_threshold`
-        # (per-window max), while extension uses the bin MEAN against
-        # `extend_threshold`. An earlier version tested the bin mean against
-        # `seed_threshold` too, which is strictly stricter and silently
-        # dropped regions the frozen single-tile path emits (one 0.996 window
-        # among 0.99x neighbours seeds there but never averaged to 0.995).
-        coarse_seed_mask = np.zeros(coarse_n_bins, dtype=bool)
-        for row in tile0_df.itertuples(index=False):
-            cb_start = int(row.start // stride)
-            cb_end = min(coarse_n_bins, int(math.ceil(row.end / stride)))
-            prob = float(row.prob)
-            coarse_sum[cb_start:cb_end] += prob
-            coarse_count[cb_start:cb_end] += 1
-            if prob >= seed_threshold:
-                coarse_seed_mask[cb_start:cb_end] = True
-        coarse_covered = coarse_count > 0
-        coarse_scores = np.zeros(coarse_n_bins, dtype=np.float64)
-        coarse_scores[coarse_covered] = coarse_sum[coarse_covered] / coarse_count[coarse_covered]
-
-        coarse_extend_mask = coarse_covered & (coarse_scores >= extend_threshold)
-
-        seed_region_ranges_bp: List[Tuple[int, int]] = []
-        used_coarse = np.zeros(coarse_n_bins, dtype=bool)
-        for coarse_index in range(coarse_n_bins):
-            if (
-                used_coarse[coarse_index]
-                or not coarse_seed_mask[coarse_index]
-                or not coarse_extend_mask[coarse_index]
-            ):
-                continue
-            left = coarse_index
-            while left - 1 >= 0 and coarse_extend_mask[left - 1]:
-                left -= 1
-            right = coarse_index
-            while right + 1 < coarse_n_bins and coarse_extend_mask[right + 1]:
-                right += 1
-            used_coarse[left : right + 1] = True
-            seed_region_ranges_bp.append((left * stride, min(contig_end, (right + 1) * stride)))
-
-        # Background for the ramp-crossing fraction: fine bins outside every
-        # seeded region (not "not seeded" at the fine level, since seeding now
-        # happens on the coarse grid).
-        in_any_seed_region = np.zeros(n_bins, dtype=bool)
-        for seed_start_bp, seed_end_bp in seed_region_ranges_bp:
-            in_any_seed_region[int(seed_start_bp // bin_size) : int(math.ceil(seed_end_bp / bin_size))] = True
-        background_candidates = bin_scores[covered_bins & ~in_any_seed_region]
-        background_level = (
-            float(np.median(background_candidates)) if background_candidates.size else 0.0
-        )
-        # Cap the ramp walk generously past one window's width, since the
-        # score ramp around a true edge is expected to span roughly window_len.
-        max_walk_steps = max(1, int(math.ceil((2 * window_len) / bin_size)))
-
-        previous_end = 0
-        for seed_start_bp, seed_end_bp in seed_region_ranges_bp:
-            left_bin = int(seed_start_bp // bin_size)
-            right_bin = min(n_bins - 1, int(math.ceil(seed_end_bp / bin_size)) - 1)
-
-            plateau = float(bin_scores[left_bin : right_bin + 1].max())
-            crossing_threshold = background_level + RAMP_MIDPOINT_FRACTION * (
-                plateau - background_level
-            )
-            # Guard against a degenerate plateau/background (e.g. a very weak
-            # region): never target below the extend_threshold's own strict
-            # floor, so this can only push boundaries outward, not inward.
-            crossing_threshold = (
-                min(crossing_threshold, extend_threshold)
-                if plateau > background_level
-                else extend_threshold
-            )
-
-            left_edge_bin = _walk_to_ramp_crossing(
-                bin_scores, covered_bins, left_bin, -1, crossing_threshold, max_walk_steps, n_bins
-            )
-            right_edge_bin = _walk_to_ramp_crossing(
-                bin_scores, covered_bins, right_bin, 1, crossing_threshold, max_walk_steps, n_bins
-            )
-
-            refined_start = left_edge_bin * bin_size
-            refined_end = min(contig_end, (right_edge_bin + 1) * bin_size)
-
-            if left_edge_bin > 0 and covered_bins[left_edge_bin - 1]:
-                left_score = bin_scores[left_edge_bin - 1]
-                right_score = bin_scores[left_edge_bin]
-                if right_score > left_score and left_score < crossing_threshold <= right_score:
-                    frac = (crossing_threshold - left_score) / (right_score - left_score)
-                    refined_start = int(round(((left_edge_bin - 1) + frac) * bin_size))
-
-            if right_edge_bin + 1 < n_bins and covered_bins[right_edge_bin + 1]:
-                left_score = bin_scores[right_edge_bin]
-                right_score = bin_scores[right_edge_bin + 1]
-                if left_score > right_score and right_score < crossing_threshold <= left_score:
-                    frac = (left_score - crossing_threshold) / (left_score - right_score)
-                    refined_end = int(round((right_edge_bin + 1 - frac) * bin_size))
-
-            refined_start = max(previous_end, max(0, refined_start))
-            refined_end = max(refined_start + 1, min(contig_end, refined_end))
-            previous_end = refined_end
-
-            region_bin_slice = slice(left_edge_bin, right_edge_bin + 1)
-            region_bin_covered = covered_bins[region_bin_slice]
-            region_stability = bin_stability[region_bin_slice][region_bin_covered]
-
-            region_rows.append(
-                {
-                    "genome_id": genome_id,
-                    "contig_id": contig_id,
-                    "start": int(refined_start),
-                    "end": int(refined_end),
-                    "region_len_bp": int(refined_end - refined_start),
-                    "n_windows": int(
-                        (
-                            (contig_df["end"].astype(int) > refined_start)
-                            & (contig_df["start"].astype(int) < refined_end)
-                        ).sum()
-                    ),
-                    "mean_prob": float(bin_scores[region_bin_slice].mean()),
-                    "max_prob": float(bin_scores[region_bin_slice].max()),
-                    "mean_stability": float(region_stability.mean())
-                    if region_stability.size
-                    else float("nan"),
-                    "boundary_kind": "multi_tile_midpoint_estimate",
-                }
-            )
-
-        bin_frames.append(
-            pd.DataFrame(
-                {
-                    "genome_id": genome_id,
-                    "contig_id": contig_id,
-                    "bin_start": np.arange(n_bins) * bin_size,
-                    "bin_end": np.minimum((np.arange(n_bins) + 1) * bin_size, contig_end),
-                    "bin_score": bin_scores,
-                    "bin_stability": bin_stability,
-                    "bin_n_windows": bin_score_count,
-                }
-            )
-        )
-
-    regions_df = pd.DataFrame(region_rows)
-    bins_df = pd.concat(bin_frames, ignore_index=True) if bin_frames else pd.DataFrame()
-    return bins_df, regions_df
-
-
 def resolve_thresholds(
     mode: str,
     threshold: float | None,
@@ -1031,10 +466,8 @@ def write_metadata(
     windows_df: pd.DataFrame,
     regions_df: pd.DataFrame,
     out_path: Path,
-    num_tiles: int = 1,
     ambiguity_policy: str = DEFAULT_AMBIGUITY_POLICY,
     grid_offset: int = 0,
-    region_builder: str = DEFAULT_REGION_BUILDER,
     coverage_frac: float = DEFAULT_COVERAGE_FRAC,
     ensemble_mode: str = "single",
     max_gap_bp: int = DEFAULT_MAX_GAP_BP,
@@ -1061,7 +494,6 @@ def write_metadata(
         "stride": cfg.data.stride,
         "trained_window_len": trained_window_len if trained_window_len is not None else cfg.data.window_len,
         "trained_stride": trained_stride if trained_stride is not None else cfg.data.stride,
-        "num_tiles": num_tiles,
         "ambiguity_policy": ambiguity_policy,
         "grid_offset": grid_offset,
         "n_windows": int(len(windows_df)),
@@ -1073,296 +505,14 @@ def write_metadata(
         metadata["short_contigs"] = short_contigs
     if seed_support:
         metadata["seed_support"] = seed_support
-    if num_tiles > 1:
-        metadata["region_builder"] = "multi_tile_hysteresis"
-        metadata["boundary_refinement"] = "multi_tile_ramp_midpoint_crossing"
-        metadata["bin_size"] = max(1, cfg.data.stride // num_tiles)
-    elif region_builder == "coverage":
-        metadata["region_builder"] = "coverage_fraction"
-        metadata["boundary_refinement"] = "none_bin_edges"
-        metadata["coverage_frac"] = coverage_frac
-        if max_gap_bp > 0:
-            metadata["fragment_merge"] = {"max_gap_bp": max_gap_bp, "bridge_prob": bridge_prob}
-        if refine:
-            metadata["refine"] = refine
-    else:
-        metadata["region_builder"] = "strict_hysteresis_stride_support"
-        metadata["boundary_refinement"] = "interpolated_from_stride_support_track"
+    metadata["region_builder"] = "coverage_fraction"
+    metadata["boundary_refinement"] = "none_bin_edges"
+    metadata["coverage_frac"] = coverage_frac
+    if max_gap_bp > 0:
+        metadata["fragment_merge"] = {"max_gap_bp": max_gap_bp, "bridge_prob": bridge_prob}
+    if refine:
+        metadata["refine"] = refine
     out_path.write_text(json.dumps(metadata, indent=2) + "\n")
-
-
-def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Run frozen MGE-Explorer inference on a genome FASTA."
-    )
-    parser.add_argument("--config", required=True)
-    parser.add_argument(
-        "--checkpoint",
-        required=True,
-        nargs="+",
-        help=(
-            "Trained checkpoint(s). Passing more than one runs a seed ensemble "
-            "over them (see --ensemble); recommended, since it removes the "
-            "dependence of recall on which replicate was packaged."
-        ),
-    )
-    parser.add_argument(
-        "--ensemble",
-        choices=ENSEMBLE_MODES,
-        default=DEFAULT_ENSEMBLE,
-        help=(
-            "How to combine multiple --checkpoint score tracks. 'max' "
-            "(default) preserves borderline detections; 'mean' dilutes them "
-            "below the seed threshold and measurably costs recall."
-        ),
-    )
-    parser.add_argument("--input_fasta", required=True)
-    parser.add_argument("--outdir", required=True)
-    parser.add_argument(
-        "--mode",
-        choices=sorted(MODE_THRESHOLDS.keys()),
-        default="default",
-    )
-    parser.add_argument("--threshold", type=float, default=None)
-    parser.add_argument("--seed-threshold", type=float, default=None)
-    parser.add_argument("--extend-threshold", type=float, default=None)
-    parser.add_argument(
-        "--min-seed-support",
-        type=int,
-        default=None,
-        help=(
-            "Keep an ensemble call only if at least this many checkpoints make an "
-            "overlapping call on their own (default: the mode's; exploratory 1, "
-            "default 3, conservative 3). Needs several --checkpoint files; 1 keeps "
-            "every call. See docs/error-analysis.md."
-        ),
-    )
-    parser.add_argument(
-        "--write-region-fasta",
-        action="store_true",
-        help="Also write the called regions' sequences to regions.fna.",
-    )
-    parser.add_argument(
-        "--write-seed-scores",
-        action="store_true",
-        help=(
-            "With several --checkpoint files, also write each checkpoint's score to "
-            "windows.tsv (prob_ckpt1, prob_ckpt2, ...), so seed votes can be re-applied "
-            "offline. Off by default."
-        ),
-    )
-    parser.add_argument("--device", default="auto")
-    parser.add_argument("--batch-size", type=int, default=128)
-    parser.add_argument("--num-workers", type=int, default=0)
-    parser.add_argument(
-        "--ambiguity-policy",
-        choices=AMBIGUITY_POLICIES,
-        default=DEFAULT_AMBIGUITY_POLICY,
-        help=(
-            "How IUPAC ambiguity codes are encoded. 'impute' (default) replaces each "
-            "with a deterministic concrete base; a no-op on ambiguity-free sequence. "
-            "'n-channel' is the training-time encoding and reproduces numbers "
-            "published before 2026-09-24, but two contiguous codes can zero a "
-            "window's score. 'uniform' spreads each as 0.25 across A/C/G/T. See "
-            "docs/scientific-validity.md '1a'."
-        ),
-    )
-    parser.add_argument(
-        "--grid-offset",
-        type=int,
-        default=0,
-        help="Shift the inference window grid by this many bp (default 0).",
-    )
-    parser.add_argument(
-        "--num-tiles",
-        type=int,
-        default=1,
-        help=(
-            "EXPERIMENTAL, not recommended: score this many phase-shifted "
-            "window tilings and merge them for finer region boundaries "
-            "(default 1 = frozen v1 behavior, single grid). See "
-            "docs/boundary-refinement.md for known issues before using this "
-            "for anything but further investigation."
-        ),
-    )
-    add_region_builder_args(parser)
-    add_multiscale_args(parser)
-    return parser
-
-
-def add_multiscale_args(parser: argparse.ArgumentParser) -> None:
-    """Window-size overrides and the fine refinement pass; mirrored in `prophound`."""
-    parser.add_argument(
-        "--window-len",
-        type=int,
-        default=None,
-        help=(
-            "Inference window length in bp (default: the checkpoint's trained "
-            "length, 10000). The model's max pooling accepts any length, so this "
-            "trades resolution for context. EXPERIMENTAL away from the trained "
-            "length: mode thresholds were calibrated at it, and negative scores "
-            "drift upward as windows shrink."
-        ),
-    )
-    parser.add_argument(
-        "--edge-snap-frac",
-        type=float,
-        default=DEFAULT_EDGE_SNAP_FRAC,
-        help=(
-            "Move a call edge within this fraction of --window-len of a contig "
-            "end onto that end (short contigs included): "
-            "on fragmented input an element cut by a breakpoint is only partly "
-            "scored near the end. Default %(default)s, i.e. 5 kb at 10 kb windows; "
-            "0 disables. Edges on a contig end are flagged in contig_edge either way."
-        ),
-    )
-    parser.add_argument(
-        "--stride",
-        type=int,
-        default=None,
-        help="Inference window stride in bp (default: the checkpoint's trained stride, 1000).",
-    )
-    parser.add_argument(
-        "--short-contigs",
-        choices=SHORT_CONTIG_MODES,
-        default=DEFAULT_SHORT_CONTIGS,
-        help=(
-            "Contigs shorter than --window-len: 'scan' (default) tiles each with a 5 kb or "
-            "3 kb window, whichever fits (contigs under 3 kb are never scanned); 'skip' "
-            "leaves them unscanned. Either way a warning reports them. Reduced-scale "
-            "thresholds are calibrated per mode to the 10 kb false-positive load "
-            "(0.95 / 0.95 / 0.99, with the mode's seed vote)."
-        ),
-    )
-    parser.add_argument(
-        "--short-contig-threshold",
-        type=float,
-        default=None,
-        help="Override the calibrated seed/extend threshold for --short-contigs scan.",
-    )
-    parser.add_argument(
-        "--refine-window-len",
-        type=int,
-        default=DEFAULT_REFINE_WINDOW_LEN,
-        help=(
-            "EXPERIMENTAL fine-scale pass (default 0 = off). Re-score each call "
-            "+/- --refine-margin at this window length, then split calls whose fine "
-            "track shows a background gap (conflated elements) and place edges "
-            "between the fine core and the coarse edge (--edge-alpha). Never drops "
-            "a call. Requires --region-builder coverage. See "
-            "docs/adaptive-multiscale-detection.md."
-        ),
-    )
-    parser.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
-                        help="Fine-pass stride in bp. Default %(default)s.")
-    parser.add_argument(
-        "--refine-threshold",
-        type=float,
-        default=None,
-        help=(
-            "Fine-pass score threshold (default 0.95, calibrated at 5 kb for the "
-            "tight-boundaries setting; 0.6-0.8 keeps recall unchanged)."
-        ),
-    )
-    parser.add_argument("--refine-margin", type=int, default=None,
-                        help="bp re-scored either side of each call (default: --window-len).")
-    parser.add_argument(
-        "--edge-alpha",
-        type=float,
-        default=DEFAULT_EDGE_ALPHA,
-        help=(
-            "Edge placement in [0, 1]: edge = fine_core + alpha * (coarse_edge - "
-            "fine_core). 1 keeps coarse edges (overextend ~half a window); 0 uses "
-            "the fine core (truncates). Default %(default)s."
-        ),
-    )
-    parser.add_argument(
-        "--edge-alpha-ramp",
-        type=int,
-        nargs=2,
-        metavar=("LO_BP", "HI_BP"),
-        default=None,
-        help=(
-            "Make --edge-alpha size-dependent: 0 for pieces whose fine core is at "
-            "most LO_BP, --edge-alpha at HI_BP and above, linear in log length "
-            "between. Small elements are best served by the fine core and large "
-            "ones by edges near the coarse call. Default off (constant alpha)."
-        ),
-    )
-    parser.add_argument(
-        "--split-min-gap-bp",
-        type=int,
-        default=DEFAULT_SPLIT_MIN_GAP_BP,
-        help="Minimum fine-track gap (bp) that can split a call. Default %(default)s.",
-    )
-    parser.add_argument(
-        "--split-max-prob",
-        type=float,
-        default=DEFAULT_SPLIT_MAX_PROB,
-        help=(
-            "Split only across a gap whose fine windows average below this -- the "
-            "mirror of --bridge-prob, so splitting cannot undo gap-filling. "
-            "Default %(default)s."
-        ),
-    )
-
-
-def add_region_builder_args(parser: argparse.ArgumentParser) -> None:
-    """`--region-builder` / `--coverage-frac`, shared with `prophound`'s CLI."""
-    parser.add_argument(
-        "--region-builder",
-        choices=REGION_BUILDERS,
-        default=DEFAULT_REGION_BUILDER,
-        help=(
-            "How per-window scores become regions. 'coverage' (default since "
-            "2026-09-21) marks a bin inside if at least --coverage-frac of its "
-            "covering windows individually score >= the extend threshold; with "
-            "--max-gap-bp merging it is the measured operating point for >=95% "
-            "recall on known regions, and it is the discovery path. 'strict' is "
-            "the frozen v1 builder: a bin is inside only if the MEAN of all "
-            "windows covering it >= the extend threshold, which truncates "
-            "regions and drops sparse-signal elements -- kept as the "
-            "conservative, database-agreement comparison. See "
-            "docs/model-quality-baseline.md 'Operating point'. 'coverage' is "
-            "not combinable with --num-tiles > 1."
-        ),
-    )
-    parser.add_argument(
-        "--coverage-frac",
-        type=float,
-        default=DEFAULT_COVERAGE_FRAC,
-        help=(
-            "For --region-builder coverage: minimum fraction of covering windows "
-            "that must be high for a bin to count as inside (0 -> union of high "
-            "windows, 1 -> intersection). Default %(default)s."
-        ),
-    )
-    parser.add_argument(
-        "--max-gap-bp",
-        type=int,
-        default=DEFAULT_MAX_GAP_BP,
-        help=(
-            "For --region-builder coverage: merge two calls separated by at "
-            "most this many bp into one, repairing elements fragmented by an "
-            "internal dip in the score track (worst for 60 kb+ elements, where "
-            "it lifts median IoU from ~0.38 to ~0.85). Default %(default)s; 0 "
-            "disables merging. Always pair with --bridge-prob -- an ungated "
-            "merge bridges genuinely separate neighbouring elements. Above "
-            "~50000 the gate binds before the distance budget does. See "
-            "docs/gap-filling.md."
-        ),
-    )
-    parser.add_argument(
-        "--bridge-prob",
-        type=float,
-        default=DEFAULT_BRIDGE_PROB,
-        help=(
-            "For --max-gap-bp: only merge across a gap whose every bin has mean "
-            "covering-window probability >= this (0 = distance-only). The "
-            "anti-overextension guard -- docs/anti-overextension.md. "
-            "Default %(default)s."
-        ),
-    )
 
 
 def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame]) -> List[int]:
@@ -1511,8 +661,8 @@ def run_predict(args: argparse.Namespace) -> None:
     )
 
     trained_window_len, trained_stride = cfg.data.window_len, cfg.data.stride
-    window_len_arg = getattr(args, "window_len", None)
-    stride_arg = getattr(args, "stride", None)
+    window_len_arg = args.window_len
+    stride_arg = args.stride
     if window_len_arg:
         cfg.data.window_len = int(window_len_arg)
     if stride_arg:
@@ -1530,49 +680,42 @@ def run_predict(args: argparse.Namespace) -> None:
             file=sys.stderr,
         )
 
-    num_tiles = max(1, getattr(args, "num_tiles", 1))
-    region_builder = getattr(args, "region_builder", DEFAULT_REGION_BUILDER)
-    coverage_frac = float(getattr(args, "coverage_frac", DEFAULT_COVERAGE_FRAC))
-    max_gap_bp = int(getattr(args, "max_gap_bp", DEFAULT_MAX_GAP_BP))
-    bridge_prob = float(getattr(args, "bridge_prob", DEFAULT_BRIDGE_PROB))
-    if region_builder != "strict" and num_tiles > 1:
-        raise SystemExit("--region-builder coverage cannot be combined with --num-tiles > 1")
-    refine_window_len = int(getattr(args, "refine_window_len", DEFAULT_REFINE_WINDOW_LEN) or 0)
-    refine_stride = int(getattr(args, "refine_stride", DEFAULT_REFINE_STRIDE))
-    edge_alpha = float(getattr(args, "edge_alpha", DEFAULT_EDGE_ALPHA))
-    alpha_ramp = getattr(args, "edge_alpha_ramp", None)
+    coverage_frac = float(args.coverage_frac)
+    max_gap_bp = int(args.max_gap_bp)
+    bridge_prob = float(args.bridge_prob)
+    refine_window_len = int(args.refine_window_len or 0)
+    refine_stride = int(args.refine_stride)
+    edge_alpha = float(args.edge_alpha)
+    alpha_ramp = args.edge_alpha_ramp
     alpha_ramp = tuple(int(x) for x in alpha_ramp) if alpha_ramp else None
     if alpha_ramp and not 0 < alpha_ramp[0] < alpha_ramp[1]:
         raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
-    split_min_gap_bp = int(getattr(args, "split_min_gap_bp", DEFAULT_SPLIT_MIN_GAP_BP))
-    split_max_prob = float(getattr(args, "split_max_prob", DEFAULT_SPLIT_MAX_PROB))
-    refine_threshold = getattr(args, "refine_threshold", None)
+    split_min_gap_bp = int(args.split_min_gap_bp)
+    split_max_prob = float(args.split_max_prob)
+    refine_threshold = args.refine_threshold
     refine_threshold = DEFAULT_REFINE_THRESHOLD if refine_threshold is None else float(refine_threshold)
-    refine_margin = getattr(args, "refine_margin", None)
+    refine_margin = args.refine_margin
     refine_margin = cfg.data.window_len if refine_margin is None else int(refine_margin)
     if refine_window_len:
-        if region_builder != "coverage" or num_tiles > 1:
-            raise SystemExit("--refine-window-len requires --region-builder coverage and --num-tiles 1")
         if refine_window_len >= cfg.data.window_len:
             raise SystemExit("--refine-window-len must be smaller than --window-len")
         if refine_stride <= 0 or not 0.0 <= edge_alpha <= 1.0 or refine_margin < 0:
             raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
 
-    edge_snap_frac = float(getattr(args, "edge_snap_frac", DEFAULT_EDGE_SNAP_FRAC))
+    edge_snap_frac = float(args.edge_snap_frac)
     if not 0.0 <= edge_snap_frac <= 1.0:
         raise SystemExit("--edge-snap-frac must be between 0 and 1")
 
     input_path = Path(args.input_fasta)
     input_summary = validate_fasta(str(input_path))   # fails early with a clear message
     genome_id = input_path.stem
-    windows_df = build_multi_tile_windows(
+    windows_df = build_windows(
         str(input_path),
         genome_id=genome_id,
         data_config=cfg.data,
-        num_tiles=num_tiles,
-        grid_offset=max(0, int(getattr(args, "grid_offset", 0) or 0)),
+        offset=max(0, int(args.grid_offset or 0)),
     )
-    short_contigs = getattr(args, "short_contigs", DEFAULT_SHORT_CONTIGS) or DEFAULT_SHORT_CONTIGS
+    short_contigs = args.short_contigs
     if short_contigs not in SHORT_CONTIG_MODES:
         raise SystemExit(f"--short-contigs must be one of {SHORT_CONTIG_MODES}")
     short_windows_df, short_report = build_short_contig_windows(
@@ -1591,32 +734,28 @@ def run_predict(args: argparse.Namespace) -> None:
     if windows_df.empty and (short_contigs == "skip" or short_windows_df.empty):
         raise RuntimeError("No inference windows were generated from the input FASTA.")
 
-    ambiguity_policy = getattr(args, "ambiguity_policy", DEFAULT_AMBIGUITY_POLICY) or DEFAULT_AMBIGUITY_POLICY
+    ambiguity_policy = args.ambiguity_policy
     checkpoints = args.checkpoint if isinstance(args.checkpoint, list) else [args.checkpoint]
-    ensemble = getattr(args, "ensemble", DEFAULT_ENSEMBLE)
+    ensemble = args.ensemble
     if ensemble not in ENSEMBLE_MODES:
         raise SystemExit(f"--ensemble must be one of {ENSEMBLE_MODES}")
 
     model = build_model(cfg, device)
     score_kw = dict(ambiguity_policy=ambiguity_policy, ensemble=ensemble, device=device,
                     batch_size=args.batch_size, num_workers=args.num_workers)
-    bins_df = None
-    # seed support is computed for the coverage builder (the shipped one) only
-    track_support = len(checkpoints) > 1 and region_builder == "coverage" and num_tiles <= 1
-    min_support = getattr(args, "min_seed_support", None)
+    track_support = len(checkpoints) > 1
+    min_support = args.min_seed_support
     min_support = MODE_MIN_SEED_SUPPORT[args.mode] if min_support is None else int(min_support)
     if min_support < 1:
         raise SystemExit("--min-seed-support must be >= 1")
     vote_k = min(min_support, len(checkpoints)) if track_support else 1
     if min_support > 1 and vote_k < min_support:
         # never silent: the mode thresholds assume the vote (MODE_THRESHOLDS comment)
-        why = (f"only {len(checkpoints)} checkpoint(s)" if len(checkpoints) < min_support
-               else "the vote needs --region-builder coverage and --num-tiles 1")
-        print(f"[warn] seed vote of {min_support} requested but {why}: "
+        print(f"[warn] seed vote of {min_support} requested but only {len(checkpoints)} checkpoint(s): "
               f"{'voting at ' + str(vote_k) if vote_k > 1 else 'no vote applied'}. The '{args.mode}' "
               "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.", file=sys.stderr)
     vote_dropped = 0
-    write_seed_scores = bool(getattr(args, "write_seed_scores", False)) and len(checkpoints) > 1
+    write_seed_scores = bool(args.write_seed_scores) and len(checkpoints) > 1
     per_seed_regions: List[List[pd.DataFrame]] = [[] for _ in checkpoints]
     if windows_df.empty:  # every contig is short: nothing for the coarse pass
         windows_df = pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "fasta_path",
@@ -1633,19 +772,7 @@ def run_predict(args: argparse.Namespace) -> None:
             for k, p in enumerate(coarse_per_ckpt):
                 windows_df[f"prob_ckpt{k + 1}"] = p
 
-    if windows_df.empty:
-        pass
-    elif num_tiles > 1:
-        bin_size = max(1, cfg.data.stride // num_tiles)
-        bins_df, regions_df = build_region_table_multi_tile(
-            windows_df,
-            bin_size=bin_size,
-            seed_threshold=seed_threshold,
-            extend_threshold=extend_threshold,
-            window_len=cfg.data.window_len,
-            stride=cfg.data.stride,
-        )
-    elif region_builder == "coverage":
+    if not windows_df.empty:
         # per-checkpoint scores are aligned to this (pre-builder) row order
         coarse_coords = windows_df[["genome_id", "contig_id", "start", "end", "fasta_path"]]
         windows_df, regions_df = build_region_table_coverage(
@@ -1669,12 +796,6 @@ def run_predict(args: argparse.Namespace) -> None:
                 vote_dropped += n
                 if n:
                     windows_df = label_windows(windows_df, regions_df)
-    else:
-        windows_df, regions_df = build_region_table(
-            windows_df,
-            seed_threshold=seed_threshold,
-            extend_threshold=extend_threshold,
-        )
 
     fine_windows_df = None
     refine_counts = None
@@ -1718,7 +839,7 @@ def run_predict(args: argparse.Namespace) -> None:
 
     short_meta = {"mode": short_contigs, **short_report}
     if short_contigs == "scan" and not short_windows_df.empty:
-        st = getattr(args, "short_contig_threshold", None)
+        st = args.short_contig_threshold
         calibrated = st is None
 
         def short_thresholds(scale: int) -> Tuple[float, float]:
@@ -1828,10 +949,8 @@ def run_predict(args: argparse.Namespace) -> None:
         windows_df=windows_df,
         regions_df=regions_df,
         out_path=metadata_out,
-        num_tiles=num_tiles,
         ambiguity_policy=ambiguity_policy,
-        grid_offset=max(0, int(getattr(args, "grid_offset", 0) or 0)),
-        region_builder=region_builder,
+        grid_offset=max(0, int(args.grid_offset or 0)),
         coverage_frac=coverage_frac,
         max_gap_bp=max_gap_bp,
         bridge_prob=bridge_prob,
@@ -1842,7 +961,7 @@ def run_predict(args: argparse.Namespace) -> None:
         extra={"input": input_summary, "n_gap_filter": gap_filter_meta, "edge_snap": edge_meta,
                "checkpoint_sha256": {str(c): sha256(str(c)) for c in checkpoints},
                "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
-               + (["regions.fna"] if getattr(args, "write_region_fasta", False) else [])},
+               + (["regions.fna"] if args.write_region_fasta else [])},
         refine=(None if not refine_window_len else {
             "window_len": refine_window_len, "stride": refine_stride,
             "threshold": refine_threshold, "margin_bp": refine_margin,
@@ -1861,15 +980,10 @@ def run_predict(args: argparse.Namespace) -> None:
     print(f"[done] wrote {regions_out}", file=sys.stderr)
     print(f"[done] wrote {metadata_out}", file=sys.stderr)
 
-    if bins_df is not None:
-        bins_out = outdir / "bins.tsv"
-        bins_df.to_csv(bins_out, sep="\t", index=False)
-        print(f"[done] wrote {bins_out}", file=sys.stderr)
-
     write_bed(regions_df, outdir / "regions.bed")
     write_gff3(regions_df, outdir / "regions.gff3", args.mode, package_version())
     print(f"[done] wrote {outdir / 'regions.bed'} and {outdir / 'regions.gff3'}", file=sys.stderr)
-    if getattr(args, "write_region_fasta", False):
+    if args.write_region_fasta:
         write_region_fasta(regions_df, str(input_path), outdir / "regions.fna")
         print(f"[done] wrote {outdir / 'regions.fna'}", file=sys.stderr)
     print_run_summary(args.mode, input_summary, regions_df, short_meta, support_meta, ambiguity_policy,
@@ -1899,8 +1013,18 @@ def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity
     print("\n".join("[summary] " + l for l in lines), file=sys.stderr)
 
 
-def main() -> None:
-    run_predict(build_arg_parser().parse_args())
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run prophage inference on a genome FASTA (same as `prophound predict`).")
+    add_predict_arguments(parser)
+    return parser
+
+
+def main(argv: List[str] | None = None) -> None:
+    # `python -m src.predict_genome` launchers spell the input `--input_fasta`
+    argv = sys.argv[1:] if argv is None else list(argv)
+    argv = ["--input" + a[len("--input_fasta"):] if a == "--input_fasta" or a.startswith("--input_fasta=") else a
+            for a in argv]
+    run_predict(build_arg_parser().parse_args(argv))
 
 
 if __name__ == "__main__":
