@@ -16,9 +16,9 @@
 # limitations under the License.
 """Input validation, provenance and extra output formats for `predict`.
 
-docs/claims-and-evidence.md (CLI usability audit, 2026-09-28): fail early with a
-clear message on inputs the pipeline cannot use, record what produced a run, and
-write regions in formats other tools read.
+Fail early with a clear message on inputs the pipeline cannot use, record what produced
+a run, and write regions in formats other tools read (docs/claims-and-evidence.md, usability
+audit).
 """
 
 from __future__ import annotations
@@ -44,6 +44,8 @@ class InputError(SystemExit):
 
 
 def package_version() -> str:
+    """Same as `prophound.__version__`, but also works where `prophound` is not importable
+    (the ARC launchers run `python -m src.predict_genome` from the model directory)."""
     try:
         from importlib.metadata import version
         return version("prophound")
@@ -79,7 +81,8 @@ def validate_fasta(path: str) -> dict:
         raise InputError(f"{path} is gzip-compressed; decompress it first (e.g. `gunzip -k {p.name}`)")
 
     ids, dup, empty = set(), [], []
-    letters, ambiguous = Counter(), Counter()
+    letters: Counter[str] = Counter()
+    ambiguous: Counter[str] = Counter()
     n_contigs, total_bp, cur, cur_len, seen_header = 0, 0, None, 0, False
     with open(p, "r", errors="replace") as fh:
         for line in fh:

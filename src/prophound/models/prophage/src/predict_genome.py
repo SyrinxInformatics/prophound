@@ -1,3 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""`prophound predict`: score a genome's windows with the checkpoints and write the calls.
+
+The stages are in `run_predict`. Call building is in `calls.py`, shared with the offline
+scorers; options and defaults are in `options.py`.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -26,7 +48,11 @@ from .calls import (  # noqa: F401 -- re-exported: scripts and tests import thes
     seed_support,
     snap_contig_edges,
 )
+from .config import DataConfig, load_cfg  # noqa: F401 -- DataConfig is used by scripts/benchmark.py
+from .devices import resolve_device
+from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoid  # noqa: F401 -- re-exported
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
+from .model_rc_cnn import build_model
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
 from .options import (  # noqa: F401 -- re-exported: scripts import the defaults and tables from here
     AMBIGUITY_POLICIES,
@@ -44,71 +70,12 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
     PredictOptions,
     add_predict_arguments,
 )
-from .train_prophage import (  # noqa: F401 -- collate_batch and DataConfig are used by scripts/benchmark.py
-    DataConfig,
-    build_model,
-    collate_batch,
-    load_cfg,
-    onehot_encode,
-    resolve_device,
-    stable_sigmoid,
-)
 
 WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
 
 def warn(msg: str) -> None:
     print(f"[warn] {msg}", file=sys.stderr)
-
-
-def encode_window(sequence: str, policy: str = DEFAULT_AMBIGUITY_POLICY) -> torch.Tensor:
-    """One-hot encode a window, choosing how IUPAC ambiguity codes are represented.
-
-    `n-channel` is the training-time encoding: every non-ACGT base sets the
-    dedicated N channel. It was the default until 2026-09-24 and reproduces
-    every number published before then; `impute` is now the default.
-
-    Measured 2026-09-22: under `n-channel`, two contiguous ambiguity codes take
-    a confident window from p=1.000 to exactly 0.000, and a real 37 kb prophage
-    in EDL933 scores ~0 because of 2-7 stray IUPAC bases per window. Both
-    alternatives below restore p~1.000 there and are exact no-ops on
-    ambiguity-free sequence. See docs/scientific-validity.md "1a".
-
-    `impute` replaces each ambiguous base with a concrete A/C/G/T, chosen
-    deterministically from the window's own content so repeated runs agree.
-    This is the only option that keeps the input *in distribution*: the model
-    was trained on one-hot vectors, and the N channel is effectively untrained
-    (ambiguity codes appear in ~0.2% of training windows, equally in both
-    classes, and the first-layer N-channel weights stay ~2.1x larger than the
-    ACGT ones across all three seeds -- i.e. near initialization). Under max
-    pooling a single such activation can dominate the pooled embedding, which
-    is why one or two bases suffice.
-
-    `uniform` instead spreads each ambiguous base as 0.25 across A/C/G/T. It is
-    deterministic and invents no specific base, but fractional inputs are
-    themselves out of distribution, so prefer `impute` unless measurement says
-    otherwise.
-    """
-    x = onehot_encode(sequence)
-    if policy == "n-channel":
-        return x
-    if policy not in AMBIGUITY_POLICIES:
-        raise ValueError(f"unknown ambiguity policy {policy!r}; expected one of {AMBIGUITY_POLICIES}")
-    ambiguous = x[4] > 0
-    if not bool(ambiguous.any()):
-        return x
-    x[4][ambiguous] = 0.0
-    if policy == "uniform":
-        x[:4, ambiguous] = 0.25
-        return x
-    # impute: deterministic per window -- seed from the unambiguous content so
-    # the same window always yields the same substitution, across runs and hosts
-    idx = torch.nonzero(ambiguous, as_tuple=False).flatten()
-    seed = (int(x[:4].sum().item()) * 1000003 + int(idx.sum().item())) & 0x7FFFFFFF
-    gen = torch.Generator().manual_seed(seed)
-    picks = torch.randint(0, 4, (idx.numel(),), generator=gen)
-    x[picks, idx] = 1.0
-    return x
 
 
 class GenomeWindowDataset(Dataset):
@@ -134,10 +101,8 @@ class GenomeWindowDataset(Dataset):
         end = int(row["end"])
         sequence = self.fasta[contig_id][start:end]
         if len(sequence) < self.window_len:
-            # Unreachable via `build_windows`, which emits only full-length
-            # windows -- but padding with N would silently zero the score
-            # (ambiguity codes saturate the model; see
-            # docs/scientific-validity.md "1a"), so fail rather than pad.
+            # build_windows emits only full-length windows; padding with N could
+            # silently zero the score (docs/scientific-validity.md "1a"), so fail instead
             raise RuntimeError(
                 f"short window {contig_id}:{start}-{end} ({len(sequence)} < {self.window_len} bp); "
                 "padding with N would silently zero its score"
@@ -209,7 +174,7 @@ def build_short_contig_windows(
     scales: Tuple[int, ...] = SHORT_CONTIG_SCALES,
     stride: int = SHORT_CONTIG_STRIDE,
     contig_lengths: Dict[str, int] | None = None,
-) -> Tuple[pd.DataFrame, Dict[str, object]]:
+) -> Tuple[pd.DataFrame, Dict[str, int]]:
     """Windows for contigs shorter than `window_len`, plus a report of them all.
 
     `build_windows` skips these contigs. Each one at least as long as the
@@ -278,11 +243,8 @@ def score_windows(
     if len(per_checkpoint) == 1:
         return per_checkpoint[0], per_checkpoint
     stacked = np.stack(per_checkpoint)
-    # max, not mean: averaging dilutes borderline seeds below the seed
-    # threshold -- the same effect that sank multi-tile averaging
-    # (docs/boundary-refinement.md) and mean-ensembling in the 2026-09-17
-    # checks. Measured 2026-09-21: max reaches .978/.994 covered recall
-    # (Default/Exploratory) against .950/.978 for mean.
+    # max, not mean: averaging pulls borderline seeds under the seed threshold and
+    # costs recall (docs/cli-and-packaging.md "Defaults changed + seed ensembling added")
     ensemble = stacked.max(axis=0) if opts.ensemble == "max" else stacked.mean(axis=0)
     return ensemble, per_checkpoint
 
@@ -425,9 +387,8 @@ def run_predict(args: argparse.Namespace) -> None:
     device = resolve_device(args.device)
     opts = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
     if opts.window_len != opts.trained_window_len:
-        # adaptive/global max pooling accepts any length, but score calibration
-        # does not transfer: negatives drift up as windows shrink (median 0.003
-        # at 10 kb -> 0.065 at 3 kb; docs/adaptive-multiscale-detection.md).
+        # the model accepts any length, but its scores on negatives rise as windows
+        # shrink, so the thresholds don't transfer (docs/adaptive-multiscale-detection.md)
         warn(f"--window-len {opts.window_len} differs from the trained {opts.trained_window_len}; the mode "
              f"thresholds were calibrated at {opts.trained_window_len} bp and are not validated at this length.")
 
@@ -439,7 +400,7 @@ def run_predict(args: argparse.Namespace) -> None:
     short_windows_df, short_report = build_short_contig_windows(
         opts.input_fasta, genome_id, window_len=opts.window_len, contig_lengths=contig_lengths)
     if short_report["n_short"]:
-        # never silent: this was the failure mode (docs/cli-and-packaging.md "Input robustness")
+        # never silent (docs/cli-and-packaging.md "Input robustness")
         verb = "scanned at reduced scale" if opts.short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
         warn(f"{short_report['n_short']} contig(s) shorter than {opts.window_len} bp "
              f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
@@ -450,7 +411,7 @@ def run_predict(args: argparse.Namespace) -> None:
 
     model = build_model(cfg, device)
     if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
-        # never silent: the mode thresholds assume the vote (options.MODE_THRESHOLDS comment)
+        # never silent: the mode thresholds were set with the vote over 3 checkpoints
         k = opts.min_seed_support
         warn(f"seed vote of {opts.requested_min_seed_support} requested but only {opts.n_checkpoints} "
              f"checkpoint(s): {'voting at ' + str(k) if k > 1 else 'no vote applied'}. The '{opts.mode}' "

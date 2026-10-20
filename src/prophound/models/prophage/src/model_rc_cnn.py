@@ -1,9 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import TYPE_CHECKING, List, Literal, Optional, cast
 
 import torch
 import torch.nn as nn
+
+if TYPE_CHECKING:
+    from .config import ProphageTrainConfig
 
 
 CombineMode = Literal["max", "mean"]
@@ -37,7 +56,8 @@ class AdaptiveMaxPool1dMPSSafe(nn.AdaptiveMaxPool1d):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.device.type != "mps":
             return super().forward(x)
-        return adaptive_max_pool1d_by_bins(x, int(self.output_size))
+        size = self.output_size if isinstance(self.output_size, int) else self.output_size[0]
+        return adaptive_max_pool1d_by_bins(x, int(size))
 
 
 class CNNEncoder1D(nn.Module):
@@ -93,6 +113,7 @@ class CNNEncoder1D(nn.Module):
         self.output_channels = channels[-1]
         self.emb_dim = channels[-1] * pool_bins
 
+        self.pool: Optional[nn.Module]
         if pooling == "global_max":
             if pool_bins != 1:
                 raise ValueError("global_max pooling requires pool_bins=1")
@@ -163,3 +184,16 @@ class RCCNN(nn.Module):
             raise ValueError(f"Unknown combine mode: {self.combine}")
 
         return self.head(combined_embedding).squeeze(-1)
+
+
+def build_model(cfg: ProphageTrainConfig, device: torch.device) -> nn.Module:
+    return RCCNN(
+        in_channels=5,
+        channels=cfg.model.channels,
+        kernel_sizes=cfg.model.kernel_sizes,
+        dropout=cfg.model.dropout,
+        fc_dim=cfg.model.fc_dim,
+        combine=cast(CombineMode, cfg.model.combine),
+        pooling=cast(PoolingMode, cfg.model.pooling),
+        pool_bins=cfg.model.pool_bins,
+    ).to(device)

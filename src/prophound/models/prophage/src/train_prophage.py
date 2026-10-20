@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2025 Jacob Alford <jalford0000@gmail.com>
+#                and Benjamin Alford <ssolar5.dev@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 from __future__ import annotations
 
 import argparse
@@ -6,188 +22,35 @@ import os
 import random
 import signal
 import time
-from dataclasses import asdict, dataclass, field
+from collections import OrderedDict
+from dataclasses import asdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-from collections import OrderedDict
+
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+import yaml
 from pyfaidx import Fasta
 from sklearn.metrics import average_precision_score, roc_auc_score
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
-import yaml
 
-from .model_rc_cnn import RCCNN
-
-
-# Config
-
-@dataclass
-class EarlyStoppingConfig:
-    metric: str = "val_auprc"
-    patience: int = 5
-    mode: str = "max"  # "max" or "min"
-
-
-@dataclass
-class TrainingConfig:
-    seed: int = 13
-    batch_size: int = 64
-    num_workers: int = 2
-    epochs: int = 20
-    lr: float = 3e-4
-    weight_decay: float = 1e-2
-    grad_clip: float = 1.0
-    amp: bool = True
-    save_every_sec: int = 1800
-    save_every_steps: int = 0
-    slurm_margin_sec: int = 600
-    auto_resume: bool = True
-    init_checkpoint: Optional[str] = None
-    init_mode: str = "strict"
-    early_stopping: EarlyStoppingConfig = field(default_factory=EarlyStoppingConfig)
-
-
-@dataclass
-class DataConfig:
-    manifest_csv: str
-    splits_dir: str
-    window_len: int = 10_000
-    stride: int = 1_000
-    use_neg_types_in_train: List[str] = field(
-        default_factory=lambda: ["far_neg", "positive"]
-    )
-    use_neg_types_in_val: List[str] = field(
-        default_factory=lambda: ["far_neg", "near_neg", "positive"]
-    )
-    use_neg_types_in_test: List[str] = field(
-        default_factory=lambda: ["far_neg", "near_neg", "positive"]
-    )
-
-
-@dataclass
-class ModelConfig:
-    type: str = "rc_cnn"
-    combine: str = "max"
-    channels: List[int] = field(default_factory=lambda: [64, 128, 256])
-    kernel_sizes: List[int] = field(default_factory=lambda: [15, 11, 7])
-    dropout: float = 0.2
-    fc_dim: int = 256
-    pooling: str = "global_max"
-    pool_bins: int = 1
-
-
-@dataclass
-class LossConfig:
-    pos_weight: str | float = "auto"
-
-
-@dataclass
-class ProphageTrainConfig:
-    run_name: str
-    data: DataConfig
-    training: TrainingConfig
-    model: ModelConfig
-    loss: LossConfig
-
-
-def load_cfg(path: str) -> ProphageTrainConfig:
-    with open(path, "r") as f:
-        raw = yaml.safe_load(f)
-
-    data = raw["data"]
-    training = raw.get("training", {})
-    model = raw.get("model", {})
-    loss = raw.get("loss", {})
-
-    data_config = DataConfig(
-        manifest_csv=data["manifest_csv"],
-        splits_dir=data["splits_dir"],
-        window_len=int(data.get("window_len", 10_000)),
-        stride=int(data.get("stride", 1_000)),
-        use_neg_types_in_train=data.get("use_neg_types_in_train", ["far_neg", "positive"]),
-        use_neg_types_in_val=data.get(
-            "use_neg_types_in_val", ["far_neg", "near_neg", "positive"]
-        ),
-        use_neg_types_in_test=data.get(
-            "use_neg_types_in_test", ["far_neg", "near_neg", "positive"]
-        ),
-    )
-
-    early_stopping_raw = training.get("early_stopping", {})
-    training_config = TrainingConfig(
-        seed=int(training.get("seed", 13)),
-        batch_size=int(training.get("batch_size", 64)),
-        num_workers=int(training.get("num_workers", 2)),
-        epochs=int(training.get("epochs", 30)),
-        lr=float(training.get("lr", 3e-4)),
-        weight_decay=float(training.get("weight_decay", 1e-2)),
-        grad_clip=float(training.get("grad_clip", 1.0)),
-        amp=bool(training.get("amp", True)),
-        save_every_sec=int(training.get("save_every_sec", 1800)),
-        save_every_steps=int(training.get("save_every_steps", 0)),
-        slurm_margin_sec=int(training.get("slurm_margin_sec", 600)),
-        auto_resume=bool(training.get("auto_resume", True)),
-        init_checkpoint=training.get("init_checkpoint"),
-        init_mode=training.get("init_mode", "strict"),
-        early_stopping=EarlyStoppingConfig(
-            metric=early_stopping_raw.get("metric", "val_auprc"),
-            patience=int(early_stopping_raw.get("patience", 5)),
-            mode=early_stopping_raw.get("mode", "max"),
-        ),
-    )
-
-    model_config = ModelConfig(
-        type=model.get("type", "rc_cnn"),
-        combine=model.get("combine", "max"),
-        channels=model.get("channels", [64, 128, 256]),
-        kernel_sizes=model.get("kernel_sizes", [15, 11, 7]),
-        dropout=float(model.get("dropout", 0.2)),
-        fc_dim=int(model.get("fc_dim", 256)),
-        pooling=model.get("pooling", "global_max"),
-        pool_bins=int(model.get("pool_bins", 1)),
-    )
-    if model.get("predict_boundary"):
-        raise ValueError(f"{path}: model.predict_boundary is no longer supported (the boundary head was removed)")
-
-    loss_config = LossConfig(pos_weight=loss.get("pos_weight", "auto"))
-
-    return ProphageTrainConfig(
-        run_name=raw.get("run_name", "prophage_v0"),
-        data=data_config,
-        training=training_config,
-        model=model_config,
-        loss=loss_config,
-    )
-
+from .config import (  # noqa: F401 -- re-exported for scripts
+    DataConfig,
+    EarlyStoppingConfig,
+    LossConfig,
+    ModelConfig,
+    ProphageTrainConfig,
+    TrainingConfig,
+    load_cfg,
+)
+from .devices import device_supports_amp, resolve_device
+from .encoding import collate_batch, onehot_encode, stable_sigmoid
+from .model_rc_cnn import build_model
 
 # Utilities
-
-BASE_TO_CH = {
-    "A": 0,
-    "C": 1,
-    "G": 2,
-    "T": 3,
-    "a": 0,
-    "c": 1,
-    "g": 2,
-    "t": 3,
-}
-N_CH = 4  # N channel index
-
-
-def onehot_encode(seq: str) -> torch.Tensor:
-    """Encode a sequence as a float32 tensor with channels [A, C, G, T, N]."""
-    L = len(seq)
-    x = np.zeros((5, L), dtype=np.float32)
-    for i, b in enumerate(seq):
-        ch = BASE_TO_CH.get(b, N_CH)
-        x[ch, i] = 1.0
-    return torch.from_numpy(x)
-
 
 def normalize_contig_id(raw: str) -> List[str]:
     """Return candidate contig IDs for matching manifest values to FASTA headers."""
@@ -221,66 +84,6 @@ def seed_everything(seed: int) -> None:
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
-
-def mps_available() -> bool:
-    return bool(
-        hasattr(torch.backends, "mps")
-        and torch.backends.mps.is_available()
-        and torch.backends.mps.is_built()
-    )
-
-
-def xpu_available() -> bool:
-    return bool(hasattr(torch, "xpu") and torch.xpu.is_available())
-
-
-def rocm_available() -> bool:
-    return bool(torch.cuda.is_available() and getattr(torch.version, "hip", None))
-
-
-def resolve_device(requested_device: str) -> torch.device:
-    requested = requested_device.lower()
-
-    if requested == "auto":
-        if torch.cuda.is_available():
-            return torch.device("cuda")
-        if mps_available():
-            return torch.device("mps")
-        if xpu_available():
-            return torch.device("xpu")
-        return torch.device("cpu")
-
-    if requested == "cpu":
-        return torch.device("cpu")
-
-    if requested == "cuda":
-        if not torch.cuda.is_available():
-            raise RuntimeError("Requested device 'cuda' is not available.")
-        return torch.device("cuda")
-
-    if requested == "rocm":
-        if not rocm_available():
-            raise RuntimeError(
-                "Requested device 'rocm' is not available through the installed PyTorch backend."
-            )
-        return torch.device("cuda")
-
-    if requested == "mps":
-        if not mps_available():
-            raise RuntimeError("Requested device 'mps' is not available.")
-        return torch.device("mps")
-
-    if requested in {"xpu", "intel"}:
-        if not xpu_available():
-            raise RuntimeError("Requested device 'xpu' is not available.")
-        return torch.device("xpu")
-
-    raise ValueError(f"Unsupported device request: {requested_device}")
-
-
-def device_supports_amp(device: torch.device) -> bool:
-    return device.type == "cuda"
 
 
 def load_init_weights(
@@ -452,13 +255,6 @@ class WindowDataset(Dataset):
         return x, torch.tensor(y, dtype=torch.float32)
 
 
-def collate_batch(batch):
-    xs, ys = zip(*batch)
-    x = torch.stack(xs, dim=0)  # (B, 5, L)
-    y = torch.stack(ys, dim=0)  # (B,)
-    return x, y
-
-
 # Metrics
 
 @torch.no_grad()
@@ -500,16 +296,6 @@ def evaluate(
     return out
 
 
-def stable_sigmoid(logits: np.ndarray) -> np.ndarray:
-    # Use a stable sigmoid to avoid overflow warnings on large logits.
-    probs = np.empty_like(logits, dtype=np.float32)
-    pos = logits >= 0
-    probs[pos] = 1.0 / (1.0 + np.exp(-logits[pos]))
-    exp_logits = np.exp(logits[~pos])
-    probs[~pos] = exp_logits / (1.0 + exp_logits)
-    return probs
-
-
 @torch.no_grad()
 def predict_logits(
     model: nn.Module, loader: DataLoader, device: torch.device
@@ -537,8 +323,10 @@ def compute_pos_weight(train_df: pd.DataFrame) -> float:
 
 
 def make_dfs(
-    manifest_csv: str, splits_dir: str, data_config: DataConfig
+    manifest_csv: Optional[str], splits_dir: Optional[str], data_config: DataConfig
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    if not manifest_csv or not splits_dir:
+        raise ValueError("training and evaluation need data.manifest_csv and data.splits_dir in the config")
     print(f"[data] reading manifest: {manifest_csv}")
     required_columns = [
         "genome_id",
@@ -589,19 +377,6 @@ def make_dfs(
             "Train split has 0 positive windows. Check your splits and BED labeling."
         )
     return train_df, val_df, test_df
-
-
-def build_model(cfg: ProphageTrainConfig, device: torch.device) -> nn.Module:
-    return RCCNN(
-        in_channels=5,
-        channels=cfg.model.channels,
-        kernel_sizes=cfg.model.kernel_sizes,
-        dropout=cfg.model.dropout,
-        fc_dim=cfg.model.fc_dim,
-        combine=cfg.model.combine,
-        pooling=cfg.model.pooling,
-        pool_bins=cfg.model.pool_bins,
-    ).to(device)
 
 
 def append_eval_metrics(
@@ -830,7 +605,7 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
     metric_name = cfg.training.early_stopping.metric
     bad_epochs = 0
 
-    history = {"train": [], "val": [], "test": []}
+    history: Dict[str, List[dict]] = {"train": [], "val": [], "test": []}
     nonfinite_loss_skips = 0
     nonfinite_grad_skips = 0
 
@@ -1115,7 +890,7 @@ def train_one_run(cfg: ProphageTrainConfig, out_dir: Path, requested_device: str
         )
 
         # validation
-        if val_loader is not None and len(val_ds) > 0:
+        if val_loader is not None and val_ds is not None and len(val_ds) > 0:
             val_metrics = evaluate(model, val_loader, device)
             history["val"].append({"epoch": epoch, **val_metrics})
             print(

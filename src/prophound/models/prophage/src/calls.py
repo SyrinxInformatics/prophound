@@ -51,9 +51,7 @@ FILTER_N_GAP = "n_gap"
 
 
 def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
-    """`boundary_kind` string for the coverage builder, encoding the merge
-    settings when fragment merging is on (so a regions.tsv is self-describing).
-    Unchanged from the pre-merge format when it is off."""
+    """`boundary_kind` for the coverage builder: its settings, so a regions.tsv says how it was built."""
     kind = f"coverage_frac_{frac:g}"
     if max_gap_bp > 0:
         kind += f"_gap{max_gap_bp:d}"
@@ -69,24 +67,14 @@ def _close_gaps(
     max_gap_bins: int,
     bridge_prob: float,
 ) -> np.ndarray:
-    """Merge inside-runs separated by a short, optionally still-elevated gap.
+    """Merge inside-runs separated by a short gap that still looks element-like.
 
-    The fragmentation failure mode (docs/gap-filling.md, measured 2026-09-20 in
-    docs/model-quality-baseline.md): 60 kb+ elements are matched 86-100% of the
-    time but at median IoU 0.218 and median predicted length 22 kb, because the
-    score track dips below `extend_threshold` partway through and the builder
-    closes the region there. This is a morphological closing on the per-bin
-    `inside` mask: a run of outside bins is filled if it is at most
-    `max_gap_bins` long AND every covered bin in it has mean covering-window
-    probability >= `bridge_prob`.
-
-    `bridge_prob` is the anti-overextension guard (docs/anti-overextension.md):
-    at 0 the merge is distance-only and will happily bridge two genuinely
-    separate nearby elements; raising it requires the intervening sequence to
-    still look somewhat element-like, well below `extend_threshold`. Gaps at a
-    contig edge (leading/trailing) are never filled -- there is no second run to
-    merge with. Uncovered bins inside a gap cannot be judged, so they never
-    satisfy a `bridge_prob > 0` gate.
+    A morphological closing of the per-bin `inside` mask: a run of outside bins is filled
+    if it is at most `max_gap_bins` long and every bin in it is covered with a mean window
+    probability of at least `bridge_prob`. This repairs large elements whose score dips
+    partway through (docs/gap-filling.md). `bridge_prob` is the guard against bridging two
+    separate neighbouring elements; at 0 the merge is distance-only. Gaps at a contig end
+    are never filled, and an uncovered bin never passes a `bridge_prob > 0` gate.
     """
     if max_gap_bins <= 0:
         return inside
@@ -118,6 +106,32 @@ def _close_gaps(
     return out
 
 
+def _bin_grid(contig_df: pd.DataFrame) -> Tuple[int, int, int, int]:
+    """Stride-sized bins over one contig's windows (sorted by start): stride (the
+    commonest start-to-start step), contig end, bin count, bins covered per window."""
+    stride_values = contig_df["start"].astype(int).diff().dropna()
+    window_len = int(contig_df["end"].iloc[0] - contig_df["start"].iloc[0])
+    stride = int(stride_values.mode().iloc[0]) if not stride_values.empty else window_len
+    contig_end = int(contig_df["end"].max())
+    n_bins = int(math.ceil(contig_end / stride))
+    return stride, contig_end, n_bins, max(1, int(math.ceil(window_len / stride)))
+
+
+def _runs(mask: np.ndarray) -> List[Tuple[int, int]]:
+    """(first, last) bin index of each run of True in `mask`."""
+    out, i, n = [], 0, len(mask)
+    while i < n:
+        if not mask[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < n and mask[j + 1]:
+            j += 1
+        out.append((i, j))
+        i = j + 1
+    return out
+
+
 def build_region_table_coverage(
     windows_df: pd.DataFrame,
     seed_threshold: float,
@@ -126,31 +140,19 @@ def build_region_table_coverage(
     max_gap_bp: int = DEFAULT_MAX_GAP_BP,
     bridge_prob: float = DEFAULT_BRIDGE_PROB,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Coverage-fraction region builder (2026-09-17, docs/multi-model-architecture.md).
+    """Turn per-window scores into regions, per contig, on a grid of stride-sized bins.
 
-    The removed `strict` builder marked a stride-sized bin as inside a region only if
-    the MEAN of the ~window_len/stride windows covering it is >= `extend_threshold`
-    -- effectively the intersection of high-scoring windows. Because the model's
-    score track inside real elements is spiky (islands of high windows amid
-    background), that drops sparse-signal elements outright and trims every
-    region by ~half a window per side. This builder instead marks a bin as
-    inside if at least `min_coverage_frac` of its covering windows individually
-    score >= `extend_threshold` (frac -> 0 is the union of high windows; frac ~1
-    recovers intersection behavior). Runs of inside bins that contain at least
-    one bin covered by a window >= `seed_threshold` become regions.
+    A bin is inside if at least `min_coverage_frac` of the windows covering it score at or
+    above `extend_threshold` (0 approaches the union of high windows, 1 the intersection).
+    The model's score is spiky inside real elements, so requiring the mean of the covering
+    windows instead drops sparse-signal elements and trims every call by about half a
+    window per side (docs/multi-model-architecture.md). With `max_gap_bp` > 0, runs separated
+    by a short gap are merged first (`_close_gaps`). A run of inside bins becomes a region if
+    any bin in it is covered by a window at or above `seed_threshold`.
 
-    On the 18-genome eval set this lifts region recall 76.9% -> 88.5% (frac 0.3)
-    / 94.2% (frac <= 0.1) and median IoU 0.56 -> 0.75-0.77, at the cost of
-    2-4x more calls per genome. frac 0.3 is where start/end errors are
-    symmetric; the union brackets true edges by ~4.5 kb a side. Same output
-    contract as the strict builder had; `region_pred_label` marks windows that
-    overlap a called region.
-
-    `max_gap_bp` / `bridge_prob` (both default off) additionally merge calls
-    separated by a short gap, to repair elements fragmented by an internal dip
-    in the score track -- see `_close_gaps` and docs/gap-filling.md. With
-    `max_gap_bp=0` this function's output is identical to its pre-2026-09-21
-    behavior.
+    Returns the windows, sorted by start within each contig, with `region_pred_label` (1 if
+    the window overlaps a region), and the regions (`REGION_COLUMNS`). Region edges are bin
+    edges.
     """
     if not 0.0 <= min_coverage_frac <= 1.0:
         raise ValueError("min_coverage_frac must be in [0, 1]")
@@ -169,14 +171,7 @@ def build_region_table_coverage(
         contig_df = contig_df.sort_values(["start", "end"]).reset_index(drop=True).copy()
         contig_df["region_pred_label"] = 0
 
-        stride_values = contig_df["start"].astype(int).diff().dropna()
-        stride = int(stride_values.mode().iloc[0]) if not stride_values.empty else int(
-            contig_df["end"].iloc[0] - contig_df["start"].iloc[0]
-        )
-        window_len = int(contig_df["end"].iloc[0] - contig_df["start"].iloc[0])
-        contig_end = int(contig_df["end"].max())
-        n_bins = int(math.ceil(contig_end / stride))
-        bins_per_window = max(1, int(math.ceil(window_len / stride)))
+        stride, contig_end, n_bins, bins_per_window = _bin_grid(contig_df)
 
         high_count = np.zeros(n_bins, dtype=np.int32)
         cover_count = np.zeros(n_bins, dtype=np.int32)
@@ -210,14 +205,7 @@ def build_region_table_coverage(
                 bridge_prob=bridge_prob,
             )
 
-        bin_index = 0
-        while bin_index < n_bins:
-            if not inside[bin_index]:
-                bin_index += 1
-                continue
-            right_bin = bin_index
-            while right_bin + 1 < n_bins and inside[right_bin + 1]:
-                right_bin += 1
+        for bin_index, right_bin in _runs(inside):
             if seed_bin_mask[bin_index : right_bin + 1].any():
                 region_start = bin_index * stride
                 region_end = min(contig_end, (right_bin + 1) * stride)
@@ -241,18 +229,11 @@ def build_region_table_coverage(
                         ),
                     }
                 )
-            bin_index = right_bin + 1
 
         annotated_parts.append(contig_df)
 
     annotated_windows_df = pd.concat(annotated_parts, ignore_index=True)
-    regions_df = pd.DataFrame(
-        region_rows,
-        columns=[
-            "genome_id", "contig_id", "start", "end", "n_windows",
-            "region_len_bp", "mean_prob", "max_prob", "boundary_kind",
-        ],
-    )
+    regions_df = pd.DataFrame(region_rows, columns=REGION_COLUMNS)
     return annotated_windows_df, regions_df
 
 
@@ -457,7 +438,7 @@ def finalize(
                                      f"{FILTER_SEED_VOTE};{FILTER_N_GAP}", FILTER_SEED_VOTE)
         filtered = concat_nonempty([snapped, filtered[~voted_out]])
 
-    meta = {"edge_snap": edge_meta, "n_gap_filter": gap_meta}
+    meta: Dict[str, dict] = {"edge_snap": edge_meta, "n_gap_filter": gap_meta}
     if per_seed:
         seed_regs = [pd.concat([x for x in r if len(x)], ignore_index=True) if any(len(x) for x in r)
                      else pd.DataFrame(columns=["contig_id", "start", "end"]) for r in per_seed]
@@ -465,7 +446,7 @@ def finalize(
         calls["seed_support"] = seed_support(calls, seed_regs) if len(calls) else []
         if len(filtered):
             filtered = filtered.assign(seed_support=seed_support(filtered, seed_regs))
-        meta["seed_support"] = {
+        support: Dict[str, object] = {
             "n_checkpoints": len(per_seed),
             "min_seed_support": rules.min_seed_support,
             "requested_min_seed_support": (rules.min_seed_support if requested_min_seed_support is None
@@ -475,4 +456,5 @@ def finalize(
             "calls_by_support": {str(k): int(v) for k, v in
                                  calls["seed_support"].value_counts().sort_index().items()},
         }
+        meta["seed_support"] = support
     return FinalCalls(calls, filtered, meta)

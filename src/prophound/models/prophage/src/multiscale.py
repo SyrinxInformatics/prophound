@@ -32,12 +32,9 @@ at a finer window size and addresses the other three downstream problems:
     alpha=1 reproduces the coarse call exactly; alpha=0 is the fine core. So a
     refined piece is never wider than its coarse call nor narrower than its
     fine core -- neither failure mode can exceed its current bound.
-    alpha may ramp with the piece's fine-core length (`alpha_ramp_bp`): measured
-    on 817370's tracks, the fine core is about right for elements under ~10 kb
-    and truncates large ones by several kb, while the coarse edge overshoots
-    small elements by ~6 kb per side but large ones by only ~1.5 kb. So the
-    best alpha rises from ~0 (small) to ~0.8 (60 kb+); one global value cannot
-    serve both (docs/downstream-postprocessing.md "Per-element dig").
+    alpha may ramp with the piece's fine-core length (`alpha_ramp_bp`): the fine
+    core suits small elements and the coarse edge large ones, so one global
+    value cannot serve both (docs/downstream-postprocessing.md "Per-element dig").
   - recall: a coarse call with no fine support is kept unchanged and flagged,
     never dropped.
 

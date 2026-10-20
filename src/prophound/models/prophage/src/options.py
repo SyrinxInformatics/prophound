@@ -25,22 +25,9 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
-# Seed threshold and call-level seed vote per mode. Re-derived 2026-09-29 (user
-# decision) from the vote frontier (docs/error-analysis.md "Seed-vote
-# confirmation"): an ensemble call is kept only if at least MODE_MIN_SEED_SUPPORT
-# checkpoints make an overlapping call of their own at the same thresholds.
-# Ensemble covered50 / calls per genome, 42-genome tuning sample and the 18
-# (docs/research-integrity.md C1: neither is held out):
-#   exploratory 0.90, keep all (flagged) -> 0.994 / 35.6 and 1.000 / 39.6
-#   default     0.95, 3 of 3            -> 0.972 / 14.1 and 1.000 / 13.3
-#   conservative 0.995, 3 of 3          -> 0.944 /  8.5 and 0.962 /  6.4
-# Default was 0.98 / 3 of 3 for part of 2026-09-29; moved to 0.95 the same day
-# (user) because 0.98 lost small and geNomad-negative elements that 0.95 keeps
-# (docs/error-analysis.md "Cost on evidence that isn't geNomad agreement").
-# Exploratory then moved 0.95 -> 0.90 (user) so it keeps a reach beyond Default:
-# recall saturates at 0.90 (lower thresholds add calls, not elements).
-# Before 2026-09-29: 0.95 / 0.995 / 0.999 with no vote (reproduce with
-# --threshold and --min-seed-support 1).
+# Per mode: the seed threshold, and how many checkpoints must make an overlapping call
+# of their own for an ensemble call to be kept (the seed vote). Exploratory keeps every
+# call. Derivation and history: docs/cli-and-packaging.md "Seed vote per mode".
 MODE_THRESHOLDS = {
     "exploratory": 0.90,
     "default": 0.95,
@@ -53,33 +40,19 @@ MODE_MIN_SEED_SUPPORT = {
 }
 
 AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
-# Default flipped to impute 2026-09-24 (user decision): n-channel silently zeroes
-# scores on ambiguity codes; impute is in-distribution and a no-op on clean
-# sequence (816446: covered recall identical to 3 dp on the 42-genome sample).
+# The model's N channel is effectively untrained, so 'n-channel' can zero a window's
+# score; 'impute' keeps the input in distribution (docs/scientific-validity.md "1a").
 DEFAULT_AMBIGUITY_POLICY = "impute"
-# Contigs shorter than --window-len (docs/adaptive-multiscale-detection.md Part 4).
-# 'scan' (default since 2026-09-28, user decision) tiles each with the largest
-# scale that fits; 'skip' leaves them unscanned. Either way they are reported.
+
+# Contigs shorter than --window-len are tiled with the largest scale that fits ('scan')
+# or left unscanned ('skip'); either way they are reported.
 SHORT_CONTIG_MODES = ("skip", "scan")
 DEFAULT_SHORT_CONTIGS = "scan"
-SHORT_CONTIG_SCALES = (5000, 3000)   # below ~3 kb a window cannot judge (spike-in floor)
+SHORT_CONTIG_SCALES = (5000, 3000)   # below ~3 kb a window cannot judge
 SHORT_CONTIG_STRIDE = 500
-# Seed/extend threshold per mode and short-contig scale. Calibrated 2026-09-28
-# (818235, scripts/short_contig_sweep.py): the 42-genome size-stratified sample
-# shredded into 27,719 fragments of 3-10 kb; each threshold is the one whose false
-# calls per Mb of element-free sequence match the intact-genome 10 kb pipeline in
-# the same mode (shipped merging). Ensemble, short vs 10 kb reference (false/Mb):
-# exploratory 0.95 -> 6.55 vs 6.04; default 0.99 -> 2.64 vs 2.52; conservative
-# 0.998 -> 1.13 vs 1.33 (0.995 overshoots at 1.84). Single seeds agree. The sweep
-# applied one threshold to both scales, so they share a value; a
-# fragment-length-normalised split puts 5 kb ~13% above the reference and 3 kb
-# below it, inside the reference's own seed spread.
-# Re-derived 2026-09-29 under the seed vote (822053, short_contig_vote_sweep.py;
-# rule "never exceed", user): the lowest threshold whose shredded false calls/Mb,
-# with the mode's vote, do not exceed the intact 10 kb pipeline's in that mode.
-#   default 0.95/3-of-3: shredded 2.06 vs reference 2.45 (0.90 gives 3.12)
-#   conservative 0.995/3-of-3: shredded 0.84 at 0.99 vs 1.09 (0.985 gives 1.11)
-#   exploratory 0.90/keep all: shredded 6.55 at 0.95 vs reference 7.60 (0.90 gives 9.68)
+# Seed and extend threshold per mode and scale: the lowest whose false calls per Mb on
+# shredded genomes, with the mode's vote, do not exceed the intact 10 kb pipeline's
+# (docs/cli-and-packaging.md).
 SHORT_CONTIG_THRESHOLDS = {
     "exploratory": {5000: 0.95, 3000: 0.95},
     "default": {5000: 0.95, 3000: 0.95},
@@ -88,47 +61,26 @@ SHORT_CONTIG_THRESHOLDS = {
 
 ENSEMBLE_MODES = ("max", "mean")
 DEFAULT_ENSEMBLE = "max"
-# Defaults changed 2026-09-21 to the measured operating point for the ">=95%
-# recall on known regions" contract -- docs/model-quality-baseline.md
-# "Operating point".
+# The coverage builder and fragment merging at the measured operating point
+# (docs/model-quality-baseline.md "Operating point").
 DEFAULT_COVERAGE_FRAC = 0.1
-# Fragment merging (docs/gap-filling.md). 0 = off, which is the shipped default
-# until a held-out sweep picks a value -- see `_close_gaps`.
-DEFAULT_MAX_GAP_BP = 50000
+DEFAULT_MAX_GAP_BP = 50000      # 0 turns merging off
 DEFAULT_BRIDGE_PROB = 0.1
-# Fine-scale refinement, pass B (multiscale.py; docs/adaptive-multiscale-detection.md).
-# Off by default: 0 = no refinement, and with it off output is byte-identical.
+# The fine refinement pass is off by default (0); the other settings are the opt-in
+# "tight boundaries" setting (docs/downstream-postprocessing.md).
 DEFAULT_REFINE_WINDOW_LEN = 0
 DEFAULT_REFINE_STRIDE = 250
-# Fine-pass threshold for the opt-in "tight boundaries" setting (5 kb, alpha 0.6,
-# ramp 15000 60000). Swept 2026-09-28 on the 42-genome tracks at 5 kb (ensemble):
-# 0.95 gives median IoU 0.785 at covered50 0.955 (vs 0.713 / 0.961 unrefined); the
-# previous fallback, the mode's extend threshold (0.99), gave 0.793 / 0.916. 0.6-0.8
-# is recall-neutral (+0.04-0.06 IoU) and is being confirmed on the 18-genome
-# sample. Default mode only; docs/downstream-postprocessing.md.
 DEFAULT_REFINE_THRESHOLD = 0.95
-DEFAULT_EDGE_ALPHA = 1.0        # 1 = keep coarse edges; calibrate before lowering
-# Split gates as swept for the tight-boundaries setting (sweep_ramp, 2026-09-24):
-# 4 kb / 0.05 adds ~0.3-0.9 fragmented elements; 0.2 added ~4.7. Were 2000 / 0.1,
-# which no ramp sweep measured. Below DEFAULT_BRIDGE_PROB, so splitting cannot undo
-# a merge; 0.05-0.1 is a dead band where neither acts.
+DEFAULT_EDGE_ALPHA = 1.0        # 1 keeps the coarse edges
 DEFAULT_SPLIT_MIN_GAP_BP = 4000
+# Below DEFAULT_BRIDGE_PROB, so splitting cannot undo a merge.
 DEFAULT_SPLIT_MAX_PROB = 0.05
-# Calls that are at least this fraction N are dropped (user decision 2026-09-29).
-# `impute` fills an N run with random bases; over a long scaffold gap that reads
-# as foreign sequence and gets called (822054: Exploratory 2.7 calls/genome
-# inside 20 kb gaps). Masking the gap's windows instead cost most of the
-# recall near every gap, because windows are 10 kb (docs/v1-scope.md A.3).
+# A call at least this fraction N is dropped: `impute` turns a scaffold gap into random
+# sequence, which can be called (docs/v1-scope.md A.3).
 MAX_CALL_N_FRAC = 0.5
-# Edge snapping for fragmented input (user decision 2026-10-05; docs/claims-and-evidence.md
-# "G5b" amendments). A call edge within this fraction of --window-len of a contig end
-# is moved to that end: a breakpoint cut the element, and the windows that would
-# reach the end score it only partly. Relative to --window-len so it scales with
-# larger windows; short-contig calls use the same distance (snapping them by their
-# own 5/3 kb scale instead lost 1 of 156 element-seeds on the 18). Measured at the
-# trained 10 kb window (5 kb snap) on corpus shreds: Default MAG covered50 0.808 ->
-# 0.827 (42) / 0.878 -> 0.904 (18), calls unchanged, about 6.5% more bp called on
-# MAG input. Other window lengths are untested, as for the thresholds. 0 = off.
+# A call edge within this fraction of --window-len of a contig end moves onto the end:
+# an element cut by a breakpoint is only partly scored there
+# (docs/claims-and-evidence.md "G5b"). 0 turns snapping off.
 DEFAULT_EDGE_SNAP_FRAC = 0.5
 
 DEVICES = ("auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel")
@@ -206,7 +158,7 @@ class PredictOptions:
         stride = int(args.stride) if args.stride else trained_stride
         if window_len <= 0 or stride <= 0:
             raise SystemExit("--window-len and --stride must be positive")
-        ramp = tuple(int(x) for x in args.edge_alpha_ramp) if args.edge_alpha_ramp else None
+        ramp = (int(args.edge_alpha_ramp[0]), int(args.edge_alpha_ramp[1])) if args.edge_alpha_ramp else None
         if ramp and not 0 < ramp[0] < ramp[1]:
             raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
         refine_threshold = DEFAULT_REFINE_THRESHOLD if args.refine_threshold is None else float(args.refine_threshold)
