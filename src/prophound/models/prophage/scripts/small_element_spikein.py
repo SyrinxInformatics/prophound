@@ -53,34 +53,13 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from evalkit import canon_kmers
 
-K = 21
-BASES = np.full(256, 4, dtype=np.uint8)
-for _i, _b in enumerate(b"ACGT"):
-    BASES[_b] = _i
-    BASES[_b + 32] = _i
 SIZE_BINS = [(0, 3000, "<3kb"), (3000, 5000, "3-5kb"), (5000, 8000, "5-8kb"), (8000, 10001, "8-10kb")]
-
-
-def canon_kmers(seq: str, k: int = K) -> np.ndarray:
-    """Unique canonical k-mer codes (2 bits/base); k-mers spanning non-ACGT are dropped."""
-    arr = BASES[np.frombuffer(seq.encode("ascii", "ignore"), dtype=np.uint8)]
-    n = arr.size - k + 1
-    if n <= 0:
-        return np.empty(0, dtype=np.uint64)
-    bad = np.convolve((arr >= 4).astype(np.int32), np.ones(k, dtype=np.int32), "valid") > 0
-    a = np.where(arr < 4, arr, 0).astype(np.uint64)
-    fwd = np.zeros(n, dtype=np.uint64)
-    rev = np.zeros(n, dtype=np.uint64)
-    for i in range(k):
-        fwd = (fwd << np.uint64(2)) | a[i:i + n]
-        rev |= (np.uint64(3) - a[i:i + n]) << np.uint64(2 * i)
-    return np.unique(np.minimum(fwd, rev)[~bad])
 
 
 def read_fasta(path) -> list:
@@ -330,10 +309,7 @@ def cmd_build(a) -> None:
 
 # ---------------------------------------------------------------- eval
 def cmd_eval(a) -> None:
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from mode_recheck import MODE_THRESHOLDS, calls, load_tracks
-    from refine_sweep import fine_regions_by_genome, refine_all
+    from evalkit import MODE_THRESHOLDS, calls, fine_regions_by_genome, load_tracks, refine_all
 
     runs = dict(s.split("=", 1) for s in a.run)
     tracks = {k: load_tracks(v) for k, v in runs.items()}

@@ -33,27 +33,13 @@ Example:
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from refine_sweep import covered50  # noqa: E402
+from evalkit import calls_at, covered50, seed_support
 
 THRESHOLDS = [0.9, 0.95, 0.98, 0.99, 0.995, 0.999]
-
-
-def calls_at(tracks: dict, t: float) -> pd.DataFrame:
-    mode = max((m for m, s in mr.MODE_THRESHOLDS.items() if s <= t), key=mr.MODE_THRESHOLDS.get,
-               default="exploratory")
-    saved = mr.MODE_THRESHOLDS[mode]
-    mr.MODE_THRESHOLDS[mode] = t   # calls() reads the seed from here; restore after
-    try:
-        return mr.calls(tracks, mode)
-    finally:
-        mr.MODE_THRESHOLDS[mode] = saved
 
 
 def main() -> None:
@@ -64,7 +50,7 @@ def main() -> None:
     args = ap.parse_args()
 
     ev = pd.read_csv(args.elements) if args.elements else None
-    tr = {r: mr.load_tracks(str(Path(args.root) / r)) for r in ("r1", "r2", "r3", "ens")}
+    tr = {r: ek.load_tracks(str(Path(args.root) / r)) for r in ("r1", "r2", "r3", "ens")}
     n_gen = len(tr["ens"])
     rows = []
     for t in THRESHOLDS:
@@ -73,13 +59,13 @@ def main() -> None:
         sup = []
         for g, sub in ens.groupby("genome_id", sort=False):
             per = [s[s.genome_id == g] for s in seeds]
-            sup += list(zip(sub.index, mr_support(sub, per)))
+            sup += list(zip(sub.index, seed_support(sub, per)))
         ens = ens.assign(support=pd.Series(dict(sup)))
         for k in (1, 2, 3):
             reg = ens[ens.support >= k]
             row = {"threshold": t, "k": k, "calls_per_genome": len(reg) / n_gen}
             if ev is not None:
-                off = sum(mr.element_overlap_bp(ev, r) == 0 for r in reg.itertuples())
+                off = sum(ek.element_overlap_bp(ev, r) == 0 for r in reg.itertuples())
                 row.update({"covered50": covered50(ev, reg), "off_target_per_genome": off / n_gen})
             rows.append(row)
             print(" ".join(f"{a} {b:.3f}" if isinstance(b, float) else f"{a} {b}" for a, b in row.items()),
@@ -87,14 +73,6 @@ def main() -> None:
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(args.out, index=False)
     print(f"[done] wrote {args.out}")
-
-
-def mr_support(sub: pd.DataFrame, per: list) -> list:
-    try:
-        from prophound.models.prophage.src.predict_genome import seed_support
-    except ImportError:
-        from src.predict_genome import seed_support
-    return seed_support(sub, per)
 
 
 if __name__ == "__main__":

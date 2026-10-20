@@ -43,14 +43,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).parent))
-from eval_region_metrics import covered_bp, load_genome_list, load_pred_regions, overlap  # noqa: E402
+from evalkit import covered_bp, load_genome_list, load_pred_regions, overlap, wilson
 
 MODES = ("default", "exploratory", "conservative")
 # Final-mode ensemble covered50 on the reused samples (docs/release-checklist.md,
@@ -60,16 +57,6 @@ REFERENCE = {
     "18": {"exploratory": 1.000, "default": 1.000, "conservative": 0.962},
 }
 STRATA = ["<5kb", "5-8kb", "8-10kb", "10-15kb", "15-30kb", "30-60kb", "60kb+"]
-
-
-def wilson(k: int, n: int, z: float = 1.959964) -> list:
-    if n == 0:
-        return [float("nan"), float("nan")]
-    p = k / n
-    d = 1 + z * z / n
-    c = (p + z * z / (2 * n)) / d
-    h = z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return [float(c - h), float(c + h)]
 
 
 def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool) -> dict:

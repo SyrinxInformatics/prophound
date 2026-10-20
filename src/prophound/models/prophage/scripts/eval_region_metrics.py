@@ -43,11 +43,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-
-def load_genome_list(path: Path) -> list:
-    with open(path) as f:
-        return [line.strip() for line in f if line.strip()]
+from evalkit import covered_bp, load_genome_list, load_pred_regions, overlap
 
 
 def load_true_regions(genomad_dir: Path, accession: str) -> pd.DataFrame:
@@ -56,39 +52,10 @@ def load_true_regions(genomad_dir: Path, accession: str) -> pd.DataFrame:
     return df[["source_seq", "start", "end"]].rename(columns={"source_seq": "contig_id"})
 
 
-def load_pred_regions(predict_dir: Path, accession: str) -> pd.DataFrame:
-    tsv = predict_dir / accession / "regions.tsv"
-    # predict_genome.py writes a bare newline (no header) when it finds zero
-    # regions for a genome -- pd.read_csv chokes on that with EmptyDataError.
-    if not tsv.exists() or tsv.stat().st_size <= 1:
-        return pd.DataFrame(columns=["contig_id", "start", "end"])
-    df = pd.read_csv(tsv, sep="\t")
-    if df.empty:
-        return pd.DataFrame(columns=["contig_id", "start", "end"])
-    return df[["contig_id", "start", "end"]]
-
-
-def overlap(a_start, a_end, b_start, b_end) -> float:
-    return max(0, min(a_end, b_end) - max(a_start, b_start))
-
-
 def iou(a_start, a_end, b_start, b_end) -> float:
     inter = overlap(a_start, a_end, b_start, b_end)
     union = (a_end - a_start) + (b_end - b_start) - inter
     return inter / union if union > 0 else 0.0
-
-
-def covered_bp(t_start: int, t_end: int, calls) -> int:
-    """bp of [t_start, t_end) under the union of `calls` (start, end pairs)."""
-    ivs = sorted((max(t_start, s), min(t_end, e)) for s, e in calls if min(t_end, e) > max(t_start, s))
-    bp, cur_s, cur_e = 0, None, None
-    for s, e in ivs:
-        if cur_e is None or s > cur_e:
-            bp += 0 if cur_e is None else cur_e - cur_s
-            cur_s, cur_e = s, e
-        else:
-            cur_e = max(cur_e, e)
-    return bp + (0 if cur_e is None else cur_e - cur_s)
 
 
 def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str, strata: list | None = None) -> None:

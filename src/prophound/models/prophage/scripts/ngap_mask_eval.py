@@ -36,15 +36,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from ambiguity_dose import cov_fracs, gap_call_stats  # noqa: E402
+from ambiguity_dose import gap_call_stats
+from evalkit import cov_fracs
 
 
 def gap_bp_per_window(w: pd.DataFrame, gaps: pd.DataFrame) -> np.ndarray:
@@ -131,8 +129,8 @@ def main() -> None:
     res, base = {}, {}
     for cond in ["impute__clean__0"] + [c for c in conds if c != "impute__clean__0"]:
         d = root / cond
-        ens = mr.load_tracks(str(d))
-        seeds = [mr.load_tracks(str(d), f"prob_ckpt{k}") for k in (1, 2, 3)]
+        ens = ek.load_tracks(str(d))
+        seeds = [ek.load_tracks(str(d), f"prob_ckpt{k}") for k in (1, 2, 3)]
         _, pat, rate = cond.split("__")
         gaps = None
         if pat == "ngap":
@@ -141,8 +139,8 @@ def main() -> None:
         for frac in fracs:
             mf = frac if isinstance(frac, float) else None
             e2, s2 = mask_tracks(ens, gaps, mf), [mask_tracks(s, gaps, mf) for s in seeds]
-            for mode in mr.MODE_THRESHOLDS:
-                raw = mr.vote(mr.calls(e2, mode), [mr.calls(s, mode) for s in s2], mr.MODE_MIN_SEED_SUPPORT[mode])
+            for mode in ek.MODE_THRESHOLDS:
+                raw = ek.vote(ek.calls(e2, mode), [ek.calls(s, mode) for s in s2], ek.MODE_MIN_SEED_SUPPORT[mode])
                 if frac == "drop":
                     reg = drop_gap_calls(raw, gaps)
                 elif frac is None:

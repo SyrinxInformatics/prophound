@@ -42,18 +42,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import mode_recheck as mr  # noqa: E402
-from compare_variants import score_variant  # noqa: E402
-from refine_sweep import covered50  # noqa: E402
-from short_contig_sweep import element_bp, fp_load, fragments  # noqa: E402
-from shred_genomes import SEP  # noqa: E402
+from evalkit import SEP, covered50, score_variant
+from short_contig_sweep import element_bp, fp_load, fragments
 
 SEEDS = ("r1", "r2", "r3")
 
@@ -61,7 +55,7 @@ SEEDS = ("r1", "r2", "r3")
 def shred_calls(w: pd.DataFrame, thr: float, frac: float) -> pd.DataFrame:
     regs = []
     for scale, sw in w.groupby("scale"):
-        _, r = mr.build_region_table_coverage(sw.drop(columns="scale"), seed_threshold=thr, extend_threshold=thr,
+        _, r = ek.build_region_table_coverage(sw.drop(columns="scale"), seed_threshold=thr, extend_threshold=thr,
                                               min_coverage_frac=frac, max_gap_bp=0)
         regs.append(r)
     regs = [r for r in regs if len(r)]
@@ -94,7 +88,7 @@ def main() -> None:
     fr["el_bp"] = [element_bp(ev, f.genome_id, f.contig, f.start, f.end) for f in fr.itertuples()]
     free_bp = float((fr.end - fr.start).sum()) - float((ev.end - ev.start).sum())
 
-    ref = {r: mr.load_tracks(str(Path(args.ref_root) / f"{r}{args.ref_suffix}")) for r in (*SEEDS, "ens")}
+    ref = {r: ek.load_tracks(str(Path(args.ref_root) / f"{r}{args.ref_suffix}")) for r in (*SEEDS, "ens")}
     shred = {}
     for r in (*SEEDS, "ens"):
         w = pd.concat([pd.read_csv(p, sep="\t", usecols=["genome_id", "contig_id", "start", "end", "prob"])
@@ -104,15 +98,15 @@ def main() -> None:
             raise SystemExit(f"{r}: fragment tracks cover {shred[r].genome_id.nunique()} of {len(genomes)} genomes")
 
     res, flat = {"element_free_bp": free_bp, "modes": {}}, []
-    for mode, k in mr.MODE_MIN_SEED_SUPPORT.items():
-        rc = mr.shipped_calls(ref["ens"], [ref[s] for s in SEEDS], mode)
-        ref_m = {"threshold": mr.MODE_THRESHOLDS[mode], "min_seed_support": k,
+    for mode, k in ek.MODE_MIN_SEED_SUPPORT.items():
+        rc = ek.shipped_calls(ref["ens"], [ref[s] for s in SEEDS], mode)
+        ref_m = {"threshold": ek.MODE_THRESHOLDS[mode], "min_seed_support": k,
                  "covered50_recall": covered50(ev, rc), **fp_load(ev, rc, free_bp)}
         print(f"[{mode} reference 10 kb, t={ref_m['threshold']:g} k={k}] false/Mb "
               f"{ref_m['false_calls_per_mb']:.2f} covered50 {ref_m['covered50_recall']:.3f}", flush=True)
         rows = []
         for thr in [float(x) for x in args.thresholds.split(",")]:
-            reg = mr.vote(shred_calls(shred["ens"], thr, args.coverage_frac),
+            reg = ek.vote(shred_calls(shred["ens"], thr, args.coverage_frac),
                           [shred_calls(shred[s], thr, args.coverage_frac) for s in SEEDS], k)
             called = set(reg.contig_id)
             reg = to_genome(reg)
@@ -130,7 +124,7 @@ def main() -> None:
         res["modes"][mode] = {"reference": ref_m, "sweep": rows,
                               "recommended_threshold": rec["threshold"] if rec else None}
         print(f"[{mode}] recommended short-contig threshold: {rec['threshold'] if rec else 'none in grid'} "
-              f"(shipped provisional {mr.SHORT_CONTIG_THRESHOLDS[mode]})", flush=True)
+              f"(shipped provisional {ek.SHORT_CONTIG_THRESHOLDS[mode]})", flush=True)
 
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(res, indent=2) + "\n")

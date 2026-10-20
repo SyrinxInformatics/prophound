@@ -42,28 +42,16 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from ambiguity_dose import cov_fracs  # noqa: E402
+from evalkit import cov_fracs, seed_support, wilson
 
 SEEDS = ("r1", "r2", "r3")
 CUTS = {"covered": 0.0, "covered25": 0.25, "covered50": 0.5, "covered75": 0.75}
 B = 10_000
-
-
-def wilson(k: int, n: int, z: float = 1.959964) -> list:
-    if n == 0:
-        return [float("nan"), float("nan")]
-    p = k / n
-    c = (p + z * z / (2 * n)) / (1 + z * z / n)
-    h = z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
-    return [float(c - h), float(c + h)]
 
 
 def boot_ratio(num: np.ndarray, den: np.ndarray, rng) -> list:
@@ -78,7 +66,7 @@ def hit(frac: np.ndarray, cut: float) -> np.ndarray:
 
 
 def load(root: str, suffix: str) -> tuple:
-    tr = {r: mr.load_tracks(str(Path(root) / f"{r}{suffix}")) for r in (*SEEDS, "ens")}
+    tr = {r: ek.load_tracks(str(Path(root) / f"{r}{suffix}")) for r in (*SEEDS, "ens")}
     return tr["ens"], [tr[s] for s in SEEDS]
 
 
@@ -89,10 +77,10 @@ def cmd_recall(a) -> None:
     ev = pd.read_csv(a.elements) if a.elements else None
     res = {"root": a.root, "n_genomes": len(genomes), "bootstrap_resamples": B, "modes": {}}
     rows = []
-    for mode in mr.MODE_THRESHOLDS:
-        reg = mr.shipped_calls(ens, seeds, mode)
+    for mode in ek.MODE_THRESHOLDS:
+        reg = ek.shipped_calls(ens, seeds, mode)
         per_g_calls = reg.groupby("genome_id").size().reindex(genomes, fill_value=0).to_numpy()
-        m = {"threshold": mr.MODE_THRESHOLDS[mode], "min_seed_support": mr.MODE_MIN_SEED_SUPPORT[mode],
+        m = {"threshold": ek.MODE_THRESHOLDS[mode], "min_seed_support": ek.MODE_MIN_SEED_SUPPORT[mode],
              "calls_per_genome": float(per_g_calls.mean()),
              "calls_per_genome_ci": boot_ratio(per_g_calls.astype(float), np.ones(len(genomes)), rng)}
         if ev is not None:
@@ -198,22 +186,13 @@ def cmd_lit(a) -> None:
 def cmd_errortables(a) -> None:
     ens, seeds = load(a.root, a.suffix)
     ev = pd.read_csv(a.elements)
-    saved = dict(mr.MODE_THRESHOLDS)
-    mr.MODE_THRESHOLDS["default"] = a.threshold
-    try:
-        reg = mr.calls(ens, "default")
-        sreg = [mr.calls(s, "default") for s in seeds]
-    finally:
-        mr.MODE_THRESHOLDS.update(saved)
-    try:
-        from prophound.models.prophage.src.predict_genome import seed_support
-    except ImportError:
-        from src.predict_genome import seed_support
+    reg = ek.calls(ens, "default", seed=a.threshold)
+    sreg = [ek.calls(s, "default", seed=a.threshold) for s in seeds]
     support = []
     for g, sub in reg.groupby("genome_id", sort=False):
         support += seed_support(sub, [s[s.genome_id == g] for s in sreg])
     reg = reg.assign(seed_support=support)
-    reg["on_target"] = [mr.element_overlap_bp(ev, r) > 0 for r in reg.itertuples()]
+    reg["on_target"] = [ek.element_overlap_bp(ev, r) > 0 for r in reg.itertuples()]
     table = reg.groupby(["seed_support", "on_target"]).size().unstack(fill_value=0)
     table.columns = ["off_target" if not c else "on_target" for c in table.columns]
     frac = cov_fracs(ev, reg)

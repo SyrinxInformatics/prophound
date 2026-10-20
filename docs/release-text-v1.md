@@ -279,4 +279,4 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 | off-target enrichment | `offtarget_annotation.py --control_busy elements_only`, then `scripts/offtarget_enrichment_ci.py` | `analysis/offtarget/annotation_ctrl_elements_only.*`, `enrichment_ci.json` |
 | small inoviruses | `small_element_spikein.py` | `analysis/spikein_siterule/results_final.*`, `analysis/spikein_small/results_final.*` |
 
-Checkpoint SHA-256s are in `docs/research-integrity.md` C8, and the frozen code is `ad5b28b`.
+Checkpoint SHA-256s are in `docs/research-integrity.md` C8, and the frozen code is `ad5b28b`. Every figure above whose inputs are local is re-run by `scripts/reproduce_figures.sh` and checked against these outputs by `scripts/compare_figures.py`; all reproduce exactly (2026-10-20).

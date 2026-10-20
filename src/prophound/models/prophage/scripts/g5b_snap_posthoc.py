@@ -25,13 +25,9 @@ Run from src/prophound/models/prophage:
 
 from __future__ import annotations
 
-import sys
-
+import g5_score as g
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, "scripts")
-import g5_score as g  # noqa: E402
 
 CONDS = ["complete", "mag_s0", "mag_s1", "mag_s2", "draft_s0"]
 MODES = ["exploratory", "default", "conservative"]

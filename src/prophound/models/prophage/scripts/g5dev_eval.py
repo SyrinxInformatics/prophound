@@ -63,15 +63,12 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from g5_score import cov_frac, split_frag  # noqa: E402
+from evalkit import cov_frac, split_frag
 
 CONDS = ["complete", "mag_s0", "mag_s1", "mag_s2", "draft_s0"]
 ES_GRID = [0, 2000, 5000, 10000]
@@ -83,8 +80,8 @@ def load(run_root: Path, cond: str, genomes: list) -> tuple[dict, list]:
     """Ensemble and per-seed tracks for one condition, restricted to `genomes`."""
     d = run_root / cond
     keep = lambda t: {g: v for g, v in t.items() if g in genomes}  # noqa: E731
-    ens = keep(mr.load_tracks(str(d)))
-    seeds = [keep(mr.load_tracks(str(d), f"prob_ckpt{k}")) for k in (1, 2, 3)]
+    ens = keep(ek.load_tracks(str(d)))
+    seeds = [keep(ek.load_tracks(str(d), f"prob_ckpt{k}")) for k in (1, 2, 3)]
     missing = set(genomes) - set(ens)
     if missing:
         raise SystemExit(f"{d}: no tracks for {len(missing)} genomes, e.g. {sorted(missing)[:3]}")
@@ -141,8 +138,8 @@ def apply_variant(base: pd.DataFrame, win: pd.DataFrame, lengths: dict, mode: st
     reg = edge_snap(base, lengths, d)
     if t is None:
         return reg, 0
-    k = mr.MODE_MIN_SEED_SUPPORT[mode]
-    tt = mr.MODE_THRESHOLDS[mode] if t == "mode" else t
+    k = ek.MODE_MIN_SEED_SUPPORT[mode]
+    tt = ek.MODE_THRESHOLDS[mode] if t == "mode" else t
     if (tt, f, k) not in cache:
         cache[(tt, f, k)] = whole_contig(win, lengths, tt, f, k)
     wc = cache[(tt, f, k)]
@@ -161,10 +158,10 @@ def phagefree_check(root: Path, summary_csv: str, modes: list, variants: list) -
     available locally, so a contig's length is taken as its furthest window end, which
     is within one stride (1 kb) of the true end; only edge snapping reads it.
     """
-    ens = mr.load_tracks(str(root / "ens"))
+    ens = ek.load_tracks(str(root / "ens"))
     seeds = []
     for r in ("r1", "r2", "r3"):
-        t = mr.load_tracks(str(root / r))
+        t = ek.load_tracks(str(root / r))
         for g, (w, _) in t.items():
             if not (w[["contig_id", "start", "end"]].to_numpy() == ens[g][0][["contig_id", "start", "end"]].to_numpy()).all():
                 raise SystemExit(f"{root}/{r}/{g}: windows do not line up with the ensemble run")
@@ -176,7 +173,7 @@ def phagefree_check(root: Path, summary_csv: str, modes: list, variants: list) -
     win = window_table(ens, seeds)
     out, cache = {}, {}
     for mode in modes:
-        base = mr.shipped_calls(ens, seeds, mode)
+        base = ek.shipped_calls(ens, seeds, mode)
         for d, t, f in variants:
             reg, n_wc = apply_variant(base, win, lengths, mode, d, t, f, cache)
             out[f"{mode}|es={d}|wc={t},{f}"] = {
@@ -237,7 +234,7 @@ def main() -> None:
             win = window_table(ens, seeds)
             wc_cache = {}
             for mode in modes:
-                base = mr.shipped_calls(ens, seeds, mode)
+                base = ek.shipped_calls(ens, seeds, mode)
                 for d, t, f in variants:
                     reg, n_wc = apply_variant(base, win, lengths, mode, d, t, f, wc_cache)
                     m = metrics(T, to_genome(reg), genome_bp)

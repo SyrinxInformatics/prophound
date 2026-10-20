@@ -34,14 +34,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).parent))
-from lambda_score import prophound_calls, union_cov  # noqa: E402
+from lambda_score import prophound_calls, union_cov
 
 TOOLS = ["prophound exploratory", "prophound default", "prophound conservative",
          "geNomad", "PHASTER", "PIDE", "VIBRANT"]

@@ -51,7 +51,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -150,24 +149,6 @@ def cmd_spike(args) -> None:
           + (f", {len(gap_rows)} gaps" if gap_rows else ""))
 
 
-def cov_fracs(ev: pd.DataFrame, reg: pd.DataFrame) -> np.ndarray:
-    """Per element, the fraction of its bp under the union of overlapping calls."""
-    out = []
-    for e in ev.itertuples():
-        x = reg[(reg.genome_id == e.accession) & (reg.contig_id == e.contig) & (reg.end > e.start) & (reg.start < e.end)]
-        iv = sorted((max(int(a), e.start), min(int(b), e.end)) for a, b in zip(x.start, x.end))
-        bp, cs, ce = 0, None, None
-        for a, b in iv:
-            if ce is None or a > ce:
-                bp += (ce - cs) if ce is not None else 0
-                cs, ce = a, b
-            else:
-                ce = max(ce, b)
-        bp += (ce - cs) if ce is not None else 0
-        out.append(bp / (e.end - e.start))
-    return np.array(out)
-
-
 def gap_call_stats(reg: pd.DataFrame, gaps: pd.DataFrame, n_genomes: int) -> dict:
     """Calls with >= 50% of their bp inside random N gaps, and the fraction of
     random-gap bp under any call."""
@@ -186,9 +167,7 @@ def gap_call_stats(reg: pd.DataFrame, gaps: pd.DataFrame, n_genomes: int) -> dic
 
 
 def cmd_eval(args) -> None:
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from mode_recheck import calls, load_tracks, shipped_calls
+    from evalkit import calls, cov_fracs, load_tracks, shipped_calls  # here, so `spike` runs without torch
 
     ev = pd.read_csv(args.elements)
     root = Path(args.root)

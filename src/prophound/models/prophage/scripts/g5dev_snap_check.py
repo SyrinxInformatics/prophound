@@ -27,22 +27,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from g5_score import cov_frac  # noqa: E402
-from g5dev_compare import best_iou, off_element_bp  # noqa: E402
-from g5dev_eval import edge_snap, load, to_genome  # noqa: E402
-
-try:  # repo layout
-    from prophound.models.prophage.src.predict_genome import DEFAULT_EDGE_SNAP_FRAC, snap_contig_edges
-except ImportError:  # HPCC data_refactored/ layout
-    from src.predict_genome import DEFAULT_EDGE_SNAP_FRAC, snap_contig_edges
+from evalkit import DEFAULT_EDGE_SNAP_FRAC, cov_frac, snap_contig_edges
+from g5dev_compare import best_iou, off_element_bp
+from g5dev_eval import edge_snap, load, to_genome
 
 MAGS = ["mag_s0", "mag_s1", "mag_s2"]
 CONDS = ["complete", *MAGS, "draft_s0"]
@@ -96,7 +88,7 @@ def main() -> None:
             lengths = {(g, c): int(n) for g, c, n in zip(lc.genome, lc.contig_id, lc.length)}
             wl = {g: v[1] for g, v in ens.items()}
             for mode in MODES:
-                base = mr.shipped_calls(ens, seeds, mode)
+                base = ek.shipped_calls(ens, seeds, mode)
                 regs = {"shipped": base, "flat5kb": edge_snap(base, lengths, 5000),
                         "frac": shipped_snap(base, lengths, wl)}
                 for v in variants:
@@ -119,13 +111,13 @@ def main() -> None:
                     "complete_median_iou": float(np.median(cells[("complete", mode, v)]["iou"]))}
     # phage-free complete genomes: contig length = furthest window end (within one stride)
     root = Path(a.phagefree)
-    ens = mr.load_tracks(str(root / "ens"))
-    seeds = [mr.load_tracks(str(root / r)) for r in ("r1", "r2", "r3")]
+    ens = ek.load_tracks(str(root / "ens"))
+    seeds = [ek.load_tracks(str(root / r)) for r in ("r1", "r2", "r3")]
     lengths = {(g, str(c)): int(e) for g, (w, _) in ens.items() for c, e in w.groupby("contig_id").end.max().items()}
     wl = {g: v[1] for g, v in ens.items()}
     pf = res["phagefree"] = {"n_genomes": len(ens)}
     for mode in MODES:
-        base = mr.shipped_calls(ens, seeds, mode)
+        base = ek.shipped_calls(ens, seeds, mode)
         regs = {"shipped": base, "flat5kb": edge_snap(base, lengths, 5000), "frac": shipped_snap(base, lengths, wl)}
         pf[mode] = {v: {"calls_per_genome": len(r) / len(ens), "bp_called": int((r.end - r.start).sum())}
                     for v, r in regs.items()}

@@ -37,14 +37,11 @@ from __future__ import annotations
 
 import argparse
 import re
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from small_element_spikein import canon_kmers  # noqa: E402
+from evalkit import canon_kmers
 
 
 def read_set(label: str, path: str) -> pd.DataFrame:

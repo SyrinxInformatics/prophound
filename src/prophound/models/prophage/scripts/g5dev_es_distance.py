@@ -21,14 +21,11 @@ called, and bp called outside geNomad elements, on the 42 (tune) and 18 (check).
 Covered50 and false/Mb cannot see how much longer calls get; this does.
 Run from src/prophound/models/prophage:  python scripts/g5dev_es_distance.py
 """
-import sys
-
-sys.path.insert(0, "scripts")
 from pathlib import Path
 
-import mode_recheck as mr
+import evalkit as ek
 import pandas as pd
-from g5_score import cov_frac
+from evalkit import cov_frac
 from g5dev_compare import off_element_bp
 from g5dev_eval import edge_snap, load, to_genome
 
@@ -40,7 +37,7 @@ for sname,path in [('tune','scripts/eval_sizestrat_elements.csv'),('check','scri
         ens,seeds=load(Path('analysis/g5dev/prophound'),cond,G)
         lc=Lt[(Lt.condition==cond)&Lt.genome.isin(G)]; L={(g,c):int(n) for g,c,n in zip(lc.genome,lc.contig_id,lc.length)}
         for mode in ['default','exploratory','conservative']:
-            base=mr.shipped_calls(ens,seeds,mode)
+            base=ek.shipped_calls(ens,seeds,mode)
             for d in [0,1000,2000,5000,10000]:
                 c=to_genome(edge_snap(base,L,d)); h=cov_frac(T,c)>=0.5
                 a=acc.setdefault((mode,d),[0,0,0,0]); a[0]+=h.sum(); a[1]+=len(h); a[2]+=(c.end-c.start).sum(); a[3]+=off_element_bp(c,T).sum()

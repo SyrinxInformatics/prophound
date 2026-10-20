@@ -46,13 +46,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 B = 10_000
 
 
@@ -102,15 +100,15 @@ def score(truth, calls, genomes, rng) -> dict:
 
 
 def prophound_calls(run_dir: str, genomes: pd.DataFrame) -> dict:
-    import mode_recheck as mr
-    ens = mr.load_tracks(run_dir)
-    seeds = [mr.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
+    import evalkit as ek
+    ens = ek.load_tracks(run_dir)
+    seeds = [ek.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
     missing = set(genomes.assembly) - set(ens)
     if missing:
         raise SystemExit(f"prophound run lacks {len(missing)} genomes, e.g. {sorted(missing)[:3]}")
     out = {}
-    for mode in mr.MODE_THRESHOLDS:
-        reg = mr.shipped_calls(ens, seeds, mode)
+    for mode in ek.MODE_THRESHOLDS:
+        reg = ek.shipped_calls(ens, seeds, mode)
         reg = reg.assign(assembly=reg.genome_id, sequence=reg.contig_id.astype(str).str.split(".").str[0])
         out[f"prophound {mode}"] = reg[["assembly", "sequence", "start", "end", "max_prob"]]
     return out

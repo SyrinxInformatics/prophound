@@ -33,18 +33,15 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
+from evalkit import calls_at, covered50, seed_support
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GroupKFold
 from sklearn.preprocessing import StandardScaler
 
 M = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(M / "scripts"))
-sys.path.insert(0, str(M))
-import mode_recheck as mr  # noqa: E402
-from refine_sweep import covered50  # noqa: E402
-from seed_vote_confirm import calls_at, mr_support  # noqa: E402
 
 OUT = Path(sys.argv[1])
 SAMPLES = {
@@ -64,10 +61,10 @@ def pool(tr: dict, t: float, ev: pd.DataFrame | None) -> pd.DataFrame:
     seeds = [calls_at(tr[r], t) for r in ("r1", "r2", "r3")]
     sup = {}
     for g, sub in ens.groupby("genome_id", sort=False):
-        sup.update(zip(sub.index, mr_support(sub, [s[s.genome_id == g] for s in seeds])))
+        sup.update(zip(sub.index, seed_support(sub, [s[s.genome_id == g] for s in seeds])))
     ens = ens.assign(support=pd.Series(sup), log_len=np.log10((ens.end - ens.start).clip(lower=1)))
     if ev is not None:
-        ov = np.array([mr.element_overlap_bp(ev, r) for r in ens.itertuples()])
+        ov = np.array([ek.element_overlap_bp(ev, r) for r in ens.itertuples()])
         ens = ens.assign(on_target=ov > 0, off_bp=(ens.end - ens.start) - ov)
     else:
         ens = ens.assign(on_target=False, off_bp=ens.end - ens.start)
@@ -89,7 +86,7 @@ def metrics(kept: pd.DataFrame, ev, n_gen: int, hallmark: pd.DataFrame | None) -
 def main() -> None:
     data = {}
     for name, (dirs, elf) in SAMPLES.items():
-        tr = {r: mr.load_tracks(str(d)) for r, d in dirs.items()}
+        tr = {r: ek.load_tracks(str(d)) for r, d in dirs.items()}
         ev = pd.read_csv(elf) if elf else None
         data[name] = (tr, ev, len(tr["ens"]))
     ann = pd.read_csv(M / "analysis/offtarget/annotation.csv")

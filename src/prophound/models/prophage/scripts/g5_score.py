@@ -52,24 +52,17 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
+from evalkit import cov_frac, split_frag
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-SEP = "__"
 B = 10_000
 COLS = ["tool", "condition", "assembly", "sequence", "start", "end", "score"]
 PRIMARY = "prophound default"
 COMPARATORS = ["geNomad", "Jaeger 57341_1.5M"]
-
-
-def split_frag(name: str) -> tuple[str, int]:
-    """`CP002907__12345` -> (CP002907, 12345); an unshredded name has offset 0."""
-    seq, _, off = str(name).partition(SEP)
-    return seq, int(off) if off else 0
 
 
 # ---- collectors ---------------------------------------------------------------
@@ -144,14 +137,9 @@ def prophound_calls(cond: str, run_dir: str, lengths: pd.DataFrame | None = None
     that fraction of the run's window length) is applied, using exact contig lengths
     from `lengths` (condition, genome, contig_id, length); every contig of every run
     must be in it."""
-    import mode_recheck as mr
-    ens = mr.load_tracks(run_dir)
-    seeds = [mr.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
+    ens = ek.load_tracks(run_dir)
+    seeds = [ek.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
     if edge_snap_frac > 0:
-        try:
-            from prophound.models.prophage.src.predict_genome import snap_contig_edges
-        except ImportError:  # HPCC data_refactored/ layout
-            from src.predict_genome import snap_contig_edges
         if lengths is None:
             raise SystemExit("--edge_snap_frac > 0 needs --lengths (exact contig lengths per condition)")
         lc = lengths[lengths.condition == cond]
@@ -161,10 +149,10 @@ def prophound_calls(cond: str, run_dir: str, lengths: pd.DataFrame | None = None
             if miss:
                 raise SystemExit(f"--lengths lacks {len(miss)} contig(s) of {cond}/{g}, e.g. {sorted(miss)[:2]}")
     out = []
-    for mode in mr.MODE_THRESHOLDS:
-        reg = mr.shipped_calls(ens, seeds, mode)
+    for mode in ek.MODE_THRESHOLDS:
+        reg = ek.shipped_calls(ens, seeds, mode)
         if edge_snap_frac > 0 and len(reg):
-            reg = pd.concat([snap_contig_edges(x.assign(contig_id=x.contig_id.astype(str)), L[g],
+            reg = pd.concat([ek.snap_contig_edges(x.assign(contig_id=x.contig_id.astype(str)), L[g],
                                                int(edge_snap_frac * ens[g][1]))[0]
                              for g, x in reg.groupby("genome_id")], ignore_index=True)
         so = reg.contig_id.astype(str).map(split_frag)
@@ -177,27 +165,6 @@ def prophound_calls(cond: str, run_dir: str, lengths: pd.DataFrame | None = None
 
 
 # ---- scoring ------------------------------------------------------------------
-
-def cov_frac(truth: pd.DataFrame, calls: pd.DataFrame) -> np.ndarray:
-    """Per element, the fraction of its bp under the union of calls on its sequence."""
-    out = np.zeros(len(truth))
-    by = {k: g.sort_values("start")[["start", "end"]].to_numpy() for k, g in calls.groupby(["assembly", "sequence"])}
-    for i, r in enumerate(truth.itertuples()):
-        c = by.get((r.assembly, r.sequence))
-        if c is None:
-            continue
-        c = c[(c[:, 1] > r.start) & (c[:, 0] < r.end)]
-        bp, cs, ce = 0, None, None
-        for s, e in c:
-            s, e = max(s, r.start), min(e, r.end)
-            if ce is None or s > ce:
-                bp += 0 if ce is None else ce - cs
-                cs, ce = s, e
-            else:
-                ce = max(ce, e)
-        bp += 0 if ce is None else ce - cs
-        out[i] = bp / (r.end - r.start)
-    return out
 
 
 def kept_frac(truth: pd.DataFrame, shred_dir: Path) -> np.ndarray:

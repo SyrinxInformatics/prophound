@@ -46,6 +46,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from evalkit import score_variant
 
 
 def load_regions(d: str) -> pd.DataFrame:
@@ -58,47 +59,6 @@ def load_regions(d: str) -> pd.DataFrame:
     if not dfs:
         return pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "max_prob"])
     return pd.concat(dfs, ignore_index=True)
-
-
-def score_variant(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
-    covered, ious, n_overlaps = [], [], []
-    per_call: dict = {}
-    for r in ev.itertuples():
-        g = reg[(reg.genome_id == r.accession) & (reg.contig_id == r.contig)]
-        o = g[(g.end > r.start) & (g.start < r.end)]
-        covered.append(len(o) > 0)
-        n_overlaps.append(len(o))
-        for c in o.itertuples():
-            per_call.setdefault((c.genome_id, c.contig_id, c.start, c.end), []).append(float(r.kb) if hasattr(r, "kb") else 0.0)
-        if len(o):
-            inter = np.minimum(o.end, r.end) - np.maximum(o.start, r.start)
-            union = np.maximum(o.end, r.end) - np.minimum(o.start, r.start)
-            ious.append(float((inter / union).max()))
-        else:
-            ious.append(0.0)
-    n_genomes = ev.accession.nunique()
-    # Conflation: one call claiming several distinct elements. Covered recall is
-    # blind to this by construction (3 elements under 1 call score 3/3), so it is
-    # reported explicitly -- see docs/downstream-postprocessing.md "Conflation".
-    conflated = {k: v for k, v in per_call.items() if len(v) >= 2}
-    absorbed = sum(len(v) for v in conflated.values())
-    n_covered = int(np.sum(covered))
-    return {
-        "covered_recall": float(np.mean(covered)),
-        "n_covered": n_covered,
-        # matched recall: covered, minus elements that merely share a call with
-        # another. The 1-1 achievable ceiling; the metric that *does* see conflation.
-        "matched_recall": float((n_covered - (absorbed - len(conflated))) / max(1, len(ev))),
-        "n_elements": int(len(ev)),
-        "n_calls": int(len(reg)),
-        "calls_per_genome": float(len(reg) / max(1, n_genomes)),
-        "median_iou": float(np.median(ious)),
-        "iou_ge_50": float(np.mean(np.asarray(ious) >= 0.5)),
-        "fragmented_elements": int(np.sum(np.asarray(n_overlaps) > 1)),
-        "conflated_calls": len(conflated),
-        "absorbed_elements": absorbed,
-        "_covered_vec": [bool(c) for c in covered],
-    }
 
 
 def main() -> None:

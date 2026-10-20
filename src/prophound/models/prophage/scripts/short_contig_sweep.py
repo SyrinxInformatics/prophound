@@ -43,23 +43,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from evalkit import SEP, build_region_table_coverage, covered50, load_run, score_variant
 from pyfaidx import Fasta
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from compare_variants import score_variant  # noqa: E402
-from refine_sweep import covered50, load_run  # noqa: E402
-from shred_genomes import SEP  # noqa: E402
-
-try:  # repo layout
-    from prophound.models.prophage.src.predict_genome import build_region_table_coverage
-except ImportError:  # HPCC data_refactored/ layout
-    from src.predict_genome import build_region_table_coverage
 
 
 def element_bp(ev: pd.DataFrame, g: str, c: str, s: int, e: int) -> int:

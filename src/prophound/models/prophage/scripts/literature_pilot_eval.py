@@ -44,20 +44,11 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from mode_recheck import calls, load_tracks, shipped_calls  # noqa: E402
-
-try:  # repo layout
-    from prophound.models.prophage.src.predict_genome import MODE_THRESHOLDS
-except ImportError:  # HPCC data_refactored/ layout
-    from src.predict_genome import MODE_THRESHOLDS
+from evalkit import MODE_THRESHOLDS, calls, load_tracks, shipped_calls
 
 
 def read_fasta(path: Path) -> dict:

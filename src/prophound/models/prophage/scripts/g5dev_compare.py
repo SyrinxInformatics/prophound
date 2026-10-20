@@ -43,16 +43,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
+import evalkit as ek
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import mode_recheck as mr  # noqa: E402
-from g5_score import cov_frac, split_frag  # noqa: E402
-from g5dev_eval import apply_variant, load, to_genome, window_table  # noqa: E402
+from evalkit import cov_frac, split_frag
+from g5dev_eval import apply_variant, load, to_genome, window_table
 
 MAGS = ["mag_s0", "mag_s1", "mag_s2"]
 CONDS = ["complete", *MAGS, "draft_s0"]
@@ -148,7 +145,7 @@ def main() -> None:
             win = window_table(ens, seeds)
             cache = {}
             for mode in MODES:
-                base = mr.shipped_calls(ens, seeds, mode)
+                base = ek.shipped_calls(ens, seeds, mode)
                 for vname, (d, t, f) in VARIANTS.items():
                     reg, n_wc = apply_variant(base, win, lengths, mode, d, t, f, cache)
                     calls = to_genome(reg)

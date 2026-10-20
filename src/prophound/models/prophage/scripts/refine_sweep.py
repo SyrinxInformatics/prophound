@@ -45,22 +45,11 @@ import argparse
 import itertools
 import json
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # data_refactored/ layout: src/ is a sibling
-from compare_variants import score_variant  # noqa: E402
-
-try:  # repo layout
-    from prophound.models.prophage.src.multiscale import refine_regions
-    from prophound.models.prophage.src.predict_genome import build_region_table_coverage
-except ImportError:  # HPCC data_refactored/ layout
-    from src.multiscale import refine_regions
-    from src.predict_genome import build_region_table_coverage
+from evalkit import covered50, fine_regions_by_genome, load_run, refine_all, score_variant
 
 
 def edge_errors(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
@@ -84,31 +73,6 @@ KEEP = ("covered_recall", "covered50_recall", "matched_recall", "median_iou", "c
         "absorbed_elements", "fragmented_elements", "calls_per_genome", "n_elements")
 
 
-def covered50(ev: pd.DataFrame, reg: pd.DataFrame) -> float:
-    """Fraction of elements with >= 50% of their bp under some call.
-
-    Covered recall (>= 1 bp) credits grazes -- a neighbouring call's overshoot
-    clipping an element's edge. Both losses 817370's refinement showed were
-    grazes (docs/downstream-postprocessing.md "Per-element dig"), so every
-    variant is also scored on this graze-proof version.
-    """
-    ok = 0
-    for r in ev.itertuples():
-        g = reg[(reg.genome_id == r.accession) & (reg.contig_id == r.contig)
-                & (reg.end > r.start) & (reg.start < r.end)].sort_values("start")
-        bp, cur_s, cur_e = 0, None, None
-        for c in g.itertuples():  # union of overlapping calls, clipped to the element
-            s, e = max(int(c.start), r.start), min(int(c.end), r.end)
-            if cur_e is None or s > cur_e:
-                bp += 0 if cur_e is None else cur_e - cur_s
-                cur_s, cur_e = s, e
-            else:
-                cur_e = max(cur_e, e)
-        bp += 0 if cur_e is None else cur_e - cur_s
-        ok += bp >= 0.5 * (r.end - r.start)
-    return ok / max(1, len(ev))
-
-
 def score(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
     m = score_variant(ev, reg)
     m["covered50_recall"] = covered50(ev, reg)
@@ -122,56 +86,6 @@ def score(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
         row.update(edge_errors(sub, reg))
         out["by_stratum"][str(st)] = row
     return out
-
-
-def load_run(d: str):
-    """(coarse regions, fine windows) per genome, rebuilt from the run's metadata."""
-    coarse, fine, meta0 = [], [], None
-    for gdir in sorted(Path(d).iterdir()):
-        w, f, m = gdir / "windows.tsv", gdir / "fine_windows.tsv", gdir / "run_metadata.json"
-        if not (w.exists() and m.exists()):
-            continue
-        meta = json.loads(m.read_text())
-        meta0 = meta0 or meta
-        wdf = pd.read_csv(w, sep="\t")
-        # short-contig windows (--short-contigs scan) have their own thresholds and
-        # are never refined; mode_recheck.py scores them
-        wdf = wdf[(wdf.end - wdf.start) == int(meta["window_len"])]
-        fm = meta.get("fragment_merge", {})
-        _, reg = build_region_table_coverage(
-            wdf, seed_threshold=meta["seed_threshold"], extend_threshold=meta["extend_threshold"],
-            min_coverage_frac=meta["coverage_frac"], max_gap_bp=fm.get("max_gap_bp", 0),
-            bridge_prob=fm.get("bridge_prob", 0.0))
-        coarse.append(reg)
-        if f.exists():
-            fine.append(pd.read_csv(f, sep="\t", usecols=["genome_id", "contig_id", "start", "end", "prob"]))
-    if not coarse:
-        raise SystemExit(f"no <genome>/windows.tsv + run_metadata.json under {d}")
-    fine_df = pd.concat(fine, ignore_index=True) if fine else pd.DataFrame(
-        columns=["genome_id", "contig_id", "start", "end", "prob"])
-    return pd.concat(coarse, ignore_index=True), fine_df, meta0, len(coarse), len(fine)
-
-
-def fine_regions_by_genome(fine: pd.DataFrame, thr: float, frac: float) -> dict:
-    """genome -> (fine windows, fine regions) at one threshold; reused across variants."""
-    out = {}
-    for g, fg in fine.groupby("genome_id", sort=False):
-        out[g] = build_region_table_coverage(fg.assign(fasta_path="x"), seed_threshold=thr,
-                                             extend_threshold=thr, min_coverage_frac=frac, max_gap_bp=0)
-    return out
-
-
-def refine_all(coarse: pd.DataFrame, fine_by_genome: dict, alpha: float, gap: int,
-               maxp: float, ramp=None) -> pd.DataFrame:
-    out = []
-    for g, cg in coarse.groupby("genome_id", sort=False):
-        if g not in fine_by_genome:
-            out.append(cg)
-            continue
-        fg, fr = fine_by_genome[g]
-        out.append(refine_regions(cg, fg, fr, edge_alpha=alpha, split_min_gap_bp=gap,
-                                  split_max_prob=maxp, alpha_ramp_bp=ramp))
-    return pd.concat(out, ignore_index=True) if out else coarse
 
 
 def floats(s: str):
