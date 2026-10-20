@@ -4,7 +4,7 @@ Living doc — update in place, don't append a history here (that's `SESSIONS.md
 
 ## Current CLI shape
 
-`prophound predict` (entrypoint `src/prophound/cli.py`, dispatching into `src/prophound/models/prophage/src/predict_genome.py`). Every option, default and mode table is defined once, in the torch-free `src/prophound/models/prophage/src/options.py` (`add_predict_arguments`). `prophound predict` and `python -m src.predict_genome` both use it; the latter still accepts `--input_fasta` for the HPCC launchers. `prophound predict --help` lists the full set in basic, advanced and experimental sections. The core:
+`prophound predict` (entrypoint `src/prophound/cli.py`, dispatching into `src/prophound/models/prophage/src/predict_genome.py`). Every option, default and mode table is defined once, in the torch-free `src/prophound/models/prophage/src/options.py` (`add_predict_arguments`). `prophound predict` and `python -m src.predict_genome` both use it; the latter still accepts `--input_fasta` for the HPCC launchers. `prophound predict --help` lists the full set in basic, advanced and experimental sections. Everything after scoring (building calls, the seed vote, edge snap, the N filter, seed support) is in the torch-free `src/calls.py`, which `scripts/mode_recheck.shipped_calls` also runs, so offline scorers rebuild exactly the CLI's calls (with `genomes_dir`; without it, snap and the N filter are skipped with a warning). Calls removed by the vote or the N filter are kept aside with their reason, not deleted (`docs/tech-debt-audit.md` Phase 2b). The core:
 
 ```
 prophound predict --input <fasta> --outdir <dir> --config <config.yaml> --checkpoint <best.pt> [<best.pt> ...] \

@@ -22,6 +22,8 @@ The one place these are defined. Kept free of torch so `prophound --help` stays 
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
+from pathlib import Path
 
 # Seed threshold and call-level seed vote per mode. Re-derived 2026-09-29 (user
 # decision) from the vote frontier (docs/error-analysis.md "Seed-vote
@@ -131,6 +133,114 @@ DEFAULT_EDGE_SNAP_FRAC = 0.5
 
 DEVICES = ("auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel")
 DEFAULT_BATCH_SIZE = 128
+
+
+@dataclass(frozen=True)
+class PredictOptions:
+    """A `predict` run's settings, resolved against the checkpoint and validated once."""
+
+    input_fasta: str
+    outdir: str
+    mode: str
+    config: str
+    checkpoints: tuple[str, ...]
+    device: str
+    threshold: float
+    seed_threshold: float
+    extend_threshold: float
+    requested_min_seed_support: int
+    ensemble: str
+    write_region_fasta: bool
+    write_seed_scores: bool        # effective: needs several checkpoints
+    ambiguity_policy: str
+    grid_offset: int
+    batch_size: int
+    num_workers: int
+    coverage_frac: float
+    max_gap_bp: int
+    bridge_prob: float
+    window_len: int
+    stride: int
+    trained_window_len: int
+    trained_stride: int
+    edge_snap_frac: float
+    short_contigs: str
+    short_contig_threshold: float | None
+    refine_window_len: int          # 0 = refinement off
+    refine_stride: int
+    refine_threshold: float
+    refine_margin: int
+    edge_alpha: float
+    edge_alpha_ramp: tuple[int, int] | None
+    split_min_gap_bp: int
+    split_max_prob: float
+
+    @property
+    def n_checkpoints(self) -> int:
+        return len(self.checkpoints)
+
+    @property
+    def min_seed_support(self) -> int:
+        """The vote actually applied: capped at the number of checkpoints, 1 with one."""
+        if self.n_checkpoints < 2:
+            return 1
+        return min(self.requested_min_seed_support, self.n_checkpoints)
+
+    @property
+    def snap_bp(self) -> int:
+        return int(self.edge_snap_frac * self.window_len)
+
+    def short_threshold(self, scale: int) -> float:
+        """Seed and extend threshold for a short-contig scale (one value serves both)."""
+        if self.short_contig_threshold is not None:
+            return float(self.short_contig_threshold)
+        return SHORT_CONTIG_THRESHOLDS[self.mode][scale]
+
+    @classmethod
+    def from_args(cls, args: argparse.Namespace, trained_window_len: int, trained_stride: int) -> PredictOptions:
+        """Resolve mode defaults and window overrides; exit with a message on an invalid combination."""
+        seed_default = args.threshold if args.threshold is not None else MODE_THRESHOLDS[args.mode]
+        seed = args.seed_threshold if args.seed_threshold is not None else seed_default
+        extend = args.extend_threshold if args.extend_threshold is not None else min(seed, 0.99)
+        window_len = int(args.window_len) if args.window_len else trained_window_len
+        stride = int(args.stride) if args.stride else trained_stride
+        if window_len <= 0 or stride <= 0:
+            raise SystemExit("--window-len and --stride must be positive")
+        ramp = tuple(int(x) for x in args.edge_alpha_ramp) if args.edge_alpha_ramp else None
+        if ramp and not 0 < ramp[0] < ramp[1]:
+            raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
+        refine_threshold = DEFAULT_REFINE_THRESHOLD if args.refine_threshold is None else float(args.refine_threshold)
+        refine_margin = window_len if args.refine_margin is None else int(args.refine_margin)
+        refine_window_len = int(args.refine_window_len or 0)
+        if refine_window_len:
+            if refine_window_len >= window_len:
+                raise SystemExit("--refine-window-len must be smaller than --window-len")
+            if args.refine_stride <= 0 or not 0.0 <= args.edge_alpha <= 1.0 or refine_margin < 0:
+                raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
+        if not 0.0 <= args.edge_snap_frac <= 1.0:
+            raise SystemExit("--edge-snap-frac must be between 0 and 1")
+        min_support = MODE_MIN_SEED_SUPPORT[args.mode] if args.min_seed_support is None else int(args.min_seed_support)
+        if min_support < 1:
+            raise SystemExit("--min-seed-support must be >= 1")
+        checkpoints = tuple(args.checkpoint) if isinstance(args.checkpoint, list) else (args.checkpoint,)
+        return cls(
+            input_fasta=str(Path(args.input_fasta)), outdir=str(args.outdir), mode=args.mode, config=args.config,
+            checkpoints=checkpoints, device=args.device,
+            threshold=float(seed_default), seed_threshold=float(seed), extend_threshold=float(extend),
+            requested_min_seed_support=min_support, ensemble=args.ensemble,
+            write_region_fasta=bool(args.write_region_fasta),
+            write_seed_scores=bool(args.write_seed_scores) and len(checkpoints) > 1,
+            ambiguity_policy=args.ambiguity_policy, grid_offset=max(0, int(args.grid_offset or 0)),
+            batch_size=args.batch_size, num_workers=args.num_workers,
+            coverage_frac=float(args.coverage_frac), max_gap_bp=int(args.max_gap_bp),
+            bridge_prob=float(args.bridge_prob), window_len=window_len, stride=stride,
+            trained_window_len=trained_window_len, trained_stride=trained_stride,
+            edge_snap_frac=float(args.edge_snap_frac), short_contigs=args.short_contigs,
+            short_contig_threshold=args.short_contig_threshold, refine_window_len=refine_window_len,
+            refine_stride=int(args.refine_stride), refine_threshold=refine_threshold, refine_margin=refine_margin,
+            edge_alpha=float(args.edge_alpha), edge_alpha_ramp=ramp,
+            split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
+        )
 
 
 def add_predict_arguments(parser: argparse.ArgumentParser) -> None:

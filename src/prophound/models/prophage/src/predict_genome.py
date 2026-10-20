@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
@@ -14,29 +13,39 @@ from pyfaidx import Fasta
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
+from .calls import (  # noqa: F401 -- re-exported: scripts and tests import these from here
+    REGION_COLUMNS,
+    CallRules,
+    PassCalls,
+    apply_seed_vote,
+    build_pass,
+    build_region_table_coverage,
+    concat_nonempty,
+    finalize,
+    label_windows,
+    seed_support,
+    snap_contig_edges,
+)
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
-from .options import (  # noqa: F401 -- MODE_THRESHOLDS, DEFAULT_EDGE_SNAP_FRAC, MAX_CALL_N_FRAC are imported from here by scripts
+from .options import (  # noqa: F401 -- re-exported: scripts import the defaults and tables from here
     AMBIGUITY_POLICIES,
     DEFAULT_AMBIGUITY_POLICY,
     DEFAULT_BRIDGE_PROB,
     DEFAULT_COVERAGE_FRAC,
     DEFAULT_EDGE_SNAP_FRAC,
     DEFAULT_MAX_GAP_BP,
-    DEFAULT_REFINE_THRESHOLD,
-    ENSEMBLE_MODES,
     MAX_CALL_N_FRAC,
     MODE_MIN_SEED_SUPPORT,
     MODE_THRESHOLDS,
-    SHORT_CONTIG_MODES,
     SHORT_CONTIG_SCALES,
     SHORT_CONTIG_STRIDE,
     SHORT_CONTIG_THRESHOLDS,
+    PredictOptions,
     add_predict_arguments,
 )
-from .train_prophage import (
+from .train_prophage import (  # noqa: F401 -- collate_batch and DataConfig are used by scripts/benchmark.py
     DataConfig,
-    ProphageTrainConfig,
     build_model,
     collate_batch,
     load_cfg,
@@ -45,9 +54,11 @@ from .train_prophage import (
     stable_sigmoid,
 )
 
+WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
-REGION_COLUMNS = ["genome_id", "contig_id", "start", "end", "n_windows",
-                  "region_len_bp", "mean_prob", "max_prob", "boundary_kind"]
+
+def warn(msg: str) -> None:
+    print(f"[warn] {msg}", file=sys.stderr)
 
 
 def encode_window(sequence: str, policy: str = DEFAULT_AMBIGUITY_POLICY) -> torch.Tensor:
@@ -174,27 +185,20 @@ def iter_fasta_lengths(fasta_path: str) -> Iterable[Tuple[str, int]]:
 def build_windows(
     fasta_path: str,
     genome_id: str,
-    data_config: DataConfig,
+    window_len: int,
+    stride: int,
     offset: int = 0,
+    contig_lengths: Dict[str, int] | None = None,
 ) -> pd.DataFrame:
+    """Full-length windows over every contig at least `window_len` long."""
+    lengths = contig_lengths if contig_lengths is not None else dict(iter_fasta_lengths(fasta_path))
     rows: List[Dict[str, object]] = []
-    for contig_id, contig_length in iter_fasta_lengths(fasta_path):
-        if contig_length < data_config.window_len:
+    for contig_id, contig_length in lengths.items():
+        if contig_length < window_len:
             continue
-        for start in range(
-            offset,
-            contig_length - data_config.window_len + 1,
-            data_config.stride,
-        ):
-            rows.append(
-                {
-                    "genome_id": genome_id,
-                    "contig_id": contig_id,
-                    "start": int(start),
-                    "end": int(start + data_config.window_len),
-                    "fasta_path": fasta_path,
-                }
-            )
+        for start in range(offset, contig_length - window_len + 1, stride):
+            rows.append({"genome_id": genome_id, "contig_id": contig_id, "start": int(start),
+                         "end": int(start + window_len), "fasta_path": fasta_path})
     return pd.DataFrame(rows)
 
 
@@ -204,6 +208,7 @@ def build_short_contig_windows(
     window_len: int,
     scales: Tuple[int, ...] = SHORT_CONTIG_SCALES,
     stride: int = SHORT_CONTIG_STRIDE,
+    contig_lengths: Dict[str, int] | None = None,
 ) -> Tuple[pd.DataFrame, Dict[str, object]]:
     """Windows for contigs shorter than `window_len`, plus a report of them all.
 
@@ -214,7 +219,8 @@ def build_short_contig_windows(
     """
     rows: List[Dict[str, object]] = []
     report = {"n_short": 0, "bp_short": 0, "n_scannable": 0, "n_too_short": 0, "bp_too_short": 0}
-    for contig_id, length in iter_fasta_lengths(fasta_path):
+    lengths = contig_lengths if contig_lengths is not None else dict(iter_fasta_lengths(fasta_path))
+    for contig_id, length in lengths.items():
         if length >= window_len:
             continue
         report["n_short"] += 1
@@ -233,322 +239,6 @@ def build_short_contig_windows(
     return pd.DataFrame(rows, columns=cols), report
 
 
-def _coverage_boundary_kind(frac: float, max_gap_bp: int, bridge_prob: float) -> str:
-    """`boundary_kind` string for the coverage builder, encoding the merge
-    settings when fragment merging is on (so a regions.tsv is self-describing).
-    Unchanged from the pre-merge format when it is off."""
-    kind = f"coverage_frac_{frac:g}"
-    if max_gap_bp > 0:
-        kind += f"_gap{max_gap_bp:d}"
-        if bridge_prob > 0:
-            kind += f"_br{bridge_prob:g}"
-    return kind
-
-
-def _close_gaps(
-    inside: np.ndarray,
-    bin_mean: np.ndarray,
-    covered: np.ndarray,
-    max_gap_bins: int,
-    bridge_prob: float,
-) -> np.ndarray:
-    """Merge inside-runs separated by a short, optionally still-elevated gap.
-
-    The fragmentation failure mode (docs/gap-filling.md, measured 2026-09-20 in
-    docs/model-quality-baseline.md): 60 kb+ elements are matched 86-100% of the
-    time but at median IoU 0.218 and median predicted length 22 kb, because the
-    score track dips below `extend_threshold` partway through and the builder
-    closes the region there. This is a morphological closing on the per-bin
-    `inside` mask: a run of outside bins is filled if it is at most
-    `max_gap_bins` long AND every covered bin in it has mean covering-window
-    probability >= `bridge_prob`.
-
-    `bridge_prob` is the anti-overextension guard (docs/anti-overextension.md):
-    at 0 the merge is distance-only and will happily bridge two genuinely
-    separate nearby elements; raising it requires the intervening sequence to
-    still look somewhat element-like, well below `extend_threshold`. Gaps at a
-    contig edge (leading/trailing) are never filled -- there is no second run to
-    merge with. Uncovered bins inside a gap cannot be judged, so they never
-    satisfy a `bridge_prob > 0` gate.
-    """
-    if max_gap_bins <= 0:
-        return inside
-
-    out = inside.copy()
-    n = out.shape[0]
-    idx = 0
-    # Skip a leading outside run: nothing to its left to merge with.
-    while idx < n and not out[idx]:
-        idx += 1
-    while idx < n:
-        while idx < n and out[idx]:
-            idx += 1
-        if idx >= n:
-            break
-        gap_start = idx
-        while idx < n and not out[idx]:
-            idx += 1
-        if idx >= n:
-            break  # trailing outside run, no right-hand neighbour
-        gap_end = idx  # exclusive
-        if gap_end - gap_start <= max_gap_bins:
-            if bridge_prob <= 0:
-                out[gap_start:gap_end] = True
-            else:
-                span = slice(gap_start, gap_end)
-                if covered[span].all() and (bin_mean[span] >= bridge_prob).all():
-                    out[span] = True
-    return out
-
-
-def build_region_table_coverage(
-    windows_df: pd.DataFrame,
-    seed_threshold: float,
-    extend_threshold: float,
-    min_coverage_frac: float = DEFAULT_COVERAGE_FRAC,
-    max_gap_bp: int = DEFAULT_MAX_GAP_BP,
-    bridge_prob: float = DEFAULT_BRIDGE_PROB,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Coverage-fraction region builder (2026-09-17, docs/multi-model-architecture.md).
-
-    The removed `strict` builder marked a stride-sized bin as inside a region only if
-    the MEAN of the ~window_len/stride windows covering it is >= `extend_threshold`
-    -- effectively the intersection of high-scoring windows. Because the model's
-    score track inside real elements is spiky (islands of high windows amid
-    background), that drops sparse-signal elements outright and trims every
-    region by ~half a window per side. This builder instead marks a bin as
-    inside if at least `min_coverage_frac` of its covering windows individually
-    score >= `extend_threshold` (frac -> 0 is the union of high windows; frac ~1
-    recovers intersection behavior). Runs of inside bins that contain at least
-    one bin covered by a window >= `seed_threshold` become regions.
-
-    On the 18-genome eval set this lifts region recall 76.9% -> 88.5% (frac 0.3)
-    / 94.2% (frac <= 0.1) and median IoU 0.56 -> 0.75-0.77, at the cost of
-    2-4x more calls per genome. frac 0.3 is where start/end errors are
-    symmetric; the union brackets true edges by ~4.5 kb a side. Same output
-    contract as the strict builder had; `region_pred_label` marks windows that
-    overlap a called region.
-
-    `max_gap_bp` / `bridge_prob` (both default off) additionally merge calls
-    separated by a short gap, to repair elements fragmented by an internal dip
-    in the score track -- see `_close_gaps` and docs/gap-filling.md. With
-    `max_gap_bp=0` this function's output is identical to its pre-2026-09-21
-    behavior.
-    """
-    if not 0.0 <= min_coverage_frac <= 1.0:
-        raise ValueError("min_coverage_frac must be in [0, 1]")
-    if max_gap_bp < 0:
-        raise ValueError("max_gap_bp must be >= 0")
-    if not 0.0 <= bridge_prob <= 1.0:
-        raise ValueError("bridge_prob must be in [0, 1]")
-
-    annotated_parts: List[pd.DataFrame] = []
-    region_rows: List[Dict[str, object]] = []
-
-    for (genome_id, contig_id), contig_df in windows_df.groupby(
-        ["genome_id", "contig_id"],
-        sort=False,
-    ):
-        contig_df = contig_df.sort_values(["start", "end"]).reset_index(drop=True).copy()
-        contig_df["region_pred_label"] = 0
-
-        stride_values = contig_df["start"].astype(int).diff().dropna()
-        stride = int(stride_values.mode().iloc[0]) if not stride_values.empty else int(
-            contig_df["end"].iloc[0] - contig_df["start"].iloc[0]
-        )
-        window_len = int(contig_df["end"].iloc[0] - contig_df["start"].iloc[0])
-        contig_end = int(contig_df["end"].max())
-        n_bins = int(math.ceil(contig_end / stride))
-        bins_per_window = max(1, int(math.ceil(window_len / stride)))
-
-        high_count = np.zeros(n_bins, dtype=np.int32)
-        cover_count = np.zeros(n_bins, dtype=np.int32)
-        prob_sum = np.zeros(n_bins, dtype=np.float64)
-        seed_bin_mask = np.zeros(n_bins, dtype=bool)
-        starts = contig_df["start"].astype(int).to_numpy()
-        probs = contig_df["prob"].astype(float).to_numpy()
-        for start, prob in zip(starts, probs):
-            start_bin = int(start // stride)
-            end_bin = min(n_bins, start_bin + bins_per_window)
-            cover_count[start_bin:end_bin] += 1
-            prob_sum[start_bin:end_bin] += prob
-            if prob >= extend_threshold:
-                high_count[start_bin:end_bin] += 1
-            if prob >= seed_threshold:
-                seed_bin_mask[start_bin:end_bin] = True
-
-        covered = cover_count > 0
-        frac = np.zeros(n_bins, dtype=np.float64)
-        frac[covered] = high_count[covered] / cover_count[covered]
-        inside = covered & (high_count > 0) & (frac >= min_coverage_frac)
-
-        if max_gap_bp > 0:
-            bin_mean = np.zeros(n_bins, dtype=np.float64)
-            bin_mean[covered] = prob_sum[covered] / cover_count[covered]
-            inside = _close_gaps(
-                inside,
-                bin_mean=bin_mean,
-                covered=covered,
-                max_gap_bins=int(max_gap_bp // stride),
-                bridge_prob=bridge_prob,
-            )
-
-        bin_index = 0
-        while bin_index < n_bins:
-            if not inside[bin_index]:
-                bin_index += 1
-                continue
-            right_bin = bin_index
-            while right_bin + 1 < n_bins and inside[right_bin + 1]:
-                right_bin += 1
-            if seed_bin_mask[bin_index : right_bin + 1].any():
-                region_start = bin_index * stride
-                region_end = min(contig_end, (right_bin + 1) * stride)
-                overlap_mask = (contig_df["end"].astype(int) > region_start) & (
-                    contig_df["start"].astype(int) < region_end
-                )
-                contig_df.loc[overlap_mask, "region_pred_label"] = 1
-                overlapping = contig_df[overlap_mask]
-                region_rows.append(
-                    {
-                        "genome_id": genome_id,
-                        "contig_id": contig_id,
-                        "start": int(region_start),
-                        "end": int(region_end),
-                        "n_windows": int(len(overlapping)),
-                        "region_len_bp": int(region_end - region_start),
-                        "mean_prob": float(overlapping["prob"].astype(float).mean()),
-                        "max_prob": float(overlapping["prob"].astype(float).max()),
-                        "boundary_kind": _coverage_boundary_kind(
-                            min_coverage_frac, max_gap_bp, bridge_prob
-                        ),
-                    }
-                )
-            bin_index = right_bin + 1
-
-        annotated_parts.append(contig_df)
-
-    annotated_windows_df = pd.concat(annotated_parts, ignore_index=True)
-    regions_df = pd.DataFrame(
-        region_rows,
-        columns=[
-            "genome_id", "contig_id", "start", "end", "n_windows",
-            "region_len_bp", "mean_prob", "max_prob", "boundary_kind",
-        ],
-    )
-    return annotated_windows_df, regions_df
-
-
-def resolve_thresholds(
-    mode: str,
-    threshold: float | None,
-    seed_threshold: float | None,
-    extend_threshold: float | None,
-) -> Tuple[float, float, float]:
-    mode_threshold = MODE_THRESHOLDS[mode]
-    score_threshold = threshold if threshold is not None else mode_threshold
-    region_seed_threshold = seed_threshold if seed_threshold is not None else score_threshold
-    region_extend_threshold = (
-        extend_threshold if extend_threshold is not None else min(region_seed_threshold, 0.99)
-    )
-    return score_threshold, region_seed_threshold, region_extend_threshold
-
-
-def write_metadata(
-    cfg: ProphageTrainConfig,
-    checkpoint_path,
-    fasta_path: str,
-    mode: str,
-    threshold: float,
-    seed_threshold: float,
-    extend_threshold: float,
-    device: str,
-    windows_df: pd.DataFrame,
-    regions_df: pd.DataFrame,
-    out_path: Path,
-    ambiguity_policy: str = DEFAULT_AMBIGUITY_POLICY,
-    grid_offset: int = 0,
-    coverage_frac: float = DEFAULT_COVERAGE_FRAC,
-    ensemble_mode: str = "single",
-    max_gap_bp: int = DEFAULT_MAX_GAP_BP,
-    bridge_prob: float = DEFAULT_BRIDGE_PROB,
-    trained_window_len: int | None = None,
-    trained_stride: int | None = None,
-    refine: dict | None = None,
-    short_contigs: dict | None = None,
-    seed_support: dict | None = None,
-    extra: dict | None = None,
-) -> None:
-    metadata = {
-        "prophound_version": package_version(),
-        "run_name": cfg.run_name,
-        "checkpoint": checkpoint_path,
-        "ensemble": ensemble_mode,
-        "input_fasta": fasta_path,
-        "mode": mode,
-        "threshold": threshold,
-        "seed_threshold": seed_threshold,
-        "extend_threshold": extend_threshold,
-        "device": device,
-        "window_len": cfg.data.window_len,
-        "stride": cfg.data.stride,
-        "trained_window_len": trained_window_len if trained_window_len is not None else cfg.data.window_len,
-        "trained_stride": trained_stride if trained_stride is not None else cfg.data.stride,
-        "ambiguity_policy": ambiguity_policy,
-        "grid_offset": grid_offset,
-        "n_windows": int(len(windows_df)),
-        "n_regions": int(len(regions_df)),
-    }
-    if extra:
-        metadata.update(extra)
-    if short_contigs:
-        metadata["short_contigs"] = short_contigs
-    if seed_support:
-        metadata["seed_support"] = seed_support
-    metadata["region_builder"] = "coverage_fraction"
-    metadata["boundary_refinement"] = "none_bin_edges"
-    metadata["coverage_frac"] = coverage_frac
-    if max_gap_bp > 0:
-        metadata["fragment_merge"] = {"max_gap_bp": max_gap_bp, "bridge_prob": bridge_prob}
-    if refine:
-        metadata["refine"] = refine
-    out_path.write_text(json.dumps(metadata, indent=2) + "\n")
-
-
-def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame]) -> List[int]:
-    """Per call, how many checkpoints make an overlapping call on their own.
-
-    docs/error-analysis.md: with the `max` ensemble any one seed can create a
-    call, and on the 42-genome sample calls only one of three seeds makes were
-    99% off-target (152 of 154). Reported so users can rank calls; no call is
-    dropped here.
-    """
-    out = []
-    for r in regions_df.itertuples(index=False):
-        n = 0
-        for sr in per_seed_regions:
-            if len(sr) and ((sr["contig_id"] == r.contig_id) & (sr["end"].astype(int) > int(r.start))
-                            & (sr["start"].astype(int) < int(r.end))).any():
-                n += 1
-        out.append(n)
-    return out
-
-
-def apply_seed_vote(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame],
-                    min_support: int) -> Tuple[pd.DataFrame, int]:
-    """Keep calls that at least `min_support` checkpoints make on their own.
-
-    The call-level vote of docs/error-analysis.md: extent comes from the
-    ensemble (`max`) call, the vote only decides whether it is kept. Returns the
-    kept calls and the number dropped. min_support <= 1 keeps everything.
-    """
-    if min_support <= 1 or regions_df.empty:
-        return regions_df, 0
-    sup = np.asarray(seed_support(regions_df, per_seed_regions))
-    keep = sup >= min_support
-    return regions_df[keep].reset_index(drop=True), int((~keep).sum())
-
-
 def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
     """Fraction of each call's bases that are N."""
     if regions_df.empty:
@@ -561,442 +251,309 @@ def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
         fa.close()
 
 
-def snap_contig_edges(regions_df: pd.DataFrame, contig_lengths: Dict[str, int],
-                      snap_bp: int) -> Tuple[pd.DataFrame, int]:
-    """Move call edges within `snap_bp` of a contig end onto that end, and flag
-    every edge that sits on a contig end afterwards.
-
-    `contig_edge` is one of none/start/end/both whether or not the edge moved:
-    either way the reported boundary is the end of the sequence, not a detected
-    element edge, and the element may continue on another contig. Returns the
-    calls and how many moved.
-    """
-    if regions_df.empty:
-        return regions_df.assign(contig_edge=pd.Series(dtype=str)), 0
-    out = regions_df.copy()
-    L = out["contig_id"].astype(str).map(contig_lengths).to_numpy(dtype=np.int64)
-    start, end = out["start"].to_numpy(dtype=np.int64), out["end"].to_numpy(dtype=np.int64)
-    new_start = np.where(start <= snap_bp, 0, start)
-    new_end = np.where(end >= L - snap_bp, L, end)
-    moved = int(((new_start != start) | (new_end != end)).sum())
-    out["start"], out["end"] = new_start, new_end
-    if "region_len_bp" in out.columns:
-        out["region_len_bp"] = new_end - new_start
-    at_s, at_e = new_start == 0, new_end == L
-    out["contig_edge"] = np.select([at_s & at_e, at_s, at_e], ["both", "start", "end"], "none")
-    return out, moved
-
-
-def label_windows(windows_df: pd.DataFrame, regions_df: pd.DataFrame) -> pd.DataFrame:
-    """Set region_pred_label to 1 on windows overlapping any call, else 0."""
-    windows_df = windows_df.copy()
-    windows_df["region_pred_label"] = 0
-    for r in regions_df.itertuples(index=False):
-        m = ((windows_df["contig_id"] == r.contig_id)
-             & (windows_df["end"].astype(int) > int(r.start)) & (windows_df["start"].astype(int) < int(r.end)))
-        windows_df.loc[m, "region_pred_label"] = 1
-    return windows_df
-
-
 def score_windows(
     model: torch.nn.Module,
-    checkpoints: List[str],
     windows_df: pd.DataFrame,
     window_len: int,
-    ambiguity_policy: str,
-    ensemble: str,
+    opts: PredictOptions,
     device: torch.device,
-    batch_size: int,
-    num_workers: int,
-    per_checkpoint_out: List[np.ndarray] | None = None,
-) -> np.ndarray:
-    """Score `windows_df` with every checkpoint and combine per `ensemble`.
-
-    Shared by the coarse pass and the fine refinement pass so both use the same
-    ensemble rule. If `per_checkpoint_out` is a list, each checkpoint's scores
-    are appended to it (for seed support).
-    """
-    dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=ambiguity_policy)
+) -> Tuple[np.ndarray, List[np.ndarray]]:
+    """Score `windows_df` with every checkpoint: the ensemble track and each checkpoint's own."""
+    dataset = GenomeWindowDataset(windows_df, window_len=window_len, ambiguity_policy=opts.ambiguity_policy)
     loader = DataLoader(
         dataset,
-        batch_size=batch_size,
+        batch_size=opts.batch_size,
         shuffle=False,
-        num_workers=num_workers,
+        num_workers=opts.num_workers,
         collate_fn=collate_batch,
         pin_memory=(device.type == "cuda"),
     )
     per_checkpoint = []
-    for ckpt_path in checkpoints:
+    for ckpt_path in opts.checkpoints:
         checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
         model.load_state_dict(checkpoint["model"])
         per_checkpoint.append(np.asarray(predict_probs(model, loader, device), dtype=np.float64))
     dataset.close()
-    if per_checkpoint_out is not None:
-        per_checkpoint_out.extend(per_checkpoint)
 
     if len(per_checkpoint) == 1:
-        return per_checkpoint[0]
+        return per_checkpoint[0], per_checkpoint
     stacked = np.stack(per_checkpoint)
     # max, not mean: averaging dilutes borderline seeds below the seed
     # threshold -- the same effect that sank multi-tile averaging
     # (docs/boundary-refinement.md) and mean-ensembling in the 2026-09-17
     # checks. Measured 2026-09-21: max reaches .978/.994 covered recall
     # (Default/Exploratory) against .950/.978 for mean.
-    return stacked.max(axis=0) if ensemble == "max" else stacked.mean(axis=0)
+    ensemble = stacked.max(axis=0) if opts.ensemble == "max" else stacked.mean(axis=0)
+    return ensemble, per_checkpoint
 
 
-def run_predict(args: argparse.Namespace) -> None:
-    """Run inference end to end from a parsed argument namespace.
+def scored(windows_df: pd.DataFrame, ensemble: np.ndarray, per_checkpoint: List[np.ndarray],
+           threshold: float, opts: PredictOptions) -> pd.DataFrame:
+    """Windows with their scores: prob, pred_label, and prob_ckpt<k> with --write-seed-scores."""
+    out = windows_df.copy()
+    out["prob"] = ensemble
+    out["pred_label"] = (out["prob"] >= threshold).astype(int)
+    if opts.write_seed_scores:
+        for k, p in enumerate(per_checkpoint):
+            out[f"prob_ckpt{k + 1}"] = p
+    return out
 
-    Shared by this module's own CLI and by `prophound`'s `predict` subcommand,
-    so both stay in sync with a single implementation.
+
+def call_coarse(model, device, windows_df: pd.DataFrame, opts: PredictOptions, rules: CallRules) -> PassCalls:
+    """The full-length window pass: score, build calls with fragment merging, vote."""
+    if windows_df.empty:   # every contig is short
+        empty = pd.DataFrame(columns=REGION_COLUMNS)
+        return PassCalls(pd.DataFrame(columns=WINDOW_COLUMNS), empty, empty.assign(filter=pd.Series(dtype=str)), [])
+    ensemble, per_checkpoint = score_windows(model, windows_df, opts.window_len, opts, device)
+    return build_pass(scored(windows_df, ensemble, per_checkpoint, opts.threshold, opts), per_checkpoint,
+                      opts.seed_threshold, opts.extend_threshold, rules,
+                      max_gap_bp=opts.max_gap_bp, bridge_prob=opts.bridge_prob)
+
+
+def refine(model, device, calls: pd.DataFrame, contig_lengths: Dict[str, int], genome_id: str,
+           opts: PredictOptions) -> Tuple[pd.DataFrame, pd.DataFrame | None, dict | None]:
+    """Fine-scale pass over the coarse calls (off unless --refine-window-len). Never drops a call.
+
+    Returns the refined calls, the scored fine windows, and the refine metadata.
     """
-    cfg = load_cfg(args.config)
-    device = resolve_device(args.device)
-    threshold, seed_threshold, extend_threshold = resolve_thresholds(
-        mode=args.mode,
-        threshold=args.threshold,
-        seed_threshold=args.seed_threshold,
-        extend_threshold=args.extend_threshold,
-    )
-
-    trained_window_len, trained_stride = cfg.data.window_len, cfg.data.stride
-    window_len_arg = args.window_len
-    stride_arg = args.stride
-    if window_len_arg:
-        cfg.data.window_len = int(window_len_arg)
-    if stride_arg:
-        cfg.data.stride = int(stride_arg)
-    if cfg.data.window_len <= 0 or cfg.data.stride <= 0:
-        raise SystemExit("--window-len and --stride must be positive")
-    if cfg.data.window_len != trained_window_len:
-        # adaptive/global max pooling accepts any length, but score calibration
-        # does not transfer: negatives drift up as windows shrink (median 0.003
-        # at 10 kb -> 0.065 at 3 kb; docs/adaptive-multiscale-detection.md).
-        print(
-            f"[warn] --window-len {cfg.data.window_len} differs from the trained "
-            f"{trained_window_len}; the mode thresholds were calibrated at "
-            f"{trained_window_len} bp and are not validated at this length.",
-            file=sys.stderr,
-        )
-
-    coverage_frac = float(args.coverage_frac)
-    max_gap_bp = int(args.max_gap_bp)
-    bridge_prob = float(args.bridge_prob)
-    refine_window_len = int(args.refine_window_len or 0)
-    refine_stride = int(args.refine_stride)
-    edge_alpha = float(args.edge_alpha)
-    alpha_ramp = args.edge_alpha_ramp
-    alpha_ramp = tuple(int(x) for x in alpha_ramp) if alpha_ramp else None
-    if alpha_ramp and not 0 < alpha_ramp[0] < alpha_ramp[1]:
-        raise SystemExit("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
-    split_min_gap_bp = int(args.split_min_gap_bp)
-    split_max_prob = float(args.split_max_prob)
-    refine_threshold = args.refine_threshold
-    refine_threshold = DEFAULT_REFINE_THRESHOLD if refine_threshold is None else float(refine_threshold)
-    refine_margin = args.refine_margin
-    refine_margin = cfg.data.window_len if refine_margin is None else int(refine_margin)
-    if refine_window_len:
-        if refine_window_len >= cfg.data.window_len:
-            raise SystemExit("--refine-window-len must be smaller than --window-len")
-        if refine_stride <= 0 or not 0.0 <= edge_alpha <= 1.0 or refine_margin < 0:
-            raise SystemExit("need --refine-stride > 0, 0 <= --edge-alpha <= 1, --refine-margin >= 0")
-
-    edge_snap_frac = float(args.edge_snap_frac)
-    if not 0.0 <= edge_snap_frac <= 1.0:
-        raise SystemExit("--edge-snap-frac must be between 0 and 1")
-
-    input_path = Path(args.input_fasta)
-    input_summary = validate_fasta(str(input_path))   # fails early with a clear message
-    genome_id = input_path.stem
-    windows_df = build_windows(
-        str(input_path),
-        genome_id=genome_id,
-        data_config=cfg.data,
-        offset=max(0, int(args.grid_offset or 0)),
-    )
-    short_contigs = args.short_contigs
-    if short_contigs not in SHORT_CONTIG_MODES:
-        raise SystemExit(f"--short-contigs must be one of {SHORT_CONTIG_MODES}")
-    short_windows_df, short_report = build_short_contig_windows(
-        str(input_path), genome_id, window_len=cfg.data.window_len,
-    )
-    if short_report["n_short"]:
-        # never silent: this was the failure mode (docs/cli-and-packaging.md "Input robustness")
-        verb = "scanned at reduced scale" if short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
-        print(
-            f"[warn] {short_report['n_short']} contig(s) shorter than {cfg.data.window_len} bp "
-            f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
-            f"{short_report['n_too_short']} under {min(SHORT_CONTIG_SCALES)} bp never scanned "
-            f"({short_report['bp_too_short']} bp).",
-            file=sys.stderr,
-        )
-    if windows_df.empty and (short_contigs == "skip" or short_windows_df.empty):
-        raise RuntimeError("No inference windows were generated from the input FASTA.")
-
-    ambiguity_policy = args.ambiguity_policy
-    checkpoints = args.checkpoint if isinstance(args.checkpoint, list) else [args.checkpoint]
-    ensemble = args.ensemble
-    if ensemble not in ENSEMBLE_MODES:
-        raise SystemExit(f"--ensemble must be one of {ENSEMBLE_MODES}")
-
-    model = build_model(cfg, device)
-    score_kw = dict(ambiguity_policy=ambiguity_policy, ensemble=ensemble, device=device,
-                    batch_size=args.batch_size, num_workers=args.num_workers)
-    track_support = len(checkpoints) > 1
-    min_support = args.min_seed_support
-    min_support = MODE_MIN_SEED_SUPPORT[args.mode] if min_support is None else int(min_support)
-    if min_support < 1:
-        raise SystemExit("--min-seed-support must be >= 1")
-    vote_k = min(min_support, len(checkpoints)) if track_support else 1
-    if min_support > 1 and vote_k < min_support:
-        # never silent: the mode thresholds assume the vote (MODE_THRESHOLDS comment)
-        print(f"[warn] seed vote of {min_support} requested but only {len(checkpoints)} checkpoint(s): "
-              f"{'voting at ' + str(vote_k) if vote_k > 1 else 'no vote applied'}. The '{args.mode}' "
-              "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.", file=sys.stderr)
-    vote_dropped = 0
-    write_seed_scores = bool(args.write_seed_scores) and len(checkpoints) > 1
-    per_seed_regions: List[List[pd.DataFrame]] = [[] for _ in checkpoints]
-    if windows_df.empty:  # every contig is short: nothing for the coarse pass
-        windows_df = pd.DataFrame(columns=["genome_id", "contig_id", "start", "end", "fasta_path",
-                                           "prob", "pred_label", "region_pred_label"])
-        regions_df = pd.DataFrame(columns=REGION_COLUMNS)
-    else:
-        coarse_per_ckpt: List[np.ndarray] = []
-        probs = score_windows(model, checkpoints, windows_df, window_len=cfg.data.window_len,
-                              per_checkpoint_out=coarse_per_ckpt, **score_kw)
-        windows_df = windows_df.copy()
-        windows_df["prob"] = probs
-        windows_df["pred_label"] = (windows_df["prob"] >= threshold).astype(int)
-        if write_seed_scores:
-            for k, p in enumerate(coarse_per_ckpt):
-                windows_df[f"prob_ckpt{k + 1}"] = p
-
-    if not windows_df.empty:
-        # per-checkpoint scores are aligned to this (pre-builder) row order
-        coarse_coords = windows_df[["genome_id", "contig_id", "start", "end", "fasta_path"]]
-        windows_df, regions_df = build_region_table_coverage(
-            windows_df,
-            seed_threshold=seed_threshold,
-            extend_threshold=extend_threshold,
-            min_coverage_frac=coverage_frac,
-            max_gap_bp=max_gap_bp,
-            bridge_prob=bridge_prob,
-        )
-        if len(checkpoints) > 1:
-            for k, p in enumerate(coarse_per_ckpt):
-                _, sr = build_region_table_coverage(
-                    coarse_coords.assign(prob=p),
-                    seed_threshold=seed_threshold, extend_threshold=extend_threshold,
-                    min_coverage_frac=coverage_frac, max_gap_bp=max_gap_bp, bridge_prob=bridge_prob,
-                )
-                per_seed_regions[k].append(sr)
-            if vote_k > 1:
-                regions_df, n = apply_seed_vote(regions_df, [r[-1] for r in per_seed_regions], vote_k)
-                vote_dropped += n
-                if n:
-                    windows_df = label_windows(windows_df, regions_df)
-
-    fine_windows_df = None
-    refine_counts = None
-    if refine_window_len and not regions_df.empty:
-        contig_lengths = dict(iter_fasta_lengths(str(input_path)))
-        neighborhoods = plan_neighborhoods(regions_df, contig_lengths, refine_margin)
+    if not opts.refine_window_len:
+        return calls, None, None
+    fine_windows_df, counts = None, {}
+    if not calls.empty:
+        neighborhoods = plan_neighborhoods(calls, contig_lengths, opts.refine_margin)
         fine_windows_df = plan_fine_windows(
-            neighborhoods, contig_lengths, genome_id, str(input_path),
-            window_len=refine_window_len, stride=refine_stride,
+            neighborhoods, contig_lengths, genome_id, opts.input_fasta,
+            window_len=opts.refine_window_len, stride=opts.refine_stride,
         )
         if not fine_windows_df.empty:
             fine_windows_df = fine_windows_df.copy()
-            fine_windows_df["prob"] = score_windows(
-                model, checkpoints, fine_windows_df, window_len=refine_window_len, **score_kw
-            )
+            fine_windows_df["prob"] = score_windows(model, fine_windows_df, opts.refine_window_len, opts, device)[0]
             # one threshold for seed and extend at the fine scale; no merging
             # here -- merging belongs to the coarse track (merge coarse, split fine)
             fine_windows_df, fine_regions_df = build_region_table_coverage(
                 fine_windows_df,
-                seed_threshold=refine_threshold,
-                extend_threshold=refine_threshold,
-                min_coverage_frac=coverage_frac,
+                seed_threshold=opts.refine_threshold,
+                extend_threshold=opts.refine_threshold,
+                min_coverage_frac=opts.coverage_frac,
                 max_gap_bp=0,
             )
         else:
             fine_regions_df = pd.DataFrame(columns=["contig_id", "start", "end"])
-        regions_df = refine_regions(
-            regions_df,
+        ramp = opts.edge_alpha_ramp
+        calls = refine_regions(
+            calls,
             fine_windows_df,
             fine_regions_df,
-            edge_alpha=edge_alpha,
-            split_min_gap_bp=split_min_gap_bp,
-            split_max_prob=split_max_prob,
-            kind_suffix=f"_refine{refine_window_len}_a{edge_alpha:g}"
-            + (f"_ramp{alpha_ramp[0]}-{alpha_ramp[1]}" if alpha_ramp else ""),
-            alpha_ramp_bp=alpha_ramp,
+            edge_alpha=opts.edge_alpha,
+            split_min_gap_bp=opts.split_min_gap_bp,
+            split_max_prob=opts.split_max_prob,
+            kind_suffix=f"_refine{opts.refine_window_len}_a{opts.edge_alpha:g}"
+            + (f"_ramp{ramp[0]}-{ramp[1]}" if ramp else ""),
+            alpha_ramp_bp=ramp,
         )
-        refine_counts = {k: int(v) for k, v in regions_df["refine_status"].value_counts().items()}
-        # region_pred_label must describe the refined calls, not the coarse ones
-        windows_df = label_windows(windows_df, regions_df)
+        counts = {k: int(v) for k, v in calls["refine_status"].value_counts().items()}
+    meta = {
+        "window_len": opts.refine_window_len, "stride": opts.refine_stride,
+        "threshold": opts.refine_threshold, "margin_bp": opts.refine_margin,
+        "edge_alpha": opts.edge_alpha,
+        "edge_alpha_ramp_bp": list(opts.edge_alpha_ramp) if opts.edge_alpha_ramp else None,
+        "split_min_gap_bp": opts.split_min_gap_bp, "split_max_prob": opts.split_max_prob,
+        "n_fine_windows": int(0 if fine_windows_df is None else len(fine_windows_df)),
+        "status_counts": counts,
+    }
+    return calls, fine_windows_df, meta
 
-    short_meta = {"mode": short_contigs, **short_report}
-    if short_contigs == "scan" and not short_windows_df.empty:
-        st = args.short_contig_threshold
-        calibrated = st is None
 
-        def short_thresholds(scale: int) -> Tuple[float, float]:
-            t = float(st) if st is not None else SHORT_CONTIG_THRESHOLDS[args.mode][scale]
-            return t, t
+def call_short_contigs(model, device, short_windows_df: pd.DataFrame, opts: PredictOptions,
+                       rules: CallRules) -> Tuple[List[PassCalls], dict]:
+    """Contigs shorter than --window-len, one pass per scale (5 or 3 kb), no merging.
 
-        if not calibrated:
-            print(f"[warn] --short-contig-threshold {float(st):g} overrides the calibrated "
-                  "short-contig thresholds.", file=sys.stderr)
-        short_regions, short_windows, used = [], [], {}
-        for scale, sw in short_windows_df.groupby("scale"):
-            short_seed, short_extend = short_thresholds(int(scale))
-            used[str(int(scale))] = {"seed": short_seed, "extend": short_extend}
-            sw = sw.drop(columns="scale").reset_index(drop=True)
-            short_per_ckpt: List[np.ndarray] = []
-            sw["prob"] = score_windows(model, checkpoints, sw, window_len=int(scale),
-                                       per_checkpoint_out=short_per_ckpt, **score_kw)
-            sw["pred_label"] = (sw["prob"] >= short_seed).astype(int)
-            if write_seed_scores:
-                for k, p in enumerate(short_per_ckpt):
-                    sw[f"prob_ckpt{k + 1}"] = p
-            if track_support:
-                for k, p in enumerate(short_per_ckpt):
-                    _, ssr = build_region_table_coverage(
-                        sw[["genome_id", "contig_id", "start", "end", "fasta_path"]].assign(prob=p),
-                        seed_threshold=short_seed, extend_threshold=short_extend,
-                        min_coverage_frac=coverage_frac, max_gap_bp=0,
-                    )
-                    per_seed_regions[k].append(ssr)
-            # per-contig windows share one length, so the coverage builder's
-            # per-contig window_len/stride inference holds; no merging on short contigs
-            sw, sr = build_region_table_coverage(
-                sw, seed_threshold=short_seed, extend_threshold=short_extend,
-                min_coverage_frac=coverage_frac, max_gap_bp=0,
-            )
-            if vote_k > 1:
-                sr, n = apply_seed_vote(sr, [r[-1] for r in per_seed_regions], vote_k)
-                vote_dropped += n
-                if n:
-                    sw = label_windows(sw, sr)
-            sr["boundary_kind"] = sr["boundary_kind"].astype(str) + f"_short{int(scale)}"
-            short_regions.append(sr)
-            short_windows.append(sw)
-        short_regions_df = pd.concat(short_regions, ignore_index=True)
-        if "refine_status" in regions_df.columns:
-            short_regions_df = short_regions_df.assign(
-                refine_status="short_contig", coarse_start=short_regions_df["start"],
-                coarse_end=short_regions_df["end"], n_pieces=1)
-        regions_df = pd.concat([regions_df, short_regions_df], ignore_index=True) \
-            if not regions_df.empty else short_regions_df
+    Returns the passes and the metadata additions (thresholds used, etc.); no passes
+    when scanning is off or nothing is scannable.
+    """
+    if opts.short_contigs != "scan" or short_windows_df.empty:
+        return [], {}
+    if opts.short_contig_threshold is not None:
+        warn(f"--short-contig-threshold {float(opts.short_contig_threshold):g} overrides the calibrated "
+             "short-contig thresholds.")
+    passes, used = [], {}
+    for scale, sw in short_windows_df.groupby("scale"):
+        t = opts.short_threshold(int(scale))
+        used[str(int(scale))] = {"seed": t, "extend": t}
+        sw = sw.drop(columns="scale").reset_index(drop=True)
+        ensemble, per_checkpoint = score_windows(model, sw, int(scale), opts, device)
+        # per-contig windows share one length, so the coverage builder's
+        # per-contig window_len/stride inference holds
+        passes.append(build_pass(scored(sw, ensemble, per_checkpoint, t, opts), per_checkpoint, t, t, rules,
+                                 max_gap_bp=0, kind_suffix=f"_short{int(scale)}"))
+    meta = {"thresholds": used, "scales": list(SHORT_CONTIG_SCALES), "stride": SHORT_CONTIG_STRIDE,
+            "n_regions": int(sum(len(p.calls) for p in passes)), "calibrated": opts.short_contig_threshold is None}
+    return passes, meta
+
+
+def combine_passes(coarse: PassCalls, coarse_calls: pd.DataFrame,
+                   short: List[PassCalls]) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Windows, calls and filtered candidates of every pass, coarse first."""
+    windows_df, calls, filtered = coarse.windows, coarse_calls, coarse.filtered
+    if short:
+        short_calls = pd.concat([p.calls for p in short], ignore_index=True)
+        if "refine_status" in calls.columns:
+            short_calls = short_calls.assign(refine_status="short_contig", coarse_start=short_calls["start"],
+                                             coarse_end=short_calls["end"], n_pieces=1)
+        # concatenating onto an empty frame would change the column dtypes
+        calls = pd.concat([calls, short_calls], ignore_index=True) if not calls.empty else short_calls
+        short_windows = [p.windows for p in short]
         windows_df = pd.concat([windows_df, *short_windows], ignore_index=True) \
             if not windows_df.empty else pd.concat(short_windows, ignore_index=True)
-        short_meta.update({"thresholds": used,
-                           "scales": list(SHORT_CONTIG_SCALES), "stride": SHORT_CONTIG_STRIDE,
-                           "n_regions": int(len(short_regions_df)), "calibrated": calibrated})
+        filtered = concat_nonempty([filtered, *(p.filtered for p in short)])
+    return windows_df, calls, filtered
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-    windows_out = outdir / "windows.tsv"
-    regions_out = outdir / "regions.tsv"
-    metadata_out = outdir / "run_metadata.json"
 
-    # before the N filter, so n_frac describes the reported coordinates
-    snap_bp = int(edge_snap_frac * cfg.data.window_len)
-    regions_df, n_snapped = snap_contig_edges(regions_df, dict(iter_fasta_lengths(str(input_path))), snap_bp)
-    if n_snapped:
-        windows_df = label_windows(windows_df, regions_df)
-    edge_meta = {"frac": edge_snap_frac, "snap_bp": snap_bp, "calls_moved": n_snapped,
-                 "calls_on_contig_edge": int((regions_df["contig_edge"] != "none").sum()) if len(regions_df) else 0}
-
-    # calls made mostly of N (imputed scaffold gaps) are not candidates
-    n_frac = call_n_fraction(regions_df, str(input_path))
-    n_dropped = int((n_frac >= MAX_CALL_N_FRAC).sum())
-    regions_df = regions_df.assign(n_frac=np.round(n_frac, 4))
-    if n_dropped:
-        regions_df = regions_df[regions_df.n_frac < MAX_CALL_N_FRAC].reset_index(drop=True)
-        windows_df = label_windows(windows_df, regions_df)
-        print(f"[warn] {n_dropped} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N (imputed gap sequence).",
-              file=sys.stderr)
-    gap_filter_meta = {"max_call_n_frac": MAX_CALL_N_FRAC, "calls_dropped": n_dropped,
-                       "calls_with_any_n": int((regions_df.n_frac > 0).sum())}
-
-    support_meta = None
-    if track_support:
-        seed_regs = [pd.concat([x for x in r if len(x)], ignore_index=True) if any(len(x) for x in r)
-                     else pd.DataFrame(columns=["contig_id", "start", "end"]) for r in per_seed_regions]
-        regions_df = regions_df.copy()
-        regions_df["seed_support"] = seed_support(regions_df, seed_regs) if len(regions_df) else []
-        support_meta = {"n_checkpoints": len(checkpoints),
-                        "min_seed_support": vote_k, "requested_min_seed_support": min_support,
-                        "calls_dropped_by_vote": vote_dropped,
-                        "calls_by_support": {str(k): int(v) for k, v in
-                                             regions_df["seed_support"].value_counts().sort_index().items()}}
-
-    windows_df.to_csv(windows_out, sep="\t", index=False)
-    regions_df.to_csv(regions_out, sep="\t", index=False)
-    write_metadata(
-        cfg=cfg,
-        checkpoint_path=checkpoints if len(checkpoints) > 1 else checkpoints[0],
-        ensemble_mode=(ensemble if len(checkpoints) > 1 else "single"),
-        fasta_path=str(input_path),
-        mode=args.mode,
-        threshold=threshold,
-        seed_threshold=seed_threshold,
-        extend_threshold=extend_threshold,
-        device=str(device),
-        windows_df=windows_df,
-        regions_df=regions_df,
-        out_path=metadata_out,
-        ambiguity_policy=ambiguity_policy,
-        grid_offset=max(0, int(args.grid_offset or 0)),
-        coverage_frac=coverage_frac,
-        max_gap_bp=max_gap_bp,
-        bridge_prob=bridge_prob,
-        trained_window_len=trained_window_len,
-        trained_stride=trained_stride,
-        short_contigs=short_meta,
-        seed_support=support_meta,
-        extra={"input": input_summary, "n_gap_filter": gap_filter_meta, "edge_snap": edge_meta,
-               "checkpoint_sha256": {str(c): sha256(str(c)) for c in checkpoints},
-               "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
-               + (["regions.fna"] if args.write_region_fasta else [])},
-        refine=(None if not refine_window_len else {
-            "window_len": refine_window_len, "stride": refine_stride,
-            "threshold": refine_threshold, "margin_bp": refine_margin,
-            "edge_alpha": edge_alpha, "edge_alpha_ramp_bp": list(alpha_ramp) if alpha_ramp else None,
-            "split_min_gap_bp": split_min_gap_bp,
-            "split_max_prob": split_max_prob, "n_fine_windows": int(0 if fine_windows_df is None else len(fine_windows_df)),
-            "status_counts": refine_counts or {},
-        }),
+def call_rules(opts: PredictOptions) -> CallRules:
+    return CallRules(
+        seed_threshold=opts.seed_threshold, extend_threshold=opts.extend_threshold,
+        coverage_frac=opts.coverage_frac, max_gap_bp=opts.max_gap_bp, bridge_prob=opts.bridge_prob,
+        min_seed_support=opts.min_seed_support,
+        short_thresholds={sc: opts.short_threshold(sc) for sc in SHORT_CONTIG_SCALES},
+        snap_bp=opts.snap_bp, max_call_n_frac=MAX_CALL_N_FRAC,
     )
 
-    print(f"[done] wrote {windows_out}", file=sys.stderr)
+
+def run_predict(args: argparse.Namespace) -> None:
+    """Run inference end to end from parsed `predict` arguments."""
+    cfg = load_cfg(args.config)
+    device = resolve_device(args.device)
+    opts = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
+    if opts.window_len != opts.trained_window_len:
+        # adaptive/global max pooling accepts any length, but score calibration
+        # does not transfer: negatives drift up as windows shrink (median 0.003
+        # at 10 kb -> 0.065 at 3 kb; docs/adaptive-multiscale-detection.md).
+        warn(f"--window-len {opts.window_len} differs from the trained {opts.trained_window_len}; the mode "
+             f"thresholds were calibrated at {opts.trained_window_len} bp and are not validated at this length.")
+
+    input_summary = validate_fasta(opts.input_fasta)   # fails early with a clear message
+    contig_lengths = dict(iter_fasta_lengths(opts.input_fasta))
+    genome_id = Path(opts.input_fasta).stem
+    windows_df = build_windows(opts.input_fasta, genome_id, opts.window_len, opts.stride,
+                               offset=opts.grid_offset, contig_lengths=contig_lengths)
+    short_windows_df, short_report = build_short_contig_windows(
+        opts.input_fasta, genome_id, window_len=opts.window_len, contig_lengths=contig_lengths)
+    if short_report["n_short"]:
+        # never silent: this was the failure mode (docs/cli-and-packaging.md "Input robustness")
+        verb = "scanned at reduced scale" if opts.short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
+        warn(f"{short_report['n_short']} contig(s) shorter than {opts.window_len} bp "
+             f"({short_report['bp_short']} bp): {short_report['n_scannable']} {verb}; "
+             f"{short_report['n_too_short']} under {min(SHORT_CONTIG_SCALES)} bp never scanned "
+             f"({short_report['bp_too_short']} bp).")
+    if windows_df.empty and (opts.short_contigs == "skip" or short_windows_df.empty):
+        raise RuntimeError("No inference windows were generated from the input FASTA.")
+
+    model = build_model(cfg, device)
+    if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
+        # never silent: the mode thresholds assume the vote (options.MODE_THRESHOLDS comment)
+        k = opts.min_seed_support
+        warn(f"seed vote of {opts.requested_min_seed_support} requested but only {opts.n_checkpoints} "
+             f"checkpoint(s): {'voting at ' + str(k) if k > 1 else 'no vote applied'}. The '{opts.mode}' "
+             "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+    rules = call_rules(opts)
+
+    coarse = call_coarse(model, device, windows_df, opts, rules)
+    coarse_calls, fine_windows_df, refine_meta = refine(model, device, coarse.calls, contig_lengths, genome_id, opts)
+    short, short_scan_meta = call_short_contigs(model, device, short_windows_df, opts, rules)
+    windows_df, calls, filtered = combine_passes(coarse, coarse_calls, short)
+
+    per_seed = [[p.per_seed[k] for p in (coarse, *short) if p.per_seed] for k in range(opts.n_checkpoints)] \
+        if opts.n_checkpoints > 1 else []
+    final = finalize(calls, filtered, per_seed, contig_lengths,
+                     lambda df: call_n_fraction(df, opts.input_fasta), rules, opts.edge_snap_frac,
+                     requested_min_seed_support=opts.requested_min_seed_support)
+    gap_meta = final.meta["n_gap_filter"]
+    if gap_meta["calls_dropped"]:
+        warn(f"{gap_meta['calls_dropped']} call(s) dropped: at least {MAX_CALL_N_FRAC:.0%} N "
+             "(imputed gap sequence).")
+    windows_df = label_windows(windows_df, final.calls)
+
+    short_meta = {"mode": opts.short_contigs, **short_report, **short_scan_meta}
+    write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, final.calls, fine_windows_df,
+                  short_meta, final.meta, refine_meta)
+    print_run_summary(opts, input_summary, final.calls, short_meta, final.meta.get("seed_support"), gap_meta)
+
+
+def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
+                 calls: pd.DataFrame, short_meta: dict, call_meta: dict, refine_meta: dict | None) -> dict:
+    """The run_metadata.json contents."""
+    many = opts.n_checkpoints > 1
+    metadata = {
+        "prophound_version": package_version(),
+        "run_name": run_name,
+        "checkpoint": list(opts.checkpoints) if many else opts.checkpoints[0],
+        "ensemble": opts.ensemble if many else "single",
+        "input_fasta": opts.input_fasta,
+        "mode": opts.mode,
+        "threshold": opts.threshold,
+        "seed_threshold": opts.seed_threshold,
+        "extend_threshold": opts.extend_threshold,
+        "device": device,
+        "window_len": opts.window_len,
+        "stride": opts.stride,
+        "trained_window_len": opts.trained_window_len,
+        "trained_stride": opts.trained_stride,
+        "ambiguity_policy": opts.ambiguity_policy,
+        "grid_offset": opts.grid_offset,
+        "n_windows": int(len(windows_df)),
+        "n_regions": int(len(calls)),
+        "input": input_summary,
+        "n_gap_filter": call_meta["n_gap_filter"],
+        "edge_snap": call_meta["edge_snap"],
+        "checkpoint_sha256": {c: sha256(c) for c in opts.checkpoints},
+        "outputs": ["windows.tsv", "regions.tsv", "regions.bed", "regions.gff3", "run_metadata.json"]
+        + (["regions.fna"] if opts.write_region_fasta else []),
+        "short_contigs": short_meta,
+    }
+    if "seed_support" in call_meta:
+        metadata["seed_support"] = call_meta["seed_support"]
+    metadata["region_builder"] = "coverage_fraction"
+    metadata["boundary_refinement"] = "none_bin_edges"
+    metadata["coverage_frac"] = opts.coverage_frac
+    if opts.max_gap_bp > 0:
+        metadata["fragment_merge"] = {"max_gap_bp": opts.max_gap_bp, "bridge_prob": opts.bridge_prob}
+    if refine_meta:
+        metadata["refine"] = refine_meta
+    return metadata
+
+
+def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
+                  calls: pd.DataFrame, fine_windows_df: pd.DataFrame | None, short_meta: dict, call_meta: dict,
+                  refine_meta: dict | None) -> None:
+    outdir = Path(opts.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    windows_df.to_csv(outdir / "windows.tsv", sep="\t", index=False)
+    calls.to_csv(outdir / "regions.tsv", sep="\t", index=False)
+    metadata = run_metadata(opts, run_name, device, input_summary, windows_df, calls, short_meta, call_meta,
+                            refine_meta)
+    (outdir / "run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    print(f"[done] wrote {outdir / 'windows.tsv'}", file=sys.stderr)
     if fine_windows_df is not None:
-        fine_out = outdir / "fine_windows.tsv"
-        fine_windows_df.to_csv(fine_out, sep="\t", index=False)
-        print(f"[done] wrote {fine_out}", file=sys.stderr)
-    print(f"[done] wrote {regions_out}", file=sys.stderr)
-    print(f"[done] wrote {metadata_out}", file=sys.stderr)
-
-    write_bed(regions_df, outdir / "regions.bed")
-    write_gff3(regions_df, outdir / "regions.gff3", args.mode, package_version())
+        fine_windows_df.to_csv(outdir / "fine_windows.tsv", sep="\t", index=False)
+        print(f"[done] wrote {outdir / 'fine_windows.tsv'}", file=sys.stderr)
+    print(f"[done] wrote {outdir / 'regions.tsv'}", file=sys.stderr)
+    print(f"[done] wrote {outdir / 'run_metadata.json'}", file=sys.stderr)
+    write_bed(calls, outdir / "regions.bed")
+    write_gff3(calls, outdir / "regions.gff3", opts.mode, package_version())
     print(f"[done] wrote {outdir / 'regions.bed'} and {outdir / 'regions.gff3'}", file=sys.stderr)
-    if args.write_region_fasta:
-        write_region_fasta(regions_df, str(input_path), outdir / "regions.fna")
+    if opts.write_region_fasta:
+        write_region_fasta(calls, opts.input_fasta, outdir / "regions.fna")
         print(f"[done] wrote {outdir / 'regions.fna'}", file=sys.stderr)
-    print_run_summary(args.mode, input_summary, regions_df, short_meta, support_meta, ambiguity_policy,
-                      len(checkpoints), gap_filter_meta)
 
 
-def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity_policy, n_ckpt,
-                      gap_meta=None) -> None:
+def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame, short_meta: dict,
+                      support_meta: dict | None, gap_meta: dict) -> None:
     """One human-readable block on stderr: what went in, what came out, what was skipped."""
-    lines = [f"prophound {package_version()} | mode {mode} | {n_ckpt} checkpoint(s)",
+    lines = [f"prophound {package_version()} | mode {opts.mode} | {opts.n_checkpoints} checkpoint(s)",
              f"input: {inp['n_contigs']} contig(s), {inp['total_bp']:,} bp; "
-             f"ambiguity codes {inp['ambiguous_bases']:,} ({inp['ambiguous_ppm']:g} ppm), policy {ambiguity_policy}"]
-    if short_meta and short_meta.get("n_short"):
+             f"ambiguity codes {inp['ambiguous_bases']:,} ({inp['ambiguous_ppm']:g} ppm), "
+             f"policy {opts.ambiguity_policy}"]
+    if short_meta.get("n_short"):
         lines.append(f"short contigs: {short_meta['n_short']} under the window length ({short_meta['bp_short']:,} bp); "
                      f"{short_meta['n_too_short']} never scanned ({short_meta['bp_too_short']:,} bp)")
     n = len(regions_df)
@@ -1006,15 +563,16 @@ def print_run_summary(mode, inp, regions_df, short_meta, support_meta, ambiguity
         lines.append(f"seed vote: min support {support_meta['min_seed_support']}, "
                      f"{support_meta['calls_dropped_by_vote']} call(s) dropped; kept by support "
                      f"{support_meta['calls_by_support']}")
-    if gap_meta and (gap_meta["calls_dropped"] or gap_meta["calls_with_any_n"]):
+    if gap_meta["calls_dropped"] or gap_meta["calls_with_any_n"]:
         lines.append(f"N gaps: {gap_meta['calls_dropped']} call(s) dropped as >= {gap_meta['max_call_n_frac']:.0%} N; "
                      f"{gap_meta['calls_with_any_n']} kept call(s) contain some N (see n_frac)")
     lines.append("calls are candidates for follow-up, not annotations")
-    print("\n".join("[summary] " + l for l in lines), file=sys.stderr)
+    print("\n".join("[summary] " + line for line in lines), file=sys.stderr)
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run prophage inference on a genome FASTA (same as `prophound predict`).")
+    parser = argparse.ArgumentParser(
+        description="Run prophage inference on a genome FASTA (same as `prophound predict`).")
     add_predict_arguments(parser)
     return parser
 

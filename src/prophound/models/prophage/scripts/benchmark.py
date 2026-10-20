@@ -158,7 +158,7 @@ def cmd_profile(args: argparse.Namespace) -> None:
     cfg = pg.load_cfg(str(CONFIG))
     device = pg.resolve_device(args.device)
     fasta = str(Path(args.input).resolve())
-    windows = pg.build_windows(fasta, Path(fasta).stem, cfg.data)
+    windows = pg.build_windows(fasta, Path(fasta).stem, cfg.data.window_len, cfg.data.stride)
     dataset = pg.GenomeWindowDataset(windows, window_len=cfg.data.window_len)
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, collate_fn=pg.collate_batch)
     model = pg.build_model(cfg, device).eval()
