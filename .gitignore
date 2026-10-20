@@ -238,3 +238,12 @@ src/prophound/models/prophage/analysis/g5dev/prophound/*/*/
 src/prophound/models/prophage/runs/
 # Phase 0 reference outputs (docs/tech-debt-audit.md); local only, derived from gitignored genomes
 src/prophound/models/prophage/analysis/refout/
+
+# ARC data pulled to re-run the ARC-only figure scripts locally (docs/tech-debt-audit.md X2)
+arc_data/
+src/prophound/models/prophage/analysis/litpilot/*/
+src/prophound/models/prophage/analysis/spikein_small/tracks_*/
+src/prophound/models/prophage/analysis/spikein_siterule/tracks_*/
+src/prophound/models/prophage/analysis/spikein_small/*_truth.tsv
+src/prophound/models/prophage/analysis/spikein_siterule/insitu_truth.tsv
+src/prophound/models/prophage/analysis/short_contig_calib/*/

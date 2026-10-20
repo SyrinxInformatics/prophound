@@ -50,6 +50,23 @@ PAIRS = [
     ("analysis/confirm18/seed_vote.csv", "seedvote/confirm18.csv"),
     ("analysis/phagefree/seed_vote.csv", "seedvote/phagefree.csv"),
     ("analysis/keep_rules/results.csv", "keep_rules/results.csv"),
+    ("analysis/ngap_dose/results_final.json", "ngap/results_final.json"),
+    ("analysis/ngap_dose/results_final.csv", "ngap/results_final.csv"),
+    # from ARC data (scripts/reproduce_figures.sh skips these without it)
+    ("analysis/short_contig_calib/vote_sweep_final.json", "short_contig/vote_sweep_final.json"),
+    ("analysis/short_contig_calib/vote_sweep_final.csv", "short_contig/vote_sweep_final.csv"),
+    ("analysis/litpilot/results_final.json", "litpilot/results_final.json"),
+    ("analysis/litpilot/results_final.elements.csv", "litpilot/results_final.elements.csv"),
+    ("analysis/integrity/lit_sensitivity_final.json", "integrity/lit_sensitivity_final.json"),
+    ("analysis/integrity/lit_sensitivity_final.csv", "integrity/lit_sensitivity_final.csv"),
+    ("analysis/spikein_small/results_final.json", "spikein_small/results_final.json"),
+    ("analysis/spikein_small/results_final.elements.csv", "spikein_small/results_final.elements.csv"),
+    ("analysis/spikein_siterule/results_final.json", "spikein_siterule/results_final.json"),
+    ("analysis/spikein_siterule/results_final.elements.csv", "spikein_siterule/results_final.elements.csv"),
+    ("analysis/offtarget/annotation_ctrl_elements_only.json", "offtarget/annotation_ctrl_elements_only.json"),
+    ("analysis/offtarget/annotation_ctrl_elements_only.csv", "offtarget/annotation_ctrl_elements_only.csv"),
+    ("analysis/offtarget/annotation_ctrl_none.json", "offtarget/annotation_ctrl_none.json"),
+    ("analysis/offtarget/annotation_ctrl_none.csv", "offtarget/annotation_ctrl_none.csv"),
 ]
 
 

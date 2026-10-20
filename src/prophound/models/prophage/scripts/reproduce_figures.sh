@@ -60,3 +60,38 @@ run seedvote18 $P scripts/seed_vote_confirm.py --elements scripts/eval_confirm18
   --out $O/seedvote/confirm18.csv
 run seedvotepf $P scripts/seed_vote_confirm.py --root analysis/phagefree --out $O/seedvote/phagefree.csv
 run keeprules $P scripts/keep_rule_compare.py $O/keep_rules/results.csv
+mkdir -p $O/ngap
+run ngap $P scripts/ambiguity_dose.py eval --elements scripts/eval_sizestrat_elements.csv --root analysis/ngap_dose \
+  --gaps_dir analysis/ngap_dose/gaps --out $O/ngap/results_final.json
+
+# Figures whose inputs come from ARC (pulled to the repo-root arc_data/ and the analysis/ track
+# directories; docs/tech-debt-audit.md X2). Skipped when they are absent. On ARC, the in-situ genomes
+# in spikein_siterule/tracks_* are absolute symlinks into spikein_small/tracks_*: pull with `tar -h`,
+# or repoint them, or that figure's in-situ numbers come out 0.
+ARC=${ARC_DATA:-../../../../arc_data}
+if [ -d "$ARC/raw/genomes" ] && [ -d analysis/litpilot/ens ]; then
+  mkdir -p $O/short_contig $O/litpilot $O/spikein_small $O/spikein_siterule
+  run shortvote $P scripts/short_contig_vote_sweep.py --elements scripts/eval_sizestrat_elements.csv \
+    --fasta_dir analysis/short_contig_calib/fasta --shred_root analysis/short_contig_calib \
+    --ref_root analysis/multiscale --ref_suffix _3000 --out $O/short_contig/vote_sweep_final.json
+  run litpilot $P scripts/literature_pilot_eval.py --truth scripts/literature_truth.tsv --genomes_dir $ARC/raw/genomes \
+    --genomad_dir $ARC/genomad_out --run r1=analysis/litpilot/r1 --run r2=analysis/litpilot/r2 \
+    --run r3=analysis/litpilot/r3 --run ens=analysis/litpilot/ens --out $O/litpilot/results_final.json
+  run litsens $P scripts/integrity_checks.py lit --truth scripts/literature_truth.tsv \
+    --elements_csv analysis/litpilot/results_final.elements.csv \
+    --runs ens_shipped/exploratory,ens_shipped/default,ens_shipped/conservative,genomad --reference genomad \
+    --out $O/integrity/lit_sensitivity_final.json
+  for S in spikein_small spikein_siterule; do
+    run $S $P scripts/small_element_spikein.py eval --spike_truth analysis/$S/spike_truth.tsv \
+      --insitu_truth analysis/$S/insitu_truth.tsv --refine off --run r1=analysis/$S/tracks_r1 \
+      --run r2=analysis/$S/tracks_r2 --run r3=analysis/$S/tracks_r3 --run ens=analysis/$S/tracks_ens \
+      --out $O/$S/results_final.json
+  done
+  for B in elements_only none; do
+    run offtarget_$B $P scripts/offtarget_annotation.py --calls analysis/offtarget/calls42.csv \
+      --elements scripts/eval_sizestrat_elements.csv --genomad_dir $ARC/genomad_out --genomes_dir $ARC/raw/genomes \
+      --control_busy $B --out $O/offtarget/annotation_ctrl_$B.json
+  done
+else
+  echo "[skipped] ARC-data figures (no $ARC/raw/genomes or analysis/litpilot/ens)"
+fi
