@@ -60,6 +60,8 @@ run seedvote18 $P scripts/seed_vote_confirm.py --elements scripts/eval_confirm18
   --out $O/seedvote/confirm18.csv
 run seedvotepf $P scripts/seed_vote_confirm.py --root analysis/phagefree --out $O/seedvote/phagefree.csv
 run keeprules $P scripts/keep_rule_compare.py $O/keep_rules/results.csv
+run lambda_candidates $P scripts/lambda_candidates.py --data analysis/external_benchmarks/lambda \
+  --prophound_run analysis/lambda/ens --out $O/lambda/candidates.json    # ~13 min
 mkdir -p $O/ngap
 run ngap $P scripts/ambiguity_dose.py eval --elements scripts/eval_sizestrat_elements.csv --root analysis/ngap_dose \
   --gaps_dir analysis/ngap_dose/gaps --out $O/ngap/results_final.json

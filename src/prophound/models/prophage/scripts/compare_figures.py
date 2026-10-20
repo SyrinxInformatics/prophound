@@ -41,6 +41,8 @@ PAIRS = [
     ("analysis/external_benchmarks/lambda/scores.json", "lambda/scores.json"),
     ("analysis/external_benchmarks/lambda/scores.csv", "lambda/scores.csv"),
     ("analysis/external_benchmarks/lambda/chance.json", "lambda/chance.json"),
+    ("analysis/external_benchmarks/lambda/candidates.json", "lambda/candidates.json"),
+    ("analysis/external_benchmarks/lambda/candidates.csv", "lambda/candidates.csv"),
     ("analysis/offtarget/enrichment_ci.json", "offtarget/enrichment_ci.json"),
     ("analysis/integrity/recall42.json", "integrity/recall42.json"),
     ("analysis/integrity/recall42.csv", "integrity/recall42.csv"),

@@ -401,6 +401,43 @@ The ensemble ran on all 39 chromosomes (exit 0, checkpoint SHA-256s verified) an
 - **Interval includes 0:** report the numbers plainly, without a claim.
 - **Under all outcomes:** this is evidence of reach beyond curated truth, not validated discovery.
 
+### LAMBDA candidates check: result (scored once, 2026-10-20)
+
+Run as preregistered (`scripts/lambda_candidates.py`, 12.8 min). Outputs: `analysis/external_benchmarks/lambda/candidates.{json,csv}`. Covered50 recovery minus chance (calls rotated on each chromosome), with 95% genome-bootstrap intervals.
+
+**Primary endpoint: positive.** On the 34 not-in-corpus genomes, prophound Default covers **18 of 19 LIKELY PHAGE candidates** (0.947), against 0.111 by chance: **0.837 above chance (0.694–0.945)**, at 14.4 calls/genome. The candidates are independent of curated truth: none of the 19 overlaps a curated element, one lies within 10 kb of one, and they are spread over 13 genomes (at most 3 each).
+
+**The context that sets the wording: the annotation tools reach these candidates too.** On the same genomes, geNomad covers 15 of 19 (0.789; above chance 0.761, 0.543–0.927), PIDE 0.789, PhageBoost 0.778, VIBRANT 0.684, PHASTER 0.579 and PhiSpy 0.368. So LAMBDA's LIKELY candidates are mostly phages the database tools do call but its curators left out. They are not elements everyone missed.
+
+**Paired with geNomad** (the 32 genomes both ran, LIKELY candidates):
+
+| | covered by prophound only | by geNomad only | both | neither |
+|---|---|---|---|---|
+| prophound Default (14.4 calls/genome) | **3** | 0 | 15 | 1 |
+| Default cut to geNomad's call count (4.4) | 3 | 2 | 13 | 1 |
+
+The three candidates only prophound covers are **all ones LAMBDA flags as novel**.
+
+**Secondary endpoints (not-in-corpus genomes unless stated).**
+
+| candidates | prophound Default | Default at geNomad's cost | geNomad | PIDE | PHASTER |
+|---|---|---|---|---|---|
+| LIKELY or POSSIBLE (61; 57 for tools run on fewer genomes) | 0.754 (above chance 0.66, 0.51–0.78) | 0.579 (0.53, 0.39–0.66) | 0.474 (0.44, 0.28–0.58) | 0.544 | 0.263 |
+| LIKELY, novel-flagged (5) | 5/5 | 4/5 *(post hoc)* | 2/5 | 3/5 | 0/5 |
+| LIKELY or POSSIBLE, novel-flagged (43; 39) | 0.674 (0.57, 0.42–0.72) | 0.436 (0.38, 0.22–0.55) *(post hoc)* | 0.282 (0.24, 0.09–0.40) | 0.410 | 0.026 |
+| LIKELY, all 39 genomes (20) | 0.95 (0.84, 0.70–0.94) | — | 0.75 | 0.75 | 0.55 |
+| WEAK PHAGE SIGNAL (52) | 0.500 | 0.137 | 0.314 | 0.115 | 0.058 |
+| UNLIKELY PHAGE (11) | 0.636 | 0.182 | 0.364 | 0.273 | 0.364 |
+
+- Exploratory and Conservative behave the same way. On LIKELY (not in corpus): Exploratory 19/19 (above chance 0.84) and Conservative 17/19 (0.83).
+- **Landing:** of Default's 383 calls outside curated truth, 13.1% overlap a LIKELY or POSSIBLE candidate, against 2.6% by chance (5.0×). geNomad's 56 off-truth calls: 57%, 17.9×. geNomad's few extra calls are concentrated on reviewed candidates. prophound's many are enriched but mostly land elsewhere. That is not evidence of error: the candidates are only the regions LAMBDA's language models flagged.
+- **It also covers more of what reviewers doubted** (UNLIKELY 0.64, against geNomad's 0.36). That is the price of its call volume: at geNomad's cost it falls to 0.18.
+
+**Reading.**
+- **Supported, by the preregistered wording:** "prophound's calls recover 18 of the 19 phages LAMBDA's reviewers judged likely but its curated set lacks, above chance (0.84, 0.69–0.94), at 14 calls/genome. Cut to geNomad's call count, 16 of 19, against geNomad's 15."
+- **Supported, descriptively:** the three LIKELY phages it reaches that geNomad does not are all novel-flagged by LAMBDA. On novel-flagged LIKELY or POSSIBLE candidates it covers 0.67, against geNomad's 0.28. At geNomad's call count that is 0.44 against 0.28 *(post hoc; intervals overlap, so this is a lead, not a claim)*.
+- **Not supported:** that it reaches reviewed phages the annotation tools cannot. Most LIKELY candidates are called by geNomad, PIDE or PhageBoost. Nor anything about validated discovery: the classes are review judgements, and the candidates are only what LAMBDA's language models proposed.
+
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)
 
 Computed 2026-09-28 from the published per-genome predictions, using our own metric (covered50: ≥50% of the element's bp under calls) so that every tool is scored the same way:
