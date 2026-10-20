@@ -71,4 +71,4 @@ def test_standalone_main_accepts_input_fasta(monkeypatch):
     for argv, expected in ((["--input_fasta", "g.fna"], "g.fna"), (["--input_fasta=h.fna"], "h.fna")):
         with pytest.raises(SystemExit) as exc:
             predict_genome.main([*argv, "--outdir", "o", "--config", "c.yaml", "--checkpoint", "a.pt"])
-        assert exc.value.code == 0 and seen["input_fasta"] == expected
+        assert exc.value.code == 0 and seen["input_fasta"] == [expected]

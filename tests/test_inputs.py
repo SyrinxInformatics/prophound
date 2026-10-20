@@ -43,7 +43,7 @@ def fasta_text(width=60, newline="\n", lower=False):
 def records(prepared):
     fa = Fasta(prepared.fasta, as_raw=True)
     try:
-        return {k: fa[k][:] for k in fa.keys()}
+        return {k: fa[k][:] for k in fa.keys()}  # noqa: SIM118 -- pyfaidx Fasta is not a dict
     finally:
         fa.close()
 
@@ -69,7 +69,8 @@ def test_fasta_variants_normalise_to_the_same_sequence(tmp_path, work, variant):
                       + SEQS["plasmid1"] + "\n"}[variant]
     p = prepare_input(write(tmp_path, "g.fna", text), work)
     assert records(p) == SEQS and p.format == "fasta" and p.compression is None
-    assert all(len(line.rstrip("\n")) <= 80 for line in open(p.fasta))
+    with open(p.fasta) as fh:
+        assert all(len(line.rstrip("\n")) <= 80 for line in fh)
     validate_fasta(p.fasta)                                     # passes on the normalised copy
 
 

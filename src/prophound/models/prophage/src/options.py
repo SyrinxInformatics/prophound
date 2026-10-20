@@ -181,8 +181,9 @@ class PredictOptions:
         if min_support < 1:
             raise PredictError("--min-seed-support must be >= 1")
         checkpoints = tuple(args.checkpoint) if isinstance(args.checkpoint, list) else (args.checkpoint,)
+        inputs = args.input_fasta if isinstance(args.input_fasta, list) else [args.input_fasta]
         return cls(
-            input_fasta=str(Path(args.input_fasta)), outdir=str(args.outdir), mode=args.mode, config=args.config,
+            input_fasta=str(Path(inputs[0])) if inputs and inputs[0] else "", outdir=str(args.outdir), mode=args.mode, config=args.config,
             checkpoints=checkpoints, device=args.device,
             threshold=float(seed_default), seed_threshold=float(seed), extend_threshold=float(extend),
             requested_min_seed_support=min_support, ensemble=args.ensemble,
@@ -213,6 +214,10 @@ outputs (in --outdir; coordinates 0-based half-open, as BED):
   run_metadata.json     settings, hashes, counts, timing and the command
   regions.fna           the calls' sequences (--write-region-fasta)
 
+a batch (several --input, a directory, or --input-list) writes these per genome in
+outdir/<genome_id>/, plus at the top: combined regions.tsv, regions.filtered.tsv,
+regions.bed/.gff3 (named genome_id:call_id), batch_summary.tsv and run_metadata.json.
+
 calls are candidates for follow-up, not annotations.
 """
 
@@ -224,9 +229,14 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
     experimental = parser.add_argument_group("experimental options (not validated for default use)")
 
     basic.add_argument(
-        "--input", required=True, dest="input_fasta",
+        "--input", dest="input_fasta", action="append", metavar="PATH",
         help=("Genome to scan: FASTA, GenBank/RefSeq, EMBL, or GFF3 with an embedded ##FASTA section (as Prokka "
-              "and Bakta write), optionally gzip, bzip2 or xz compressed. The format is read from the content."),
+              "and Bakta write), optionally gzip, bzip2 or xz compressed; the format is read from the content. "
+              "Repeat it, or give a directory, to scan several genomes in one batch (one subdirectory each)."),
+    )
+    basic.add_argument(
+        "--input-list", metavar="FILE",
+        help="A file listing genomes to scan as a batch, one path per line (relative to the file; # comments).",
     )
     basic.add_argument(
         "--outdir", required=True,

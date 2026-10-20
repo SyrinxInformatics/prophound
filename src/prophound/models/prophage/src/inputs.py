@@ -31,9 +31,10 @@ import gzip
 import hashlib
 import lzma
 import warnings
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, Iterable, Iterator, TextIO, Tuple
+from typing import TextIO
 
 from .io_checks import InputError
 
@@ -58,7 +59,7 @@ class PreparedInput:
     compression: str | None
     sha256: str                    # of the user's file, as given
     u_as_t: int = 0                # RNA U bases read as T
-    contig_names: Dict[str, str] = field(default_factory=dict)   # contig ID -> record name, where they differ
+    contig_names: dict[str, str] = field(default_factory=dict)   # contig ID -> record name, where they differ
 
 
 def genome_id_for(path: str) -> str:
@@ -79,7 +80,7 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def _text_opener(path: Path) -> Tuple[Callable[[], TextIO], str | None]:
+def _text_opener(path: Path) -> tuple[Callable[[], TextIO], str | None]:
     """A function that opens `path` as text, decompressing if needed, and the compression's name."""
     with open(path, "rb") as fh:
         magic = fh.read(6)
@@ -121,7 +122,7 @@ def _detect(first: str, path: Path) -> str:
                      f"first line: {first.strip()[:60]!r}")
 
 
-def _fasta_records(lines: Iterable[str], path: Path) -> Iterator[Tuple[str, Iterator[str]]]:
+def _fasta_records(lines: Iterable[str], path: Path) -> Iterator[tuple[str, Iterator[str]]]:
     """(header, sequence lines) per record from FASTA text."""
     it = iter(lines)
     header = None
@@ -180,7 +181,7 @@ def _write_gff3(fh: TextIO, out: _Writer, path: Path) -> None:
                      "give the genome FASTA (or a GFF3 with the sequence embedded, as Prokka and Bakta write)")
 
 
-def _write_flatfile(fh: TextIO, out: _Writer, path: Path, fmt: str, names: Dict[str, str]) -> None:
+def _write_flatfile(fh: TextIO, out: _Writer, path: Path, fmt: str, names: dict[str, str]) -> None:
     from Bio import BiopythonParserWarning, SeqIO
     from Bio.Seq import UndefinedSequenceError
 
@@ -227,7 +228,7 @@ def prepare_input(source: str, workdir: Path) -> PreparedInput:
     fmt = _detect(first, path)
 
     out_path = workdir / "input.fna"
-    names: Dict[str, str] = {}
+    names: dict[str, str] = {}
     with open_text() as fh, open(out_path, "w") as out_fh:
         writer = _Writer(out_fh)
         if fmt == "fasta":

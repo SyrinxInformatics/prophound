@@ -23,6 +23,7 @@ scorers; options and defaults are in `options.py`.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import os
 import platform
@@ -46,6 +47,14 @@ from pyfaidx import Fasta
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
+from .batch import (
+    GenomeRow,
+    batch_outputs_held,
+    collect_inputs,
+    combined_calls,
+    summary_table,
+    unique_names,
+)
 from .calls import (  # noqa: F401 -- re-exported: scripts and tests import these from here
     REGION_COLUMNS,
     CallRules,
@@ -62,7 +71,7 @@ from .calls import (  # noqa: F401 -- re-exported: scripts and tests import thes
 from .config import DataConfig, load_cfg  # noqa: F401 -- DataConfig is used by scripts/benchmark.py
 from .devices import resolve_device
 from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoid  # noqa: F401 -- re-exported
-from .inputs import PreparedInput, prepare_input
+from .inputs import PreparedInput, genome_id_for, prepare_input
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .model_rc_cnn import build_model
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
@@ -87,7 +96,7 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
 
 # every file `predict` can write; --force removes all of them before writing
 OUTPUT_FILES = ("windows.tsv", "regions.tsv", "regions.filtered.tsv", "run_metadata.json", "regions.bed",
-                "regions.gff3", "regions.fna", "fine_windows.tsv")
+                "regions.gff3", "regions.fna", "fine_windows.tsv", "batch_summary.tsv")
 WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
 
@@ -95,11 +104,11 @@ class Log:
     """stderr output at the run's verbosity: warnings always, progress lines unless
     --quiet, `[info]` stage details only with --verbose."""
 
-    def __init__(self, verbosity: int = 0):
-        self.verbosity = verbosity
+    def __init__(self, verbosity: int = 0, prefix: str = ""):
+        self.verbosity, self.prefix = verbosity, prefix   # prefix names the genome in a batch
 
     def warn(self, msg: str) -> None:
-        print(f"[warn] {msg}", file=sys.stderr)
+        print(f"[warn] {self.prefix}{msg}", file=sys.stderr)
 
     def info(self, msg: str) -> None:
         if self.verbosity >= 0:
@@ -107,7 +116,7 @@ class Log:
 
     def detail(self, msg: str) -> None:
         if self.verbosity > 0:
-            print(f"[info] {msg}", file=sys.stderr)
+            print(f"[info] {self.prefix}{msg}", file=sys.stderr)
 
 
 class Progress:
@@ -472,7 +481,7 @@ def _load_config(path: str):
         raise PredictError(f"cannot read config {path}: {e}") from None
 
 
-def _check_paths(opts: PredictOptions) -> None:
+def _check_paths(opts: PredictOptions, check_outdir: bool = True) -> None:
     """Fail before any work on a missing checkpoint or an outdir that cannot be written."""
     missing = [c for c in opts.checkpoints if not Path(c).is_file()]
     if missing:
@@ -483,7 +492,7 @@ def _check_paths(opts: PredictOptions) -> None:
     existing = next(p for p in (out, *out.parents) if p.exists())
     if not os.access(existing, os.W_OK | os.X_OK):
         raise PredictError(f"cannot write to --outdir {out}: no write permission on {existing}")
-    held = _held_outputs(out)
+    held = _held_outputs(out) if check_outdir else []
     if held and not opts.force:
         raise PredictError(f"--outdir {out} already holds prophound outputs ({', '.join(held)}); "
                            f"use a new directory such as {_next_free(out)}, or --force to replace them")
@@ -510,25 +519,194 @@ def _nothing_to_scan(opts: PredictOptions, contig_lengths: Dict[str, int]) -> Pr
                         f"smallest window (the longest is {longest:,} bp)")
 
 
+@dataclasses.dataclass
+class Engine:
+    """What every genome of a run shares: the config, the device, and the model with each
+    checkpoint's weights (read once per run, not per genome)."""
+
+    cfg: object
+    device: torch.device
+    model: torch.nn.Module
+    states: List[dict]
+
+
+def load_engine(cfg, device: torch.device, opts: PredictOptions, log: Log) -> Engine:
+    model = build_model(cfg, device)
+    states = load_checkpoints(model, opts.checkpoints, device, opts.config)
+    if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
+        # never silent: the mode thresholds were set with the vote over 3 checkpoints
+        k = opts.min_seed_support
+        applied = f"voting at {k}" if k > 1 else "no vote applied"
+        log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only "
+                 f"{_plural(opts.n_checkpoints, 'checkpoint')}: {applied}. The '{opts.mode}' "
+                 "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+    return Engine(cfg, device, model, states)
+
+
+@dataclasses.dataclass
+class GenomeResult:
+    prepared: PreparedInput
+    input_summary: dict
+    calls: pd.DataFrame
+    filtered: pd.DataFrame
+    short_meta: dict
+    support_meta: dict | None
+    gap_meta: dict
+
+
 def run_predict(args: argparse.Namespace) -> None:
-    """Run inference end to end from parsed `predict` arguments."""
+    """Run inference end to end from parsed `predict` arguments: one genome, or a batch."""
     started = time.perf_counter()
     started_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
     cfg = _load_config(args.config)
     device = resolve_device(args.device)
-    opts = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
-    log = Log(opts.verbosity)
-    _check_paths(opts)
+    base = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
+    log = Log(base.verbosity)
+    paths, is_batch = collect_inputs(args.input_fasta, getattr(args, "input_list", None))
+    opts = dataclasses.replace(base, input_fasta=str(Path(paths[0])))
+    _check_paths(opts, check_outdir=not is_batch)
+    if is_batch:
+        _check_batch_outdir(Path(base.outdir), [genome_id_for(p) for p in paths], base.force)
     if opts.window_len != opts.trained_window_len:
         # the model accepts any length, but its scores on negatives rise as windows
         # shrink, so the thresholds don't transfer (docs/adaptive-multiscale-detection.md)
         log.warn(f"--window-len {opts.window_len:,} differs from the trained {opts.trained_window_len:,}; the "
                  f"mode thresholds were calibrated at {opts.trained_window_len:,} bp and are not validated "
                  "at this length.")
-
+    engine = load_engine(cfg, device, opts, log)
+    if is_batch:
+        run_batch(base, engine, log, paths, started, started_utc)
+        return
     with input_workspace(Path(opts.outdir)) as work:
         prepared = prepare_input(opts.input_fasta, work)
-        predict_prepared(opts, cfg, device, log, prepared, started, started_utc)
+        result = predict_prepared(opts, engine, log, prepared, started, started_utc)
+    print_run_summary(opts, prepared, result.input_summary, result.calls, result.short_meta,
+                      result.support_meta, result.gap_meta, str(device), time.perf_counter() - started)
+
+
+def _check_batch_outdir(outdir: Path, genome_ids: List[str], force: bool) -> None:
+    held = batch_outputs_held(outdir, genome_ids, _held_outputs)
+    if held and not force:
+        raise PredictError(f"--outdir {outdir} already holds prophound outputs ({', '.join(held[:6])}"
+                           f"{' ...' if len(held) > 6 else ''}); use a new directory such as "
+                           f"{_next_free(outdir)}, or --force to replace them")
+
+
+def run_batch(base: PredictOptions, engine: Engine, log: Log, paths: List[str], started: float,
+              started_utc: str) -> None:
+    """Scan each genome into outdir/<genome_id>/; one failure does not stop the others."""
+    outdir = Path(base.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    rows: List[GenomeRow] = []
+    calls, filtered = [], []
+    for k, path in enumerate(paths, 1):
+        gid = genome_id_for(path)
+        opts = dataclasses.replace(base, input_fasta=str(Path(path)), outdir=str(outdir / gid))
+        glog = Log(base.verbosity, prefix=f"{gid}: ")
+        t = time.perf_counter()
+        t_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        try:
+            with input_workspace(Path(opts.outdir)) as work:
+                prepared = prepare_input(path, work)
+                result = predict_prepared(opts, engine, glog, prepared, t, t_utc)
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            if base.verbosity > 0 and not isinstance(e, PredictError):
+                traceback.print_exc()
+            message = str(e) if isinstance(e, PredictError) else f"unexpected {type(e).__name__}: {e}"
+            rows.append(GenomeRow(gid, _shown(path), "failed", elapsed_s=round(time.perf_counter() - t, 1),
+                                  error=message))
+            log.warn(f"{gid}: failed: {message}")
+            continue
+        inp = result.input_summary
+        rows.append(GenomeRow(gid, _shown(path), "ok", prepared.format, inp["n_contigs"], inp["total_bp"],
+                              len(result.calls), len(result.filtered), round(time.perf_counter() - t, 1)))
+        calls.append(result.calls)
+        filtered.append(result.filtered)
+        log.info(f"[done] {gid} ({k}/{len(paths)}): {_plural(len(result.calls), 'call')} "
+                 f"in {_duration(time.perf_counter() - t)}")
+    written = write_batch_outputs(base, engine, outdir, rows, calls, filtered, started, started_utc)
+    log.info(f"[done] wrote {', '.join(written)} and one directory per genome to {outdir}")
+    print_batch_summary(base, rows, str(engine.device), time.perf_counter() - started)
+    failed = [r for r in rows if r.status != "ok"]
+    if failed:
+        raise PredictError(f"{len(failed)} of {len(rows)} genomes failed ({', '.join(r.genome_id for r in failed[:5])}"
+                           f"{' ...' if len(failed) > 5 else ''}); see batch_summary.tsv")
+
+
+def write_batch_outputs(base: PredictOptions, engine: Engine, outdir: Path, rows: List[GenomeRow],
+                        calls: List[pd.DataFrame], filtered: List[pd.DataFrame], started: float,
+                        started_utc: str) -> List[str]:
+    """The batch's top-level files, written atomically: combined calls, the summary, metadata."""
+    all_calls = combined_calls(calls)
+    # a genome that failed this time keeps no outputs from an earlier batch
+    stage = StagedOutputs(outdir, force=base.force, keep_dirs=tuple(r.genome_id for r in rows if r.status == "ok"))
+    try:
+        all_calls.to_csv(stage.path("regions.tsv"), sep="\t", index=False)
+        combined_calls(filtered).to_csv(stage.path("regions.filtered.tsv"), sep="\t", index=False)
+        write_bed(unique_names(all_calls), stage.path("regions.bed"))
+        write_gff3(unique_names(all_calls), stage.path("regions.gff3"), base.mode, package_version())
+        summary_table(rows).to_csv(stage.path("batch_summary.tsv"), sep="\t", index=False)
+        outputs = [*stage.staged, "run_metadata.json"]
+        meta = batch_metadata(base, engine, rows, outputs, started_utc, time.perf_counter() - started)
+        stage.path("run_metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
+        stage.commit()
+    except BaseException:
+        stage.discard()
+        raise
+    return outputs
+
+
+def batch_metadata(base: PredictOptions, engine: Engine, rows: List[GenomeRow], outputs: List[str],
+                   started_utc: str, elapsed: float) -> dict:
+    """The batch run_metadata.json: shared settings and one entry per genome; each genome's own
+    run_metadata.json has the full detail."""
+    checkpoints = [_shown(c) for c in base.checkpoints]
+    return {
+        "prophound_version": package_version(),
+        "batch": True,
+        "config": _shown(base.config),
+        "checkpoint": checkpoints,
+        "checkpoint_sha256": {_shown(c): sha256(c) for c in base.checkpoints},
+        "mode": base.mode,
+        "threshold": base.threshold,
+        "seed_threshold": base.seed_threshold,
+        "extend_threshold": base.extend_threshold,
+        "min_seed_support": base.min_seed_support,
+        "ensemble": base.ensemble if base.n_checkpoints > 1 else "single",
+        "window_len": base.window_len,
+        "stride": base.stride,
+        "ambiguity_policy": base.ambiguity_policy,
+        "short_contigs": base.short_contigs,
+        "device": str(engine.device),
+        "n_genomes": len(rows),
+        "n_ok": sum(r.status == "ok" for r in rows),
+        "n_failed": sum(r.status != "ok" for r in rows),
+        "genomes": [{"genome_id": r.genome_id, "input": r.input, "status": r.status,
+                     "outdir": r.genome_id if r.status == "ok" else None} for r in rows],
+        "outputs": outputs,
+        "started_utc": started_utc,
+        "elapsed_s": round(elapsed, 1),
+        "command": _command_line(sys.argv[1:]),
+        "platform": {"python": platform.python_version(), "system": platform.system(),
+                     "release": platform.release(), "machine": platform.machine(), "torch": torch.__version__},
+    }
+
+
+def print_batch_summary(base: PredictOptions, rows: List[GenomeRow], device: str, elapsed: float) -> None:
+    ok = [r for r in rows if r.status == "ok"]
+    failed = [r for r in rows if r.status != "ok"]
+    lines = [f"prophound {package_version()} | mode {base.mode} | {_plural(base.n_checkpoints, 'checkpoint')} "
+             f"| batch of {_plural(len(rows), 'genome')}",
+             f"genomes: {len(ok):,} done, {len(failed):,} failed" + (" (see batch_summary.tsv)" if failed else "")]
+    if ok:
+        per = sorted(r.calls for r in ok)
+        lines.append(f"calls: {sum(per):,} in {_plural(len(ok), 'genome')} (per genome: min {per[0]:,}, "
+                     f"median {per[len(per) // 2]:,}, max {per[-1]:,}); {sum(r.filtered for r in ok):,} set aside")
+    lines.append("calls are candidates for follow-up, not annotations")
+    lines.append(f"ran on {device} in {_duration(elapsed)}")
+    print("\n".join("[summary] " + line for line in lines), file=sys.stderr)
 
 
 @contextmanager
@@ -546,8 +724,8 @@ def input_workspace(outdir: Path):
             outdir.rmdir()
 
 
-def predict_prepared(opts: PredictOptions, cfg, device: torch.device, log: Log, prepared: PreparedInput,
-                     started: float, started_utc: str) -> None:
+def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: PreparedInput,
+                     started: float, started_utc: str) -> GenomeResult:
     """Everything after the input is ready: windows, scoring, calls and outputs."""
     fasta = prepared.fasta
     if prepared.u_as_t:
@@ -570,22 +748,14 @@ def predict_prepared(opts: PredictOptions, cfg, device: torch.device, log: Log, 
     if windows_df.empty and not scan_short:
         raise _nothing_to_scan(opts, contig_lengths)
 
-    model = build_model(cfg, device)
-    states = load_checkpoints(model, opts.checkpoints, device, opts.config)
-    if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
-        # never silent: the mode thresholds were set with the vote over 3 checkpoints
-        k = opts.min_seed_support
-        applied = f"voting at {k}" if k > 1 else "no vote applied"
-        log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only "
-                 f"{_plural(opts.n_checkpoints, 'checkpoint')}: {applied}. The '{opts.mode}' "
-                 "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
+    device = engine.device
     rules = call_rules(opts)
     n_short = len(short_windows_df) if scan_short else 0
     log.detail(f"{len(windows_df):,} windows of {opts.window_len:,} bp and {n_short:,} short-contig windows, "
                f"{_plural(opts.n_checkpoints, 'checkpoint')}, on {device}")
 
     progress = Progress((len(windows_df) + n_short) * opts.n_checkpoints, quiet=opts.verbosity < 0)
-    scorer = Scorer(model, states, device, opts, progress)
+    scorer = Scorer(engine.model, engine.states, device, opts, progress)
     try:
         t = time.perf_counter()
         coarse = call_coarse(scorer, windows_df, opts, rules)
@@ -621,11 +791,12 @@ def predict_prepared(opts: PredictOptions, cfg, device: torch.device, log: Log, 
     filtered_out = call_table(final.filtered, contig_order, "filtered_", opts.window_len)
     filtered_out = filtered_out.reindex(columns=[*calls_out.columns, "filter"])
     run_info = {"started_utc": started_utc, "elapsed_s": round(time.perf_counter() - started, 1)}
-    written = write_outputs(opts, cfg.run_name, str(device), prepared, input_summary, windows_df, calls_out,
+    written = write_outputs(opts, engine.cfg.run_name, str(device), prepared, input_summary, windows_df, calls_out,
                             filtered_out, fine_windows_df, short_meta, final.meta, refine_meta, run_info)
-    log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
-    print_run_summary(opts, prepared, input_summary, calls_out, short_meta, final.meta.get("seed_support"), gap_meta,
-                      str(device), time.perf_counter() - started)
+    if not log.prefix:   # a batch reports each genome in one line instead
+        log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
+    return GenomeResult(prepared, input_summary, calls_out, filtered_out, short_meta,
+                        final.meta.get("seed_support"), gap_meta)
 
 
 _SHORT_SCALE = re.compile(r"_short(\d+)")
@@ -724,8 +895,8 @@ class StagedOutputs:
     """Write each output under a temporary name in the outdir, then rename them all at
     once, so a failed run leaves no partial set (and, with --force, no stale file)."""
 
-    def __init__(self, outdir: Path, force: bool):
-        self.outdir, self.force = outdir, force
+    def __init__(self, outdir: Path, force: bool, keep_dirs: Tuple[str, ...] = ()):
+        self.outdir, self.force, self.keep_dirs = outdir, force, set(keep_dirs)
         self.staged: Dict[str, Path] = {}
 
     def path(self, name: str) -> Path:
@@ -734,6 +905,7 @@ class StagedOutputs:
 
     def commit(self) -> None:
         if self.force:
+            self._clear_previous_batch()
             for name in OUTPUT_FILES:
                 (self.outdir / name).unlink(missing_ok=True)
         for name, tmp in self.staged.items():
@@ -742,6 +914,25 @@ class StagedOutputs:
     def discard(self) -> None:
         for tmp in self.staged.values():
             tmp.unlink(missing_ok=True)
+
+    def _clear_previous_batch(self) -> None:
+        """With --force over an earlier batch: its genome directories that this run does not
+        rewrite would otherwise linger, so their prophound files are removed."""
+        try:
+            old = json.loads((self.outdir / "run_metadata.json").read_text())
+        except (OSError, ValueError):
+            return
+        if not isinstance(old, dict) or not old.get("batch"):
+            return
+        for g in old.get("genomes", []):
+            name = str(g.get("genome_id", ""))
+            d = self.outdir / name
+            if not name or name in self.keep_dirs or "/" in name or not d.is_dir():
+                continue
+            for f in OUTPUT_FILES:
+                (d / f).unlink(missing_ok=True)
+            if not any(d.iterdir()):
+                d.rmdir()
 
 
 def write_outputs(opts: PredictOptions, run_name: str, device: str, prepared: PreparedInput, input_summary: dict,

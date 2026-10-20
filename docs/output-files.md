@@ -23,6 +23,24 @@ All coordinates in the TSV files and BED are **0-based, half-open** (`start` inc
 | `regions.fna` | `--write-region-fasta` | the calls' sequences |
 | `fine_windows.tsv` | `--refine-window-len` > 0 | the refinement pass's windows |
 
+## Batches
+
+A single `--input` file writes the layout above. A **batch** (`--input` given more than once, a directory, or `--input-list`) writes one directory per genome, `outdir/<genome_id>/`, each holding that genome's files exactly as a single run would write them. The top of the outdir holds:
+
+| file | contents |
+|---|---|
+| `regions.tsv`, `regions.filtered.tsv` | every genome's calls (or set-aside candidates), in input order. `genome_id` tells them apart; `call_id` is numbered per genome |
+| `regions.bed`, `regions.gff3` | the combined calls, named `genome_id:call_id` so names are unique. Contig IDs can repeat across genomes |
+| `batch_summary.tsv` | one row per genome: `genome_id`, `input`, `status` (`ok` or `failed`), `format`, `contigs`, `bp`, `calls`, `filtered`, `elapsed_s`, `error` |
+| `run_metadata.json` | `"batch": true`, the shared settings, checkpoint hashes, counts (`n_genomes`, `n_ok`, `n_failed`), one entry per genome, timing, command and platform. Each genome's own `run_metadata.json` has the full detail |
+
+- **Before any work**, a batch checks that every input exists and that genome IDs are unique (the file name without extension; `x.fna` and `x.fa` collide).
+- **A directory** contributes its genome files: `.fa`, `.fna`, `.fasta`, `.fas`, `.fsa`, `.gb`, `.gbk`, `.gbff`, `.genbank`, `.embl`, `.gff`, `.gff3`, optionally `.gz`, `.bz2` or `.xz`. It is not recursive, and hidden files are skipped.
+- **`--input-list`** takes one path per line, relative to the list file, with `#` comments.
+- **A failing genome** is recorded in `batch_summary.tsv` with its error, and the batch continues. The exit code is 1 if any genome failed.
+- **Checkpoints are read once** per batch.
+- **`--force`** over an earlier batch also removes the prophound files in its genome directories that the new batch does not rewrite, including a genome that fails this time.
+
 ## `regions.tsv`
 
 One row per call, sorted by contig (in input order), then by start.
