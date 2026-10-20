@@ -62,6 +62,8 @@ SHRED_SEED = 20261019
 # Shred piece lengths, cycled: under 3 kb (never scanned), 3-10 kb (short-contig scan), 10 kb+.
 SHRED_LENGTHS = (2_500, 6_000, 9_000, 4_000, 25_000, 15_000, 3_500, 40_000, 7_500, 12_000)
 STDERR_PREFIXES = ("[warn]", "[summary]", "error:")
+# run_metadata.json keys that differ on every run (time, and the command, which names the outdir)
+VOLATILE_META = {"started_utc", "elapsed_s", "command"}
 # volatile parts of a kept line, replaced before comparing
 VOLATILE = [(re.compile(r"^\[summary\] ran on \S+ in .*$"), "[summary] ran on <device> in <time>")]
 
@@ -253,7 +255,7 @@ def compare_case_across_devices(a: Path, b: Path, tol: float) -> list[str]:
         if worst > tol + (1e-4 if name == "regions.tsv" else 0.0):
             diffs.append(f"{name}: max score difference {worst:.2e} > {tol:g}")
     ma, mb = (json.loads((d / "run_metadata.json").read_text()) for d in (a, b))
-    for key in sorted((set(ma) | set(mb)) - {"device"}):
+    for key in sorted((set(ma) | set(mb)) - {"device"} - VOLATILE_META):
         if ma.get(key) != mb.get(key):
             diffs.append(f"run_metadata.json[{key}] differs")
     return diffs
@@ -266,7 +268,7 @@ def cmd_compare(args: argparse.Namespace) -> None:
         raise SystemExit("the two runs used different inputs")
     if not args.across_devices and (ma["device"], ma["threads"]) != (mb["device"], mb["threads"]):
         raise SystemExit(f"device/threads differ: {ma['device']}/{ma['threads']} vs {mb['device']}/{mb['threads']}")
-    ignore = set(args.ignore_metadata_key)
+    ignore = set(args.ignore_metadata_key) | VOLATILE_META
     names = set(ma["cases"]) & set(mb["cases"]) if args.common_only else set(ma["cases"]) | set(mb["cases"])
     n_bad = 0
     for name in sorted(names):

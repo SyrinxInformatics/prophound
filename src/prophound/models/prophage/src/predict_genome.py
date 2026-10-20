@@ -28,9 +28,12 @@ import os
 import platform
 import re
 import shlex
+import shutil
 import sys
+import tempfile
 import time
 import traceback
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
@@ -59,6 +62,7 @@ from .calls import (  # noqa: F401 -- re-exported: scripts and tests import thes
 from .config import DataConfig, load_cfg  # noqa: F401 -- DataConfig is used by scripts/benchmark.py
 from .devices import resolve_device
 from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoid  # noqa: F401 -- re-exported
+from .inputs import PreparedInput, prepare_input
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .model_rc_cnn import build_model
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
@@ -347,7 +351,7 @@ def call_coarse(scorer: Scorer, windows_df: pd.DataFrame, opts: PredictOptions, 
                       max_gap_bp=opts.max_gap_bp, bridge_prob=opts.bridge_prob)
 
 
-def refine(scorer: Scorer, calls: pd.DataFrame, contig_lengths: Dict[str, int], genome_id: str,
+def refine(scorer: Scorer, calls: pd.DataFrame, contig_lengths: Dict[str, int], genome_id: str, fasta: str,
            opts: PredictOptions) -> Tuple[pd.DataFrame, pd.DataFrame | None, dict | None]:
     """Fine-scale pass over the coarse calls (off unless --refine-window-len). Never drops a call.
 
@@ -359,7 +363,7 @@ def refine(scorer: Scorer, calls: pd.DataFrame, contig_lengths: Dict[str, int], 
     if not calls.empty:
         neighborhoods = plan_neighborhoods(calls, contig_lengths, opts.refine_margin)
         fine_windows_df = plan_fine_windows(
-            neighborhoods, contig_lengths, genome_id, opts.input_fasta,
+            neighborhoods, contig_lengths, genome_id, fasta,
             window_len=opts.refine_window_len, stride=opts.refine_stride,
         )
         if not fine_windows_df.empty:
@@ -522,13 +526,39 @@ def run_predict(args: argparse.Namespace) -> None:
                  f"mode thresholds were calibrated at {opts.trained_window_len:,} bp and are not validated "
                  "at this length.")
 
-    input_summary = validate_fasta(opts.input_fasta)   # fails early with a clear message
-    contig_lengths = dict(iter_fasta_lengths(opts.input_fasta))
-    genome_id = Path(opts.input_fasta).stem
-    windows_df = build_windows(opts.input_fasta, genome_id, opts.window_len, opts.stride,
+    with input_workspace(Path(opts.outdir)) as work:
+        prepared = prepare_input(opts.input_fasta, work)
+        predict_prepared(opts, cfg, device, log, prepared, started, started_utc)
+
+
+@contextmanager
+def input_workspace(outdir: Path):
+    """A hidden work directory in the outdir for the normalised input and its index,
+    removed afterwards (with the outdir too, if this run created it and wrote nothing)."""
+    created = not outdir.exists()
+    outdir.mkdir(parents=True, exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix=".prophound-input-", dir=outdir))
+    try:
+        yield work
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+        if created and not any(outdir.iterdir()):
+            outdir.rmdir()
+
+
+def predict_prepared(opts: PredictOptions, cfg, device: torch.device, log: Log, prepared: PreparedInput,
+                     started: float, started_utc: str) -> None:
+    """Everything after the input is ready: windows, scoring, calls and outputs."""
+    fasta = prepared.fasta
+    if prepared.u_as_t:
+        log.warn(f"{_plural(prepared.u_as_t, 'U base')} read as T (RNA sequence?).")
+    input_summary = validate_fasta(fasta, label=opts.input_fasta)
+    contig_lengths = dict(iter_fasta_lengths(fasta))
+    genome_id = prepared.genome_id
+    windows_df = build_windows(fasta, genome_id, opts.window_len, opts.stride,
                                offset=opts.grid_offset, contig_lengths=contig_lengths)
     short_windows_df, short_report = build_short_contig_windows(
-        opts.input_fasta, genome_id, window_len=opts.window_len, contig_lengths=contig_lengths)
+        fasta, genome_id, window_len=opts.window_len, contig_lengths=contig_lengths)
     if short_report["n_short"]:
         # never silent (docs/cli-and-packaging.md "Input robustness")
         verb = "scanned with shorter windows" if opts.short_contigs == "scan" else "NOT scanned (--short-contigs skip)"
@@ -545,8 +575,9 @@ def run_predict(args: argparse.Namespace) -> None:
     if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
         # never silent: the mode thresholds were set with the vote over 3 checkpoints
         k = opts.min_seed_support
-        log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only {opts.n_checkpoints} "
-                 f"checkpoint(s): {'voting at ' + str(k) if k > 1 else 'no vote applied'}. The '{opts.mode}' "
+        applied = f"voting at {k}" if k > 1 else "no vote applied"
+        log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only "
+                 f"{_plural(opts.n_checkpoints, 'checkpoint')}: {applied}. The '{opts.mode}' "
                  "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
     rules = call_rules(opts)
     n_short = len(short_windows_df) if scan_short else 0
@@ -560,7 +591,8 @@ def run_predict(args: argparse.Namespace) -> None:
         coarse = call_coarse(scorer, windows_df, opts, rules)
         log.detail(f"full-length windows: {_plural(len(coarse.calls), 'call')} in {_duration(time.perf_counter() - t)}")
         t = time.perf_counter()
-        coarse_calls, fine_windows_df, refine_meta = refine(scorer, coarse.calls, contig_lengths, genome_id, opts)
+        coarse_calls, fine_windows_df, refine_meta = refine(scorer, coarse.calls, contig_lengths, genome_id,
+                                                            fasta, opts)
         if refine_meta:
             log.detail(f"refinement: {_plural(len(coarse_calls), 'call')} in {_duration(time.perf_counter() - t)}")
         t = time.perf_counter()
@@ -575,7 +607,7 @@ def run_predict(args: argparse.Namespace) -> None:
     per_seed = [[p.per_seed[k] for p in (coarse, *short) if p.per_seed] for k in range(opts.n_checkpoints)] \
         if opts.n_checkpoints > 1 else []
     final = finalize(calls, filtered, per_seed, contig_lengths,
-                     lambda df: call_n_fraction(df, opts.input_fasta), rules, opts.edge_snap_frac,
+                     lambda df: call_n_fraction(df, fasta), rules, opts.edge_snap_frac,
                      requested_min_seed_support=opts.requested_min_seed_support)
     gap_meta = final.meta["n_gap_filter"]
     if gap_meta["calls_dropped"]:
@@ -589,10 +621,10 @@ def run_predict(args: argparse.Namespace) -> None:
     filtered_out = call_table(final.filtered, contig_order, "filtered_", opts.window_len)
     filtered_out = filtered_out.reindex(columns=[*calls_out.columns, "filter"])
     run_info = {"started_utc": started_utc, "elapsed_s": round(time.perf_counter() - started, 1)}
-    written = write_outputs(opts, cfg.run_name, str(device), input_summary, windows_df, calls_out, filtered_out,
-                            fine_windows_df, short_meta, final.meta, refine_meta, run_info)
+    written = write_outputs(opts, cfg.run_name, str(device), prepared, input_summary, windows_df, calls_out,
+                            filtered_out, fine_windows_df, short_meta, final.meta, refine_meta, run_info)
     log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
-    print_run_summary(opts, input_summary, calls_out, short_meta, final.meta.get("seed_support"), gap_meta,
+    print_run_summary(opts, prepared, input_summary, calls_out, short_meta, final.meta.get("seed_support"), gap_meta,
                       str(device), time.perf_counter() - started)
 
 
@@ -634,7 +666,8 @@ def _command_line(argv: List[str]) -> str:
     return " ".join([program, *map(arg, argv)])
 
 
-def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
+def run_metadata(opts: PredictOptions, run_name: str, device: str, prepared: PreparedInput, input_summary: dict,
+                 windows_df: pd.DataFrame,
                  calls: pd.DataFrame, short_meta: dict, call_meta: dict, refine_meta: dict | None,
                  run_info: dict, outputs: List[str]) -> dict:
     """The run_metadata.json contents. Paths show the home directory as ~."""
@@ -647,7 +680,10 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, input_summary
         "checkpoint": checkpoints if many else checkpoints[0],
         "ensemble": opts.ensemble if many else "single",
         "input_fasta": _shown(opts.input_fasta),
-        "input_sha256": sha256(opts.input_fasta),
+        "input_sha256": prepared.sha256,
+        "input_format": {"format": prepared.format, "compression": prepared.compression,
+                         "u_read_as_t": prepared.u_as_t,
+                         **({"contig_names": prepared.contig_names} if prepared.contig_names else {})},
         "mode": opts.mode,
         "threshold": opts.threshold,
         "seed_threshold": opts.seed_threshold,
@@ -708,7 +744,8 @@ class StagedOutputs:
             tmp.unlink(missing_ok=True)
 
 
-def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summary: dict, windows_df: pd.DataFrame,
+def write_outputs(opts: PredictOptions, run_name: str, device: str, prepared: PreparedInput, input_summary: dict,
+                  windows_df: pd.DataFrame,
                   calls: pd.DataFrame, filtered: pd.DataFrame, fine_windows_df: pd.DataFrame | None,
                   short_meta: dict, call_meta: dict, refine_meta: dict | None, run_info: dict) -> List[str]:
     """Write every output file atomically; returns their names."""
@@ -725,10 +762,10 @@ def write_outputs(opts: PredictOptions, run_name: str, device: str, input_summar
         write_bed(calls, stage.path("regions.bed"))
         write_gff3(calls, stage.path("regions.gff3"), opts.mode, package_version())
         if opts.write_region_fasta:
-            write_region_fasta(calls, opts.input_fasta, stage.path("regions.fna"))
+            write_region_fasta(calls, prepared.fasta, stage.path("regions.fna"))
         outputs = [*stage.staged, "run_metadata.json"]
-        metadata = run_metadata(opts, run_name, device, input_summary, windows_df, calls, short_meta, call_meta,
-                                refine_meta, run_info, outputs)
+        metadata = run_metadata(opts, run_name, device, prepared, input_summary, windows_df, calls, short_meta,
+                                call_meta, refine_meta, run_info, outputs)
         stage.path("run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
         stage.commit()
     except BaseException:
@@ -751,11 +788,12 @@ def _duration(seconds: float) -> str:
     return f"{hours} h {minutes} min"
 
 
-def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame, short_meta: dict,
-                      support_meta: dict | None, gap_meta: dict, device: str, elapsed: float) -> None:
+def print_run_summary(opts: PredictOptions, prepared: PreparedInput, inp: dict, regions_df: pd.DataFrame,
+                      short_meta: dict, support_meta: dict | None, gap_meta: dict, device: str,
+                      elapsed: float) -> None:
     """One human-readable block on stderr: what went in, what came out, what was skipped."""
     lines = [f"prophound {package_version()} | mode {opts.mode} | {_plural(opts.n_checkpoints, 'checkpoint')}",
-             f"input: {_plural(inp['n_contigs'], 'contig')}, {inp['total_bp']:,} bp; "
+             f"input: {_input_kind(prepared)}, {_plural(inp['n_contigs'], 'contig')}, {inp['total_bp']:,} bp; "
              f"{_plural(inp['ambiguous_bases'], 'ambiguity code')} ({inp['ambiguous_ppm']:,g} ppm), "
              f"policy {opts.ambiguity_policy}"]
     if short_meta.get("n_short"):
@@ -790,6 +828,11 @@ def print_run_summary(opts: PredictOptions, inp: dict, regions_df: pd.DataFrame,
     lines.append("calls are candidates for follow-up, not annotations")
     lines.append(f"ran on {device} in {_duration(elapsed)}")
     print("\n".join("[summary] " + line for line in lines), file=sys.stderr)
+
+
+def _input_kind(prepared: PreparedInput) -> str:
+    kind = {"fasta": "FASTA", "genbank": "GenBank", "embl": "EMBL", "gff3": "GFF3 with sequence"}[prepared.format]
+    return f"{kind} ({prepared.compression})" if prepared.compression else kind
 
 
 def _out_of_memory(e: BaseException) -> bool:

@@ -60,7 +60,7 @@ def sha256(path: str, chunk: int = 1 << 20) -> str:
     return h.hexdigest()
 
 
-def validate_fasta(path: str) -> dict:
+def validate_fasta(path: str, label: str | None = None) -> dict:
     """Check a nucleotide FASTA in one streaming pass and summarise it.
 
     Rejects: a missing or empty file, gzip (pyfaidx needs plain text or bgzip,
@@ -70,6 +70,7 @@ def validate_fasta(path: str) -> dict:
     per-code counts of ambiguity bases for the run summary.
     """
     p = Path(path)
+    real, path = path, label or path   # messages name the user's file, not a normalised copy
     if not p.exists():
         raise InputError(f"input FASTA not found: {path}")
     if p.stat().st_size == 0:
@@ -83,7 +84,7 @@ def validate_fasta(path: str) -> dict:
     letters: Counter[str] = Counter()
     ambiguous: Counter[str] = Counter()
     n_contigs, total_bp, cur, cur_len, seen_header = 0, 0, None, 0, False
-    with open(p, "r", errors="replace") as fh:
+    with open(real, "r", errors="replace") as fh:
         for line in fh:
             line = line.rstrip("\r\n")
             if not line:

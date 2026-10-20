@@ -10,9 +10,8 @@ description = "Recall-first, database-free prophage screen for prokaryotic genom
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
-# Runtime only; dev tools stay in [tool.pixi.dependencies]. scikit-learn is
-# pulled in by train_prophage until inference stops importing it
-# (docs/tech-debt-audit.md S6).
+# What `prophound predict` needs; dev and training tools (scikit-learn for
+# train_prophage's metrics) stay in [tool.pixi.dependencies].
 dependencies = [
     "torch>=2.4,<3",
     "numpy>=1.26",
@@ -20,7 +19,7 @@ dependencies = [
     "pyfaidx>=0.8,<1",
     "tqdm>=4.66,<5",
     "pyyaml>=6,<7",
-    "scikit-learn>=1.7.2,<2",
+    "biopython>=1.86,<2",
 ]
 
 [project.scripts]

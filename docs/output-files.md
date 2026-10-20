@@ -30,8 +30,8 @@ One row per call, sorted by contig (in input order), then by start.
 | column | meaning |
 |---|---|
 | `call_id` | `prophound_1` … `prophound_N`; the same name in BED, GFF3 and FASTA |
-| `genome_id` | the input file name without its extension |
-| `contig_id` | the sequence ID (first word of the FASTA header) |
+| `genome_id` | the input file name without its extension (and without `.gz`/`.bz2`/`.xz`) |
+| `contig_id` | the sequence ID: the first word of the FASTA header, or the versioned accession (`VERSION`) of a GenBank/EMBL record |
 | `start`, `end` | the call, 0-based half-open |
 | `n_windows` | windows overlapping the call |
 | `region_len_bp` | `end − start` |
@@ -81,7 +81,8 @@ Scores are written at full precision, because offline scorers rebuild calls from
 |---|---|
 | `prophound_version`, `run_name` | package version, and the checkpoint's training run name |
 | `config`, `checkpoint`, `checkpoint_sha256` | config and checkpoint paths, and each checkpoint's SHA-256 |
-| `input_fasta`, `input_sha256`, `input` | the input, its SHA-256, and a summary (contigs, bp, ambiguity codes) |
+| `input_fasta`, `input_sha256`, `input` | the input as given, the SHA-256 of that file, and a summary (contigs, bp, ambiguity codes) |
+| `input_format` | detected `format` (`fasta`, `genbank`, `embl`, `gff3`), `compression`, `u_read_as_t` (RNA `U` bases read as `T`), and `contig_names` (GenBank/EMBL record name per contig ID, where they differ) |
 | `mode`, `threshold`, `seed_threshold`, `extend_threshold`, `ensemble` | the thresholds actually used |
 | `window_len`, `stride`, `trained_window_len`, `trained_stride`, `grid_offset`, `ambiguity_policy` | window settings |
 | `region_builder`, `coverage_frac`, `fragment_merge`, `refine` | call-building settings (`refine` only with refinement) |

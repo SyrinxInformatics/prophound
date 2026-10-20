@@ -223,7 +223,11 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
     advanced = parser.add_argument_group("advanced options (thresholds, ensemble, input handling, outputs)")
     experimental = parser.add_argument_group("experimental options (not validated for default use)")
 
-    basic.add_argument("--input", required=True, dest="input_fasta", help="Genome to scan, as a nucleotide FASTA.")
+    basic.add_argument(
+        "--input", required=True, dest="input_fasta",
+        help=("Genome to scan: FASTA, GenBank/RefSeq, EMBL, or GFF3 with an embedded ##FASTA section (as Prokka "
+              "and Bakta write), optionally gzip, bzip2 or xz compressed. The format is read from the content."),
+    )
     basic.add_argument(
         "--outdir", required=True,
         help="Directory for the outputs (created if missing). A directory that already holds outputs is refused.",
