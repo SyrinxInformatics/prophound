@@ -492,6 +492,7 @@ A golden `regions.tsv` on a fixed genome (checklist §6), plus a CPU / MPS / CUD
 - The check found MPS giving wrong scores (S10). It is fixed.
 - CPU and MPS now give identical calls on the 30 Phase 0 reference cases. Scores agree to 1.7e-5, against CUDA to 8e-6.
 - Outputs are not byte-identical across devices (float order). The release wording is "the same calls" on the verified devices: Apple M4 CPU and GPU, and NVIDIA V100S.
+- MPS vs recorded CUDA on the 45 G5b runs: one internal decision flip, no released call changed.
 - x86 CPU and other GPUs are untested; ARC jobs are proposed.
 - The golden output is the Phase 0 harness (`scripts/reference_outputs.py`).
 

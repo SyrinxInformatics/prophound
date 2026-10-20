@@ -44,7 +44,13 @@ So the GPU does most of the work, and encoding is the one cheap target. A vector
 
 For users without an Apple Silicon or NVIDIA GPU. Protocol: 2 timed runs of the typical genome, no warm-up; a warm-up is small next to the run time.
 
-**[Pending. The first attempt was stopped at 16:00 on 2026-10-19 before its first run finished (the machine was needed); it is to be re-run on a quiet machine with the same protocol.]**
+Measured 2026-10-19 evening on the same machine, idle and on mains power; code identical to the MPS run (`cpu_typical.json`).
+
+| input | size | wall time (2 runs) | per Mb | peak memory |
+|---|---|---|---|---|
+| typical complete genome (`GCF_000146165.2`) | 4.97 Mb | **45.0 min** (2,701.8 and 2,700.3 s) | 9.1 min | 1.37 GB |
+
+**In plain terms: on CPU alone, about 45 minutes for a typical 5 Mb genome, 62× slower than the same laptop's GPU, and about twice the memory.** Both runs wrote byte-identical `regions.tsv`. Against the MPS run, the 20 calls are identical (coordinates, `seed_support`, contig-edge flags), with scores within 6e-7. The first attempt (afternoon) was stopped at 16:00 before finishing, and nothing from it is used.
 
 Earlier measurement on the same machine, for scale: `GCF_000027305.1` (1.83 Mb) took 1,053 s, 17.6 minutes (about 9.6 minutes per Mb) on 4 threads. Two causes, neither fixed yet:
 - **The torch build.** The pixi/conda-forge build is generic arm64 with oneDNN off (`torch.backends.mkldnn.is_available()` is False).
@@ -92,7 +98,13 @@ Caveats:
 
 A call can differ between devices only when a decision value lands within about 1e-5 of a threshold. At a margin of 1e-4 (6× the largest difference seen), 289 of 536,280 window scores in the 45 G5b runs sit near a threshold (0.90 / 0.95 / 0.99 / 0.995), as do 42 of 153,583 bin means near the 0.1 bridge gate. Most runs have a few such values. Whether any of them decides a call is the next measurement:
 
-**[Pending: MPS vs recorded CUDA calls on all 45 G5b runs (`scripts/cross_device_g5b.py`; the inputs are verified identical to ARC's). Runs after the CPU re-run.]**
+**Measured 2026-10-19 (`scripts/cross_device_g5b.py`, `analysis/benchmarks/cross_device_g5b_mps.json`).** All 45 G5b runs (9 genomes: complete plus four shredded conditions; inputs MD5-identical to ARC's) were re-run on the M4 GPU and compared with the scores recorded on the V100S. The comparison covers 134,070 windows × 4 scores (ensemble and three checkpoints) and every bin mean.
+- **Largest score difference:** 1.9e-5.
+- **Decision flips:** one. Checkpoint 1 scored one window 0.98999995 on CUDA and 0.99000007 on MPS, 1.2e-7 either side of Conservative's 0.99 extend threshold. No bin mean flipped at the bridge gate.
+- **Effect of that flip:** rebuilding the calls from both tracks with the shipped builder and vote, it extends checkpoint 1's own Conservative call by 1 kb. **The released calls are identical in every mode**: a single checkpoint's call only votes, by overlap.
+- **CPU vs MPS on the 4.97 Mb benchmark genome:** 20 of 20 calls identical, scores within 6e-7.
+
+So the calls are the same on all three verified devices, and the measured rate of even an internal decision differing is about 1 in 500,000 scores.
 
 **What can be said about other platforms.** Verified so far: Apple M4 CPU, Apple M4 GPU (MPS, after the fix) and NVIDIA V100S (CUDA). Not verified:
 - x86 CPUs (Intel and AMD, with MKL or oneDNN);

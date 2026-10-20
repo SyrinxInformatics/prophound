@@ -1,0 +1,58 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.0.1",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22675555)\t75%; charging; (no estimate) present: true",
+    "omp_num_threads": null,
+    "code_commit": "f93c7adb08d8baf3b2e46e144b4cd19559c23bac",
+    "code_dirty": false,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "cpu",
+  "mode": "default",
+  "repeats": 2,
+  "warmup": false,
+  "inputs": {
+    "typical": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 2701.75,
+          "peak_rss_mb": 1371.0,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "fe25bf06a31c37d3d94457bf7a69c02ecaadd0a89b50b3d446074bb169a032f5",
+          "warmup": false
+        },
+        {
+          "wall_s": 2700.34,
+          "peak_rss_mb": 1365.0,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "fe25bf06a31c37d3d94457bf7a69c02ecaadd0a89b50b3d446074bb169a032f5",
+          "warmup": false
+        }
+      ],
+      "median_s": 2701.045,
+      "min_s": 2700.34,
+      "max_s": 2701.75,
+      "median_s_per_mb": 543.49,
+      "median_peak_rss_mb": 1368.0,
+      "regions_identical": true
+    }
+  }
+}

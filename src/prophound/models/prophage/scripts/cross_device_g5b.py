@@ -18,9 +18,14 @@
 
 Re-runs the 45 G5b runs (9 genomes: complete plus four shredded conditions) with the
 current code on --device, with the arguments `g5_prophound.slurm` used on ARC's V100
-(`--mode default --write-seed-scores`). Then it compares, per run:
-  - the calls (contig, start, end) and each call's seed_support, which must be equal;
-  - every window score, ensemble and per checkpoint, whose largest difference is reported.
+(`--mode default --write-seed-scores`), and compares the window scores with the recorded
+CUDA ones. Only windows.tsv was pulled from ARC for G5b (calls were rebuilt offline), so
+the test is on the decisions the pipeline makes from scores:
+  - every window score, ensemble and per checkpoint, against each mode's seed/extend
+    thresholds (0.90, 0.95, 0.99, 0.995);
+  - every 1 kb bin's mean score against the 0.1 bridge gate.
+Everything after those comparisons is integer logic, so if no decision flips between
+devices, every mode's calls are identical. Also reports the largest score difference.
 
 The local inputs must match the recorded MD5s (analysis/g5b/input_md5.tsv).
 Run from src/prophound/models/prophage:
@@ -37,13 +42,16 @@ import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 G5B = Path("analysis/g5b")
 CONDITIONS = ("complete", "mag_s0", "mag_s1", "mag_s2", "draft_s0")
 CHECKPOINTS = [f"runs/prophage_v2_pool_r{k}/checkpoints/best.pt" for k in (1, 2, 3)]
 CONFIG = "runs/prophage_v2_pool_r1/config_snapshot.yaml"
-CALL_COLUMNS = ["contig_id", "start", "end", "seed_support"]
+THRESHOLDS = (0.90, 0.95, 0.99, 0.995)   # seed/extend thresholds of all modes and short-contig scales
+BRIDGE_PROB = 0.1
+BIN_BP = 1000
 
 
 def local_input(cond: str, genome: str) -> Path:
@@ -67,17 +75,31 @@ def check_inputs(runs: list[tuple[str, str]]) -> None:
         raise SystemExit(f"inputs differ from the ARC runs: {bad[:5]}")
 
 
+def bin_means(windows: pd.DataFrame) -> np.ndarray:
+    """Mean ensemble score of the windows covering each 1 kb bin, all contigs concatenated."""
+    out = []
+    for _, c in windows.groupby("contig_id", sort=True):
+        n = int(np.ceil(c.end.max() / BIN_BP))
+        total, count = np.zeros(n), np.zeros(n)
+        for start, end, prob in zip(c.start.to_numpy(), c.end.to_numpy(), c.prob.to_numpy()):
+            total[start // BIN_BP: -(-end // BIN_BP)] += prob
+            count[start // BIN_BP: -(-end // BIN_BP)] += 1
+        out.append(total[count > 0] / count[count > 0])
+    return np.concatenate(out) if out else np.zeros(0)
+
+
 def compare(local: Path, cuda: Path) -> dict:
-    la, ca = (pd.read_csv(d / "regions.tsv", sep="\t") for d in (local, cuda))
     lw, cw = (pd.read_csv(d / "windows.tsv", sep="\t") for d in (local, cuda))
+    coords = ["contig_id", "start", "end"]
+    if not lw[coords].astype(str).equals(cw[coords].astype(str)):
+        raise SystemExit(f"{local}: the windows differ from the CUDA run's")
     prob_cols = ["prob"] + [c for c in cw.columns if c.startswith("prob_ckpt")]
-    same_windows = lw[["contig_id", "start", "end"]].equals(cw[["contig_id", "start", "end"]])
-    return {
-        "n_calls_local": len(la), "n_calls_cuda": len(ca),
-        "calls_equal": la[CALL_COLUMNS].astype(str).equals(ca[CALL_COLUMNS].astype(str)),
-        "windows_equal": bool(same_windows),
-        "max_score_diff": float(max((lw[c] - cw[c]).abs().max() for c in prob_cols)) if same_windows else None,
-    }
+    a, b = lw[prob_cols].to_numpy(), cw[prob_cols].to_numpy()
+    score_flips = int(sum(((a >= t) != (b >= t)).sum() for t in THRESHOLDS))
+    bin_flips = int(((bin_means(lw) >= BRIDGE_PROB) != (bin_means(cw) >= BRIDGE_PROB)).sum())
+    return {"n_windows": len(lw), "max_score_diff": float(np.abs(a - b).max()),
+            "threshold_flips": score_flips, "bridge_flips": bin_flips,
+            "decisions_equal": score_flips == 0 and bin_flips == 0}
 
 
 def main() -> None:
@@ -101,17 +123,18 @@ def main() -> None:
         if proc.returncode:
             raise SystemExit(f"{cond}/{genome} failed:\n{proc.stderr[-1500:]}")
         results[f"{cond}/{genome}"] = r = compare(outdir, G5B / "prophound" / cond / genome)
-        print(f"[cross-device] {cond}/{genome}: calls {'equal' if r['calls_equal'] else 'DIFFER'} "
-              f"({r['n_calls_local']} vs {r['n_calls_cuda']}), max score diff {r['max_score_diff']:.2e}", flush=True)
+        print(f"[cross-device] {cond}/{genome}: {r['n_windows']} windows, max score diff {r['max_score_diff']:.2e}, "
+              f"decision flips {r['threshold_flips']} (thresholds) + {r['bridge_flips']} (bridge gate)", flush=True)
     summary = {"device": args.device, "reference": "CUDA (V100S), g5_prophound.slurm job 826741",
                "n_runs": len(results),
-               "runs_with_equal_calls": sum(r["calls_equal"] for r in results.values()),
-               "calls_local": sum(r["n_calls_local"] for r in results.values()),
-               "calls_cuda": sum(r["n_calls_cuda"] for r in results.values()),
+               "runs_with_no_decision_flip": sum(r["decisions_equal"] for r in results.values()),
+               "windows": sum(r["n_windows"] for r in results.values()),
+               "threshold_flips": sum(r["threshold_flips"] for r in results.values()),
+               "bridge_flips": sum(r["bridge_flips"] for r in results.values()),
                "max_score_diff": max(r["max_score_diff"] for r in results.values()), "runs": results}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(summary, indent=2) + "\n")
-    print(f"[done] {summary['runs_with_equal_calls']} of {summary['n_runs']} runs with equal calls; "
+    print(f"[done] {summary['runs_with_no_decision_flip']} of {summary['n_runs']} runs with no decision flip; "
           f"max score difference {summary['max_score_diff']:.2e}; wrote {args.out}")
 
 

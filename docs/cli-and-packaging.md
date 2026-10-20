@@ -49,7 +49,7 @@ Console script: `[project.scripts] prophound = "prophound.cli:main"` in `pyproje
 - `--device auto` prefers CUDA, then MPS, then XPU, then CPU. On Apple Silicon it picks MPS.
 - **MPS gave wrong scores until 2026-10-19:** adaptive max pooling (`docs/tech-debt-audit.md` S10). It is fixed in `model_rc_cnn.py`.
 - Calls are the same on M4 CPU, M4 MPS and V100S CUDA. Scores agree to ~1e-5 but not byte for byte (`docs/benchmarks.md`).
-- Speed on the M4: ~9 s/Mb on MPS, ~9.6 min/Mb on CPU with the generic conda-forge torch build.
+- Speed on the M4: ~9 s/Mb on MPS (43.5 s per 5 Mb genome), ~9 min/Mb on CPU (45 min per 5 Mb genome) with the generic conda-forge torch build.
 
 ## Positional-pooling experiment (found, evaluated, not yet promoted)
 

@@ -1,0 +1,327 @@
+{
+  "device": "mps",
+  "reference": "CUDA (V100S), g5_prophound.slurm job 826741",
+  "n_runs": 45,
+  "runs_with_no_decision_flip": 44,
+  "windows": 134070,
+  "threshold_flips": 1,
+  "bridge_flips": 0,
+  "max_score_diff": 1.9282102584838867e-05,
+  "runs": {
+    "complete/Achromobacter_denitrificans_strain_PR1": {
+      "n_windows": 6920,
+      "max_score_diff": 1.436471939086914e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/GCA_000152565.1_ASM15256v1_genomic": {
+      "n_windows": 7007,
+      "max_score_diff": 1.2993812561035156e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/GCA_002082995.2_ASM208299v2_genomic": {
+      "n_windows": 1788,
+      "max_score_diff": 1.329183578491211e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/GCA_002813895.1_ASM281389v1_genomic": {
+      "n_windows": 3269,
+      "max_score_diff": 1.3828277587890625e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/Paracoccus_aminophilus_JCM_7686": {
+      "n_windows": 3604,
+      "max_score_diff": 1.329183578491211e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/Paracoccus_denitrificans_PD1222": {
+      "n_windows": 4564,
+      "max_score_diff": 1.463294029241391e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/Paracoccus_sanguinis_5503": {
+      "n_windows": 2299,
+      "max_score_diff": 1.627206802368164e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/Paracoccus_sp._SCN_68-21": {
+      "n_windows": 2684,
+      "max_score_diff": 1.4781951904296875e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "complete/Paracoccus_yeei_TT13": {
+      "n_windows": 3579,
+      "max_score_diff": 1.6748905181884766e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Achromobacter_denitrificans_strain_PR1": {
+      "n_windows": 4161,
+      "max_score_diff": 1.475214958190918e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/GCA_000152565.1_ASM15256v1_genomic": {
+      "n_windows": 4377,
+      "max_score_diff": 1.4424324035644531e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/GCA_002082995.2_ASM208299v2_genomic": {
+      "n_windows": 1121,
+      "max_score_diff": 1.1563301086481292e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/GCA_002813895.1_ASM281389v1_genomic": {
+      "n_windows": 1917,
+      "max_score_diff": 9.894371032714844e-06,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Paracoccus_aminophilus_JCM_7686": {
+      "n_windows": 2303,
+      "max_score_diff": 1.2814998626708984e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Paracoccus_denitrificans_PD1222": {
+      "n_windows": 2709,
+      "max_score_diff": 1.2546777725275238e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Paracoccus_sanguinis_5503": {
+      "n_windows": 1863,
+      "max_score_diff": 1.9282102584838867e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Paracoccus_sp._SCN_68-21": {
+      "n_windows": 1790,
+      "max_score_diff": 1.2636184692382812e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s0/Paracoccus_yeei_TT13": {
+      "n_windows": 2106,
+      "max_score_diff": 1.4960765838623047e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/Achromobacter_denitrificans_strain_PR1": {
+      "n_windows": 4386,
+      "max_score_diff": 1.7434358596801758e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/GCA_000152565.1_ASM15256v1_genomic": {
+      "n_windows": 4166,
+      "max_score_diff": 1.2993812561035156e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/GCA_002082995.2_ASM208299v2_genomic": {
+      "n_windows": 1044,
+      "max_score_diff": 1.0371208190917969e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/GCA_002813895.1_ASM281389v1_genomic": {
+      "n_windows": 2112,
+      "max_score_diff": 1.2934207916259766e-05,
+      "threshold_flips": 1,
+      "bridge_flips": 0,
+      "decisions_equal": false
+    },
+    "mag_s1/Paracoccus_aminophilus_JCM_7686": {
+      "n_windows": 2319,
+      "max_score_diff": 1.4603137969970703e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/Paracoccus_denitrificans_PD1222": {
+      "n_windows": 2814,
+      "max_score_diff": 1.2934207916315277e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/Paracoccus_sanguinis_5503": {
+      "n_windows": 1809,
+      "max_score_diff": 1.671910285949707e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/Paracoccus_sp._SCN_68-21": {
+      "n_windows": 1881,
+      "max_score_diff": 1.3619661331121247e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s1/Paracoccus_yeei_TT13": {
+      "n_windows": 2278,
+      "max_score_diff": 1.4007091522216797e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Achromobacter_denitrificans_strain_PR1": {
+      "n_windows": 4199,
+      "max_score_diff": 1.621246337890625e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/GCA_000152565.1_ASM15256v1_genomic": {
+      "n_windows": 4444,
+      "max_score_diff": 1.239776611328125e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/GCA_002082995.2_ASM208299v2_genomic": {
+      "n_windows": 1102,
+      "max_score_diff": 9.417533874511719e-06,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/GCA_002813895.1_ASM281389v1_genomic": {
+      "n_windows": 2249,
+      "max_score_diff": 1.1414289474431794e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Paracoccus_aminophilus_JCM_7686": {
+      "n_windows": 2126,
+      "max_score_diff": 1.2218952178955078e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Paracoccus_denitrificans_PD1222": {
+      "n_windows": 2601,
+      "max_score_diff": 1.2636184692382812e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Paracoccus_sanguinis_5503": {
+      "n_windows": 1720,
+      "max_score_diff": 1.3321638107299805e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Paracoccus_sp._SCN_68-21": {
+      "n_windows": 1863,
+      "max_score_diff": 1.2814998626708984e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "mag_s2/Paracoccus_yeei_TT13": {
+      "n_windows": 2212,
+      "max_score_diff": 1.4722347259521484e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Achromobacter_denitrificans_strain_PR1": {
+      "n_windows": 5918,
+      "max_score_diff": 1.4543533325195312e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/GCA_000152565.1_ASM15256v1_genomic": {
+      "n_windows": 6057,
+      "max_score_diff": 1.5795230865478516e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/GCA_002082995.2_ASM208299v2_genomic": {
+      "n_windows": 1618,
+      "max_score_diff": 1.037120819097348e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/GCA_002813895.1_ASM281389v1_genomic": {
+      "n_windows": 2715,
+      "max_score_diff": 1.0788440704345703e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Paracoccus_aminophilus_JCM_7686": {
+      "n_windows": 3067,
+      "max_score_diff": 1.5556812286376953e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Paracoccus_denitrificans_PD1222": {
+      "n_windows": 3895,
+      "max_score_diff": 1.4990568161010742e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Paracoccus_sanguinis_5503": {
+      "n_windows": 2034,
+      "max_score_diff": 1.627206802368164e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Paracoccus_sp._SCN_68-21": {
+      "n_windows": 2317,
+      "max_score_diff": 1.4781951904296875e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    },
+    "draft_s0/Paracoccus_yeei_TT13": {
+      "n_windows": 3063,
+      "max_score_diff": 1.7523765563964844e-05,
+      "threshold_flips": 0,
+      "bridge_flips": 0,
+      "decisions_equal": true
+    }
+  }
+}
