@@ -159,6 +159,9 @@ def cmd_profile(args: argparse.Namespace) -> None:
     device = pg.resolve_device(args.device)
     fasta = str(Path(args.input).resolve())
     windows = pg.build_windows(fasta, Path(fasta).stem, cfg.data.window_len, cfg.data.stride)
+    n_all = len(windows)
+    if args.max_windows and n_all > args.max_windows:   # an evenly spaced sample, for slow devices
+        windows = windows.iloc[[round(i * (n_all - 1) / (args.max_windows - 1)) for i in range(args.max_windows)]]
     dataset = pg.GenomeWindowDataset(windows, window_len=cfg.data.window_len)
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, collate_fn=pg.collate_batch)
     model = pg.build_model(cfg, device).eval()
@@ -183,10 +186,11 @@ def cmd_profile(args: argparse.Namespace) -> None:
                 t_forward += time.perf_counter() - t0
     dataset.close()
     n = len(windows)
-    # the CLI encodes once per checkpoint pass, so its encoding cost is 3x the one pass timed here
+    # before Phase 3 the CLI encoded once per checkpoint (3 passes); since, once (--cli-encode-passes)
     result = {"machine": machine_info(code, os.environ.copy()), "device": str(device), "input": fasta,
-              "n_windows": n, "batch_size": args.batch_size,
-              "encode_one_pass_s": round(t_encode, 2), "encode_as_cli_s": round(3 * t_encode, 2),
+              "n_windows": n, "n_windows_in_genome": n_all, "batch_size": args.batch_size,
+              "cli_encode_passes": args.cli_encode_passes,
+              "encode_one_pass_s": round(t_encode, 2), "encode_as_cli_s": round(args.cli_encode_passes * t_encode, 2),
               "checkpoint_load_s": round(t_load, 2), "transfer_s": round(t_transfer, 2),
               "forward_s": round(t_forward, 2),
               "ms_per_window": {"encode": round(1e3 * t_encode / n, 3),
@@ -215,6 +219,9 @@ def main() -> None:
     s.add_argument("--device", default="mps")
     s.add_argument("--input", required=True)
     s.add_argument("--batch-size", type=int, default=128)
+    s.add_argument("--max-windows", type=int, default=0, help="profile an evenly spaced sample of windows (0: all)")
+    s.add_argument("--cli-encode-passes", type=int, default=1,
+                   help="encoding passes the CLI makes: 3 before Phase 3 (once per checkpoint), 1 since")
     s.add_argument("--out", required=True)
     args = ap.parse_args()
     {"timing": cmd_timing, "profile": cmd_profile}[args.cmd](args)

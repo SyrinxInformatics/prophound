@@ -34,15 +34,19 @@ BASE_TO_CH = {
     "t": 3,
 }
 N_CH = 4  # N channel index
+# byte -> channel; every byte not in BASE_TO_CH is N
+_CHANNEL_OF_BYTE = np.full(256, N_CH, dtype=np.intp)
+for _base, _ch in BASE_TO_CH.items():
+    _CHANNEL_OF_BYTE[ord(_base)] = _ch
 
 
 def onehot_encode(seq: str) -> torch.Tensor:
-    """Encode a sequence as a float32 tensor with channels [A, C, G, T, N]."""
-    L = len(seq)
-    x = np.zeros((5, L), dtype=np.float32)
-    for i, b in enumerate(seq):
-        ch = BASE_TO_CH.get(b, N_CH)
-        x[ch, i] = 1.0
+    """Encode a sequence as a float32 tensor with channels [A, C, G, T, N]; anything
+    other than A/C/G/T (either case) sets the N channel."""
+    # latin-1 maps each character to one byte; anything it cannot encode becomes "?", i.e. N
+    channels = _CHANNEL_OF_BYTE[np.frombuffer(seq.encode("latin-1", errors="replace"), dtype=np.uint8)]
+    x = np.zeros((5, len(seq)), dtype=np.float32)
+    x[channels, np.arange(len(seq))] = 1.0
     return torch.from_numpy(x)
 
 

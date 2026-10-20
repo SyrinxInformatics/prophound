@@ -53,3 +53,26 @@ def test_impute_leaves_no_ambiguity_and_is_deterministic():
     assert not torch.equal(a, n)
     if a.shape[0] > 4:                                     # N channel, if the encoding has one
         assert a[4].sum() == 0
+
+
+def test_vectorised_onehot_matches_the_per_base_definition():
+    """The lookup-table encoder (Phase 3) gives exactly the tensors of the per-base loop."""
+    import random
+
+    import numpy as np
+    import torch
+
+    from prophound.models.prophage.src.encoding import BASE_TO_CH, N_CH, onehot_encode
+
+    def per_base(seq):
+        x = np.zeros((5, len(seq)), dtype=np.float32)
+        for i, b in enumerate(seq):
+            x[BASE_TO_CH.get(b, N_CH), i] = 1.0
+        return torch.from_numpy(x)
+
+    rng = random.Random(20261020)
+    alphabet = "ACGTacgtNnRYKMSWBDHVuU-*?. é€"
+    for n in (0, 1, 7, 3000, 10_000):
+        for _ in range(20):
+            seq = "".join(rng.choice(alphabet) for _ in range(n))
+            assert torch.equal(onehot_encode(seq), per_base(seq))

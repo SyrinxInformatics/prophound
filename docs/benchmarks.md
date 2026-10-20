@@ -22,11 +22,11 @@ Protocol: one warm-up run, then 3 timed runs per input, each a fresh `prophound 
 
 | input | size | median wall time (range) | per Mb | peak memory |
 |---|---|---|---|---|
-| typical complete genome (`GCF_000146165.2`) | 4.97 Mb, 1 contig | **43.5 s** (43.1–44.5) | 8.8 s | 610 MB |
-| the same genome as a MAG-like shred (`mag_s0`) | 4.95 Mb, 374 contigs | **25.6 s** (25.5–25.6) | 5.2 s | 637 MB |
-| 10 genomes spanning the corpus size range | 1.8–7.0 Mb, 48.9 Mb total | **7.4 min** in total; median 46.5 s per genome | 8.9 s, plus 1.0 s fixed per genome | ≤620 MB |
+| typical complete genome (`GCF_000146165.2`) | 4.97 Mb, 1 contig | **33.5 s** (33.3–33.6), after Phase 3; was 43.5 s | 6.7 s | 512 MB |
+| the same genome as a MAG-like shred (`mag_s0`) | 4.95 Mb, 374 contigs | **19.3 s** (19.3–19.3), after Phase 3; was 25.6 s | 3.9 s | 538 MB |
+| 10 genomes spanning the corpus size range (before Phase 3, as 10 separate runs; not re-measured) | 1.8–7.0 Mb, 48.9 Mb total | **7.4 min** in total; median 46.5 s per genome | 8.9 s, plus 1.0 s fixed per genome | ≤620 MB |
 
-**In plain terms: about 45 seconds for a typical 5 Mb bacterial genome, about 9 seconds per Mb, and well under 1 GB of memory.** A batch of 100 genomes of that size is roughly 75 minutes.
+**In plain terms: about 35 seconds for a typical 5 Mb bacterial genome, about 7 seconds per Mb, and about half a GB of memory.** A batch of 100 genomes of that size is roughly 75 minutes.
 
 Fragmented assemblies are faster per Mb than complete genomes. Fewer full 10 kb windows fit, and fragments under 3 kb are never scanned.
 
@@ -39,6 +39,22 @@ Fragmented assemblies are faster per Mb than complete genomes. Fewer full 10 kb 
 | loading checkpoints, moving batches to the GPU | 0.2 s | <1% |
 
 So the GPU does most of the work, and encoding is the one cheap target. A vectorised encoder (13× faster on its own, `docs/tech-debt-audit.md` S9), run once rather than once per checkpoint, would save about 9 s, to roughly 34 s per 5 Mb genome. That is Phase 3.
+
+### Phase 3 speed work (2026-10-20)
+
+Two changes, both with byte-identical outputs (`docs/tech-debt-audit.md` Phase 3): a vectorised one-hot encoder, and one scoring pass that reads and encodes each window once and runs it through all three checkpoints. Before, every window was encoded once per checkpoint. Measured back to back on the same idle machine, timing the code before Phase 3 (`7e6d449`) and after it. Protocol as above; 1 warm-up plus 3 timed runs. `analysis/benchmarks/p3_{before,after}_{mps,mps_profile,cpu_profile}.json`.
+
+| | before | after | change |
+|---|---|---|---|
+| typical genome, MPS wall time (median) | 43.2 s | **33.5 s** | −22% |
+| MAG shred, MPS wall time (median) | 24.9 s | **19.3 s** | −22% |
+| encoding, as the CLI does it (profile) | 10.3 s (0.69 ms per window, 3 passes) | **0.49 s** (0.099 ms, 1 pass) | −95% |
+| GPU forward pass (profile) | 33.2 s | 32.5 s | unchanged |
+| peak memory | 511 MB | 512 MB | unchanged |
+
+Every run before and after wrote the same `regions.tsv`. The forward pass is now about 97% of the profiled time, so further MPS gains need a faster model or a different device. Peak memory was already about 100 MB below the 2026-10-19 figure (610 MB) before Phase 3. The likely cause is that checkpoints are now loaded once (UI pass, step 1).
+
+**CPU (300-window profile, 4 threads):** the forward pass costs 186–193 ms per window per checkpoint, and encoding 0.1–0.7 ms. Encoding was about 0.3% of the CPU run time, so Phase 3 barely changes it: projected from the profile, a typical genome still takes about 45 minutes. The open CPU questions (pip's torch build with oneDNN, more threads) are untouched.
 
 ## CPU only (`--device cpu`)
 

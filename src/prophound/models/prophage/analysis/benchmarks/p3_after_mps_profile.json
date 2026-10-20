@@ -1,0 +1,38 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.0.1",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22675555)\t80%; AC attached; not charging present: true",
+    "omp_num_threads": null,
+    "code_commit": "",
+    "code_dirty": false,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "mps",
+  "input": "/Users/jacobalford/Desktop/Programs/mge-detect/src/prophound/models/prophage/analysis/g5/fasta/GCF_000146165.2.fna",
+  "n_windows": 4960,
+  "n_windows_in_genome": 4960,
+  "batch_size": 128,
+  "cli_encode_passes": 1,
+  "encode_one_pass_s": 0.49,
+  "encode_as_cli_s": 0.49,
+  "checkpoint_load_s": 0.04,
+  "transfer_s": 0.17,
+  "forward_s": 32.54,
+  "ms_per_window": {
+    "encode": 0.099,
+    "forward_per_checkpoint": 2.187
+  }
+}

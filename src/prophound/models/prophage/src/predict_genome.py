@@ -183,23 +183,23 @@ class GenomeWindowDataset(Dataset):
 
 @torch.no_grad()
 def predict_probs(
-    model: torch.nn.Module,
+    models: List[torch.nn.Module],
     loader: DataLoader,
     device: torch.device,
     on_batch=None,
-) -> np.ndarray:
-    """Score every batch of `loader`; `on_batch(n)` is called after each batch of n windows."""
-    model.eval()
-    all_logits: List[np.ndarray] = []
+) -> List[np.ndarray]:
+    """Each model's probabilities for every window of `loader`, reading and encoding each
+    batch once for all models. `on_batch(n)` is called after each batch, with n windows
+    times the number of models."""
+    logits: List[List[np.ndarray]] = [[] for _ in models]
     for batch_x, _ in loader:
         batch_x = batch_x.to(device, non_blocking=True)
-        logits = model(batch_x).view(-1)
-        all_logits.append(logits.detach().cpu().numpy())
+        for k, model in enumerate(models):
+            logits[k].append(model(batch_x).view(-1).detach().cpu().numpy())
         if on_batch is not None:
-            on_batch(len(batch_x))
-    if not all_logits:
-        return np.array([], dtype=np.float32)
-    return stable_sigmoid(np.concatenate(all_logits))
+            on_batch(len(batch_x) * len(models))
+    return [stable_sigmoid(np.concatenate(chunks)) if chunks else np.array([], dtype=np.float32)
+            for chunks in logits]
 
 
 def iter_fasta_lengths(fasta_path: str) -> Iterable[Tuple[str, int]]:
@@ -303,11 +303,11 @@ def load_checkpoints(model: torch.nn.Module, paths: Tuple[str, ...], device: tor
 
 
 class Scorer:
-    """The model with every checkpoint's weights, and the run's progress bar."""
+    """One model per checkpoint, and the run's progress bar."""
 
-    def __init__(self, model: torch.nn.Module, states: List[dict], device: torch.device, opts: PredictOptions,
+    def __init__(self, models: List[torch.nn.Module], device: torch.device, opts: PredictOptions,
                  progress: Progress):
-        self.model, self.states, self.device, self.opts, self.progress = model, states, device, opts, progress
+        self.models, self.device, self.opts, self.progress = models, device, opts, progress
 
     def score(self, windows_df: pd.DataFrame, window_len: int) -> Tuple[np.ndarray, List[np.ndarray]]:
         """Score `windows_df` with every checkpoint: the ensemble track and each checkpoint's own."""
@@ -321,11 +321,8 @@ class Scorer:
             collate_fn=collate_batch,
             pin_memory=(device.type == "cuda"),
         )
-        per_checkpoint = []
-        for state in self.states:
-            self.model.load_state_dict(state)
-            probs = predict_probs(self.model, loader, device, on_batch=self.progress.update)
-            per_checkpoint.append(np.asarray(probs, dtype=np.float64))
+        per_checkpoint = [np.asarray(p, dtype=np.float64)
+                          for p in predict_probs(self.models, loader, device, on_batch=self.progress.update)]
         dataset.close()
 
         if len(per_checkpoint) == 1:
@@ -521,18 +518,20 @@ def _nothing_to_scan(opts: PredictOptions, contig_lengths: Dict[str, int]) -> Pr
 
 @dataclasses.dataclass
 class Engine:
-    """What every genome of a run shares: the config, the device, and the model with each
-    checkpoint's weights (read once per run, not per genome)."""
+    """What every genome of a run shares: the config, the device, and one model per
+    checkpoint, built and loaded once per run (not per genome or per pass)."""
 
     cfg: object
     device: torch.device
-    model: torch.nn.Module
-    states: List[dict]
+    models: List[torch.nn.Module]
 
 
 def load_engine(cfg, device: torch.device, opts: PredictOptions, log: Log) -> Engine:
-    model = build_model(cfg, device)
-    states = load_checkpoints(model, opts.checkpoints, device, opts.config)
+    models = []
+    for state in load_checkpoints(build_model(cfg, device), opts.checkpoints, device, opts.config):
+        model = build_model(cfg, device)
+        model.load_state_dict(state)
+        models.append(model.eval())
     if opts.requested_min_seed_support > 1 and opts.min_seed_support < opts.requested_min_seed_support:
         # never silent: the mode thresholds were set with the vote over 3 checkpoints
         k = opts.min_seed_support
@@ -540,7 +539,7 @@ def load_engine(cfg, device: torch.device, opts: PredictOptions, log: Log) -> En
         log.warn(f"seed vote of {opts.requested_min_seed_support} requested but only "
                  f"{_plural(opts.n_checkpoints, 'checkpoint')}: {applied}. The '{opts.mode}' "
                  "thresholds were calibrated with the vote over 3 checkpoints; expect more calls.")
-    return Engine(cfg, device, model, states)
+    return Engine(cfg, device, models)
 
 
 @dataclasses.dataclass
@@ -755,7 +754,7 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
                f"{_plural(opts.n_checkpoints, 'checkpoint')}, on {device}")
 
     progress = Progress((len(windows_df) + n_short) * opts.n_checkpoints, quiet=opts.verbosity < 0)
-    scorer = Scorer(engine.model, engine.states, device, opts, progress)
+    scorer = Scorer(engine.models, device, opts, progress)
     try:
         t = time.perf_counter()
         coarse = call_coarse(scorer, windows_df, opts, rules)
