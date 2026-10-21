@@ -522,7 +522,7 @@ The user's second point: the tool itself, not only its claims. Each item below i
 | recommendation | status (re-checked 2026-10-20; first checked 2026-09-28) |
 |---|---|
 | print usage with no arguments; `-h` | yes |
-| `--version` | yes (`prophound 1.0.0`), and `run_metadata.json` records it |
+| `--version` | yes (`prophound 0.1.0`), and `run_metadata.json` records it |
 | messages to stderr, not stdout | yes: a run writes nothing to stdout. Progress, warnings and the summary go to stderr; `-q` keeps warnings, errors and the summary |
 | non-zero exit code on failure | yes: a fixable failure prints one `error:` line and exits 1; Ctrl-C exits 130; argparse errors exit 2 (`tests/test_cli_errors.py`) |
 | validate parameters and input | yes: missing, empty, unreadable, protein, reads, alignments, duplicate contig IDs and out-of-range options fail with a reason (`src/inputs.py`, `src/io_checks.py`, `tests/test_inputs.py`) |

@@ -1,4 +1,4 @@
-# prophound v1 — release text (DRAFT)
+# prophound 0.1.0 — release text (DRAFT)
 
 > **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
 
@@ -207,7 +207,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 
 ---
 
-## What v1 does not claim
+## What 0.1.0 does not claim
 
 - **No validated novel elements.** No call has been confirmed in the lab, and enrichment for MGE features is not discovery.
 - **No claim that it is more accurate than** geNomad, PHASTER or any tool. Per unit of cost it is level with them (§2).

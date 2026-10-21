@@ -5,7 +5,7 @@ authors = [
 ]
 name = "prophound"
 requires-python = ">= 3.11"
-version = "1.0.0"
+version = "0.1.0"
 description = "Recall-first, database-free prophage screen for prokaryotic genomes"
 readme = "README.md"
 license = "Apache-2.0"

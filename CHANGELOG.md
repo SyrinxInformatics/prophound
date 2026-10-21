@@ -2,7 +2,9 @@
 
 All notable changes to prophound are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). A change to the bundled model, a mode's thresholds or any other default that changes calls is a minor version at least, and is listed under **Calls changed**.
 
-## [1.0.0] — unreleased
+prophound is in initial development (0.y.z). Until 1.0.0 the command line, output files and defaults may change in any minor release; 1.0.0 will mark the first interface we commit to keeping stable.
+
+## [0.1.0] — unreleased
 
 The first release. Earlier development versions were called `mge-detect`.
 

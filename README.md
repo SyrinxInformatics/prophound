@@ -4,7 +4,7 @@
 
 The name is a prophage hound, and a homophone of "profound". The project was called `mge-detect` until 2026-09-29. Other mobile-element types may follow the prophage detector, which is why the code keeps a `models/prophage/` layout.
 
-**Status: version 1.0.0, not yet released.** This is research software. Read [What it does not claim](#what-it-does-not-claim) before using its calls.
+**Status: version 0.1.0, not yet released.** This is research software. Read [What it does not claim](#what-it-does-not-claim) before using its calls.
 
 ## How it works
 

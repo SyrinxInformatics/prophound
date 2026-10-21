@@ -56,7 +56,7 @@ Console script: `[project.scripts] prophound = "prophound.cli:main"` in `pyproje
 
 ## Distribution (2026-10-20)
 
-- **Version 1.0.0** in `pyproject.toml`, with `CHANGELOG.md` (the entry is marked unreleased until the tag) and `CITATION.cff`. `run_metadata.json` records the version, and `reference_outputs.py compare` ignores `prophound_version`, so a gate can compare across a bump.
+- **Version 0.1.0** in `pyproject.toml` (user, 2026-10-21: initial development under semver, not 1.0.0; 1.0.0 waits until a colleague can contribute), with `CHANGELOG.md` (the entry is marked unreleased until the tag) and `CITATION.cff`. `run_metadata.json` records the version, and `reference_outputs.py compare` ignores `prophound_version`, so a gate can compare across a bump.
 - **Example and smoke test.** `examples/hin_rd_kw20_region.fna` is 220 kb of *H. influenzae* Rd KW20 with its two geNomad elements. `examples/expected_calls.tsv` holds the calls and `examples/expected_regions.tsv` the full CPU `regions.tsv`; `examples/README.md` explains how to read them. `tests/test_example.py` runs it and compares calls; it is marked `slow`, which `pytest` deselects by default (`[tool.pytest.ini_options]`). Run it with `pixi run smoke`. `pixi run test` runs the fast suite.
 - **Bioconda recipe (draft).** `recipes/prophound/meta.yaml`: noarch python, built from the GitHub tag archive, with the bundled model inside the package and no separate download. Its tests check `--version`, `predict --help` and the model manifest. The sha256 is a placeholder until the release is tagged. The recipe's test commands pass against the built wheel; the recipe itself has not been built with `conda-build` or linted with `bioconda-utils`.
 
