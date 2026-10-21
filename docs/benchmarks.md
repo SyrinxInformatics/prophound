@@ -2,7 +2,7 @@
 
 Written 2026-10-19. What a user should expect when they run prophound, measured on a current laptop (user, 2026-10-19: "this laptop has hardware that most other users will likely have similar or slightly more / less computing power, so users know what they are in for"). The cluster GPU figures are secondary: most users will not have a V100.
 
-These numbers describe the code at `0a8abaa`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targets speed, so **the benchmarks are re-run after Phase 3**, and the release text quotes that run. The figures below become its "before".
+The first run (2026-10-19) measured the code at `0a8abaa`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targeted speed. **The single-genome Apple GPU rows were re-run after it on 2026-10-20** ("Phase 3 speed work" below), and the release text quotes them. The batch row and the CPU figures are from the first run; Phase 3 leaves CPU time unchanged (profiled).
 
 ## The machine
 
@@ -72,7 +72,7 @@ Earlier measurement on the same machine, for scale: `GCF_000027305.1` (1.83 Mb) 
 - **The torch build.** The pixi/conda-forge build is generic arm64 with oneDNN off (`torch.backends.mkldnn.is_available()` is False).
 - **The model.** Its 10 kb convolutions run twice per window (forward and reverse complement), for three checkpoints. Measured in process: about 0.2 s per window per checkpoint on CPU.
 
-Whether pip's torch wheels or more threads help is a Phase 3 question.
+Whether pip's torch wheels or more threads help is still open: Phase 3 did not change CPU time (see the CPU profile below).
 
 ## Cluster GPU: NVIDIA V100S (ARC, secondary)
 

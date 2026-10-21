@@ -1,6 +1,6 @@
 # prophound v1 — release text (DRAFT)
 
-> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
+> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
 
 ---
 
@@ -173,6 +173,16 @@ Earlier versions collapsed to zero on IUPAC codes (*E. coli* EDL933 at 1,182 ppm
 
 Wording: *"off-target candidates are enriched for mobile-element features (3.1× over background)"*. Not "phage", and never "novel elements".
 
+### 9. LAMBDA's reviewed candidates outside its curated set (preregistered)
+
+LAMBDA's authors list regions their language models proposed, which reviewers graded but left out of the curated truth (`docs/claims-and-evidence.md` "LAMBDA candidates check", scored once on 2026-10-20).
+- **Primary endpoint, positive.** On the 34 genomes not in prophound's corpus, Default covers **18 of the 19** candidates graded LIKELY PHAGE, against 0.111 by chance (calls rotated on each chromosome). That is **0.837 above chance (genome bootstrap 0.694–0.945)**, at 14.4 calls per genome. None of the 19 overlaps a curated element.
+- **The annotation tools reach most of them too.** geNomad covers 15 of 19, PIDE 0.789, PhageBoost 0.778. These are mostly phages the database tools call but the curators left out, not elements every tool missed.
+- **Paired with geNomad** (32 genomes): 3 candidates are covered by prophound only, none by geNomad only. All three are flagged novel by LAMBDA. Cut to geNomad's call count, prophound covers 16 of 19.
+- It also covers more of what reviewers doubted (UNLIKELY PHAGE 0.64, against geNomad's 0.36), which is the price of its call volume.
+
+Wording: *"prophound's calls recover 18 of the 19 phages LAMBDA's reviewers judged likely but its curated set lacks, above chance (0.84, 0.69–0.94), at 14 calls/genome. Cut to geNomad's call count, 16 of 19, against geNomad's 15."* Not "phages the annotation tools cannot find", and not discovery: the grades are review judgements.
+
 ---
 
 ## Operating modes
@@ -238,10 +248,10 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 
 | run-time data | size | source |
 |---|---|---|
-| prophound: 3 checkpoints | **49.5 MB** (49,538,986 bytes) | `du -sb` on ARC, 2026-10-16 |
-| geNomad database v1.9 | **1.47 GB** unpacked (1,471,630,421 bytes); 842 MB compressed | same; Zenodo 14886553 |
+| prophound: the bundled model (3 weights-only checkpoints, config, manifest) | **16.5 MB** (16,500,331 bytes) | the package's `model/` directory, 2026-10-20 |
+| geNomad database v1.9 | **1.47 GB** unpacked (1,471,630,421 bytes); 842 MB compressed | `du -sb` on ARC, 2026-10-16; Zenodo 14886553 |
 
-prophound needs about 30× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The 49.5 MB is an upper bound if the checkpoints also hold optimizer state (to be checked at packaging). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64), and both tools' environments are measured from their install recipes at packaging.
+prophound needs about 89× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The training checkpoints were 49.5 MB because they also held optimizer and RNG state. The bundled files hold the same weights, tensor for tensor, and give byte-identical outputs (`docs/lockbox.md`). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64).
 
 ## Run time and hardware
 
@@ -262,8 +272,8 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 ## Not yet measured (blocks wording, not the release)
 
 - **CPU runtime (G6) against geNomad on one machine.** prophound's own hardware baseline is measured (above, `docs/benchmarks.md`). The G6 comparison still needs geNomad timed on the same machine; G5's geNomad timings came from ARC.
-- **The post-Phase-3 benchmark re-run**, which the run-time table quotes.
-- **Installed-environment size** for both tools, at packaging.
+- **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
+- **Installed-environment size** for both tools, once the bioconda package exists.
 
 ## Reproduction
 
@@ -278,5 +288,6 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 | LAMBDA chance adjustment | `scripts/lambda_chance.py` | `analysis/external_benchmarks/lambda/chance.json` |
 | off-target enrichment | `offtarget_annotation.py --control_busy elements_only`, then `scripts/offtarget_enrichment_ci.py` | `analysis/offtarget/annotation_ctrl_elements_only.*`, `enrichment_ci.json` |
 | small inoviruses | `small_element_spikein.py` | `analysis/spikein_siterule/results_final.*`, `analysis/spikein_small/results_final.*` |
+| LAMBDA candidates | `scripts/lambda_candidates.py` | `analysis/external_benchmarks/lambda/candidates.{json,csv}` |
 
-Checkpoint SHA-256s are in `docs/research-integrity.md` C8, and the frozen code is `ad5b28b`. Every figure above whose inputs are local is re-run by `scripts/reproduce_figures.sh` and checked against these outputs by `scripts/compare_figures.py`; all reproduce exactly (2026-10-20).
+The training checkpoints' SHA-256s are in `docs/research-integrity.md` C8, and the frozen code is `ad5b28b`. The bundled model's SHA-256s are in its `manifest.json`, mapped to the C8 hashes in `docs/lockbox.md`. Every figure above whose inputs are local is re-run by `scripts/reproduce_figures.sh` and checked against these outputs by `scripts/compare_figures.py`; all reproduce exactly (2026-10-20).

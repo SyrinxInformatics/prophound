@@ -78,8 +78,9 @@ SHRED_SEED = 20261019
 # Shred piece lengths, cycled: under 3 kb (never scanned), 3-10 kb (short-contig scan), 10 kb+.
 SHRED_LENGTHS = (2_500, 6_000, 9_000, 4_000, 25_000, 15_000, 3_500, 40_000, 7_500, 12_000)
 STDERR_PREFIXES = ("[warn]", "[summary]", "error:")
-# run_metadata.json keys that differ on every run (time, and the command, which names the outdir)
-VOLATILE_META = {"started_utc", "elapsed_s", "command"}
+# run_metadata.json keys that differ on every run (time, and the command, which names the outdir),
+# and the package version, which a gate compares across by design
+VOLATILE_META = {"started_utc", "elapsed_s", "command", "prophound_version"}
 # volatile parts of a kept line, replaced before comparing
 VOLATILE = [(re.compile(r"^\[summary\] ran on \S+ in .*$"), "[summary] ran on <device> in <time>")]
 

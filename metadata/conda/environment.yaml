@@ -15,7 +15,7 @@ channels:
 dependencies:
   - python>=3.11
   - pytorch>=2.4.0,<3
-  - numpy
+  - numpy>=1.26
   - pandas>=2.2,<3
   - biopython>=1.86,<2
   - pyfaidx>=0.8,<1

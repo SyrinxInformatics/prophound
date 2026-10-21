@@ -5,7 +5,7 @@ authors = [
 ]
 name = "prophound"
 requires-python = ">= 3.11"
-version = "0.1.0"
+version = "1.0.0"
 description = "Recall-first, database-free prophage screen for prokaryotic genomes"
 readme = "README.md"
 license = "Apache-2.0"
@@ -49,9 +49,10 @@ exclude = [
 packages = ["src/prophound"]
 
 # docs/ holds internal planning docs (the release checklist among them); keep
-# the sdist to code, tests and licence files.
+# the sdist to code, tests, the example (the smoke test's input) and licence files.
 [tool.hatch.build.targets.sdist]
-only-include = ["src", "tests", "README.md", "LICENSE", "NOTICE", "pyproject.toml"]
+only-include = ["src", "tests", "examples", "README.md", "CHANGELOG.md", "CITATION.cff", "LICENSE", "NOTICE",
+                "pyproject.toml"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge", "bioconda"]
@@ -62,6 +63,13 @@ prophound = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 prophound = "prophound"
+test = "pytest -q tests"
+# the example genome end to end (about 2 minutes on CPU, seconds on a GPU)
+smoke = "pytest -q -m slow tests/test_example.py"
+
+[tool.pytest.ini_options]
+markers = ["slow: end-to-end runs of the model (run with -m slow, or `pixi run smoke`)"]
+addopts = "-m 'not slow'"
 
 [tool.pixi.dependencies]
 pytorch = ">=2.4.0,<3"

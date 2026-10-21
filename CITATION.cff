@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use prophound, please cite it as below."
+title: "prophound: a recall-first, database-free prophage screen for prokaryotic genomes"
+type: software
+authors:
+  - given-names: Jacob
+    family-names: Alford
+    email: jalford0000@gmail.com
+  - given-names: Benjamin
+    family-names: Alford
+    email: ssolar5.dev@gmail.com
+version: 1.0.0
+license: Apache-2.0
+repository-code: "https://github.com/SyrinxInformatics/mge-detect"
+abstract: >-
+  prophound localizes candidate integrated prophages directly from nucleotide
+  sequence, with no gene calling or reference database at run time. A
+  reverse-complement-symmetric CNN, trained on geNomad-labelled genomes, scores
+  sliding 10 kb windows as an ensemble of three training replicates, and calls
+  are built from the score track. It is tuned to recover already-known elements
+  and returns everything else as candidates for follow-up, at a cost in calls
+  per genome the user sets with one of three modes.
+keywords:
+  - prophage
+  - bacteriophage
+  - mobile genetic elements
+  - deep learning
+  - metagenomics

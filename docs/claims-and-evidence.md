@@ -23,7 +23,7 @@ One ensemble run of prophound (all three modes) on LAMBDA's 39 clean genomes, sc
 | G1 | **Complement to geNomad** | geNomad ∪ prophound gains **more than +8** curated elements over geNomad alone (0.809, 123/152). +8 is the best existing pairing (PHASTER), at +3.9 calls/genome. | **Plausible**, most likely in Exploratory. It is the direct test of the concept. Report the extra calls/genome with it. |
 | G2 | **Sequence-only, at matched cost** | top-*k* calls per genome (k matched to ~3.5) reach covered50 **above 0.727** (best genomic LM, NTv2; Evo2 0.724) | **Plausible.** It is trained on integrated elements in host context, whereas the LMs trained on free phage genomes. |
 | G3 | **Overall curated recall** | covered50 **above 0.818** (PHASTER; PIDE 0.812, geNomad 0.809), with calls/genome | **Unlikely at Default**, because the model inherits geNomad's misses. Possible in Exploratory, at about 7× the calls/genome, and must be stated that way. |
-| G4 | **Footprint** (run-time data measured 2026-10-16: 49.5 MB of checkpoints vs geNomad DB 1.47 GB unpacked, ~30×; see `docs/release-checklist.md`) | install size versus geNomad's database: `genomad_db_v1.9.tar.gz` is **842 MB compressed** (Zenodo 14886553; measure the unpacked size). Our side is 3 checkpoints plus the package. | **Likely.** It counts only alongside a G1–G3 recall figure, since a small tool that finds less is not better. |
+| G4 | **Footprint** (run-time data: the bundled weights-only model is 16.5 MB, against geNomad's DB at 1.47 GB unpacked, ~89×; the training checkpoints were 49.5 MB with optimizer state; see `docs/release-checklist.md`) | install size versus geNomad's database: `genomad_db_v1.9.tar.gz` is **842 MB compressed** (Zenodo 14886553; measure the unpacked size). Our side is 3 checkpoints plus the package. | **Likely.** It counts only alongside a G1–G3 recall figure, since a small tool that finds less is not better. |
 
 ### Time-boxed: in the gate only if setup goes smoothly
 
@@ -519,19 +519,19 @@ The user's second point: the tool itself, not only its claims. Each item below i
 
 ### Usability, checked against the ten recommendations for bioinformatics CLIs (Seemann 2013)
 
-| recommendation | status (checked 2026-09-28) |
+| recommendation | status (re-checked 2026-10-20; first checked 2026-09-28) |
 |---|---|
 | print usage with no arguments; `-h` | yes |
-| **`--version`** | **missing**: `prophound --version` is rejected. It is needed for reproducibility and should also be written to `run_metadata.json`. |
-| **messages to stderr, not stdout** | **no**: progress and warnings use `print()` to stdout |
-| non-zero exit code on failure | argparse errors exit 2. Runtime failures need checking. |
-| **validate parameters and input** | partial. Missing input, empty file, gzip, protein FASTA and duplicate contig IDs are untested and should fail with clear messages. |
-| no hard-coded paths; bundled data found relative to the install | **open**: `--config`/`--checkpoint` are still required (checklist §5) |
-| check dependencies | n/a beyond the Python environment |
+| `--version` | yes (`prophound 1.0.0`), and `run_metadata.json` records it |
+| messages to stderr, not stdout | yes: a run writes nothing to stdout. Progress, warnings and the summary go to stderr; `-q` keeps warnings, errors and the summary |
+| non-zero exit code on failure | yes: a fixable failure prints one `error:` line and exits 1; Ctrl-C exits 130; argparse errors exit 2 (`tests/test_cli_errors.py`) |
+| validate parameters and input | yes: missing, empty, unreadable, protein, reads, alignments, duplicate contig IDs and out-of-range options fail with a reason (`src/inputs.py`, `src/io_checks.py`, `tests/test_inputs.py`) |
+| no hard-coded paths; bundled data found relative to the install | yes: the model ships in the package and is found next to the code; its SHA-256s are checked at every run |
+| check dependencies | n/a beyond the Python environment; the wheel declares its seven runtime dependencies |
 
-Also:
-- **38 flags on `predict`.** Group them into basic and advanced in `--help`, and put the experimental and not-recommended ones (`--num-tiles`, the edge-ramp and split parameters) under advanced.
-- **Standard output formats.** Add BED and GFF3 for genome browsers, and optionally a FASTA of called regions for follow-up work.
+Also, both done in the 2026-10 UI pass:
+- **Flags grouped.** `--help` shows basic, advanced and experimental sections.
+- **Standard output formats.** BED and GFF3 always, and a FASTA of called regions with `--write-region-fasta`.
 
 ### Per-call information, so a user can triage candidates
 
