@@ -145,6 +145,7 @@ class PredictOptions:
     split_min_gap_bp: int
     split_max_prob: float
     att_search: bool = True         # att boundaries where found (docs/att-boundaries.md)
+    composition_edges: str = "auto"  # auto = on in Default and Conservative
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
     force: bool = False             # replace outputs already in outdir
     bundled_model: bool = False     # checkpoints are the ones shipped with the package
@@ -225,6 +226,7 @@ class PredictOptions:
             edge_alpha=float(args.edge_alpha), edge_alpha_ramp=ramp,
             split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
             att_search=getattr(args, "att_search", "on") == "on",
+            composition_edges=getattr(args, "composition_edges", "auto"),
             verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
             force=bool(getattr(args, "force", False)),
             bundled_model=bundled, trust_checkpoint=bool(getattr(args, "trust_checkpoint", False)),
@@ -232,11 +234,12 @@ class PredictOptions:
 
 
 PREDICT_EPILOG = """\
-outputs (in --outdir; coordinates 0-based half-open, as BED):
-  regions.tsv           the calls, one row each: call_id, contig_id, start, end, boundary (att: edges
-                        exact to the base; model: estimates), start_lo..end_hi (where each true edge
-                        lies), mean_prob (rank by this), max_prob, contig_edge, n_frac, seed_support
-  regions.filtered.tsv  candidates set aside, same columns plus filter (seed_vote, n_gap)
+outputs (in --outdir):
+  regions.tsv           start here: the candidates, best first, 1-based: rank, contig, start, end,
+                        edges (att site = exact to the base; estimated = can be kb off), a range for
+                        each end, model support and notes
+  regions.detailed.tsv  the same calls with every column, 0-based like BED (for scripts)
+  regions.filtered.tsv  candidates set aside: the detailed columns plus filter (seed_vote, n_gap)
   regions.bed/.gff3     the calls for genome browsers; BED score = 1000 x mean_prob
   windows.tsv           every window's score (prob; prob_ckpt1.. with --write-seed-scores)
   fine_windows.tsv      the refinement pass's window scores
@@ -244,10 +247,11 @@ outputs (in --outdir; coordinates 0-based half-open, as BED):
   regions.fna           the calls' sequences (--write-region-fasta)
 
 a batch (several --input, a directory, or --input-list) writes these per genome in
-outdir/<genome_id>/, plus at the top: combined regions.tsv, regions.filtered.tsv,
+outdir/<genome_id>/, plus at the top: combined regions.tsv, regions.detailed.tsv, regions.filtered.tsv,
 regions.bed/.gff3 (named genome_id:call_id), batch_summary.tsv and run_metadata.json.
 
-calls are candidates for follow-up, not annotations.
+calls are candidates for follow-up, not annotations. How to read them:
+https://github.com/SyrinxInformatics/mge-detect/blob/main/docs/interpreting-results.md
 """
 
 
@@ -463,6 +467,16 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
             "Look for an att site at each call: a direct repeat with one copy near each edge, left by "
             "integration. Where one is found, the call's edges are its two copies, exact to the base "
             "(boundary = att). Default on."
+        ),
+    )
+    advanced.add_argument(
+        "--composition-edges",
+        choices=("auto", "on", "off"),
+        default="auto",
+        help=(
+            "Move each estimated edge to where the sequence's composition changes from host-like to "
+            "element-like. auto (default): on in default and conservative mode, off in exploratory, where "
+            "it cost recall."
         ),
     )
     advanced.add_argument(

@@ -257,7 +257,9 @@ def compare_case_across_devices(a: Path, b: Path, tol: float) -> list[str]:
     import pandas as pd
 
     diffs = []
-    for name in ("regions.tsv", "windows.tsv"):
+    for name in ("regions.tsv", "regions.detailed.tsv", "windows.tsv"):
+        if not all((d / name).exists() for d in (a, b)):   # regions.detailed.tsv is new in 0.1.0
+            continue
         ta, tb = (pd.read_csv(d / name, sep="\t") for d in (a, b))
         if list(ta.columns) != list(tb.columns) or len(ta) != len(tb):
             diffs.append(f"{name}: shape or columns differ ({ta.shape} vs {tb.shape})")
@@ -269,7 +271,7 @@ def compare_case_across_devices(a: Path, b: Path, tol: float) -> list[str]:
             diffs.append(f"{name}: columns differ beyond tolerance: {bad}")
         worst = max(((ta[c] - tb[c]).abs().max() for c in prob_cols), default=0.0)
         # regions.tsv rounds probabilities to 4 dp, so a tiny score difference can round 1e-4 apart
-        if worst > tol + (1e-4 if name == "regions.tsv" else 0.0):
+        if worst > tol + (1e-4 if name.startswith("regions") else 0.0):
             diffs.append(f"{name}: max score difference {worst:.2e} > {tol:g}")
     ma, mb = (json.loads((d / "run_metadata.json").read_text()) for d in (a, b))
     for key in sorted((set(ma) | set(mb)) - {"device"} - VOLATILE_META):

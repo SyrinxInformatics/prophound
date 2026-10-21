@@ -116,7 +116,9 @@ def timed_run(code_env: dict, fasta: Path, outdir: Path, device: str, mode: str,
     meta = json.loads((outdir / "run_metadata.json").read_text())
     return {"wall_s": round(wall, 2), "peak_rss_mb": round(int(rss.group(1)) / 2**20, 1) if rss else None,
             "n_windows": meta["n_windows"], "n_regions": meta["n_regions"],
-            "regions_sha256": hashlib.sha256((outdir / "regions.tsv").read_bytes()).hexdigest()}
+            "regions_sha256": hashlib.sha256((outdir / "regions.tsv").read_bytes()).hexdigest(),
+            **({"detailed_sha256": hashlib.sha256((outdir / "regions.detailed.tsv").read_bytes()).hexdigest()}
+               if (outdir / "regions.detailed.tsv").exists() else {})}
 
 
 def cmd_timing(args: argparse.Namespace) -> None:

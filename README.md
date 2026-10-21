@@ -35,15 +35,18 @@ A bioconda package is planned; the draft recipe is in `recipes/prophound/`. Unde
 prophound predict --input examples/hin_rd_kw20_region.fna --outdir example_out
 ```
 
-The example is 220 kb of *Haemophilus influenzae* Rd KW20 holding its two geNomad-called prophage regions. It takes a few seconds on a GPU and about 2 minutes on CPU. The expected result is two calls, one over each element, both made by all three checkpoints:
+The example is 220 kb of *Haemophilus influenzae* Rd KW20 holding its two geNomad-called prophage regions. It takes a few seconds on a GPU and a few minutes on CPU. The terminal ends with the candidates, best first:
 
 ```
-call_id      contig_id           start   end     boundary  start_lo  start_hi  end_lo  end_hi  seed_support
-prophound_1  hin_rd_kw20_region  53842   81000   model     52348     67258     67584   82494   3
-prophound_2  hin_rd_kw20_region  116737  156000  model     114578    136133    136604  158159  3
+2 candidate prophage regions (default mode), best first:
+  rank  contig              start-end (1-based)  length   edges      support
+  1     hin_rd_kw20_region  116,738-156,000      39.3 kb  estimated  3/3 models
+  2     hin_rd_kw20_region  53,843-81,000        27.2 kb  estimated  3/3 models
 ```
 
-**Boundaries.** Where an element has an att site (a direct repeat left at both edges by integration), `boundary` is `att` and the edges are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `boundary` is `model`: the edges are the model's estimate, which usually overshoots by a few kb, and `start_lo`…`end_hi` give where each true edge lies, 90% of the time. Neither example element has an att site; the calls overshoot them (58,836–73,073 and 119,961–154,275) by 3–8 kb, inside the ranges. [`examples/README.md`](examples/README.md) explains the output, and `pixi run smoke` checks it.
+`regions.tsv` holds the same table with a range for each edge. **[How to read your results](docs/interpreting-results.md)** explains every column, what the edges mean, and how to take a candidate to the lab.
+
+**Boundaries.** Where an element has an att site (a direct repeat left at both ends by integration), `edges` is `att site` and the ends are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `edges` is `estimated`: the model's estimate, moved in Default and Conservative mode to where the sequence's composition turns from host-like to element-like (median error about 2 kb on our test samples), with a range for each end that holds the true end about 90% of the time. Neither example element has an att site; the calls overshoot them (58,837–73,073 and 119,962–154,275, 1-based) by 3–8 kb, inside the ranges. [`examples/README.md`](examples/README.md) walks through the output, and `pixi run smoke` checks it.
 
 Other inputs:
 
@@ -74,7 +77,8 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 
 | file | contents |
 |---|---|
-| `regions.tsv` | the calls, one row each: coordinates (0-based, half-open), `boundary` (att or model) and each edge's range, scores, `seed_support`, `contig_edge`, `n_frac` |
+| `regions.tsv` | **start here:** the candidates, best first, in 1-based coordinates: where each is, how exact its ends are (`att site` or `estimated`, with ranges), model support and notes |
+| `regions.detailed.tsv` | the same candidates with every column (scores, the model's own edges, the att core), 0-based like BED; what scripts should read |
 | `regions.bed`, `regions.gff3` | the same calls; BED score is `round(1000 × mean_prob)` |
 | `regions.filtered.tsv` | calls a filter set aside (the seed vote, or mostly N), with the reason |
 | `windows.tsv` | every window's score: the track the calls are built from |
@@ -84,7 +88,7 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 
 A batch writes one subdirectory per genome, plus combined calls and `batch_summary.tsv`. Every column is described in [`docs/output-files.md`](docs/output-files.md). An outdir that already holds outputs is refused unless `--force` is given.
 
-Rank calls by `mean_prob`. It is a score, not the probability that a call is a prophage.
+`rank` puts the candidates most like known prophages first, so a novel element can rank low. The scores behind it are not probabilities that a call is a prophage.
 
 ## What has been measured
 

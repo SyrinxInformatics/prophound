@@ -156,3 +156,41 @@ def test_search_uses_the_coarse_coordinates():
         coarse_start=77_000, coarse_end=113_000, n_pieces=1)
     out = att.apply_boundaries(calls, g, {CONTIG: LEN}).iloc[0]
     assert (out.boundary, out.start, out.end, out.model_start) == ("att", 80_000, 110_040, 82_000)
+
+
+def test_edge_sources():
+    calls = calls_frame([("g", CONTIG, 82_000, 108_000, 26_000, "none"),
+                         ("g", CONTIG, 150_000, 170_000, 20_000, "none"),
+                         ("g", CONTIG, 180_000, LEN, 20_000, "end")]).assign(
+        coarse_start=[77_000, 150_000, 178_000], coarse_end=[113_000, 172_000, LEN], n_pieces=1,
+        refine_status="refined")
+    out = att.apply_boundaries(calls, genome_with_pair(), {CONTIG: LEN})
+    assert list(out.start_source) == ["att", "coarse", "fine"]
+    assert list(out.end_source) == ["att", "fine", "contig_end"]
+
+
+def test_finish_boundaries_runs_composition_only_in_its_modes():
+    from prophound.models.prophage.src import composition
+    # host: random; element: AT-rich, so the two profiles differ
+    rng = np.random.default_rng(5)
+    host = list(rng.choice(list("ACGT"), 300_000))
+    host[100_000:140_000] = list(rng.choice(list("ACGT"), 40_000, p=[0.4, 0.1, 0.1, 0.4]))
+    g = att.Genome({CONTIG: "".join(host)})
+    calls = calls_frame([("g", CONTIG, 96_000, 144_000, 48_000, "none")])
+    for mode, moved in (("default", True), ("conservative", True), ("exploratory", False)):
+        out = att.finish_boundaries(calls, g, {CONTIG: 300_000}, mode).iloc[0]
+        assert (out.start_source == "composition") is moved
+        if moved:   # within one window of the true switch, and the cap respected
+            assert abs(out.start - 100_000) <= composition.WIN and abs(out.end - 140_000) <= composition.WIN
+    off = att.finish_boundaries(calls, g, {CONTIG: 300_000}, "default", composition_edges="off").iloc[0]
+    assert off.start == 96_000 and off.start_source == "coarse"
+
+
+def test_composition_moves_are_capped_inward():
+    from prophound.models.prophage.src import composition
+    rng = np.random.default_rng(6)
+    host = list(rng.choice(list("ACGT"), 300_000))
+    host[120_000:140_000] = list(rng.choice(list("ACGT"), 20_000, p=[0.4, 0.1, 0.1, 0.4]))
+    calls = calls_frame([("g", CONTIG, 96_000, 144_000, 48_000, "none")])
+    out = att.finish_boundaries(calls, att.Genome({CONTIG: "".join(host)}), {CONTIG: 300_000}, "default").iloc[0]
+    assert out.start <= 96_000 + round(composition.MAX_INWARD_FRAC * 48_000)

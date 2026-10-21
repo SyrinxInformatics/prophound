@@ -57,6 +57,8 @@ import pandas as pd
 def load_tsv(d: str, name: str) -> pd.DataFrame:
     dfs = []
     for f in glob.glob(os.path.join(d, "*", name)):
+        if name == "regions.tsv" and os.path.exists(os.path.join(os.path.dirname(f), "regions.detailed.tsv")):
+            f = os.path.join(os.path.dirname(f), "regions.detailed.tsv")   # 0-based calls since 0.1.0
         try:
             dfs.append(pd.read_csv(f, sep="\t"))
         except pd.errors.EmptyDataError:

@@ -12,19 +12,21 @@ This takes a few seconds on a GPU (Apple M4: 1.6 s) and about 2 minutes on CPU o
 
 ## Expected output
 
-`expected_calls.tsv` holds the calls. `expected_regions.tsv` is the full `regions.tsv` from a CPU run.
+The run ends by listing the candidates, best first. `regions.tsv` holds them as a table:
 
-| call | start–end (0-based, half-open) | length | `boundary` | start range | end range | geNomad element (same coordinates) | seed_support |
-|---|---|---|---|---|---|---|---|
-| `prophound_1` | 53,842–81,000 | 27.2 kb | model | 52,348–67,258 | 67,584–82,494 | 58,836–73,073 (14.2 kb) | 3 |
-| `prophound_2` | 116,737–156,000 | 39.3 kb | model | 114,578–136,133 | 136,604–158,159 | 119,961–154,275 (34.3 kb) | 3 |
+| rank | call | start–end (1-based) | length | edges | start range | end range | geNomad element (1-based) | support |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `prophound_2` | 116,738–156,000 | 39.3 kb | estimated | 114,579–136,134 | 136,604–158,159 | 119,962–154,275 (34.3 kb) | 3/3 |
+| 2 | `prophound_1` | 53,843–81,000 | 27.2 kb | estimated | 52,349–67,259 | 67,584–82,494 | 58,837–73,073 (14.2 kb) | 3/3 |
 
-How to read the calls:
+How to read it (the full guide is [`docs/interpreting-results.md`](../docs/interpreting-results.md)):
 
 - **Both elements are found, and nothing else is called.** Each call covers its whole element, so both count as found under covered50, the release's recall metric (at least half of an element's length covered).
-- **These boundaries are model estimates** (`boundary` = `model`): neither element has a findable att site, a direct repeat left at both edges by integration, which about 15% of known elements do. The fine pass places the edges, which still overshoot the elements by 3–8 kb here. The start and end ranges say where each true edge lies, 90% of the time; both elements' edges fall inside them. Where an att site is found, `boundary` is `att` and the edges are exact to the base.
-- **`seed_support` 3** means all three bundled checkpoints make the call on their own. Default mode keeps only those. In Exploratory mode, calls with support 1 are the first to discount.
-- `mean_prob` (0.68 and 0.70) is the mean window score across the call. It ranks calls; it is not a probability that the call is a prophage.
+- **The ends are estimates** (`edges` = `estimated`): neither element has a findable att site, a direct repeat left at both ends by integration, which about 15% of known elements do. The calls overshoot the elements by 3–8 kb here. The start and end ranges say where each true end lies, about 90% of the time, and both elements' ends fall inside them. Both calls' ends sit on round numbers (81,000 and 156,000), and `note` says why: the fine pass could not move them, because the score stays high up to them. Those are the least certain ends; here they overshoot by 7.9 and 1.7 kb. Where an att site is found, `edges` is `att site` and the ends are exact to the base.
+- **`support` 3/3** means all three bundled models make the call on their own. Default mode keeps only those. In Exploratory mode, calls with support 1/3 are the first to discount.
+- **`rank`** puts the call most like known prophages first. Here both score 1.0 at their best window, and the larger one has the higher average.
+
+Files: `expected_regions.tsv` is `regions.tsv` from a CPU run, `expected_regions.detailed.tsv` is `regions.detailed.tsv` (every column, 0-based like BED), and `expected_calls.tsv` holds the columns the smoke test compares.
 
 On another device the window scores can differ in the last digits, because floating-point order differs. The calls are the same: CPU and Apple GPU agree here, and on all 30 reference cases (`docs/benchmarks.md`).
 

@@ -53,7 +53,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from evalkit import covered_bp, load_genome_list, load_pred_regions, overlap, wilson
+from evalkit import calls_file, covered_bp, load_genome_list, load_pred_regions, overlap, wilson
 
 MODES = ("default", "exploratory", "conservative")
 # Final-mode ensemble covered50 on the reused samples (docs/release-checklist.md,
@@ -62,6 +62,9 @@ REFERENCE = {
     "42": {"exploratory": 0.994, "default": 0.972, "conservative": 0.944},
     "18": {"exploratory": 1.000, "default": 1.000, "conservative": 0.962},
 }
+# the 0.1.0 edge stages per mode (run_metadata.json boundary_refinement; docs/lockbox2.md)
+BOUNDARY_STAGES = {"exploratory": "fine_pass_then_att", "default": "fine_pass_then_att_then_composition",
+                   "conservative": "fine_pass_then_att_then_composition"}
 STRATA = ["<5kb", "5-8kb", "8-10kb", "10-15kb", "15-30kb", "30-60kb", "60kb+"]
 
 
@@ -70,7 +73,7 @@ def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool, bo
     shas = set()
     for g in genomes:
         d = run_dir / g
-        if not (d / "regions.tsv").exists() or not (d / "run_metadata.json").exists():
+        if not calls_file(d).exists() or not (d / "run_metadata.json").exists():
             missing.append(g)
             continue
         if not check_metadata:
@@ -78,7 +81,7 @@ def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool, bo
         m = json.loads((d / "run_metadata.json").read_text())
         if (m.get("mode") != mode or (m.get("edge_snap") or {}).get("frac") != 0.5
                 or m.get("ambiguity_policy") != "impute"
-                or (boundaries and m.get("boundary_refinement") != "fine_pass_then_att")):
+                or (boundaries and m.get("boundary_refinement") != BOUNDARY_STAGES[mode])):
             bad.append(g)
         shas.add(json.dumps(m.get("checkpoint_sha256"), sort_keys=True))
     if missing or bad or len(shas) > 1:
@@ -120,7 +123,7 @@ def boundary_metrics(ev: pd.DataFrame, genomes: list, run_dir: Path) -> dict:
     n_calls = n_att = 0
     bp = off = 0
     for g in genomes:
-        tsv = run_dir / g / "regions.tsv"
+        tsv = calls_file(run_dir / g)
         pred = pd.read_csv(tsv, sep="\t") if tsv.exists() and tsv.stat().st_size > 1 else pd.DataFrame()
         tr = ev[ev.accession == g]
         for r in tr.itertuples():

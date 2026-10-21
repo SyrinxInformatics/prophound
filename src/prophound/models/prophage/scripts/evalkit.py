@@ -26,7 +26,7 @@ import from each other (the g5/g5dev, lambda, short-contig, N-gap and eval-sampl
 - refinement offline: `load_run`, `fine_regions_by_genome`, `refine_all`
 - intervals and coverage: `overlap`, `covered_bp`, `covered50`, `cov_fracs`, `cov_frac`,
   `split_frag`, `score_variant`, `element_overlap_bp`
-- files: `load_genome_list`, `load_pred_regions`
+- files: `load_genome_list`, `calls_file`, `load_pred_regions`
 - statistics: `wilson`
 - k-mers: `canon_kmers`
 """
@@ -45,7 +45,7 @@ import pandas as pd
 # The names scripts use are re-exported, so no script needs this fallback itself.
 try:
     from prophound.models.prophage.src import predict_genome as pg
-    from prophound.models.prophage.src.att import Genome, apply_boundaries
+    from prophound.models.prophage.src.att import Genome, finish_boundaries
     from prophound.models.prophage.src.calls import (
         WINDOW_COORDS,
         CallRules,
@@ -74,7 +74,7 @@ try:
     from prophound.models.prophage.src.predict_genome import refine as _shipped_refine
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from src.att import Genome, apply_boundaries
+    from src.att import Genome, finish_boundaries
     from src.calls import WINDOW_COORDS, CallRules, build_pass, concat_nonempty, finalize
     from src.multiscale import refine_regions
     from src.predict_genome import (  # noqa: F401 -- re-exported
@@ -204,12 +204,13 @@ def predict_options(mode: str, extra: list | None = None):
 
 
 def refine_pass(calls: pd.DataFrame, fine: pd.DataFrame, lengths: dict, genome_id: str, fasta: str,
-                mode: str) -> pd.DataFrame:
+                mode: str, extra: list | None = None) -> pd.DataFrame:
     """The shipped refine() on coarse calls, fed stored fine scores (an Exploratory refinement
-    run's fine windows cover every mode's neighbourhoods), at `predict`'s defaults."""
+    run's fine windows cover every mode's neighbourhoods), at `predict`'s defaults (plus `extra`
+    predict arguments, e.g. ["--refine-threshold", "0.9"])."""
     if calls.empty:
         return calls
-    return _shipped_refine(StoredScorer(fine), calls, lengths, genome_id, fasta, predict_options(mode))[0]
+    return _shipped_refine(StoredScorer(fine), calls, lengths, genome_id, fasta, predict_options(mode, extra))[0]
 
 
 def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: str | None = None,
@@ -219,7 +220,7 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
     The ensemble track is `ens_tracks`; the vote counts the single-seed tracks in
     `seed_tracks`, aligned to it by window. With `genomes_dir` (holding <genome>.fna)
     every step runs, including the edge snap and the N filter, and the calls carry
-    `contig_edge`, `n_frac` and `seed_support` as in regions.tsv. Without it those two
+    `contig_edge`, `n_frac` and `seed_support` as in regions.detailed.tsv. Without it those two
     steps cannot run (they need contig lengths and sequence) and a warning says so;
     the calls are then the CLI's before snapping. A `short` column marks short-contig
     calls. With `with_filtered`, also returns the candidates a filter removed.
@@ -277,8 +278,8 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
             final = finalize(call_g, filt_g, per_seed, lengths,
                              lambda df, f=fasta: call_n_fraction(df, f), rules, DEFAULT_EDGE_SNAP_FRAC)
             genome = Genome.from_fasta(fasta)
-            call_g = apply_boundaries(final.calls, genome, lengths)
-            filt_g = apply_boundaries(final.filtered, genome, lengths)
+            call_g = finish_boundaries(final.calls, genome, lengths, mode)
+            filt_g = finish_boundaries(final.filtered, genome, lengths, mode)
         kept.append(call_g)
         removed.append(filt_g)
     cols = ["genome_id", "contig_id", "start", "end", "max_prob", "short"]
@@ -488,8 +489,15 @@ def load_genome_list(path: Path) -> list:
         return [line.strip() for line in f if line.strip()]
 
 
+def calls_file(genome_dir: Path) -> Path:
+    """predict's calls in 0-based coordinates: regions.detailed.tsv since 0.1.0 (its regions.tsv
+    is the 1-based researcher table), regions.tsv in runs from before it."""
+    detailed = Path(genome_dir) / "regions.detailed.tsv"
+    return detailed if detailed.exists() else Path(genome_dir) / "regions.tsv"
+
+
 def load_pred_regions(predict_dir: Path, accession: str) -> pd.DataFrame:
-    tsv = predict_dir / accession / "regions.tsv"
+    tsv = calls_file(predict_dir / accession)
     # predict_genome.py writes a bare newline (no header) when it finds zero
     # regions for a genome -- pd.read_csv chokes on that with EmptyDataError.
     if not tsv.exists() or tsv.stat().st_size <= 1:

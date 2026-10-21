@@ -38,6 +38,6 @@ def test_example_genome_gives_the_expected_calls(tmp_path):
                            "--input", str(EXAMPLES / "hin_rd_kw20_region.fna"), "--outdir", str(out), "-q"],
                           capture_output=True, text=True)
     assert proc.returncode == 0, proc.stderr
-    got = pd.read_csv(out / "regions.tsv", sep="\t")[CALL_COLUMNS]
+    got = pd.read_csv(out / "regions.detailed.tsv", sep="\t")[CALL_COLUMNS]
     expected = pd.read_csv(EXAMPLES / "expected_calls.tsv", sep="\t")[CALL_COLUMNS]
     pd.testing.assert_frame_equal(got, expected)

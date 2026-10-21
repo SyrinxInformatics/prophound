@@ -62,6 +62,9 @@ MAX_EVALUE = 1e-6
 
 REL_OUT = 0.055          # edge ranges, as fractions of the call's length
 REL_IN = 0.494
+# the same after composition edges (Default and Conservative), calibrated the same way on
+# their model edges (0.898 on the tuning sample; 0.891 and 0.883 on the two check samples)
+RANGE_FRACS_COMPOSITION = (0.143, 0.463)
 
 _CODE = np.full(256, 255, dtype=np.uint8)
 for _i, _b in enumerate(b"ACGT"):
@@ -208,10 +211,46 @@ def apply_boundaries(calls: pd.DataFrame, genome: Genome | None, contig_lengths:
     out["boundary"] = boundary
     out["att_len"] = pd.array(att_len, dtype="Int64") if n else pd.array([], dtype="Int64")
     out["att_core"] = att_core
+    out["start_source"], out["end_source"] = _sources(out, "start"), _sources(out, "end")
     return edge_ranges(out, contig_lengths)
 
 
-def edge_ranges(calls: pd.DataFrame, contig_lengths: dict[str, int]) -> pd.DataFrame:
+def _sources(calls: pd.DataFrame, side: str) -> np.ndarray:
+    """What placed each edge: att, contig_end, fine (moved by refinement) or coarse."""
+    n = len(calls)
+    edge = calls["contig_edge"].to_numpy() if "contig_edge" in calls else np.array(["none"] * n)
+    att = (calls["boundary"] == "att").to_numpy()
+    on_end = np.isin(edge, [side, "both"])
+    moved = np.zeros(n, bool)
+    if f"coarse_{side}" in calls and "refine_status" in calls:
+        refined = calls["refine_status"].isin(["refined", "split"]).to_numpy()
+        moved = refined & (calls[side].to_numpy() != calls[f"coarse_{side}"].to_numpy())
+    return np.select([att, on_end, moved], ["att", "contig_end", "fine"], "coarse").astype(object)
+
+
+def uses_composition(mode: str, setting: str = "auto") -> bool:
+    """--composition-edges: auto is on in Default and Conservative (src/composition.py MODES)."""
+    from . import composition
+
+    return setting == "on" or (setting == "auto" and mode in composition.MODES)
+
+
+def finish_boundaries(calls: pd.DataFrame, genome: Genome | None, contig_lengths: dict[str, int], mode: str,
+                      att_search: bool = True, composition_edges: str = "auto") -> pd.DataFrame:
+    """Every boundary stage after finalize, as predict runs it: att boundaries, then composition
+    edges (src/composition.py; by default in Default and Conservative), then the edge ranges.
+    `genome` is needed for either stage; without it only the ranges are added."""
+    from . import composition
+
+    out = apply_boundaries(calls, genome if att_search else None, contig_lengths)
+    if genome is not None and uses_composition(mode, composition_edges):
+        out = composition.composition_edges(out, genome.seqs)
+        out = edge_ranges(out, contig_lengths, *RANGE_FRACS_COMPOSITION)
+    return out
+
+
+def edge_ranges(calls: pd.DataFrame, contig_lengths: dict[str, int], rel_out: float = REL_OUT,
+                rel_in: float = REL_IN) -> pd.DataFrame:
     """start_lo..start_hi and end_lo..end_hi: where each true edge lies (90% for a model edge)."""
     out = calls.copy()
     s, e = out["start"].to_numpy(dtype=np.int64), out["end"].to_numpy(dtype=np.int64)
@@ -219,7 +258,7 @@ def edge_ranges(calls: pd.DataFrame, contig_lengths: dict[str, int]) -> pd.DataF
     exact = (out["boundary"] == "att").to_numpy() if "boundary" in out else np.zeros(len(out), bool)
     edge = out["contig_edge"].to_numpy() if "contig_edge" in out else np.array(["none"] * len(out))
     lens = out["contig_id"].map(contig_lengths).to_numpy(dtype=np.int64) if len(out) else np.zeros(0, np.int64)
-    out_bp, in_bp = np.round(REL_OUT * span).astype(np.int64), np.round(REL_IN * span).astype(np.int64)
+    out_bp, in_bp = np.round(rel_out * span).astype(np.int64), np.round(rel_in * span).astype(np.int64)
     fix_s = exact | np.isin(edge, ["start", "both"])
     fix_e = exact | np.isin(edge, ["end", "both"])
     out["start_lo"] = np.where(fix_s, s, np.maximum(0, s - out_bp))

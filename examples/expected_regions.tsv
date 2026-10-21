@@ -1,3 +1,3 @@
-call_id	genome_id	contig_id	start	end	boundary	start_lo	start_hi	end_lo	end_hi	n_windows	region_len_bp	mean_prob	max_prob	window_bp	refine_status	coarse_start	coarse_end	n_pieces	contig_edge	n_frac	seed_support	model_start	model_end	att_len	att_core
-prophound_1	hin_rd_kw20_region	hin_rd_kw20_region	53842	81000	model	52348	67258	67584	82494	128	27158	0.654	1.0	10000	refined	51000	81000	1	none	0.0	3	53842	81000		
-prophound_2	hin_rd_kw20_region	hin_rd_kw20_region	116737	156000	model	114578	136133	136604	158159	177	39263	0.7498	1.0	10000	refined	116000	156000	1	none	0.0	3	116737	156000		
+rank	call_id	contig	start	end	length_kb	edges	start_range	end_range	support	note
+1	prophound_2	hin_rd_kw20_region	116738	156000	39.3	estimated	114579-136134	136604-158159	3/3	end not refined: the score stays high past it, so the true edge is less certain
+2	prophound_1	hin_rd_kw20_region	53843	81000	27.2	estimated	52349-67259	67584-82494	3/3	end not refined: the score stays high past it, so the true edge is less certain

@@ -76,8 +76,9 @@ from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoi
 from .inputs import PreparedInput, genome_id_for, prepare_input
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .model_rc_cnn import build_model
-from .att import REL_IN, REL_OUT, Genome, apply_boundaries
+from .att import RANGE_FRACS_COMPOSITION, REL_IN, REL_OUT, Genome, finish_boundaries, uses_composition
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
+from .report import rank_calls, simple_table, terminal_lines
 from .options import (  # noqa: F401 -- re-exported: scripts import the defaults and tables from here
     AMBIGUITY_POLICIES,
     BUNDLED_MODEL_DIR,
@@ -100,7 +101,8 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
 )
 
 # every file `predict` can write; --force removes all of them before writing
-OUTPUT_FILES = ("windows.tsv", "regions.tsv", "regions.filtered.tsv", "run_metadata.json", "regions.bed",
+OUTPUT_FILES = ("windows.tsv", "regions.tsv", "regions.detailed.tsv", "regions.filtered.tsv", "run_metadata.json",
+                "regions.bed",
                 "regions.gff3", "regions.fna", "fine_windows.tsv", "batch_summary.tsv")
 WINDOW_COLUMNS = ["genome_id", "contig_id", "start", "end", "fasta_path", "prob", "pred_label", "region_pred_label"]
 
@@ -666,7 +668,9 @@ def write_batch_outputs(base: PredictOptions, engine: Engine, outdir: Path, rows
     # a genome that failed this time keeps no outputs from an earlier batch
     stage = StagedOutputs(outdir, force=base.force, keep_dirs=tuple(r.genome_id for r in rows if r.status == "ok"))
     try:
-        all_calls.to_csv(stage.path("regions.tsv"), sep="\t", index=False)
+        simple_table(all_calls, base.n_checkpoints, with_genome=True).to_csv(stage.path("regions.tsv"), sep="\t",
+                                                                             index=False)
+        all_calls.to_csv(stage.path("regions.detailed.tsv"), sep="\t", index=False)
         combined_calls(filtered).to_csv(stage.path("regions.filtered.tsv"), sep="\t", index=False)
         write_bed(unique_names(all_calls), stage.path("regions.bed"))
         write_gff3(unique_names(all_calls), stage.path("regions.gff3"), base.mode, package_version())
@@ -832,16 +836,21 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
 def boundaries(final: FinalCalls, fasta: str, contig_lengths: Dict[str, int], opts: PredictOptions) -> FinalCalls:
     """Att boundaries where found and an edge range for every call, kept and set aside
     (docs/att-boundaries.md). n_frac is re-measured where att moved a call's edges."""
-    genome = Genome.from_fasta(fasta) if opts.att_search else None
-    calls = apply_boundaries(final.calls, genome, contig_lengths)
-    filtered = apply_boundaries(final.filtered, genome, contig_lengths)
+    composition = uses_composition(opts.mode, opts.composition_edges)
+    genome = Genome.from_fasta(fasta) if opts.att_search or composition else None
+    calls = finish_boundaries(final.calls, genome, contig_lengths, opts.mode, opts.att_search, opts.composition_edges)
+    filtered = finish_boundaries(final.filtered, genome, contig_lengths, opts.mode, opts.att_search,
+                                 opts.composition_edges)
     for df in (calls, filtered):
         moved = (df["boundary"] == "att").to_numpy() if len(df) else np.zeros(0, bool)
         if moved.any():
             df.loc[moved, "n_frac"] = np.round(call_n_fraction(df[moved], fasta), 4)
-    meta = {"att_search": opts.att_search,
+    rel_out, rel_in = RANGE_FRACS_COMPOSITION if composition else (REL_OUT, REL_IN)
+    sources = pd.concat([calls["start_source"], calls["end_source"]]).value_counts() if len(calls) else pd.Series()
+    meta = {"att_search": opts.att_search, "composition_edges": composition,
             "calls_with_att": int((calls["boundary"] == "att").sum()) if len(calls) else 0,
-            "edge_range": {"outward_frac": REL_OUT, "inward_frac": REL_IN, "coverage": 0.9}}
+            "edges_by_source": {str(k): int(v) for k, v in sources.items()},
+            "edge_range": {"outward_frac": rel_out, "inward_frac": rel_in, "coverage": 0.9}}
     return FinalCalls(calls, filtered, {**final.meta, "boundaries": meta})
 
 
@@ -862,6 +871,8 @@ def call_table(calls: pd.DataFrame, contig_order: Dict[str, int], prefix: str, w
               .sort_values(["_order", "start", "end"], kind="stable")
               .drop(columns="_order").reset_index(drop=True))
     out.insert(0, "call_id", [f"{prefix}{i}" for i in range(1, len(out) + 1)])
+    if "max_prob" in out.columns:
+        out.insert(1, "rank", rank_calls(out))
     # where each edge is and how sure: right after the coordinates
     first = ["boundary", "start_lo", "start_hi", "end_lo", "end_hi"]
     if all(c in out.columns for c in first):
@@ -931,9 +942,9 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, prepared: Pre
     if "seed_support" in call_meta:
         metadata["seed_support"] = call_meta["seed_support"]
     metadata["region_builder"] = "coverage_fraction"
-    metadata["boundary_refinement"] = {(True, True): "fine_pass_then_att", (True, False): "fine_pass",
-                                       (False, True): "att", (False, False): "none_bin_edges"}[
-        (bool(opts.refine_window_len), opts.att_search)]
+    stages = [name for name, on in (("fine_pass", bool(opts.refine_window_len)), ("att", opts.att_search),
+                                     ("composition", uses_composition(opts.mode, opts.composition_edges))) if on]
+    metadata["boundary_refinement"] = "_then_".join(stages) if stages else "none_bin_edges"
     if "boundaries" in call_meta:
         metadata["boundaries"] = call_meta["boundaries"]
     metadata["coverage_frac"] = opts.coverage_frac
@@ -1002,7 +1013,8 @@ def write_outputs(opts: PredictOptions, run_name: str, device: str, prepared: Pr
     stage = StagedOutputs(outdir, opts.force)
     try:
         windows_df.drop(columns="fasta_path").to_csv(stage.path("windows.tsv"), sep="\t", index=False)
-        calls.to_csv(stage.path("regions.tsv"), sep="\t", index=False)
+        simple_table(calls, opts.n_checkpoints).to_csv(stage.path("regions.tsv"), sep="\t", index=False)
+        calls.to_csv(stage.path("regions.detailed.tsv"), sep="\t", index=False)
         filtered.to_csv(stage.path("regions.filtered.tsv"), sep="\t", index=False)
         if fine_windows_df is not None:
             fine_windows_df.drop(columns="fasta_path", errors="ignore").to_csv(
@@ -1073,9 +1085,9 @@ def print_run_summary(opts: PredictOptions, prepared: PreparedInput, inp: dict, 
             parts.append(f"{_plural(n_any, 'kept call')} {'contains' if n_any == 1 else 'contain'} some N "
                          "(see n_frac)")
         lines.append("N gaps: " + "; ".join(parts))
-    lines.append("calls are candidates for follow-up, not annotations")
     lines.append(f"ran on {device} in {_duration(elapsed)}")
     print("\n".join("[summary] " + line for line in lines), file=sys.stderr)
+    print("\n" + "\n".join(terminal_lines(simple_table(regions_df, opts.n_checkpoints), opts.mode)), file=sys.stderr)
 
 
 def _input_kind(prepared: PreparedInput) -> str:

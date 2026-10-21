@@ -58,6 +58,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from evalkit import calls_file
 
 
 def load_split_ids(splits_dir: Path, name: str) -> set:
@@ -148,7 +149,8 @@ def tag_elements(ev: pd.DataFrame, cl: pd.DataFrame, train_clades: set) -> pd.Da
 
 def load_regions(d: str) -> pd.DataFrame:
     dfs = []
-    for f in glob.glob(os.path.join(d, "*", "regions.tsv")):
+    for f in sorted({os.path.dirname(x) for x in glob.glob(os.path.join(d, "*", "regions.tsv"))}):
+        f = str(calls_file(f))   # regions.detailed.tsv since 0.1.0
         try:
             dfs.append(pd.read_csv(f, sep="\t"))
         except pd.errors.EmptyDataError:  # header-only file: a genome with no calls

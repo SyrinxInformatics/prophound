@@ -99,16 +99,24 @@ def score(truth, calls, genomes, rng) -> dict:
             "calls_per_mb": len(c) / max(1e-9, mb), "found": set(zip(t.assembly[h50], t.start[h50], t.end[h50]))}
 
 
-def prophound_calls(run_dir: str, genomes: pd.DataFrame) -> dict:
+def prophound_calls(run_dir: str, genomes: pd.DataFrame, genomes_dir: str | None = None) -> dict:
+    """Calls per shipped mode. With `genomes_dir`, every stage `predict` runs since 0.1.0: edge
+    snap and the N filter, refinement (from the run's fine_windows.tsv) and att boundaries."""
     import evalkit as ek
     ens = ek.load_tracks(run_dir)
     seeds = [ek.load_tracks(run_dir, f"prob_ckpt{k}") for k in (1, 2, 3)]
     missing = set(genomes.assembly) - set(ens)
     if missing:
         raise SystemExit(f"prophound run lacks {len(missing)} genomes, e.g. {sorted(missing)[:3]}")
+    fine = None
+    if genomes_dir is not None:
+        fine = {g: pd.read_csv(Path(run_dir) / g / "fine_windows.tsv", sep="\t", float_precision="round_trip")
+                for g in ens if (Path(run_dir) / g / "fine_windows.tsv").exists()}
+        if set(fine) != set(ens):
+            raise SystemExit(f"{len(set(ens) - set(fine))} genomes lack fine_windows.tsv: run with refinement on")
     out = {}
     for mode in ek.MODE_THRESHOLDS:
-        reg = ek.shipped_calls(ens, seeds, mode)
+        reg = ek.shipped_calls(ens, seeds, mode, genomes_dir, fine_tracks=fine)
         reg = reg.assign(assembly=reg.genome_id, sequence=reg.contig_id.astype(str).str.split(".").str[0])
         out[f"prophound {mode}"] = reg[["assembly", "sequence", "start", "end", "max_prob"]]
     return out
@@ -118,6 +126,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="lambda_prepare.py output dir")
     ap.add_argument("--prophound_run", default=None, help="run dir: <assembly>/windows.tsv with --write-seed-scores")
+    ap.add_argument("--genomes_dir", default=None,
+                    help="<assembly>.fna: rebuild with every 0.1.0 stage (snap, N filter, refinement, att)")
     ap.add_argument("--containment", default=None, help="eval_containment.py output with a `lambda` set")
     ap.add_argument("--seed", type=int, default=20260929)
     ap.add_argument("--out", required=True)
@@ -134,7 +144,7 @@ def main() -> None:
     tools = {t: C[C.tool == t] for t in sorted(C.tool.unique())}
     ran = {t: set(RAN[RAN.tool == t].assembly) for t in tools}
     if a.prophound_run:
-        for k, v in prophound_calls(a.prophound_run, G).items():
+        for k, v in prophound_calls(a.prophound_run, G, a.genomes_dir).items():
             tools[k], ran[k] = v, set(G.assembly)
 
     subsets = {"all": G, "not_in_corpus": G[G.corpus_status == "not_in_corpus"], "test": G[G.corpus_status == "test"]}

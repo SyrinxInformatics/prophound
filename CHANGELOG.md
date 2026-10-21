@@ -19,13 +19,13 @@ The first release. Earlier development versions were called `mge-detect`.
 - Contigs of 3–10 kb are scanned with their own thresholds. Contigs under 3 kb are never scanned, and are reported.
 - A call within half a window of a contig end is extended to the end and flagged in `contig_edge`.
 - IUPAC ambiguity codes are replaced by fixed, reproducible bases (`--ambiguity-policy impute`). This changes nothing on sequence without them. The training-time encoding made two adjacent ambiguous bases drop a window's score to zero.
-- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, a 90% range for model edges. About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
+- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off), and in Default and Conservative mode each edge is then moved to where the sequence's composition turns from host-like to element-like, which roughly halves the median edge error (`--composition-edges`). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, a 90% range for model edges. About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
 
 ### Input and output
 
 - Input can be FASTA, GenBank, EMBL or GFF3 with embedded sequence, optionally gzip, bzip2 or xz compressed. The format is read from the content.
 - Batch runs: repeat `--input`, give a directory, or use `--input-list`.
-- Outputs: `regions.tsv`, `regions.bed`, `regions.gff3`, `windows.tsv` and `run_metadata.json`. Calls a filter set aside go to `regions.filtered.tsv`, so a discovery user can recover them without a re-run. `regions.fna` is optional. The full contract is in `docs/output-files.md`.
+- Outputs: `regions.tsv` (the candidates for a researcher: ranked, plain columns, 1-based), `regions.detailed.tsv` (every column, 0-based), `regions.bed`, `regions.gff3`, `windows.tsv` and `run_metadata.json`. The terminal lists the ranked candidates, and `docs/interpreting-results.md` explains how to read them. Calls a filter set aside go to `regions.filtered.tsv`, so a discovery user can recover them without a re-run. `regions.fna` is optional. The full contract is in `docs/output-files.md`.
 - An outdir that already holds outputs is refused unless `--force`, and outputs are written atomically.
 - Checkpoints load with `weights_only=True`. A full training checkpoint needs `--trust-checkpoint`.
 - Devices: CUDA, Apple MPS, Intel XPU or CPU, picked automatically.

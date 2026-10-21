@@ -38,7 +38,7 @@ from .options import PredictError
 GENOME_SUFFIXES = (".fa", ".fna", ".fasta", ".fas", ".fsa", ".gb", ".gbk", ".gbff", ".genbank", ".embl",
                    ".gff", ".gff3")
 # files a batch writes at the top of the outdir (each genome's directory holds the single-genome set)
-BATCH_FILES = ("regions.tsv", "regions.filtered.tsv", "regions.bed", "regions.gff3", "batch_summary.tsv",
+BATCH_FILES = ("regions.tsv", "regions.detailed.tsv", "regions.filtered.tsv", "regions.bed", "regions.gff3", "batch_summary.tsv",
                "run_metadata.json")
 SUMMARY_COLUMNS = ["genome_id", "input", "status", "format", "contigs", "bp", "calls", "filtered", "elapsed_s",
                    "error"]
