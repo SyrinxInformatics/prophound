@@ -89,7 +89,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 
 *Correction:*
 - Containment of every evaluation element (42, 18, lockbox, in-situ) against training positives, reported with recall stratified by containment.
-- Amino-acid clustering remains post-v1, as decided. The claim must say "nucleotide-level".
+- Amino-acid clustering remains post-0.1.0, as decided. The claim must say "nucleotide-level".
 
 ### F6. Self-assessment trap and curator exposure in the literature pilot (moderate)
 

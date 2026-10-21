@@ -2,7 +2,7 @@
 
 > **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
 
-Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the v1 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are in `docs/release-checklist.md`.
+Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the 0.1.0 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are in `docs/release-checklist.md`.
 
 ## The principle (user, 2026-09-28)
 
@@ -12,7 +12,7 @@ The tool should make a novelty or improvement claim confidently without oversell
 
 > "If this isn't doing anything new, it at least needs to be better."
 
-The concept (rung 1 below) is new only as a *contract*, and the methods are not new. So v1 has to show it is **better than existing tools on at least one measured axis**, on independent truth or identical input, not only on agreement with geNomad. **Scope rule (user, 2026-09-28): an axis is in the gate only if measuring it will not cause major delay.** The axes are sorted by what they cost to measure.
+The concept (rung 1 below) is new only as a *contract*, and the methods are not new. So 0.1.0 has to show it is **better than existing tools on at least one measured axis**, on independent truth or identical input, not only on agreement with geNomad. **Scope rule (user, 2026-09-28): an axis is in the gate only if measuring it will not cause major delay.** The axes are sorted by what they cost to measure.
 
 ### In the gate: all measured by one run, no new tools to install
 
@@ -102,7 +102,7 @@ All runs were clean: every `.err` was empty and every job exited 0. That covers 
 - 3–4: 0.844 / 0.874 / 0.859 (135);
 - 5+: 0.857 / 0.881 / 0.881 (168).
 
-prophound leads when an element survives in one or two pieces. It trails once the element is in three or more, and on 60 kb+ elements (0.767 against 0.800 and 0.800). The comparators classify whole contigs: a fragment lying entirely inside an element is reported as a virus at full length. That is why geNomad's calls rise from 4.2 to 14.4 per genome and its retention exceeds 1. prophound has no contig-level call and never merges across contigs. Skipping contigs under 3 kb is not the cause: the 22 elements only prophound misses have a median of 3% of their bp in such pieces, against a median of 0.47 of the element in their largest piece. A contig-level "this whole fragment is phage" output is a plausible post-v1 fix, untested.
+prophound leads when an element survives in one or two pieces. It trails once the element is in three or more, and on 60 kb+ elements (0.767 against 0.800 and 0.800). The comparators classify whole contigs: a fragment lying entirely inside an element is reported as a virus at full length. That is why geNomad's calls rise from 4.2 to 14.4 per genome and its retention exceeds 1. prophound has no contig-level call and never merges across contigs. Skipping contigs under 3 kb is not the cause: the 22 elements only prophound misses have a median of 3% of their bp in such pieces, against a median of 0.47 of the element in their largest piece. A contig-level "this whole fragment is phage" output is a plausible post-0.1.0 fix, untested.
 
 **What the release may say.**
 - **Not supported:** any claim that prophound handles fragmented input better than geNomad or Jaeger.
@@ -260,7 +260,7 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
 - **On fresh data the fix bought no recall at the endpoint.** Its development gain (+0.019 tune / +0.026 check) did not reproduce on 32 elements. Here an element only counts if it crosses 50% coverage, and none did.
 - **So G5b's tie with geNomad is not the fix's doing.** Without the snap, prophound already scores 0.938 against geNomad's 0.958 on this set. The change from G5 (−0.106) to G5b (−0.021) comes from the genome set (Philympics: smaller, with both tools at the complete-genome ceiling), not from the fix. Never write it up as "the fix closed the gap".
 - **The fix's measured cost is real:** about 6–7% more MAG sequence called, and 78–88% of the added sequence lies off-element. The `contig_edge` flag marks every snapped edge, so a user can discount them.
-- The decision to ship it on by default stands as frozen. Reopening it would mean tuning after G5b, which the agreed order forbids. Whether to revisit the default post-v1 is a user decision.
+- The decision to ship it on by default stands as frozen. Reopening it would mean tuning after G5b, which the agreed order forbids. Whether to revisit the default post-0.1.0 is a user decision.
 
 ### Measured by the same run, where the tool is probably not better (report plainly)
 
@@ -274,13 +274,13 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
 
 - **Ambiguity robustness versus other tools.** It needs spiked input run through every comparator. Our own dose-response (`821396`) is reported as a robustness fact, not a comparison.
 - **Contributing prophound to the Philympics framework** (a Snakemake rule and a PR to an external repo, on their timeline). Post-v1. *Scoring* Philympics' 23 clean genomes ourselves can be added to the G1–G4 job if it costs less than a day, since the published CDS-level results are in its repo (`jupyter_notebooks/all_tptn.tsv`).
-- **Anything requiring retraining** (small elements, boundary head): deferred past v1 already.
+- **Anything requiring retraining** (small elements, boundary head): deferred past 0.1.0 already.
 
 ### Decision rule
 
 - **If any of G1–G3 or G5 clears its bar**, the write-up leads with the axes that cleared: each with its bar, our number, the calls/genome and the n. G4 and G6 go alongside, never alone.
 - **Every axis measured is reported**, including those where the tool is not better (boundary precision, small elements, cost per genome). Reporting the losses is what makes the wins credible.
-- **If none clears**, v1 cannot claim to be new or better, and the release decision goes back to the user.
+- **If none clears**, 0.1.0 cannot claim to be new or better, and the release decision goes back to the user.
 
 ## Two layers of "known accuracy"
 
@@ -509,7 +509,7 @@ Each claim gives the evidence it needs, its status, and the strongest wording th
 | Recovery of geNomad-negative elements | `821410` in-situ arm, `821391` |
 | Retrospective discovery | item 2d, not started |
 
-### Not claimable in v1
+### Not claimable in 0.1.0
 
 Validated novel elements; mechanism (1b); protein-level novelty; "first"; "guarantee"; any accuracy figure that is really agreement with geNomad.
 

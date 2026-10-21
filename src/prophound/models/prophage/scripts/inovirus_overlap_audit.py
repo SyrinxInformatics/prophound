@@ -16,7 +16,7 @@
 # limitations under the License.
 """Where do inoviruses already sit in our corpus, and how are they labelled?
 
-docs/release-scope-0.1.0.md A.1: v1 retraining adds real small elements (integrated
+docs/release-scope-0.1.0.md A.1: 0.1.0 retraining adds real small elements (integrated
 inoviruses) as positives. Before that, check the corpus for label conflicts:
 an inovirus that geNomad did not call is currently a `near_neg`/`far_neg`
 interval, and adding the same kind of sequence as a positive would put it in

@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Literature-curated prophage truth for the v1 pilot (docs/final-benchmark.md).
+"""Literature-curated prophage truth for the 0.1.0 pilot (docs/final-benchmark.md).
 
 Every element comes from the primary literature or from the original authors'
 own curation in the genome record, never from a detection tool. The basis is
