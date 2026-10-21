@@ -193,4 +193,15 @@ def test_composition_moves_are_capped_inward():
     host[120_000:140_000] = list(rng.choice(list("ACGT"), 20_000, p=[0.4, 0.1, 0.1, 0.4]))
     calls = calls_frame([("g", CONTIG, 96_000, 144_000, 48_000, "none")])
     out = att.finish_boundaries(calls, att.Genome({CONTIG: "".join(host)}), {CONTIG: 300_000}, "default").iloc[0]
-    assert out.start <= 96_000 + round(composition.MAX_INWARD_FRAC * 48_000)
+    assert out.start <= 96_000 + min(round(composition.MAX_INWARD_FRAC * 48_000), composition.MAX_INWARD_BP)
+
+
+def test_composition_inward_moves_have_an_absolute_ceiling():
+    """On a long call 15% is more than an element: the ceiling stops a move cutting it off."""
+    from prophound.models.prophage.src import composition
+    rng = np.random.default_rng(7)
+    host = list(rng.choice(list("ACGT"), 400_000))
+    host[150_000:180_000] = list(rng.choice(list("ACGT"), 30_000, p=[0.4, 0.1, 0.1, 0.4]))
+    calls = calls_frame([("g", CONTIG, 100_000, 300_000, 200_000, "none")])   # 15% would be 30 kb
+    out = att.finish_boundaries(calls, att.Genome({CONTIG: "".join(host)}), {CONTIG: 400_000}, "default").iloc[0]
+    assert out.start - 100_000 <= composition.MAX_INWARD_BP and 300_000 - out.end <= composition.MAX_INWARD_BP

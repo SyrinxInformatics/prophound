@@ -214,7 +214,7 @@ def refine_pass(calls: pd.DataFrame, fine: pd.DataFrame, lengths: dict, genome_i
 
 
 def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: str | None = None,
-                  with_filtered: bool = False, fine_tracks: dict | None = None):
+                  with_filtered: bool = False, fine_tracks: dict | None = None, composition: str = "auto"):
     """Calls as `predict` ships them for `mode`, built by the CLI's own pipeline (src/calls.py).
 
     The ensemble track is `ens_tracks`; the vote counts the single-seed tracks in
@@ -229,6 +229,7 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
     (docs/att-boundaries.md). `fine_tracks` ({genome: fine windows}, from refinement-on
     runs) adds the refinement, and `genomes_dir` the att boundaries and edge ranges.
     Without `fine_tracks` a warning says the calls are the pre-refinement ones.
+    `composition` is predict's --composition-edges (auto: Default and Conservative).
     """
     global _warned_no_fasta, _warned_no_fine
     if genomes_dir is None and not _warned_no_fasta:
@@ -278,8 +279,8 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
             final = finalize(call_g, filt_g, per_seed, lengths,
                              lambda df, f=fasta: call_n_fraction(df, f), rules, DEFAULT_EDGE_SNAP_FRAC)
             genome = Genome.from_fasta(fasta)
-            call_g = finish_boundaries(final.calls, genome, lengths, mode)
-            filt_g = finish_boundaries(final.filtered, genome, lengths, mode)
+            call_g = finish_boundaries(final.calls, genome, lengths, mode, composition_edges=composition)
+            filt_g = finish_boundaries(final.filtered, genome, lengths, mode, composition_edges=composition)
         kept.append(call_g)
         removed.append(filt_g)
     cols = ["genome_id", "contig_id", "start", "end", "max_prob", "short"]

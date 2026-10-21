@@ -165,6 +165,8 @@ def main() -> None:
     ap.add_argument("--truth", required=True)
     ap.add_argument("--genomes_dir", required=True)
     ap.add_argument("--genomad_dir", default=None)
+    ap.add_argument("--pipeline_run", default=None,
+                    help="an Exploratory refinement-on run with --write-seed-scores: scored with every 0.1.0 stage")
     ap.add_argument("--run", action="append", required=True, metavar="LABEL=DIR")
     ap.add_argument("--n_perm", type=int, default=10000)
     ap.add_argument("--seed", type=int, default=20260928)
@@ -214,6 +216,15 @@ def main() -> None:
         for mode in MODE_THRESHOLDS:
             res["runs"][f"ens_shipped/{mode}"] = evaluate(f"ens_shipped/{mode}",
                                                           shipped_calls(loaded["ens"], seeds, mode))
+
+    if args.pipeline_run:   # every 0.1.0 stage: refinement, att and composition edges
+        d = args.pipeline_run
+        ens = {g: v for g, v in load_tracks(d).items() if g in set(truth.genome_id)}
+        seeds = [{g: v for g, v in load_tracks(d, f"prob_ckpt{k}").items() if g in ens} for k in (1, 2, 3)]
+        fine = {g: pd.read_csv(Path(d) / g / "fine_windows.tsv", sep="\t", float_precision="round_trip") for g in ens}
+        for mode in MODE_THRESHOLDS:
+            res["runs"][f"ens_0.1.0/{mode}"] = evaluate(f"ens_0.1.0/{mode}", shipped_calls(
+                ens, seeds, mode, args.genomes_dir, fine_tracks=fine))
 
     if args.genomad_dir:
         rows = []

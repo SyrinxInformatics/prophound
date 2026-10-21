@@ -28,8 +28,9 @@ on a contig end, of a call at least MIN_CALL_BP long:
   - change-point: the split that maximises (sum of scores on the element side) - (sum on
     the host side); its first element-side window centre is the new edge
   - gates: the profiles' Jensen-Shannon divergence >= MIN_JSD, and an inward move of at
-    most MAX_INWARD_FRAC x the call's length (a partial detection's middle is not the
-    element, and an uncapped move then cuts into it)
+    most min(MAX_INWARD_FRAC x the call's length, MAX_INWARD_BP). A partial detection's or a
+    multi-element call's middle is not the element, and a large move then cuts into it: the
+    absolute ceiling stopped a 22.8 kb move that cut a 13 kb LAMBDA element off a 156 kb call
 
 Chosen on the tuning sample and checked on two others; shipped in Default and
 Conservative mode (user decision 2026-10-21), where it was recall-neutral (Default, all
@@ -49,6 +50,7 @@ PSEUDO = 0.5
 MIN_CALL_BP = 3000
 MIN_JSD = 0.01
 MAX_INWARD_FRAC = 0.15
+MAX_INWARD_BP = 8000
 MODES = ("default", "conservative")
 
 _CODE = np.full(256, 255, dtype=np.uint8)
@@ -136,8 +138,9 @@ def composition_edges(calls: pd.DataFrame, seqs: dict) -> pd.DataFrame:
             old = s if side == "start" else e
             new = change_point(contig, lo, hi, elem, host, side, old)
             inward = (new - old) if side == "start" else (old - new)
-            if inward > MAX_INWARD_FRAC * L:
-                new = old + MAX_INWARD_FRAC * L if side == "start" else old - MAX_INWARD_FRAC * L
+            cap = min(MAX_INWARD_FRAC * L, MAX_INWARD_BP)
+            if inward > cap:
+                new = old + cap if side == "start" else old - cap
             new = int(np.round(new))
             if side == "start":
                 starts[i], src_s[i] = new, ("composition" if new != old else src_s[i])

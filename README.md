@@ -40,13 +40,13 @@ The example is 220 kb of *Haemophilus influenzae* Rd KW20 holding its two geNoma
 ```
 2 candidate prophage regions (default mode), best first:
   rank  contig              start-end (1-based)  length   edges      support
-  1     hin_rd_kw20_region  116,738-156,000      39.3 kb  estimated  3/3 models
-  2     hin_rd_kw20_region  53,843-81,000        27.2 kb  estimated  3/3 models
+  1     hin_rd_kw20_region  121,179-152,504      31.3 kb  estimated  3/3 models
+  2     hin_rd_kw20_region  56,749-76,926        20.2 kb  estimated  3/3 models
 ```
 
 `regions.tsv` holds the same table with a range for each edge. **[How to read your results](docs/interpreting-results.md)** explains every column, what the edges mean, and how to take a candidate to the lab.
 
-**Boundaries.** Where an element has an att site (a direct repeat left at both ends by integration), `edges` is `att site` and the ends are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `edges` is `estimated`: the model's estimate, moved in Default and Conservative mode to where the sequence's composition turns from host-like to element-like (median error about 2 kb on our test samples), with a range for each end that holds the true end about 90% of the time. Neither example element has an att site; the calls overshoot them (58,837–73,073 and 119,962–154,275, 1-based) by 3–8 kb, inside the ranges. [`examples/README.md`](examples/README.md) walks through the output, and `pixi run smoke` checks it.
+**Boundaries.** Where an element has an att site (a direct repeat left at both ends by integration), `edges` is `att site` and the ends are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `edges` is `estimated`: the model's estimate, moved in Default and Conservative mode to where the sequence's composition turns from host-like to element-like (median error about 2 kb on our test samples), with a range for each end that holds the true end about 90% of the time. Neither example element has an att site; the calls' ends are 1–4 kb from the elements' (58,837–73,073 and 119,962–154,275, 1-based), inside the ranges. [`examples/README.md`](examples/README.md) walks through the output, and `pixi run smoke` checks it.
 
 Other inputs:
 
