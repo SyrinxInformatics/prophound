@@ -22,6 +22,7 @@ The one place these are defined. Kept free of torch so `prophound --help` stays 
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -83,6 +84,18 @@ MAX_CALL_N_FRAC = 0.5
 # (docs/claims-and-evidence.md "G5b"). 0 turns snapping off.
 DEFAULT_EDGE_SNAP_FRAC = 0.5
 
+# The model shipped with the package: weights-only checkpoints, model.yaml and a manifest of
+# SHA-256s (made by scripts/strip_checkpoint.py from the training checkpoints).
+BUNDLED_MODEL_DIR = Path(__file__).resolve().parents[1] / "model"
+
+
+def bundled_model() -> tuple[str, tuple[str, ...], dict]:
+    """The bundled model's config path, checkpoint paths and manifest."""
+    manifest = json.loads((BUNDLED_MODEL_DIR / "manifest.json").read_text())
+    return (str(BUNDLED_MODEL_DIR / manifest["config"]),
+            tuple(str(BUNDLED_MODEL_DIR / c["file"]) for c in manifest["checkpoints"]), manifest)
+
+
 DEVICES = ("auto", "cpu", "cuda", "rocm", "mps", "xpu", "intel")
 DEFAULT_BATCH_SIZE = 128
 
@@ -132,6 +145,8 @@ class PredictOptions:
     split_max_prob: float
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
     force: bool = False             # replace outputs already in outdir
+    bundled_model: bool = False     # checkpoints are the ones shipped with the package
+    trust_checkpoint: bool = False  # allow full (pickled) training checkpoints
 
     @property
     def n_checkpoints(self) -> int:
@@ -180,11 +195,17 @@ class PredictOptions:
         min_support = MODE_MIN_SEED_SUPPORT[args.mode] if args.min_seed_support is None else int(args.min_seed_support)
         if min_support < 1:
             raise PredictError("--min-seed-support must be >= 1")
-        checkpoints = tuple(args.checkpoint) if isinstance(args.checkpoint, list) else (args.checkpoint,)
+        bundled_config, bundled_checkpoints, _ = bundled_model()
+        bundled = not args.checkpoint
+        if bundled:
+            checkpoints = bundled_checkpoints
+        else:
+            checkpoints = tuple(args.checkpoint) if isinstance(args.checkpoint, list) else (args.checkpoint,)
+        config = args.config or bundled_config
         inputs = args.input_fasta if isinstance(args.input_fasta, list) else [args.input_fasta]
         return cls(
-            input_fasta=str(Path(inputs[0])) if inputs and inputs[0] else "", outdir=str(args.outdir), mode=args.mode, config=args.config,
-            checkpoints=checkpoints, device=args.device,
+            input_fasta=str(Path(inputs[0])) if inputs and inputs[0] else "", outdir=str(args.outdir),
+            mode=args.mode, config=config, checkpoints=checkpoints, device=args.device,
             threshold=float(seed_default), seed_threshold=float(seed), extend_threshold=float(extend),
             requested_min_seed_support=min_support, ensemble=args.ensemble,
             write_region_fasta=bool(args.write_region_fasta),
@@ -201,6 +222,7 @@ class PredictOptions:
             split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
             verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
             force=bool(getattr(args, "force", False)),
+            bundled_model=bundled, trust_checkpoint=bool(getattr(args, "trust_checkpoint", False)),
         )
 
 
@@ -257,16 +279,6 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
             "counts are from a held-out test on 150 complete bacterial genomes."
         ),
     )
-    basic.add_argument("--config", required=True, help="Model config (YAML) that comes with the checkpoints.")
-    basic.add_argument(
-        "--checkpoint",
-        required=True,
-        nargs="+",
-        help=(
-            "Model checkpoint file(s). Pass all three shipped checkpoints: the modes' seed vote needs them, "
-            "and a single checkpoint makes more calls."
-        ),
-    )
     basic.add_argument(
         "--device",
         default="auto",
@@ -287,6 +299,24 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
     chatter.add_argument("-v", "--verbose", action="store_true",
                          help="Also print each stage's timing, and the full traceback of an unexpected error.")
 
+    advanced.add_argument(
+        "--checkpoint",
+        nargs="+",
+        default=None,
+        help=(
+            "Model checkpoint file(s) to use instead of the bundled model (its three checkpoints are the "
+            "default). The modes' seed vote needs three; one checkpoint makes more calls."
+        ),
+    )
+    advanced.add_argument(
+        "--config", default=None,
+        help="Model config (YAML) for --checkpoint files (default: the bundled model's).",
+    )
+    advanced.add_argument(
+        "--trust-checkpoint", action="store_true",
+        help=("Allow full training checkpoints, which load by unpickling arbitrary Python objects; use only "
+              "for files you trust. Weights-only files (scripts/strip_checkpoint.py) need no flag."),
+    )
     advanced.add_argument(
         "--threshold", type=float, default=None,
         help="Override the mode's seed threshold (sets --seed-threshold, and --extend-threshold through it).",

@@ -1,0 +1,21 @@
+# prophage_v2_pool: the bundled model's config (window settings and architecture only;
+# training paths are not needed for inference). Written by scripts/strip_checkpoint.py.
+run_name: prophage_v2_pool
+data:
+  window_len: 10000
+  stride: 1000
+model:
+  type: rc_cnn
+  combine: max
+  channels:
+  - 64
+  - 128
+  - 256
+  kernel_sizes:
+  - 15
+  - 11
+  - 7
+  dropout: 0.2
+  fc_dim: 256
+  pooling: adaptive_max
+  pool_bins: 16

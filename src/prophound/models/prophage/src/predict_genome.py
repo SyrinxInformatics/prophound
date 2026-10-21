@@ -26,6 +26,7 @@ import argparse
 import dataclasses
 import json
 import os
+import pickle
 import platform
 import re
 import shlex
@@ -77,6 +78,7 @@ from .model_rc_cnn import build_model
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
 from .options import (  # noqa: F401 -- re-exported: scripts import the defaults and tables from here
     AMBIGUITY_POLICIES,
+    BUNDLED_MODEL_DIR,
     DEFAULT_AMBIGUITY_POLICY,
     DEFAULT_BRIDGE_PROB,
     DEFAULT_COVERAGE_FRAC,
@@ -92,6 +94,7 @@ from .options import (  # noqa: F401 -- re-exported: scripts import the defaults
     PredictError,
     PredictOptions,
     add_predict_arguments,
+    bundled_model,
 )
 
 # every file `predict` can write; --force removes all of them before writing
@@ -280,13 +283,29 @@ def call_n_fraction(regions_df: pd.DataFrame, fasta_path: str) -> np.ndarray:
         fa.close()
 
 
+def verify_bundled_model() -> None:
+    """Check the bundled files against the manifest's SHA-256s, so a damaged install fails clearly."""
+    _, _, manifest = bundled_model()
+    for entry in manifest["checkpoints"]:
+        path = BUNDLED_MODEL_DIR / entry["file"]
+        if not path.is_file() or sha256(str(path)) != entry["sha256"]:
+            raise PredictError(f"the bundled model file {path} is missing or damaged; reinstall prophound")
+
+
 def load_checkpoints(model: torch.nn.Module, paths: Tuple[str, ...], device: torch.device,
-                     config_path: str) -> List[dict]:
-    """Read each checkpoint's weights once, checking that they fit the model the config describes."""
+                     config_path: str, trust: bool = False) -> List[dict]:
+    """Read each checkpoint's weights once, checking that they fit the model the config describes.
+
+    Files load with `weights_only=True` unless `trust`: a full training checkpoint would otherwise
+    be unpickled, which can run arbitrary code."""
     states = []
     for path in paths:
         try:
-            state = torch.load(path, map_location=device, weights_only=False)["model"]
+            state = torch.load(path, map_location=device, weights_only=not trust)["model"]
+        except pickle.UnpicklingError:
+            raise PredictError(f"{path} is a full training checkpoint, which loads by unpickling arbitrary objects; "
+                               "strip it to weights with scripts/strip_checkpoint.py, or pass --trust-checkpoint "
+                               "if you trust the file") from None
         except (KeyError, TypeError, IndexError):
             raise PredictError(f"{path} is not a prophound checkpoint (it has no model weights)") from None
         except Exception as e:  # unreadable, truncated, not a torch file
@@ -527,8 +546,11 @@ class Engine:
 
 
 def load_engine(cfg, device: torch.device, opts: PredictOptions, log: Log) -> Engine:
+    if opts.bundled_model:
+        verify_bundled_model()
     models = []
-    for state in load_checkpoints(build_model(cfg, device), opts.checkpoints, device, opts.config):
+    for state in load_checkpoints(build_model(cfg, device), opts.checkpoints, device, opts.config,
+                                  trust=opts.trust_checkpoint):
         model = build_model(cfg, device)
         model.load_state_dict(state)
         models.append(model.eval())
@@ -557,7 +579,7 @@ def run_predict(args: argparse.Namespace) -> None:
     """Run inference end to end from parsed `predict` arguments: one genome, or a batch."""
     started = time.perf_counter()
     started_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    cfg = _load_config(args.config)
+    cfg = _load_config(args.config or bundled_model()[0])
     device = resolve_device(args.device)
     base = PredictOptions.from_args(args, cfg.data.window_len, cfg.data.stride)
     log = Log(base.verbosity)
@@ -665,6 +687,7 @@ def batch_metadata(base: PredictOptions, engine: Engine, rows: List[GenomeRow], 
     return {
         "prophound_version": package_version(),
         "batch": True,
+        "bundled_model": base.bundled_model,
         "config": _shown(base.config),
         "checkpoint": checkpoints,
         "checkpoint_sha256": {_shown(c): sha256(c) for c in base.checkpoints},
@@ -846,6 +869,7 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, prepared: Pre
     metadata = {
         "prophound_version": package_version(),
         "run_name": run_name,
+        "bundled_model": opts.bundled_model,
         "config": _shown(opts.config),
         "checkpoint": checkpoints if many else checkpoints[0],
         "ensemble": opts.ensemble if many else "single",

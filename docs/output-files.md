@@ -98,7 +98,7 @@ Scores are written at full precision, because offline scorers rebuild calls from
 | key | meaning |
 |---|---|
 | `prophound_version`, `run_name` | package version, and the checkpoint's training run name |
-| `config`, `checkpoint`, `checkpoint_sha256` | config and checkpoint paths, and each checkpoint's SHA-256 |
+| `bundled_model`, `config`, `checkpoint`, `checkpoint_sha256` | whether the bundled model ran; config and checkpoint paths, and each checkpoint's SHA-256 (the bundled ones are listed in `docs/lockbox.md`) |
 | `input_fasta`, `input_sha256`, `input` | the input as given, the SHA-256 of that file, and a summary (contigs, bp, ambiguity codes) |
 | `input_format` | detected `format` (`fasta`, `genbank`, `embl`, `gff3`), `compression`, `u_read_as_t` (RNA `U` bases read as `T`), and `contig_names` (GenBank/EMBL record name per contig ID, where they differ) |
 | `mode`, `threshold`, `seed_threshold`, `extend_threshold`, `ensemble` | the thresholds actually used |

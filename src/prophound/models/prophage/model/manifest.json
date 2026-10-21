@@ -1,0 +1,34 @@
+{
+  "name": "prophage_v2_pool",
+  "config": "model.yaml",
+  "config_sha256": "5e43d4b99fe23eec5a45b26120c0ef392edac836ee1306c14b3cccc386c04e7a",
+  "checkpoints": [
+    {
+      "file": "prophage_v2_pool_r1.pt",
+      "sha256": "6687742a081af0132cce0fc546ea62364805325c387cd6ca6f12d3769259475e",
+      "source": "runs/prophage_v2_pool_r1/checkpoints/best.pt",
+      "source_sha256": "3259673877ced18e79a92227f898b2009f69cfe82b692c59cb355d74dc27655f",
+      "source_run_name": "prophage_v2_pool_r1",
+      "tensors": 10,
+      "parameters": 1373825
+    },
+    {
+      "file": "prophage_v2_pool_r2.pt",
+      "sha256": "29133fd4e1db0a1bc42c951e9ad2149747c4eaea621d1268e208d04434638c2b",
+      "source": "runs/prophage_v2_pool_r2/checkpoints/best.pt",
+      "source_sha256": "7a50701a0be0f9cca87f000b428341e67d55242f77807321b3237ee73f31e59c",
+      "source_run_name": "prophage_v2_pool_r2",
+      "tensors": 10,
+      "parameters": 1373825
+    },
+    {
+      "file": "prophage_v2_pool_r3.pt",
+      "sha256": "736d672e8837a6769f61379753a3e750f629c4233f98959381f08f4f2b4607dc",
+      "source": "runs/prophage_v2_pool_r3/checkpoints/best.pt",
+      "source_sha256": "541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484",
+      "source_run_name": "prophage_v2_pool_r3",
+      "tensors": 10,
+      "parameters": 1373825
+    }
+  ]
+}

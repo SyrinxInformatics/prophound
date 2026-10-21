@@ -51,8 +51,24 @@ import numpy as np
 from pyfaidx import Fasta
 
 MODEL_DIR = Path(__file__).resolve().parents[1]
-CHECKPOINTS = [MODEL_DIR / f"runs/prophage_v2_pool_r{k}/checkpoints/best.pt" for k in (1, 2, 3)]
-CONFIG = MODEL_DIR / "runs/prophage_v2_pool_r1/config_snapshot.yaml"
+# Two model sources: `bundled` (the default) is what ships, passed explicitly so every code version
+# accepts it; `training` is the original training checkpoints, needed for code from before Phase 2,
+# whose config loader required training paths.
+MODELS = {
+    "bundled": ([MODEL_DIR / f"model/prophage_v2_pool_r{k}.pt" for k in (1, 2, 3)], MODEL_DIR / "model/model.yaml"),
+    "training": ([MODEL_DIR / f"runs/prophage_v2_pool_r{k}/checkpoints/best.pt" for k in (1, 2, 3)],
+                 MODEL_DIR / "runs/prophage_v2_pool_r1/config_snapshot.yaml"),
+}
+
+
+def model_args(code: Path, model: str, ks=(1, 2, 3)) -> list[str]:
+    """--config/--checkpoint for `model`; with training checkpoints, --trust-checkpoint when the code has it."""
+    checkpoints, config = MODELS[model]
+    args = ["--config", str(config), "--checkpoint", *(str(checkpoints[k - 1]) for k in ks)]
+    options = code / "src/prophound/models/prophage/src/options.py"
+    if model == "training" and options.exists() and "--trust-checkpoint" in options.read_text():
+        args.append("--trust-checkpoint")
+    return args
 SOURCE = MODEL_DIR / "analysis/g5/fasta/GCF_000027305.1.fna"   # H. influenzae Rd KW20, NC_000907
 SOURCE_CONTIG = "NC_000907"
 # Both geNomad elements (1,498,836-1,513,073 and 1,559,961-1,594,275) with flanks.
@@ -192,19 +208,19 @@ def cmd_run(args: argparse.Namespace) -> None:
     code, inputs, out = Path(args.code).resolve(), Path(args.inputs).resolve(), Path(args.out).resolve()
     if out.exists() and any(out.iterdir()):
         raise SystemExit(f"{out} is not empty")
-    missing = [p for p in [*CHECKPOINTS, CONFIG] if not p.exists()]
+    checkpoints, config = MODELS[args.model]
+    missing = [p for p in [*checkpoints, config] if not p.exists()]
     if missing:
         raise SystemExit(f"missing: {', '.join(map(str, missing))}")
     env = {**os.environ, "PYTHONPATH": str(code / "src"), "OMP_NUM_THREADS": str(args.threads)}
     cases = [c for c in CASES if not args.only or c.name in args.only]
     manifest = {"code": str(code), "inputs": json.loads((inputs / "SHA256SUMS.json").read_text()),
-                "device": args.device, "threads": args.threads, "cases": {}}
+                "device": args.device, "threads": args.threads, "model": args.model, "cases": {}}
     for case in cases:
         outdir = out / case.name
         cmd = [sys.executable, "-c", "from prophound.cli import main; main()", "predict",
                "--input", str(inputs / f"{case.input}.fna"), "--outdir", str(outdir),
-               "--config", str(CONFIG), "--checkpoint", *(str(CHECKPOINTS[k - 1]) for k in case.checkpoints),
-               "--device", args.device, *case.args]
+               *model_args(code, args.model, case.checkpoints), "--device", args.device, *case.args]
         proc = subprocess.run(cmd, env=env, capture_output=True, text=True)
         outdir.mkdir(parents=True, exist_ok=True)
         (outdir / "stderr.txt").write_text(proc.stderr)
@@ -305,6 +321,8 @@ def main() -> None:
     s.add_argument("--out", required=True)
     s.add_argument("--threads", type=int, default=4)
     s.add_argument("--device", choices=("cpu", "mps"), default="cpu")
+    s.add_argument("--model", choices=sorted(MODELS), default="bundled",
+                   help="bundled (default, what ships) or training (the original checkpoints, for pre-Phase 2 code)")
     s.add_argument("--only", nargs="*", default=None, help="case names to run (default: all)")
     s = sub.add_parser("compare")
     s.add_argument("a")

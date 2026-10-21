@@ -43,8 +43,24 @@ import time
 from pathlib import Path
 
 MODEL_DIR = Path(__file__).resolve().parents[1]
-CHECKPOINTS = [MODEL_DIR / f"runs/prophage_v2_pool_r{k}/checkpoints/best.pt" for k in (1, 2, 3)]
-CONFIG = MODEL_DIR / "runs/prophage_v2_pool_r1/config_snapshot.yaml"
+# Two model sources: `bundled` (the default) is what ships, passed explicitly so every code version
+# accepts it; `training` is the original training checkpoints, needed for code from before Phase 2,
+# whose config loader required training paths.
+MODELS = {
+    "bundled": ([MODEL_DIR / f"model/prophage_v2_pool_r{k}.pt" for k in (1, 2, 3)], MODEL_DIR / "model/model.yaml"),
+    "training": ([MODEL_DIR / f"runs/prophage_v2_pool_r{k}/checkpoints/best.pt" for k in (1, 2, 3)],
+                 MODEL_DIR / "runs/prophage_v2_pool_r1/config_snapshot.yaml"),
+}
+
+
+def model_args(code: Path, model: str, ks=(1, 2, 3)) -> list[str]:
+    """--config/--checkpoint for `model`; with training checkpoints, --trust-checkpoint when the code has it."""
+    checkpoints, config = MODELS[model]
+    args = ["--config", str(config), "--checkpoint", *(str(checkpoints[k - 1]) for k in ks)]
+    options = code / "src/prophound/models/prophage/src/options.py"
+    if model == "training" and options.exists() and "--trust-checkpoint" in options.read_text():
+        args.append("--trust-checkpoint")
+    return args
 
 
 def run_text(cmd: list[str]) -> str:
@@ -88,10 +104,9 @@ def fasta_bp(path: Path) -> tuple[int, int]:
     return n_contigs, bp
 
 
-def timed_run(code_env: dict, fasta: Path, outdir: Path, device: str, mode: str) -> dict:
+def timed_run(code_env: dict, fasta: Path, outdir: Path, device: str, mode: str, model_cli: list) -> dict:
     cmd = ["/usr/bin/time", "-l", sys.executable, "-c", "from prophound.cli import main; main()", "predict",
-           "--input", str(fasta), "--outdir", str(outdir), "--config", str(CONFIG),
-           "--checkpoint", *map(str, CHECKPOINTS), "--device", device, "--mode", mode]
+           "--input", str(fasta), "--outdir", str(outdir), *model_cli, "--device", device, "--mode", mode]
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, env=code_env, capture_output=True, text=True)
     wall = time.perf_counter() - t0
@@ -118,7 +133,7 @@ def cmd_timing(args: argparse.Namespace) -> None:
         n_contigs, bp = fasta_bp(fasta)
         runs = []
         for k in range(args.repeats + (0 if args.no_warmup else 1)):
-            r = timed_run(env, fasta, work / f"{label}_{k}", args.device, args.mode)
+            r = timed_run(env, fasta, work / f"{label}_{k}", args.device, args.mode, model_args(code, args.model))
             r["warmup"] = k == 0 and not args.no_warmup
             runs.append(r)
             print(f"[timing] {label} run {k}{' (warm-up)' if r['warmup'] else ''}: {r['wall_s']} s, "
@@ -155,7 +170,8 @@ def cmd_profile(args: argparse.Namespace) -> None:
 
     from prophound.models.prophage.src import predict_genome as pg
 
-    cfg = pg.load_cfg(str(CONFIG))
+    checkpoints, config = MODELS[args.model]
+    cfg = pg.load_cfg(str(config))
     device = pg.resolve_device(args.device)
     fasta = str(Path(args.input).resolve())
     windows = pg.build_windows(fasta, Path(fasta).stem, cfg.data.window_len, cfg.data.stride)
@@ -170,7 +186,7 @@ def cmd_profile(args: argparse.Namespace) -> None:
     t_encode = time.perf_counter() - t0
     t_load = t_forward = t_transfer = 0.0
     with torch.no_grad():
-        for ckpt in CHECKPOINTS:
+        for ckpt in checkpoints:
             t0 = time.perf_counter()
             model.load_state_dict(torch.load(ckpt, map_location=device, weights_only=False)["model"])
             sync(device)
@@ -194,7 +210,7 @@ def cmd_profile(args: argparse.Namespace) -> None:
               "checkpoint_load_s": round(t_load, 2), "transfer_s": round(t_transfer, 2),
               "forward_s": round(t_forward, 2),
               "ms_per_window": {"encode": round(1e3 * t_encode / n, 3),
-                                "forward_per_checkpoint": round(1e3 * t_forward / n / len(CHECKPOINTS), 3)}}
+                                "forward_per_checkpoint": round(1e3 * t_forward / n / len(checkpoints), 3)}}
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2) + "\n")
@@ -206,6 +222,8 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("timing")
     s.add_argument("--code", default=".", help="source tree (repo root) whose src/ is imported")
+    s.add_argument("--model", choices=sorted(MODELS), default="bundled",
+                   help="bundled (default) or training (the original checkpoints, for pre-Phase 2 code)")
     s.add_argument("--device", default="mps")
     s.add_argument("--mode", default="default")
     s.add_argument("--input", action="append", required=True, metavar="LABEL=FASTA")
@@ -216,6 +234,7 @@ def main() -> None:
     s.add_argument("--out", required=True)
     s = sub.add_parser("profile")
     s.add_argument("--code", default=".")
+    s.add_argument("--model", choices=sorted(MODELS), default="bundled")
     s.add_argument("--device", default="mps")
     s.add_argument("--input", required=True)
     s.add_argument("--batch-size", type=int, default=128)
