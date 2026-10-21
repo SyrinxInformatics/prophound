@@ -1,5 +1,5 @@
 #!/bin/bash
-# docs/v1-scope.md gating audit A.1: are small elements represented as positives
+# docs/release-scope-0.1.0.md gating audit A.1: are small elements represented as positives
 # in training, and at what dilution? Gates the retraining data design.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/size_representation_audit.slurm

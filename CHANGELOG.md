@@ -38,7 +38,7 @@ The first release. Earlier development versions were called `mge-detect`.
 
 ### Known limitations
 
-These are in the release text (`docs/release-text-v1.md`). In short:
+These are in the release text (`docs/release-text-0.1.0.md`). In short:
 
 - Every agreement figure is measured against geNomad, which also supplied the training labels.
 - Boundaries are coarser than gene-based tools'.

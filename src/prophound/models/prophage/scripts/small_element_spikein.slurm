@@ -1,5 +1,5 @@
 #!/bin/bash
-# docs/release-checklist.md §3 / docs/v1-scope.md: sub-10 kb recall with REAL small
+# docs/release-checklist.md §3 / docs/release-scope-0.1.0.md: sub-10 kb recall with REAL small
 # prophage-class elements, which geNomad truth cannot certify (its floor is 3.5 kb
 # and the corpus holds 2 elements below 5 kb).
 #   1. disjoint  drop candidates sharing 21-mers with any training positive or

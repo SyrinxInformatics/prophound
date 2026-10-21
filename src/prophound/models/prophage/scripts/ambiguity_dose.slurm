@@ -1,5 +1,5 @@
 #!/bin/bash
-# docs/v1-scope.md A.3: ambiguity dose-response. Spikes IUPAC codes into the
+# docs/release-scope-0.1.0.md A.3: ambiguity dose-response. Spikes IUPAC codes into the
 # 42-genome size-stratified sample (substitution only; truth unchanged) and
 # scores each condition with the shipped ensemble under n-channel (old) and
 # impute (default since 2026-09-24):

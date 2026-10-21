@@ -1,6 +1,6 @@
 #!/bin/bash
 # Long N gaps (scaffold gaps) under the shipped defaults: impute, and the
-# 2026-09-29 seed-vote modes. Extends docs/v1-scope.md A.3, which tested only
+# 2026-09-29 seed-vote modes. Extends docs/release-scope-0.1.0.md A.3, which tested only
 # 100 bp N runs. Spikes the 42-genome size-stratified sample with gaps of
 # 1 / 5 / 20 kb -- 2 per Mb at random plus one inside every element (capped at
 # 25% of its length) -- and scores the ensemble with --write-seed-scores so each

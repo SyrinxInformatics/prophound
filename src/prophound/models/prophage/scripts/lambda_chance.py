@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Chance-adjusted covered50 on LAMBDA (docs/claims-and-evidence.md "LAMBDA result",
-docs/release-text-v1.md section 2). Per tool, every call on a chromosome is rotated
+docs/release-text-0.1.0.md section 2). Per tool, every call on a chromosome is rotated
 by one uniform random offset (circularly, wrapping calls split at the origin). That
 keeps the tool's call lengths, count and spacing, and moves them off the elements.
 Chance covered50 is the mean over draws, and recall above chance is observed minus

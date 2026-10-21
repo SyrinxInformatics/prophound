@@ -107,7 +107,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 
 ### F7. The spike-in's implant sites are chosen by the model (minor to moderate)
 
-*What happened:* implant sites require every window within 20 kb to score below 0.1 on the ensemble track (`docs/v1-scope.md`). That conditions the experiment on the model: implants go only where the model is confident there is nothing. It is a reasonable way to attribute calls. But it selects atypical backgrounds, and the direction of the bias on detection is unknown.
+*What happened:* implant sites require every window within 20 kb to score below 0.1 on the ensemble track (`docs/release-scope-0.1.0.md`). That conditions the experiment on the model: implants go only where the model is confident there is nothing. It is a reasonable way to attribute calls. But it selects atypical backgrounds, and the direction of the bias on detection is unknown.
 
 *Correction:* a sensitivity arm with a model-independent site rule (element-free by geNomad plus distance only). It needs GPU re-scoring.
 
@@ -198,7 +198,7 @@ Every reported number carries one of these roles. Release text uses the role's w
 
 **Applied 2026-09-29, complete:**
 - The README status, the CLI mode table and the checklist claim items.
-- A standard sample-roles banner at the top of the 13 docs that report sample numbers (model-quality-baseline, scientific-validity, downstream-postprocessing, model-reengineering, v1-scope, adaptive-multiscale-detection, error-analysis, multi-model-architecture, gap-filling, claims-and-evidence, final-benchmark, boundary-refinement, related-tools).
+- A standard sample-roles banner at the top of the 13 docs that report sample numbers (model-quality-baseline, scientific-validity, downstream-postprocessing, model-reengineering, release-scope-0.1.0, adaptive-multiscale-detection, error-analysis, multi-model-architecture, gap-filling, claims-and-evidence, final-benchmark, boundary-refinement, related-tools).
 - 29 targeted rewordings wherever the text called a sample "held-out" or "independent" without qualification. The release-claim wording in `docs/claims-and-evidence.md` now says "held out from training but used for tuning" and carries the final-mode figure.
 - Historical results keep their original numbers, marked "held out at the time" where they were.
 
@@ -334,7 +334,7 @@ Recall by containment: ensemble, final modes (shipped seed vote), covered50. The
 
 - **The ≥95% figure is not carried by training look-alikes.** Three-quarters of the 42 are essentially novel to training (<0.1). Default's five misses on the 42 are all in that bin, which still reads 0.964.
 - **The literature pilot is the most contained set** (median 0.723). Its pooled 0.912 is flattered: 34 of 57 elements are ≥50% contained, and both tools find all 34. On the 13 novel ones, Default finds 8 and geNomad 6. **Every novel miss is a remnant.** All four novel prophage and cryptic-prophage elements (SPβ, Sp18, Sp2, CP-933I) are found by both tools; Default's +2 over geNomad here are the remnants SpLE1 and *B. subtilis* prophage 6. Default's misses are SpLE2, SpLE4, SpLE6 and *B. subtilis* prophages 1 and 3. Exploratory recovers all but SpLE6 and prophage 1.
-- **In-situ loci are not near-duplicates** (median 0.001; 2 of 31 at ≥0.5). This settles the open question in `docs/v1-scope.md` A.1: the in-situ/implant gap is not a containment artifact.
+- **In-situ loci are not near-duplicates** (median 0.001; 2 of 31 at ≥0.5). This settles the open question in `docs/release-scope-0.1.0.md` A.1: the in-situ/implant gap is not a containment artifact.
 - **The lockbox is nearly novel by construction** (median 0.003; 6 of 202 at ≥0.5), as the genus-disjoint build intended.
 - The release reports the literature pilot split by containment, not only pooled.
 

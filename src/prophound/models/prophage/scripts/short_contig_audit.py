@@ -35,7 +35,7 @@ Reports per genome and in aggregate:
   * the worst-affected genomes, which is where fragmented/MAG assemblies show up
 
 It also counts **IUPAC ambiguity codes** on the same pass, since it is the same
-scan and ambiguity is the other half of the input-quality axis (`docs/v1-scope.md`
+scan and ambiguity is the other half of the input-quality axis (`docs/release-scope-0.1.0.md`
 gating audit A.2). Ambiguity codes collapse a window's score to zero
 (`docs/scientific-validity.md` "1a"), so how common they are across the corpus,
 and at what per-genome rate, decides whether the encoding fix is a headline

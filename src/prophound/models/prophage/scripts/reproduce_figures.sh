@@ -20,7 +20,7 @@
 # recorded outputs:
 #   scripts/reproduce_figures.sh OUT_DIR && pixi run python scripts/compare_figures.py . OUT_DIR
 # Run from the model directory (src/prophound/models/prophage). The commands are the ones that
-# produced the figures in docs/release-text-v1.md "Reproduction". Scripts whose inputs live only
+# produced the figures in docs/release-text-0.1.0.md "Reproduction". Scripts whose inputs live only
 # on ARC (offtarget_annotation, small_element_spikein, literature_pilot, eval_containment) are not
 # here. docs/tech-debt-audit.md X2.
 set -u

@@ -1,5 +1,5 @@
 #!/bin/bash
-# docs/v1-scope.md A.1 source check: where do inoviruses already sit in the
+# docs/release-scope-0.1.0.md A.1 source check: where do inoviruses already sit in the
 # corpus, and do current labels call any of them negative (label conflicts)?
 # Needs Roux's pI HMMs at analysis/inovirus_overlap/Final_marker_morph.hmm
 # (from bitbucket.org/srouxjgi/inovirus Inovirus_dbs.tar.gz); without

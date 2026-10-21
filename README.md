@@ -87,7 +87,7 @@ Rank calls by `mean_prob`. It is a score, not the probability that a call is a p
 
 ## What has been measured
 
-Every figure, its interval and its source are in [`docs/release-text-v1.md`](docs/release-text-v1.md). Briefly:
+Every figure, its interval and its source are in [`docs/release-text-0.1.0.md`](docs/release-text-0.1.0.md). Briefly:
 
 - **Agreement with geNomad, held out:** Default covers 0.960 of 202 elements (0.924–0.980). The test set was preregistered and scored once ([`docs/lockbox.md`](docs/lockbox.md)). Its lower bound is under 0.95, so 95% recall is not established.
 - **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.5–3.7× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.

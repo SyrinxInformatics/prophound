@@ -151,7 +151,7 @@ Wording: *"on MAG-like fragmented input, prophound Default kept 0.92–0.94 of i
 |---|---|---|
 | reverse complement | window scores exact; region calls identical on whole contigs | `docs/scientific-validity.md` standing check |
 | ambiguity codes (IUPAC, incl. N), `impute` default | ≤2 of 179 elements lost up to 3,000 ppm scattered codes; the old encoding lost 172 | `821396`, tuning sample |
-| long internal N gaps | a 20 kb gap costs 6 of 179 elements at Default. Calls ≥50% N are dropped, removing exactly the spurious gap calls with no recall change at ≤5 kb gaps | `822054`, `docs/v1-scope.md` A.3 |
+| long internal N gaps | a 20 kb gap costs 6 of 179 elements at Default. Calls ≥50% N are dropped, removing exactly the spurious gap calls with no recall change at ≤5 kb gaps | `822054`, `docs/release-scope-0.1.0.md` A.3 |
 | grid phase | 1.7% of elements phase-unstable; ~5% call-count spread | `816447` |
 | composition baseline | k ≤ 4 composition reaches AUPRC ≤0.16 against the CNN's 0.60–0.61 on the same split (random 0.014) | `816086`, item 1c |
 
