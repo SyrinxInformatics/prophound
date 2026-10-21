@@ -1,0 +1,58 @@
+accession,contig,start,end,name,class,split,basis,kb
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,300059,310645,CP-933H,cryptic_prophage,test,author_feature;lift=identical,10.586
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,310645,323540,CP-933I,cryptic_prophage,test,author_feature;lift=identical,12.895
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,892771,931359,CP-933K,cryptic_prophage,test,author_feature;lift=identical,38.588
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1250318,1295562,CP-933M,cryptic_prophage,test,author_feature;lift=identical,45.244
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1330828,1392491,BP-933W,prophage,test,author_feature;lift=identical,61.663
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1626721,1669479,CP-933N,cryptic_prophage,test,author_genes(n=55);lift=identical,42.758
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1678700,1693927,CP-933C,cryptic_prophage,test,author_feature;lift=identical,15.227
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1702184,1752784,CP-933X,cryptic_prophage,test,author_genes(n=57);lift=identical,50.6
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,1849487,1927638,CP-933O,cryptic_prophage,test,author_genes(n=102);lift=identical,78.151
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,2115998,2165795,CP-933R,cryptic_prophage,test,author_feature;lift=identical,49.797
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,2283854,2330172,CP-933P,cryptic_prophage,test,author_genes(n=56);lift=identical,46.318
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,2668111,2689231,CP-933T,cryptic_prophage,test,author_feature;lift=identical,21.12
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,2743223,2788400,CP-933U,cryptic_prophage,test,author_feature;lift=identical,45.177
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,2966156,3015072,CP-933V,cryptic_prophage,test,author_feature;lift=identical,48.916
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,3551576,3557558,CP-933Y,cryptic_prophage,test,author_genes(n=8);lift=identical,5.982
+GCF_000006665.1_ASM666v1_genomic,NC_002655.2,4651321,4657375,CP-933L,cryptic_prophage,test,author_genes(n=9);lift=identical,6.054
+GCF_000006745.1_ASM674v1_genomic,NC_002505.1,1564151,1574355,RS1-CTXphi array,prophage,test,locus_tags VC1452-VC1465;lift=same_record,10.204
+GCF_000006745.1_ASM674v1_genomic,NC_002505.1,1574347,1578000,TLC,phage_derived,test,locus_tags VC1466-VC1470;lift=same_record,3.653
+GCF_000006785.2_ASM678v2_genomic,NC_002737.2,529586,570504,SF370.1,prophage,test,author_feature;lift=identical,40.918
+GCF_000006785.2_ASM678v2_genomic,NC_002737.2,778519,821004,SF370.2,prophage,test,author_feature;lift=identical,42.485
+GCF_000006785.2_ASM678v2_genomic,NC_002737.2,1189119,1222649,SF370.3,prophage,test,author_feature;lift=identical,33.53
+GCF_000006785.2_ASM678v2_genomic,NC_002737.2,1773338,1786888,SF370.4,remnant,test,author_feature;lift=identical,13.55
+GCF_000013425.1_ASM1342v1_genomic,NC_007795.1,1463617,1508580,phi12,prophage,test,phage_genome AF424782 (31-mer cover 0.995),44.963
+GCF_000013425.1_ASM1342v1_genomic,NC_007795.1,1923407,1967011,phi11,prophage,test,phage_genome AF424781 (31-mer cover 1.000),43.604
+GCF_000013425.1_ASM1342v1_genomic,NC_007795.1,2031910,2074632,phi13,prophage,test,phage_genome AF424783 (31-mer cover 0.998),42.722
+GCF_000006765.1_ASM676v1_genomic,NC_002516.2,672776,703058,R2/F2 pyocin,phage_derived,val,locus_tags PA0610-PA0648;lift=same_record,30.282
+GCF_000006765.1_ASM676v1_genomic,NC_002516.2,785968,797598,Pf4,prophage,val,locus_tags PA0715-PA0729;lift=same_record,11.63
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,300041,310627,Sp1,prophage,val,author_feature;lift=same_record,10.586
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,310627,323514,Sp2,prophage,val,author_feature;lift=same_record,12.887
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,891123,929709,Sp3,prophage,val,author_feature;lift=same_record,38.586
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1161091,1210882,Sp4,prophage,val,author_feature;lift=same_record,49.791
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1246153,1308861,Sp5,prophage,val,author_feature;lift=same_record,62.708
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1370597,1456845,SpLE1,remnant,val,author_feature;lift=same_record,86.248
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1541610,1590033,Sp6,prophage,val,author_feature;lift=same_record,48.423
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1594710,1610171,Sp7,prophage,val,author_feature;lift=same_record,15.461
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1618291,1662679,Sp8,prophage,val,author_feature;lift=same_record,44.388
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1757643,1815725,Sp9,prophage,val,author_feature;lift=same_record,58.082
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,1921508,1972663,Sp10,prophage,val,author_feature;lift=same_record,51.155
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2158310,2204088,Sp11,prophage,val,author_feature;lift=same_record,45.778
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2204088,2255027,Sp12,prophage,val,author_feature;lift=same_record,50.939
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2593038,2614158,Sp13,prophage,val,author_feature;lift=same_record,21.12
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2668144,2712172,Sp14,prophage,val,author_feature;lift=same_record,44.028
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2738215,2751674,SpLE2,remnant,val,author_feature;lift=same_record,13.459
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,2896061,2943940,Sp15,prophage,val,author_feature;lift=same_record,47.879
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,3193117,3201668,Sp16,prophage,val,author_feature;lift=same_record,8.551
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,3476098,3500291,Sp17,prophage,val,author_feature;lift=same_record,24.193
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,3852166,3875617,SpLE3,remnant,val,author_feature;lift=same_record,23.451
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,4580989,4624439,SpLE4,remnant,val,author_feature;lift=same_record,43.45
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,5040970,5079729,Sp18,prophage,val,author_feature;lift=same_record,38.759
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,5347212,5357447,SpLE5,remnant,val,author_feature;lift=same_record,10.235
+GCF_000008865.2_ASM886v2_genomic,NC_002695.2,5357498,5391646,SpLE6,remnant,val,author_feature;lift=same_record,34.148
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,202546,226248,prophage 1,remnant,val,author_genes(n=11);lift=identical,23.702
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,651976,675857,prophage 3,remnant,val,author_genes(n=22);lift=identical,23.881
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,1317534,1348182,PBSX,remnant,val,author_genes(n=42);lift=identical,30.648
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,2036038,2078626,prophage 6,remnant,val,author_genes(n=32);lift=identical,42.588
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,2152085,2287053,SPbeta,prophage,val,author_genes(n=195);lift=identical,134.968
+GCF_000009045.1_ASM904v1_genomic,NC_000964.3,2653370,2701356,skin,remnant,val,author_genes(n=64);lift=identical,47.986

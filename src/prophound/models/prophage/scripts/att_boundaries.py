@@ -19,31 +19,40 @@
 
 Integration by site-specific recombination leaves the element between two
 copies of the att core, so a direct repeat with one copy near each edge of a
-call marks both boundaries to the base. For each shipped call this searches a
-zone around each edge for exact direct repeats (k-mer seeds extended along
-their diagonal), scores each by the number of repeats that long expected by
-chance between zones of that size and composition, and rejects low-complexity
-and dispersed (multi-copy) repeats. The same search runs on decoy zones of the
-same geometry in host sequence away from any call or truth element, which
-measures the false-att rate directly instead of trusting the formula.
+call marks both boundaries to the base.
 
 Subcommands:
   run    calls rebuilt as `predict` ships them (evalkit.shipped_calls) for each
-         mode -> one row per call with the best repeat found and its decoys
-  score  per-call table + truth -> edge errors (bp), recall and cost metrics for
-         the shipped coordinates and for att-replaced ones, per threshold
+         mode, plus decoys: the same geometry shifted into host sequence away from
+         every call and truth element. For each, every exact direct repeat >= 16 bp
+         between the widest zones is recorded with its copy count and entropy, so
+         `score` can sweep the selection rules without searching again. Writes
+         <out>.items.tsv (one row per call or decoy) and <out>.cands.tsv.
+  score  applies each selection rule in a grid and reports, per mode: att rate on
+         calls and decoys, covered50/covered/matched recall, IoU, bp called and
+         off-element, and edge errors against the truth (bp). Writes <out>.csv.
+
+A selection rule: both copies inside zones [s - w_out, s + w_in] and
+[e - w_in, e + w_out] (stopped at the call's midpoint); core length <= max_len;
+<= max_copies copies in the genome (both strands); base entropy >= min_entropy;
+the att interval must contain the call's high-scoring core (centres of windows
+at or above the mode's seed threshold) up to core_slack bp; then the candidate
+with the smallest chance expectation E = m * n * (1 - p) * p**L, accepted if
+E <= e_max. m, n are the zone lengths and p = sum of squared base frequencies.
 
 Example:
   python scripts/att_boundaries.py run --tracks analysis/ngap_dose/impute__clean__0 \\
-      --genomes_dir ../../../../arc_data/raw/genomes --out analysis/att/tune42_calls.tsv
-  python scripts/att_boundaries.py score --calls analysis/att/tune42_calls.tsv \\
-      --elements scripts/eval_sizestrat_elements.csv --out analysis/att/tune42
+      --genomes_dir ../../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
+      --out analysis/att/tune42
+  python scripts/att_boundaries.py score --run analysis/att/tune42 \\
+      --elements scripts/eval_sizestrat_elements.csv --out analysis/att/tune42_sweep
 """
 
 from __future__ import annotations
 
 import argparse
-import json
+import itertools
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -58,6 +67,9 @@ COMP = str.maketrans("ACGTacgt", "TGCAtgca")
 
 SEED_K = 12          # seed length; every exact repeat >= SEED_K is found
 MAX_SEED_COPIES = 8  # a seed this frequent within one zone is low complexity / tandem
+MIN_RECORD_LEN = 16  # shorter repeats are never significant in kb-sized zones
+MIN_ELEMENT = 2000   # the att pair must enclose at least this much sequence
+W_IN_MAX, W_OUT_MAX = 25000, 10000   # widest zones searched; `score` narrows them
 
 
 def encode(seq: str) -> np.ndarray:
@@ -103,43 +115,34 @@ def entropy_bits(s: str) -> float:
     return float(-(p * np.log2(p)).sum())
 
 
-def find_att(contig: str, genome_text: str, s: int, e: int, w_in: int, w_out: int, p_match: float,
-             min_element: int = 2000, max_copies: int = 2, min_entropy: float = 1.5) -> dict | None:
-    """Best att-like direct repeat for a call [s, e) on `contig` (the contig's sequence).
-
-    The left zone is [s - w_out, s + w_in], the right [e - w_in, e + w_out], each
-    stopping at the call's midpoint so the two never overlap. Returns the repeat with
-    the smallest chance expectation (`evalue`), or None. `genome_text` is every contig
-    joined, for counting the repeat's copies on both strands.
-    """
+def zones(s: int, e: int, contig_len: int, w_in: int, w_out: int) -> tuple[int, int, int, int]:
+    """Left and right search zones for a call [s, e), each stopped at its midpoint."""
     mid = (s + e) // 2
-    l0, l1 = max(0, s - w_out), min(mid, s + w_in)
-    r0, r1 = max(mid, e - w_in), min(len(contig), e + w_out)
+    return max(0, s - w_out), min(mid, s + w_in), max(mid, e - w_in), min(contig_len, e + w_out)
+
+
+def find_candidates(contig: str, genome_text: str, s: int, e: int,
+                    w_in: int = W_IN_MAX, w_out: int = W_OUT_MAX) -> list:
+    """Every direct repeat >= MIN_RECORD_LEN with one copy in each zone of call [s, e).
+
+    `genome_text` is every contig joined, for counting copies on both strands.
+    """
+    l0, l1, r0, r1 = zones(s, e, len(contig), w_in, w_out)
     if l1 - l0 < SEED_K or r1 - r0 < SEED_K:
-        return None
+        return []
     reps = direct_repeats(contig[l0:l1], contig[r0:r1])
-    if reps.empty:
-        return None
-    reps["start"] = l0 + reps.li
-    reps["end"] = r0 + reps.ri + reps.length
-    reps = reps[reps.end - reps.start >= min_element]
-    m, n = l1 - l0, r1 - r0
-    best = None
-    for r in reps.sort_values("length", ascending=False).itertuples():
-        evalue = m * n * (1 - p_match) * p_match ** r.length
-        if best is not None and evalue >= best["evalue"]:
-            break
-        core = contig[r.start:r.start + r.length].upper()
-        if entropy_bits(core) < min_entropy:
+    reps = reps[reps.length >= MIN_RECORD_LEN]
+    out = []
+    for r in reps.itertuples():
+        start, end = l0 + int(r.li), r0 + int(r.ri) + int(r.length)
+        if end - start < MIN_ELEMENT:
             continue
+        core = contig[start:start + int(r.length)].upper()
         rc = core.translate(COMP)[::-1]
         copies = genome_text.count(core) + (genome_text.count(rc) if rc != core else 0)
-        if copies > max_copies:
-            continue
-        best = {"att_start": int(r.start), "att_end": int(r.end), "att_len": int(r.length),
-                "att_core": core, "att_copies": int(copies), "evalue": float(evalue),
-                "zone_left": m, "zone_right": n}
-    return best
+        out.append({"att_start": start, "att_end": end, "att_len": int(r.length), "att_copies": int(copies),
+                    "entropy": entropy_bits(core), "att_core": core if len(core) <= 300 else core[:300] + "..."})
+    return out
 
 
 # --- run
@@ -154,9 +157,9 @@ def load_genome(path: Path) -> tuple[dict, str, float]:
     return seqs, text, float((f ** 2).sum())
 
 
-def decoy_offsets(rng, s: int, e: int, length: int, blocked: list, w_out: int, n: int) -> list:
-    """Up to `n` shifts d for which [s+d - w_out, e+d + w_out] fits the contig and avoids `blocked`."""
-    span0, span1 = s - w_out, e + w_out
+def decoy_offsets(rng, s: int, e: int, length: int, blocked: list, pad: int, n: int) -> list:
+    """Up to `n` shifts d for which [s+d - pad, e+d + pad] fits the contig and avoids `blocked`."""
+    span0, span1 = s - pad, e + pad
     out = []
     for _ in range(50 * n):
         if len(out) == n:
@@ -170,119 +173,169 @@ def decoy_offsets(rng, s: int, e: int, length: int, blocked: list, w_out: int, n
     return out
 
 
+def call_core(win: pd.DataFrame, contig: str, s: int, e: int, thr: float) -> tuple[int, int]:
+    """Span of window centres inside [s, e) scoring >= thr (the call's midpoint if none)."""
+    w = win[win.contig_id == contig]
+    c = (w.start + w.end) // 2
+    c = c[(c >= s) & (c < e) & (w.prob >= thr)]
+    return (int(c.min()), int(c.max())) if len(c) else ((s + e) // 2, (s + e) // 2)
+
+
+def genome_job(job: dict) -> tuple[list, list]:
+    g, calls, win, truth = job["genome"], job["calls"], job["windows"], job["truth"]
+    seqs, text, p = load_genome(Path(job["genomes_dir"]) / f"{g}.fna")
+    rng = np.random.default_rng([job["seed"], int.from_bytes(g.encode()[-8:], "little")])
+    items, cands = [], []
+    for c in calls.itertuples():
+        contig = seqs[c.contig_id]
+        edge = getattr(c, "contig_edge", "none")
+        searchable = not bool(getattr(c, "short", False)) and (pd.isna(edge) or edge == "none")
+        thr = job["seed_thr"][c.mode]
+        lo, hi = call_core(win, c.contig_id, int(c.start), int(c.end), thr)
+        base = {"mode": c.mode, "genome_id": g, "contig_id": c.contig_id, "contig_len": len(contig),
+                "call_start": int(c.start), "call_end": int(c.end), "p_match": p,
+                "contig_edge": edge, "searchable": searchable}
+        blocked = [(int(x.start) - W_OUT_MAX, int(x.end) + W_OUT_MAX)
+                   for x in calls[calls.contig_id == c.contig_id].itertuples()]
+        blocked += [(int(x.start) - W_OUT_MAX, int(x.end) + W_OUT_MAX)
+                    for x in truth[truth.contig == c.contig_id].itertuples()]
+        shifts = [0] + (decoy_offsets(rng, int(c.start), int(c.end), len(contig), blocked, W_OUT_MAX, job["n_decoys"])
+                        if searchable else [])
+        for k, d in enumerate(shifts):
+            item_id = f"{c.mode}|{g}|{c.contig_id}|{c.start}|{k}"
+            s, e = int(c.start) + d, int(c.end) + d
+            items.append({**base, "item_id": item_id, "kind": "call" if k == 0 else "decoy", "shift": d,
+                          "s": s, "e": e, "core_lo": lo + d, "core_hi": hi + d})
+            if searchable:
+                cands += [{"item_id": item_id, **x} for x in find_candidates(contig, text, s, e)]
+    return items, cands
+
+
 def cmd_run(args) -> None:
     import evalkit as ek
 
     ens = ek.load_tracks(args.tracks)
-    seeds = [ek.load_tracks(args.tracks, f"prob_ckpt{k}") for k in (1, 2, 3)]
-    truth = pd.read_csv(args.elements) if args.elements else None
-    rng = np.random.default_rng(args.seed)
-    rows = []
+    seeds = ([ek.load_tracks(d) for d in args.seed_tracks] if args.seed_tracks
+             else [ek.load_tracks(args.tracks, f"prob_ckpt{k}") for k in (1, 2, 3)])
+    truth = pd.read_csv(args.elements) if args.elements else pd.DataFrame(columns=["accession", "contig", "start", "end"])
+    per_mode = []
     for mode in args.modes:
         reg = ek.shipped_calls(ens, seeds, mode, args.genomes_dir)
-        for g, sub in reg.groupby("genome_id", sort=True):
-            seqs, text, p = load_genome(Path(args.genomes_dir) / f"{g}.fna")
-            for c in sub.itertuples():
-                contig = seqs[c.contig_id]
-                base = {"mode": mode, "genome_id": g, "contig_id": c.contig_id, "start": int(c.start),
-                        "end": int(c.end), "contig_edge": getattr(c, "contig_edge", "none"),
-                        "seed_support": getattr(c, "seed_support", np.nan), "p_match": p}
-                hit = None
-                if base["contig_edge"] in ("none", None) or pd.isna(base["contig_edge"]):
-                    hit = find_att(contig, text, c.start, c.end, args.w_in, args.w_out, p,
-                                   max_copies=args.max_copies)
-                rows.append({**base, "kind": "call", **(hit or {})})
-                # decoys: same geometry, shifted into host sequence away from calls and truth
-                blocked = [(int(x.start) - args.w_out, int(x.end) + args.w_out)
-                           for x in reg[(reg.genome_id == g) & (reg.contig_id == c.contig_id)].itertuples()]
-                if truth is not None:
-                    t = truth[(truth.accession == g) & (truth.contig == c.contig_id)]
-                    blocked += [(int(x.start) - args.w_out, int(x.end) + args.w_out) for x in t.itertuples()]
-                for d in decoy_offsets(rng, c.start, c.end, len(contig), blocked, args.w_out, args.n_decoys):
-                    h = find_att(contig, text, c.start + d, c.end + d, args.w_in, args.w_out, p,
-                                 max_copies=args.max_copies)
-                    rows.append({**base, "kind": "decoy", "decoy_shift": d, **(h or {})})
+        per_mode.append(reg.assign(mode=mode))
         print(f"[att] {mode}: {len(reg)} calls", flush=True)
-    out = pd.DataFrame(rows)
+    reg = pd.concat(per_mode, ignore_index=True)
+    seed_thr = {m: ek.MODE_THRESHOLDS[m] for m in args.modes}
+    jobs = [{"genome": g, "calls": sub, "windows": ens[g][0], "truth": truth[truth.accession == g],
+             "genomes_dir": args.genomes_dir, "seed": args.seed, "n_decoys": args.n_decoys, "seed_thr": seed_thr}
+            for g, sub in reg.groupby("genome_id", sort=True)]
+    items, cands = [], []
+    with ProcessPoolExecutor(max_workers=args.workers) as ex:
+        for i, (it, ca) in enumerate(ex.map(genome_job, jobs)):
+            items += it
+            cands += ca
+            print(f"[att] {i + 1}/{len(jobs)} genomes", end="\r", flush=True)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    out.to_csv(args.out, sep="\t", index=False)
-    print(f"[att] wrote {args.out} ({len(out)} rows)")
+    pd.DataFrame(items).to_csv(f"{args.out}.items.tsv", sep="\t", index=False)
+    pd.DataFrame(cands).to_csv(f"{args.out}.cands.tsv", sep="\t", index=False)
+    print(f"\n[att] wrote {args.out}.items.tsv ({len(items)}) and {args.out}.cands.tsv ({len(cands)})")
+
+
+# --- selection (the rule a shipped version would implement)
+
+
+def select(items: pd.DataFrame, cands: pd.DataFrame, w_in: int, w_out: int, max_len: int, max_copies: int,
+           min_entropy: float, core_slack: int | None, e_max: float) -> pd.DataFrame:
+    """Best accepted candidate per item (item_id, att_start, att_end, att_len, evalue)."""
+    it = items[items.searchable].copy()
+    mid = (it.s + it.e) // 2
+    it["l0"], it["l1"] = np.maximum(0, it.s - w_out), np.minimum(mid, it.s + w_in)
+    it["r0"], it["r1"] = np.maximum(mid, it.e - w_in), np.minimum(it.contig_len, it.e + w_out)
+    c = cands.merge(it[["item_id", "l0", "l1", "r0", "r1", "core_lo", "core_hi", "p_match"]], on="item_id")
+    ok = ((c.att_start >= c.l0) & (c.att_start + c.att_len <= c.l1)
+          & (c.att_end - c.att_len >= c.r0) & (c.att_end <= c.r1)
+          & (c.att_len <= max_len) & (c.att_copies <= max_copies) & (c.entropy >= min_entropy))
+    if core_slack is not None:
+        ok &= (c.att_start <= c.core_lo + core_slack) & (c.att_end >= c.core_hi - core_slack)
+    c = c[ok].copy()
+    m, n = (c.l1 - c.l0).clip(lower=1), (c.r1 - c.r0).clip(lower=1)
+    c["evalue"] = m * n * (1 - c.p_match) * c.p_match ** c.att_len
+    c = c[c.evalue <= e_max]
+    return c.sort_values(["item_id", "evalue"]).drop_duplicates("item_id")[
+        ["item_id", "att_start", "att_end", "att_len", "evalue"]]
 
 
 # --- score
 
 
-def edge_errors(calls: pd.DataFrame, truth: pd.DataFrame, s_col: str, e_col: str) -> pd.DataFrame:
-    """For each call overlapping exactly one element: signed edge errors (call - element)."""
+def edge_errors(calls: pd.DataFrame, truth: pd.DataFrame) -> np.ndarray:
+    """|edge errors| (bp) of calls overlapping exactly one element, both edges pooled."""
     out = []
     for c in calls.itertuples():
         t = truth[(truth.accession == c.genome_id) & (truth.contig == c.contig_id)
-                  & (truth.end > getattr(c, s_col)) & (truth.start < getattr(c, e_col))]
-        if len(t) != 1:
-            continue
-        t = t.iloc[0]
-        out.append({"mode": c.mode, "genome_id": c.genome_id, "start": c.start,
-                    "left": int(getattr(c, s_col)) - int(t.start), "right": int(getattr(c, e_col)) - int(t.end),
-                    "stratum": t.get("stratum", "")})
-    return pd.DataFrame(out)
+                  & (truth.end > c.start) & (truth.start < c.end)]
+        if len(t) == 1:
+            out += [abs(int(c.start) - int(t.start.iloc[0])), abs(int(c.end) - int(t.end.iloc[0]))]
+    return np.asarray(out)
 
 
-def summarize_errors(err: pd.DataFrame) -> dict:
-    if err.empty:
-        return {"n_calls": 0}
-    a = np.abs(np.concatenate([err.left.to_numpy(), err.right.to_numpy()]))
-    return {"n_calls": int(len(err)), "median_abs_bp": float(np.median(a)),
-            "within_100": float(np.mean(a <= 100)), "within_500": float(np.mean(a <= 500)),
-            "within_1000": float(np.mean(a <= 1000)), "within_5000": float(np.mean(a <= 5000))}
+def _cost(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
+    """bp called and bp called off every truth element."""
+    bp, on = int((reg.end - reg.start).sum()), 0
+    for c in reg.itertuples():
+        on += sum(max(0, min(c.end, t.end) - max(c.start, t.start))
+                  for t in ev[(ev.accession == c.genome_id) & (ev.contig == c.contig_id)].itertuples())
+    return {"Mb_called": bp / 1e6, "Mb_off": (bp - on) / 1e6}
+
+
+def metrics(ev: pd.DataFrame, reg: pd.DataFrame, ek) -> dict:
+    v = ek.score_variant(ev, reg)
+    err = edge_errors(reg, ev)
+    return {"covered50": ek.covered50(ev, reg), "covered": v["covered_recall"], "matched": v["matched_recall"],
+            "median_iou": v["median_iou"], "absorbed": v["absorbed_elements"], **_cost(ev, reg),
+            "edge_med_bp": float(np.median(err)) if len(err) else np.nan,
+            "edge_le100": float(np.mean(err <= 100)) if len(err) else np.nan,
+            "edge_le1k": float(np.mean(err <= 1000)) if len(err) else np.nan}
 
 
 def cmd_score(args) -> None:
     import evalkit as ek
 
-    df = pd.read_csv(args.calls, sep="\t")
+    items = pd.read_csv(f"{args.run}.items.tsv", sep="\t")
+    cands = pd.read_csv(f"{args.run}.cands.tsv", sep="\t")
     truth = pd.read_csv(args.elements)
-    calls_df, dec = df[df.kind == "call"].copy(), df[df.kind == "decoy"]
-    res = {}
-    for mode, cm in calls_df.groupby("mode", sort=False):
-        dm = dec[dec["mode"] == mode]
-        n_g = cm.genome_id.nunique()
-        ev = truth[truth.accession.isin(cm.genome_id.unique())] if not args.all_genomes else truth
-        r = {"n_calls": int(len(cm)), "calls_per_genome": len(cm) / max(1, n_g), "by_threshold": {}}
-        base = cm[["genome_id", "contig_id", "start", "end"]]
-        r["shipped"] = {"covered50": ek.covered50(ev, base), **_cost(ev, base),
-                        **{k: v for k, v in ek.score_variant(ev, base).items() if not k.startswith("_")},
-                        "edges_all": summarize_errors(edge_errors(cm, ev, "start", "end"))}
-        for thr in args.evalue:
-            hit = cm.evalue.notna() & (cm.evalue <= thr)
-            dhit = dm.evalue.notna() & (dm.evalue <= thr)
-            new = cm.copy()
-            new.loc[hit, "start"] = new.loc[hit, "att_start"].astype(int)
-            new.loc[hit, "end"] = new.loc[hit, "att_end"].astype(int)
-            nb = new[["genome_id", "contig_id", "start", "end"]]
-            sub_ship, sub_att = cm[hit], new[hit]
-            r["by_threshold"][str(thr)] = {
-                "att_rate_calls": float(hit.mean()), "att_rate_decoys": float(dhit.mean()) if len(dm) else None,
-                "n_decoys": int(len(dm)), "n_att": int(hit.sum()),
-                "covered50": ek.covered50(ev, nb), **_cost(ev, nb),
-                **{k: v for k, v in ek.score_variant(ev, nb).items() if not k.startswith("_")},
-                "edges_att_calls_shipped": summarize_errors(edge_errors(sub_ship, ev, "start", "end")),
-                "edges_att_calls_att": summarize_errors(edge_errors(sub_att, ev, "start", "end")),
-                "edges_all": summarize_errors(edge_errors(new, ev, "start", "end")),
-            }
-        res[mode] = r
+    calls_all = items[items.kind == "call"]
+    rows = []
+    base_by_mode = {}
+    for mode, cm in calls_all.groupby("mode", sort=False):
+        ev = truth[truth.accession.isin(cm.genome_id.unique())]
+        reg = cm.rename(columns={"call_start": "start", "call_end": "end"})[["genome_id", "contig_id", "start", "end"]]
+        base_by_mode[mode] = (ev, cm)
+        rows.append({"mode": mode, "rule": "shipped", "att_calls": np.nan, "att_decoys": np.nan, **metrics(ev, reg, ek)})
+    grid = itertools.product(args.w_in, args.w_out, args.max_len, args.max_copies, args.core_slack, args.e_max)
+    for w_in, w_out, max_len, max_copies, slack, e_max in grid:
+        sl = None if slack < 0 else slack
+        sel = select(items, cands, w_in, w_out, max_len, max_copies, args.min_entropy, sl, e_max)
+        hit = items.merge(sel, on="item_id", how="left")
+        rule = f"win{w_in}_wout{w_out}_len{max_len}_cp{max_copies}_slack{slack}_E{e_max:g}"
+        for mode, (ev, cm) in base_by_mode.items():
+            h = hit[hit["mode"] == mode]
+            hc, hd = h[h.kind == "call"], h[(h.kind == "decoy") & h.searchable]
+            new = hc.assign(start=np.where(hc.att_start.notna(), hc.att_start, hc.call_start).astype(int),
+                            end=np.where(hc.att_end.notna(), hc.att_end, hc.call_end).astype(int))
+            reg = new[["genome_id", "contig_id", "start", "end"]]
+            att_only = new[new.att_start.notna()][["genome_id", "contig_id", "start", "end"]]
+            err_att = edge_errors(att_only, ev)
+            rows.append({"mode": mode, "rule": rule, "att_calls": float(hc.att_start.notna().mean()),
+                         "att_decoys": float(hd.att_start.notna().mean()), **metrics(ev, reg, ek),
+                         "att_n": int(len(att_only)),
+                         "att_edge_med_bp": float(np.median(err_att)) if len(err_att) else np.nan,
+                         "att_edge_le100": float(np.mean(err_att <= 100)) if len(err_att) else np.nan,
+                         "att_edge_le1k": float(np.mean(err_att <= 1000)) if len(err_att) else np.nan})
+        print(f"[att] {rule}", flush=True)
+    out = pd.DataFrame(rows)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(f"{args.out}.json").write_text(json.dumps(res, indent=2))
-    print(json.dumps(res, indent=1)[:args.print_chars])
-
-
-def _cost(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
-    """bp called and bp called off every truth element."""
-    bp = int((reg.end - reg.start).sum())
-    on = 0
-    for c in reg.itertuples():
-        on += sum(max(0, min(c.end, t.end) - max(c.start, t.start))
-                  for t in ev[(ev.accession == c.genome_id) & (ev.contig == c.contig_id)].itertuples())
-    return {"bp_called": bp, "bp_off_element": bp - on}
+    out.to_csv(f"{args.out}.csv", index=False)
+    print(f"[att] wrote {args.out}.csv ({len(out)} rows)")
 
 
 def main() -> None:
@@ -291,21 +344,25 @@ def main() -> None:
     r = sp.add_parser("run")
     r.add_argument("--tracks", required=True, help="run dir with <genome>/windows.tsv holding prob_ckpt1..3")
     r.add_argument("--genomes_dir", required=True)
+    r.add_argument("--seed_tracks", nargs="+", help="per-checkpoint run dirs, when --tracks has no prob_ckpt<k>")
     r.add_argument("--elements", help="truth table, so decoys avoid true elements")
     r.add_argument("--modes", nargs="+", default=["exploratory", "default", "conservative"])
-    r.add_argument("--w_in", type=int, default=20000)
-    r.add_argument("--w_out", type=int, default=5000)
-    r.add_argument("--max_copies", type=int, default=2)
-    r.add_argument("--n_decoys", type=int, default=3)
+    r.add_argument("--n_decoys", type=int, default=5)
     r.add_argument("--seed", type=int, default=0)
-    r.add_argument("--out", required=True)
+    r.add_argument("--workers", type=int, default=8)
+    r.add_argument("--out", required=True, help="output prefix")
     r.set_defaults(fn=cmd_run)
     s = sp.add_parser("score")
-    s.add_argument("--calls", required=True)
+    s.add_argument("--run", required=True, help="prefix given to `run --out`")
     s.add_argument("--elements", required=True)
-    s.add_argument("--evalue", type=float, nargs="+", default=[1e-1, 1e-2, 1e-3, 1e-4, 1e-6])
-    s.add_argument("--all_genomes", action="store_true")
-    s.add_argument("--print_chars", type=int, default=6000)
+    s.add_argument("--w_in", type=int, nargs="+", default=[10000, 15000, 25000])
+    s.add_argument("--w_out", type=int, nargs="+", default=[5000, 10000])
+    s.add_argument("--max_len", type=int, nargs="+", default=[100, 200, 300, 100000])
+    s.add_argument("--max_copies", type=int, nargs="+", default=[2])
+    s.add_argument("--min_entropy", type=float, default=1.5)
+    s.add_argument("--core_slack", type=int, nargs="+", default=[-1, 0, 2000],
+                   help="bp the att interval may fall inside the high-scoring core; -1 = no core rule")
+    s.add_argument("--e_max", type=float, nargs="+", default=[1e-2, 1e-4, 1e-6])
     s.add_argument("--out", required=True)
     s.set_defaults(fn=cmd_score)
     args = ap.parse_args()
