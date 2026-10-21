@@ -21,7 +21,8 @@ analysis cannot silently change another's result. Scripts in one investigation m
 import from each other (the g5/g5dev, lambda, short-contig, N-gap and eval-sample families).
 
 - shipped code: imported once, from the installed package or from the ARC source tree
-- tracks and calls: `load_tracks`, `calls`, `calls_at`, `vote`, `shipped_calls`
+- tracks and calls: `load_tracks`, `calls`, `calls_at`, `vote`, `shipped_calls` (with `refine_pass`,
+  `StoredScorer` and the shipped att boundaries when fine tracks and sequence are given)
 - refinement offline: `load_run`, `fine_regions_by_genome`, `refine_all`
 - intervals and coverage: `overlap`, `covered_bp`, `covered50`, `cov_fracs`, `cov_frac`,
   `split_frag`, `score_variant`, `element_overlap_bp`
@@ -44,6 +45,7 @@ import pandas as pd
 # The names scripts use are re-exported, so no script needs this fallback itself.
 try:
     from prophound.models.prophage.src import predict_genome as pg
+    from prophound.models.prophage.src.att import Genome, apply_boundaries
     from prophound.models.prophage.src.calls import (
         WINDOW_COORDS,
         CallRules,
@@ -69,8 +71,10 @@ try:
         seed_support,
         snap_contig_edges,
     )
+    from prophound.models.prophage.src.predict_genome import refine as _shipped_refine
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from src.att import Genome, apply_boundaries
     from src.calls import WINDOW_COORDS, CallRules, build_pass, concat_nonempty, finalize
     from src.multiscale import refine_regions
     from src.predict_genome import (  # noqa: F401 -- re-exported
@@ -90,6 +94,7 @@ except ImportError:
         seed_support,
         snap_contig_edges,
     )
+    from src.predict_genome import refine as _shipped_refine
 
     from src import predict_genome as pg  # noqa: F401 -- re-exported
 
@@ -162,10 +167,53 @@ def vote(reg: pd.DataFrame, seed_regs: list, k: int) -> pd.DataFrame:
 
 
 _warned_no_fasta = False
+_warned_no_fine = False
+
+
+class _NoProgress:
+    def add(self, n: int) -> None:
+        pass
+
+
+class StoredScorer:
+    """Stands in for predict's Scorer: fine-window scores come from a stored fine_windows.tsv."""
+
+    def __init__(self, fine: pd.DataFrame):
+        self.progress = _NoProgress()
+        self.lookup = fine.set_index(["contig_id", "start", "end"]).prob
+
+    def score(self, windows: pd.DataFrame, window_len: int):
+        prob = self.lookup.reindex(pd.MultiIndex.from_frame(windows[["contig_id", "start", "end"]])).to_numpy()
+        if np.isnan(prob).any():
+            raise SystemExit(f"{int(np.isnan(prob).sum())} fine windows missing from the stored run")
+        return prob, None
+
+
+def predict_options(mode: str, extra: list | None = None):
+    """PredictOptions from the real `predict` parser, at its defaults (plus `extra` arguments)."""
+    import argparse
+
+    try:
+        from prophound.models.prophage.src.options import PredictOptions, add_predict_arguments
+    except ImportError:
+        from src.options import PredictOptions, add_predict_arguments
+    p = argparse.ArgumentParser()
+    add_predict_arguments(p)
+    args = p.parse_args(["--input", "unused.fna", "--outdir", "unused", "--mode", mode, *(extra or [])])
+    return PredictOptions.from_args(args, trained_window_len=10000, trained_stride=1000)
+
+
+def refine_pass(calls: pd.DataFrame, fine: pd.DataFrame, lengths: dict, genome_id: str, fasta: str,
+                mode: str) -> pd.DataFrame:
+    """The shipped refine() on coarse calls, fed stored fine scores (an Exploratory refinement
+    run's fine windows cover every mode's neighbourhoods), at `predict`'s defaults."""
+    if calls.empty:
+        return calls
+    return _shipped_refine(StoredScorer(fine), calls, lengths, genome_id, fasta, predict_options(mode))[0]
 
 
 def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: str | None = None,
-                  with_filtered: bool = False):
+                  with_filtered: bool = False, fine_tracks: dict | None = None):
     """Calls as `predict` ships them for `mode`, built by the CLI's own pipeline (src/calls.py).
 
     The ensemble track is `ens_tracks`; the vote counts the single-seed tracks in
@@ -175,12 +223,21 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
     steps cannot run (they need contig lengths and sequence) and a warning says so;
     the calls are then the CLI's before snapping. A `short` column marks short-contig
     calls. With `with_filtered`, also returns the candidates a filter removed.
+
+    Since 0.1.0 `predict` refines calls and places att boundaries by default
+    (docs/att-boundaries.md). `fine_tracks` ({genome: fine windows}, from refinement-on
+    runs) adds the refinement, and `genomes_dir` the att boundaries and edge ranges.
+    Without `fine_tracks` a warning says the calls are the pre-refinement ones.
     """
-    global _warned_no_fasta
+    global _warned_no_fasta, _warned_no_fine
     if genomes_dir is None and not _warned_no_fasta:
-        print("[mode_recheck] no --genomes_dir: edge snap and the N filter are skipped, so calls can "
-              "differ from the CLI's on fragmented or gappy input", file=sys.stderr)
+        print("[mode_recheck] no --genomes_dir: edge snap, the N filter and att boundaries are skipped, so "
+              "calls can differ from the CLI's", file=sys.stderr)
         _warned_no_fasta = True
+    if fine_tracks is None and not _warned_no_fine:
+        print("[evalkit] no fine tracks: calls are rebuilt without the refinement pass, which predict runs "
+              "by default since 0.1.0 (docs/att-boundaries.md)", file=sys.stderr)
+        _warned_no_fine = True
     kept, removed = [], []
     for g, (w, wl) in ens_tracks.items():
         per_ckpt = []
@@ -193,10 +250,17 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
         span = (w.end - w.start).to_numpy()
         passes = []
         full = span == wl
+        fasta = str(Path(genomes_dir) / f"{g}.fna") if genomes_dir is not None else None
         if full.any():
-            passes.append((build_pass(w[full].reset_index(drop=True), [p[full] for p in per_ckpt],
-                                      rules.seed_threshold, rules.extend_threshold, rules,
-                                      max_gap_bp=rules.max_gap_bp, bridge_prob=rules.bridge_prob), False))
+            coarse = build_pass(w[full].reset_index(drop=True), [p[full] for p in per_ckpt],
+                                rules.seed_threshold, rules.extend_threshold, rules,
+                                max_gap_bp=rules.max_gap_bp, bridge_prob=rules.bridge_prob)
+            if fine_tracks is not None and g in fine_tracks:
+                if fasta is None:
+                    raise SystemExit("refinement offline needs genomes_dir")
+                coarse.calls = refine_pass(coarse.calls, fine_tracks[g], dict(iter_fasta_lengths(fasta)), g,
+                                           fasta, mode)
+            passes.append((coarse, False))
         for scale in sorted(set(span[span < wl])):   # ascending, as predict groups them
             m = span == scale
             t = rules.short_thresholds[int(scale)]
@@ -207,12 +271,14 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
         call_g = concat_nonempty([p.calls.assign(short=short) for p, short in passes])
         filt_g = concat_nonempty([p.filtered.assign(short=short) for p, short in passes])
         if genomes_dir is not None:
-            fasta = str(Path(genomes_dir) / f"{g}.fna")
             per_seed = [[p.per_seed[k] for p, _ in passes if p.per_seed] for k in range(len(seed_tracks))] \
                 if len(seed_tracks) > 1 else []
-            final = finalize(call_g, filt_g, per_seed, dict(iter_fasta_lengths(fasta)),
+            lengths = dict(iter_fasta_lengths(fasta))
+            final = finalize(call_g, filt_g, per_seed, lengths,
                              lambda df, f=fasta: call_n_fraction(df, f), rules, DEFAULT_EDGE_SNAP_FRAC)
-            call_g, filt_g = final.calls, final.filtered
+            genome = Genome.from_fasta(fasta)
+            call_g = apply_boundaries(final.calls, genome, lengths)
+            filt_g = apply_boundaries(final.filtered, genome, lengths)
         kept.append(call_g)
         removed.append(filt_g)
     cols = ["genome_id", "contig_id", "start", "end", "max_prob", "short"]

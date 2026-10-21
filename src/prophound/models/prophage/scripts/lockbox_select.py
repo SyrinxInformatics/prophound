@@ -71,6 +71,10 @@ def genus_of(organism: str) -> str:
 
 
 def cmd_select(a) -> None:
+    if a.summary_sha256:
+        got = hashlib.sha256(Path(a.summary).read_bytes()).hexdigest()
+        if got != a.summary_sha256:
+            raise SystemExit(f"{a.summary}: SHA-256 {got} is not the expected {a.summary_sha256}")
     s = read_summary(a.summary)
     need = {"assembly_accession", "organism_name", "assembly_level", "version_status", "ftp_path",
             "refseq_category", "seq_rel_date", "asm_name"}
@@ -96,7 +100,12 @@ def cmd_select(a) -> None:
              & (s.ftp_path.str.startswith("https://") | s.ftp_path.str.startswith("ftp://"))]
     if group:
         pool = pool[pool[group] == "bacteria"]
-    pool = pool[~pool.genus.isin(corpus_genera) & (pool.genus != "")
+    excluded = set()
+    if a.exclude_genera:
+        excluded = {x.strip() for x in Path(a.exclude_genera).read_text().splitlines()
+                    if x.strip() and not x.startswith("#")}
+        print(f"[exclude] {len(excluded)} more genera from {a.exclude_genera}", flush=True)
+    pool = pool[~pool.genus.isin(corpus_genera | excluded) & (pool.genus != "")
                 & ~pool.genus.str.lower().isin(BAD_GENUS) & ~pool.assembly_accession.isin(corpus_acc)]
     pool = pool.assign(rank=pool.refseq_category.map(CATEGORY_RANK).fillna(2))
     per_genus = pool.sort_values(["rank", "assembly_accession"]).groupby("genus", sort=True).head(1)
@@ -120,6 +129,8 @@ def cmd_select(a) -> None:
     meta = {"summary_file": a.summary, "summary_sha256": sha256(a.summary), "seed": a.seed,
             "n_requested": a.n, "n": int(n),
             "corpus_genera": len(corpus_genera), "eligible_genera": int(len(per_genus)),
+            **({"exclude_genera_file": a.exclude_genera, "exclude_genera_sha256": sha256(a.exclude_genera),
+                "excluded_genera": len(excluded)} if a.exclude_genera else {}),
             "list_sha256": sha256(str(lst)),
             "rule": "bacteria, RefSeq Complete Genome, latest, genus absent from corpus; one per genus "
                     "(reference > representative > other, then accession); seeded sample of genera"}
@@ -165,6 +176,8 @@ def main() -> None:
     s.add_argument("--n", type=int, default=100)
     s.add_argument("--seed", type=int, default=20260929)
     s.add_argument("--out_dir", required=True)
+    s.add_argument("--exclude_genera", help="file of further genera to exclude, one per line (# comments)")
+    s.add_argument("--summary_sha256", help="refuse a summary file with any other SHA-256")
     m = sub.add_parser("manifest")
     m.add_argument("--genomad_dir", required=True)
     m.add_argument("--genome_list", required=True)

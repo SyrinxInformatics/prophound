@@ -20,8 +20,8 @@ Input: a `predict --mode exploratory --write-seed-scores --refine-window-len ...
 directory (<genome>/windows.tsv, fine_windows.tsv, run_metadata.json). Exploratory
 calls contain every other mode's calls, so their fine windows cover every mode's
 refinement neighbourhoods. For each mode the calls are rebuilt with the shipped
-code: build_pass, then the shipped `refine()` (fed the stored fine scores by a
-stand-in scorer, with options from the real `predict` parser), then finalize.
+code: build_pass, then the shipped `refine()` (evalkit.refine_pass: the stored fine
+scores, `predict`'s default options), then finalize, then the shipped att boundaries.
 
 Variants per mode:
   shipped        coarse calls (refinement off, as released)
@@ -47,61 +47,29 @@ import json
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
+import att_boundaries as ab
+import evalkit as ek
 import numpy as np
 import pandas as pd
 
-import att_boundaries as ab
-import evalkit as ek
+try:
+    from prophound.models.prophage.src.att import Genome, apply_boundaries
+except ImportError:
+    from src.att import Genome, apply_boundaries
 
-REFINE_ARGS = ["--refine-window-len", "5000", "--refine-threshold", "0.6", "--edge-alpha", "0.6",
-               "--edge-alpha-ramp", "15000", "60000"]
-ATT_RULE = {"w_in": 10000, "w_out": 5000, "max_len": 300, "max_copies": 2, "min_entropy": 1.5,
-            "core_slack": None, "e_max": 1e-6}
 MODES = ["exploratory", "default", "conservative"]
-
-
-class _Progress:
-    def add(self, n: int) -> None:
-        pass
-
-
-class StoredScorer:
-    """Stands in for predict's Scorer: fine-window scores come from a stored fine_windows.tsv."""
-
-    def __init__(self, fine: pd.DataFrame):
-        self.progress = _Progress()
-        self.lookup = fine.set_index(["contig_id", "start", "end"]).prob
-
-    def score(self, windows: pd.DataFrame, window_len: int):
-        key = pd.MultiIndex.from_frame(windows[["contig_id", "start", "end"]])
-        prob = self.lookup.reindex(key).to_numpy()
-        if np.isnan(prob).any():
-            raise SystemExit(f"{int(np.isnan(prob).sum())} fine windows missing from the stored run")
-        return prob, None
-
-
-def predict_opts(mode: str, fasta: str):
-    from prophound.models.prophage.src.options import PredictOptions, add_predict_arguments
-
-    p = argparse.ArgumentParser()
-    add_predict_arguments(p)
-    args = p.parse_args(["--input", fasta, "--outdir", "unused", "--mode", mode, *REFINE_ARGS])
-    return PredictOptions.from_args(args, trained_window_len=10000, trained_stride=1000)
 
 
 def genome_calls(job: dict) -> list:
     """{mode: {variant: calls}} for one genome, built by the shipped code."""
-    from prophound.models.prophage.src.predict_genome import refine
-
     g, d, fasta = job["genome"], Path(job["dir"]), job["fasta"]
     w = pd.read_csv(d / "windows.tsv", sep="\t", float_precision="round_trip")
     fine = pd.read_csv(d / "fine_windows.tsv", sep="\t", float_precision="round_trip")
     wl = int(json.loads((d / "run_metadata.json").read_text())["window_len"])
     lengths = dict(ek.iter_fasta_lengths(fasta))
-    seqs, text, p = ab.load_genome(Path(fasta))
+    seqs, _, _ = ab.load_genome(Path(fasta))
     out = []
     for mode in job["modes"]:
-        opts = predict_opts(mode, fasta)
         rules = ek.CallRules.for_mode(mode, wl, 3)
         span = (w.end - w.start).to_numpy()
         per = [w[f"prob_ckpt{k}"].to_numpy() for k in (1, 2, 3)]
@@ -119,8 +87,8 @@ def genome_calls(job: dict) -> list:
         variants = {}
         for name, do_refine in (("shipped", False), ("refine", True)):
             calls = coarse.calls
-            if do_refine and len(calls):
-                calls, _, _ = refine(StoredScorer(fine), calls, lengths, g, fasta, opts)
+            if do_refine:
+                calls = ek.refine_pass(calls, fine, lengths, g, fasta, mode)
             allc = ek.concat_nonempty([calls.assign(short=False), *(s.calls.assign(short=True) for s in shorts)]) \
                 if len(calls) or shorts else calls
             filt = ek.concat_nonempty([coarse.filtered, *(s.filtered for s in shorts)])
@@ -128,39 +96,12 @@ def genome_calls(job: dict) -> list:
             final = ek.finalize(allc, filt, per_seed, lengths, lambda df: ek.call_n_fraction(df, fasta), rules,
                                 ek.DEFAULT_EDGE_SNAP_FRAC)
             variants[name] = final.calls.assign(genome_id=g)
-        # att: searched on each call's coarse coordinates, the frame the rule was tuned in
+        # att and edge ranges by the shipped code (src/att.py), on each call's coarse coordinates
+        genome = Genome(seqs)
         for name in ("shipped", "refine"):
-            c = variants[name].copy()
-            cs = c["coarse_start"] if "coarse_start" in c else c["start"]
-            ce = c["coarse_end"] if "coarse_end" in c else c["end"]
-            pieces = c["n_pieces"] if "n_pieces" in c else pd.Series(1, index=c.index)
-            att_s, att_e, att_l = [], [], []
-            for i, r in enumerate(c.itertuples()):
-                hit = None
-                if not r.short and r.contig_edge == "none" and int(pieces.iloc[i]) == 1:
-                    hit = att_for(seqs[r.contig_id], text, int(cs.iloc[i]), int(ce.iloc[i]), p)
-                att_s.append(hit["att_start"] if hit else np.nan)
-                att_e.append(hit["att_end"] if hit else np.nan)
-                att_l.append(hit["att_len"] if hit else np.nan)
-            c["att_start"], c["att_end"], c["att_len"] = att_s, att_e, att_l
-            c["model_start"], c["model_end"] = c["start"], c["end"]
-            has = c.att_start.notna()
-            c.loc[has, "start"] = c.loc[has, "att_start"].astype(int)
-            c.loc[has, "end"] = c.loc[has, "att_end"].astype(int)
-            variants["att" if name == "shipped" else "refine+att"] = c
+            variants["att" if name == "shipped" else "refine+att"] = apply_boundaries(variants[name], genome, lengths)
         out.append((mode, variants))
     return out
-
-
-def att_for(contig: str, text: str, s: int, e: int, p: float) -> dict | None:
-    """The tuned att rule (ATT_RULE) on one call."""
-    cands = ab.find_candidates(contig, text, s, e)
-    if not cands:
-        return None
-    item = pd.DataFrame([{"item_id": 0, "searchable": True, "s": s, "e": e, "contig_len": len(contig),
-                          "core_lo": (s + e) // 2, "core_hi": (s + e) // 2, "p_match": p}])
-    sel = ab.select(item, pd.DataFrame(cands).assign(item_id=0), **ATT_RULE)
-    return None if sel.empty else sel.iloc[0].to_dict()
 
 
 def metrics(ev: pd.DataFrame, reg: pd.DataFrame, n_genomes: int) -> dict:

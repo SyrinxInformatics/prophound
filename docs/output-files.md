@@ -21,7 +21,7 @@ All coordinates in the TSV files and BED are **0-based, half-open** (`start` inc
 | `windows.tsv` | always | every scored window and its score |
 | `run_metadata.json` | always | settings, input and checkpoint hashes, counts, timing, platform |
 | `regions.fna` | `--write-region-fasta` | the calls' sequences |
-| `fine_windows.tsv` | `--refine-window-len` > 0 | the refinement pass's windows |
+| `fine_windows.tsv` | refinement on (the default; not with `--refine-window-len 0`) | the refinement pass's windows |
 
 ## Batches
 
@@ -50,8 +50,10 @@ One row per call, sorted by contig (in input order), then by start.
 | `call_id` | `prophound_1` … `prophound_N`; the same name in BED, GFF3 and FASTA |
 | `genome_id` | the input file name without its extension (and without `.gz`/`.bz2`/`.xz`) |
 | `contig_id` | the sequence ID: the first word of the FASTA header, or the versioned accession (`VERSION`) of a GenBank/EMBL record |
-| `start`, `end` | the call, 0-based half-open |
-| `n_windows` | windows overlapping the call |
+| `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise the model's edges |
+| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are the model's estimate (docs/att-boundaries.md) |
+| `start_lo`, `start_hi`, `end_lo`, `end_hi` | where each true edge lies. Equal to the edge for an att edge and for an edge on a contig end. For a model edge, a 90% range relative to the call's length L: from 0.055·L outside to 0.494·L inside the reported edge, clipped to the contig (calibrated on the tuning sample; 0.91–0.92 coverage on two check samples). Model edges usually sit outside the element, so most of the range is inward |
+| `n_windows` | windows overlapping the model's call |
 | `region_len_bp` | `end − start` |
 | `mean_prob` | mean score of those windows, 4 dp. **Use this to rank calls**: it separates calls that match known elements from those that don't better than `max_prob` |
 | `max_prob` | highest score among them, 4 dp; about 1 for almost every call |
@@ -59,7 +61,9 @@ One row per call, sorted by contig (in input order), then by start.
 | `contig_edge` | `none`, `start`, `end` or `both`: an edge on a contig end. That edge is the end of the sequence, not a detected element boundary, and the element may continue on another contig |
 | `n_frac` | fraction of the call that is N, 4 dp |
 | `seed_support` | with several checkpoints: how many make an overlapping call of their own (absent with one checkpoint) |
-| `refine_status`, `coarse_start`, `coarse_end`, `n_pieces` | only with `--refine-window-len`. `refine_status` is `refined`, `split` (one coarse call became `n_pieces`), `no_fine_support` (kept unchanged) or `short_contig` (not refined). `coarse_*` is the call before refinement |
+| `refine_status`, `coarse_start`, `coarse_end`, `n_pieces` | from the refinement pass (on by default; absent with `--refine-window-len 0`). `refine_status` is `refined`, `split` (one coarse call became `n_pieces`), `no_fine_support` (kept unchanged) or `short_contig` (not refined). `coarse_*` is the call before refinement; the att search uses it |
+| `model_start`, `model_end` | the model's edges (refined, or coarse without refinement). Differ from `start`/`end` only when `boundary` is `att` |
+| `att_len`, `att_core` | the att core's length and sequence (empty for a model call). Authors differ on whether one core copy belongs to the element: with this core, `start + att_len` or `end − att_len` gives the other convention |
 
 ## `regions.filtered.tsv`
 
@@ -69,12 +73,12 @@ The same columns as `regions.tsv`, numbered `filtered_1` … `filtered_N`, plus:
 |---|---|
 | `filter` | why the call was set aside: `seed_vote` (fewer checkpoints than the mode's vote made it), `n_gap` (at least 50% N), or `seed_vote;n_gap` |
 
-These calls are not in BED, GFF3 or FASTA. They are kept so a discovery user can recover them without a re-run. Refinement columns are empty for calls set aside by the vote, because only kept calls are refined.
+These calls are not in BED, GFF3 or FASTA. They are kept so a discovery user can recover them without a re-run. Refinement columns are empty for calls set aside by the vote, because only kept calls are refined. They are searched for att sites like kept calls.
 
 ## `regions.bed`, `regions.gff3`, `regions.fna`
 
 - **BED6:** `contig_id`, `start`, `end`, `call_id`, score, `.`. The score is `round(1000 × mean_prob)`, so it ranks calls.
-- **GFF3:** type `prophage` (Sequence Ontology), source `prophound`, score `mean_prob`. Attributes: `ID` (= `call_id`), `note=candidate`, `mean_prob`, `max_prob`, `seed_support`, `n_frac`, `contig_edge`, `window_bp`.
+- **GFF3:** type `prophage` (Sequence Ontology), source `prophound`, score `mean_prob`. Attributes: `ID` (= `call_id`), `note=candidate`, `boundary`, `att_core` (att calls only), `mean_prob`, `max_prob`, `seed_support`, `n_frac`, `contig_edge`, `window_bp`.
 - **FASTA:** `>call_id contig:start-end` (1-based, inclusive), 80 bases per line.
 
 ## `windows.tsv`
@@ -103,7 +107,8 @@ Scores are written at full precision, because offline scorers rebuild calls from
 | `input_format` | detected `format` (`fasta`, `genbank`, `embl`, `gff3`), `compression`, `u_read_as_t` (RNA `U` bases read as `T`), and `contig_names` (GenBank/EMBL record name per contig ID, where they differ) |
 | `mode`, `threshold`, `seed_threshold`, `extend_threshold`, `ensemble` | the thresholds actually used |
 | `window_len`, `stride`, `trained_window_len`, `trained_stride`, `grid_offset`, `ambiguity_policy` | window settings |
-| `region_builder`, `coverage_frac`, `fragment_merge`, `refine` | call-building settings (`refine` only with refinement) |
+| `region_builder`, `coverage_frac`, `fragment_merge`, `refine`, `boundary_refinement` | call-building settings (`refine` only with refinement); `boundary_refinement` names the edge stages that ran (`fine_pass_then_att` by default) |
+| `boundaries` | `att_search` (on or off), `calls_with_att`, and the `edge_range` fractions and coverage |
 | `short_contigs` | contigs under the window length: counts, and the thresholds used to scan them |
 | `seed_support` | the vote: checkpoints, minimum support, calls set aside, calls by support |
 | `edge_snap`, `n_gap_filter` | edge snapping and the N filter: settings and counts |

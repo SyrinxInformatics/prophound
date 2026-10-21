@@ -110,11 +110,12 @@ Measured under the standing RC/N check (`docs/scientific-validity.md`, "Input-ro
 
 Reverse-complement handling is *not* a concern: window scores and whole-contig region calls are both exactly invariant.
 
-## Window size and fine refinement flags (added 2026-09-23, experimental, off by default)
+## Window size, refinement and att boundaries
 
 - `--window-len` / `--stride`: override the checkpoint's trained 10 kb / 1 kb at inference. The pooling accepts any length, but the mode thresholds were calibrated at 10 kb, so a warning is printed whenever the length differs. `run_metadata.json` records both the used and the trained values.
-- `--refine-window-len W` (0 = off), plus `--refine-stride`, `--refine-threshold`, `--refine-margin`, `--edge-alpha`, `--split-min-gap-bp` and `--split-max-prob`: the fine pass that splits conflated calls and places edges. It needs `--region-builder coverage`. It writes an extra `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four".
-- The flags are defined twice, in `predict_genome.add_multiscale_args` and in `cli.py`, because the top-level CLI avoids importing torch at parse time. Both parse identically (checked). Keep them in sync.
+- **Refinement, on by default since 2026-10-21** (user decision; `docs/att-boundaries.md` "The combined pipeline"): `--refine-window-len 5000` (0 turns it off), `--refine-stride 250`, `--refine-threshold 0.6`, `--edge-alpha 0.6`, `--edge-alpha-ramp 15000 60000` (`0 0` turns the ramp off), `--split-min-gap-bp 4000`, `--split-max-prob 0.05`, all in the advanced help section. The fine pass splits conflated calls and places edges; it writes `fine_windows.tsv`, and `regions.tsv` gains `refine_status`, `coarse_start`, `coarse_end` and `n_pieces`. Design: `docs/downstream-postprocessing.md` "One pipeline for all four". Added 2026-09-23 as an experimental opt-in.
+- **Att boundaries, on by default since 2026-10-21** (`--att-search {on,off}`): after finalize, each call is searched for an att pair on its coarse coordinates (`src/att.py`); where one is accepted, it replaces the edges. Every call gets `boundary`, `start_lo`…`end_hi`, `model_start`/`model_end`, `att_len` and `att_core` (`docs/output-files.md`). The pipeline order is coarse calls → refinement → finalize (snap, N filter, vote) → att search.
+- **One parser** (`src/options.py`) serves `prophound predict` and `python -m …predict_genome`; `tests/test_cli_defaults.py` checks the defaults.
 
 ## Seed vote per mode (2026-09-29, user decision)
 

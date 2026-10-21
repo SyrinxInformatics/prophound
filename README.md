@@ -38,12 +38,12 @@ prophound predict --input examples/hin_rd_kw20_region.fna --outdir example_out
 The example is 220 kb of *Haemophilus influenzae* Rd KW20 holding its two geNomad-called prophage regions. It takes a few seconds on a GPU and about 2 minutes on CPU. The expected result is two calls, one over each element, both made by all three checkpoints:
 
 ```
-call_id      contig_id           start   end     seed_support
-prophound_1  hin_rd_kw20_region  51000   81000   3
-prophound_2  hin_rd_kw20_region  116000  156000  3
+call_id      contig_id           start   end     boundary  start_lo  start_hi  end_lo  end_hi  seed_support
+prophound_1  hin_rd_kw20_region  53842   81000   model     52348     67258     67584   82494   3
+prophound_2  hin_rd_kw20_region  116737  156000  model     114578    136133    136604  158159  3
 ```
 
-The calls overshoot the elements (58,836–73,073 and 119,961–154,275) by up to about 8 kb on a side. Boundaries come from 1 kb bins of the score track, so they are coarser than a gene-based tool's. [`examples/README.md`](examples/README.md) explains the output, and `pixi run smoke` checks it.
+**Boundaries.** Where an element has an att site (a direct repeat left at both edges by integration), `boundary` is `att` and the edges are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `boundary` is `model`: the edges are the model's estimate, which usually overshoots by a few kb, and `start_lo`…`end_hi` give where each true edge lies, 90% of the time. Neither example element has an att site; the calls overshoot them (58,836–73,073 and 119,961–154,275) by 3–8 kb, inside the ranges. [`examples/README.md`](examples/README.md) explains the output, and `pixi run smoke` checks it.
 
 Other inputs:
 
@@ -74,10 +74,11 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 
 | file | contents |
 |---|---|
-| `regions.tsv` | the calls, one row each: coordinates (0-based, half-open), scores, `seed_support`, `contig_edge`, `n_frac` |
+| `regions.tsv` | the calls, one row each: coordinates (0-based, half-open), `boundary` (att or model) and each edge's range, scores, `seed_support`, `contig_edge`, `n_frac` |
 | `regions.bed`, `regions.gff3` | the same calls; BED score is `round(1000 × mean_prob)` |
 | `regions.filtered.tsv` | calls a filter set aside (the seed vote, or mostly N), with the reason |
 | `windows.tsv` | every window's score: the track the calls are built from |
+| `fine_windows.tsv` | the fine pass's window scores, around each call |
 | `run_metadata.json` | settings, model and input checksums, versions, timing |
 | `regions.fna` | the called sequences (`--write-region-fasta`) |
 

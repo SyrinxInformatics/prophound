@@ -1,0 +1,174 @@
+# Genera the second lockbox must not draw (docs/lockbox2.md): every genus of the first
+# lockbox (150), the LAMBDA clean subset (15) and the G5b Philympics set (6);
+# the corpus (train/val/test) is excluded separately through --corpus_lists.
+.
+Achromobacter
+Acidaminobacter
+Acidaminobacterium
+Acidimicrobilacustris
+Aegicerorhabdus
+Aerococcus
+Agrilactobacillus
+Aleya
+Algorimicrobium
+Alicyclobacillus
+Aliikangiella
+Alkalimonas
+Allocoprococcus
+Allosphingosinicella
+Alloyangia
+Amaricoccus
+Anaerosalibacter
+Annamia
+Arenimonas
+Aurantibacter
+Avrilella
+Azobacteroides
+Biomaibacter
+Bisbaumannia
+Brakhagea
+Breznakia
+Burkholderia
+Caldifarcimen
+Campylobacter
+Candidatus Azoamicus
+Candidatus Campylobacter
+Candidatus Cardinium
+Candidatus Chloracidobacterium
+Candidatus Desulfovibrio
+Candidatus Gillettellia
+Candidatus Kaistella
+Candidatus Kurthia
+Candidatus Legionella
+Candidatus Limnocylindrus
+Candidatus Limousia
+Candidatus Magnetomonas
+Candidatus Merdibacter
+Candidatus Methylolitoribacter
+Candidatus Mycoplasma
+Candidatus Providencia
+Candidatus Psyllophila
+Candidatus Rickettsiella
+Candidatus Sodalis
+Carbonicoccus
+Chiayiivirga
+Chitinirhabdus
+Citromicrobium
+Clostridium_G
+Corynebacterium
+Croceitalea
+Cyanobacterium
+Daejeonella
+Desulfatiglans
+Desulfoconvexum
+Desulfocurvus
+Desulfonauticus
+Desulforhopalus
+Desulfosceptrum
+Desulfosoma
+Desulfosporomusa
+Desulfovibrio
+Desulfuromusa
+Dielma
+Enhygromyxa
+Escherichia
+Eximiradius
+Fimbriicoccus
+Floridaenema
+Fodinicurvata
+Fontibacterium
+Fusicatenibacter
+Galbitalea
+Gelidimonas
+Geothermobacter
+Gillisella
+Glycomyces
+Gordonia
+Haemophilus
+Hahnella
+Halospirulina
+Hanstruepera
+Hepatoplasma
+Hoeflea
+Holdemanella
+Hominenteromicrobium
+Hominimerdicola
+Hoskinsella
+Hydrogenivirga
+Hydrotalea
+Hyunsoonleella
+Jutongia
+Kofleria
+Kothea
+Kouleothrix
+Kueselia
+Lactiplantibacillus
+Lactivibrio
+Lacunimicrobium
+Leucogemmata
+Liberibacter
+Listeria
+Litoreibacter
+Lotipaludicoccus
+Luoshenia
+Mesorhizobium
+Methylacidiphilum
+Methylomirabilis
+Micropepsis
+Monashia
+Murdochiella
+Mycobacterium
+Nanosynbacter
+Natronocytophaga
+Natronotalea
+Neisseria
+Neoakkermansia
+Nitrospira
+Njordella
+Nonomuraea
+Ornithobacterium
+Oryzihumus
+Oryzophilus
+Pantoea
+Paracoccus
+Parvibacter
+Phocicoccus
+Photorhabdus
+Phyllobacterium
+Phytoplasma
+Piezobacter
+Pinirhizobacter
+Piscibacter
+Planktophila
+Polluticoccus
+Pontixanthobacter
+Prescottella
+Pseudanabaenococcus
+Pseudomonas
+Pseudothioglobus
+Pyxidicoccus
+Racemicystis
+Rhodoglobus
+Roseixanthobacter
+Roseofilum
+Rudaea
+Ruminococcoides
+Salinifilum
+Salmonella
+Sandarakinorhabdus
+Shewanella
+Silvibacterium
+Streptococcus
+Thalassovivens
+Thermalkanevorax
+Thermosporothrix
+Thermosyntropha
+Thiobacter
+Thioreductor
+Tindallia
+Tropicibacter
+Uliginosibacterium
+Undibacterium
+Vulcanithermus
+Yeosuana
+gamma

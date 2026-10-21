@@ -59,6 +59,7 @@ from .batch import (
 from .calls import (  # noqa: F401 -- re-exported: scripts and tests import these from here
     REGION_COLUMNS,
     CallRules,
+    FinalCalls,
     PassCalls,
     apply_seed_vote,
     build_pass,
@@ -75,6 +76,7 @@ from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoi
 from .inputs import PreparedInput, genome_id_for, prepare_input
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
 from .model_rc_cnn import build_model
+from .att import REL_IN, REL_OUT, Genome, apply_boundaries
 from .multiscale import plan_fine_windows, plan_neighborhoods, refine_regions
 from .options import (  # noqa: F401 -- re-exported: scripts import the defaults and tables from here
     AMBIGUITY_POLICIES,
@@ -805,6 +807,12 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
     if gap_meta["calls_dropped"]:
         log.warn(f"{_plural(gap_meta['calls_dropped'], 'call')} set aside in regions.filtered.tsv: at least "
                  f"{MAX_CALL_N_FRAC:.0%} N (imputed gap sequence).")
+    t = time.perf_counter()
+    final = boundaries(final, fasta, contig_lengths, opts)
+    if opts.att_search:
+        n_att = final.meta["boundaries"]["calls_with_att"]
+        log.detail(f"att search: {n_att} of {_plural(len(final.calls), 'call')} with att boundaries "
+                   f"in {_duration(time.perf_counter() - t)}")
     windows_df = label_windows(windows_df, final.calls)
 
     short_meta = {"mode": opts.short_contigs, **short_report, **short_scan_meta}
@@ -819,6 +827,22 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
         log.info(f"[done] wrote {', '.join(written)} to {opts.outdir}")
     return GenomeResult(prepared, input_summary, calls_out, filtered_out, short_meta,
                         final.meta.get("seed_support"), gap_meta)
+
+
+def boundaries(final: FinalCalls, fasta: str, contig_lengths: Dict[str, int], opts: PredictOptions) -> FinalCalls:
+    """Att boundaries where found and an edge range for every call, kept and set aside
+    (docs/att-boundaries.md). n_frac is re-measured where att moved a call's edges."""
+    genome = Genome.from_fasta(fasta) if opts.att_search else None
+    calls = apply_boundaries(final.calls, genome, contig_lengths)
+    filtered = apply_boundaries(final.filtered, genome, contig_lengths)
+    for df in (calls, filtered):
+        moved = (df["boundary"] == "att").to_numpy() if len(df) else np.zeros(0, bool)
+        if moved.any():
+            df.loc[moved, "n_frac"] = np.round(call_n_fraction(df[moved], fasta), 4)
+    meta = {"att_search": opts.att_search,
+            "calls_with_att": int((calls["boundary"] == "att").sum()) if len(calls) else 0,
+            "edge_range": {"outward_frac": REL_OUT, "inward_frac": REL_IN, "coverage": 0.9}}
+    return FinalCalls(calls, filtered, {**final.meta, "boundaries": meta})
 
 
 _SHORT_SCALE = re.compile(r"_short(\d+)")
@@ -838,6 +862,12 @@ def call_table(calls: pd.DataFrame, contig_order: Dict[str, int], prefix: str, w
               .sort_values(["_order", "start", "end"], kind="stable")
               .drop(columns="_order").reset_index(drop=True))
     out.insert(0, "call_id", [f"{prefix}{i}" for i in range(1, len(out) + 1)])
+    # where each edge is and how sure: right after the coordinates
+    first = ["boundary", "start_lo", "start_hi", "end_lo", "end_hi"]
+    if all(c in out.columns for c in first):
+        rest = [c for c in out.columns if c not in first]
+        at = rest.index("end") + 1
+        out = out[rest[:at] + first + rest[at:]]
     for col in ("mean_prob", "max_prob"):
         if col in out.columns:
             out[col] = out[col].astype(float).round(4)
@@ -901,7 +931,11 @@ def run_metadata(opts: PredictOptions, run_name: str, device: str, prepared: Pre
     if "seed_support" in call_meta:
         metadata["seed_support"] = call_meta["seed_support"]
     metadata["region_builder"] = "coverage_fraction"
-    metadata["boundary_refinement"] = "none_bin_edges"
+    metadata["boundary_refinement"] = {(True, True): "fine_pass_then_att", (True, False): "fine_pass",
+                                       (False, True): "att", (False, False): "none_bin_edges"}[
+        (bool(opts.refine_window_len), opts.att_search)]
+    if "boundaries" in call_meta:
+        metadata["boundaries"] = call_meta["boundaries"]
     metadata["coverage_frac"] = opts.coverage_frac
     if opts.max_gap_bp > 0:
         metadata["fragment_merge"] = {"max_gap_bp": opts.max_gap_bp, "bridge_prob": opts.bridge_prob}

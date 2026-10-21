@@ -1,3 +1,3 @@
-call_id	contig_id	start	end	contig_edge	seed_support
-prophound_1	hin_rd_kw20_region	51000	81000	none	3
-prophound_2	hin_rd_kw20_region	116000	156000	none	3
+call_id	contig_id	start	end	boundary	contig_edge	seed_support
+prophound_1	hin_rd_kw20_region	53842	81000	model	none	3
+prophound_2	hin_rd_kw20_region	116737	156000	model	none	3

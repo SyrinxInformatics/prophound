@@ -26,6 +26,12 @@ Endpoints, as preregistered:
              the gap to the 42- and 18-genome estimates
 Descriptive, not preregistered: calls/genome on the genomes with no element.
 
+With --boundaries (the second lockbox, docs/lockbox2.md), also its boundary endpoints:
+median IoU per element; the share of calls with att boundaries; coverage of the model
+edges' ranges (start_lo..start_hi, end_lo..end_hi) on calls overlapping one element;
+att edges' distance to geNomad's; bp called and bp off every element. The run check
+then also requires the 0.1.0 edge stages (refinement, then att search).
+
 Before scoring, every run is checked: one regions.tsv and run_metadata.json per genome
 and mode, the mode as named, edge snap at 0.5, impute, and one checkpoint-hash set.
 Nothing is dropped after scoring. An --out that already exists is never overwritten.
@@ -59,7 +65,7 @@ REFERENCE = {
 STRATA = ["<5kb", "5-8kb", "8-10kb", "10-15kb", "15-30kb", "30-60kb", "60kb+"]
 
 
-def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool) -> dict:
+def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool, boundaries: bool = False) -> dict:
     missing, bad = [], []
     shas = set()
     for g in genomes:
@@ -71,7 +77,8 @@ def check_runs(genomes: list, run_dir: Path, mode: str, check_metadata: bool) ->
             continue
         m = json.loads((d / "run_metadata.json").read_text())
         if (m.get("mode") != mode or (m.get("edge_snap") or {}).get("frac") != 0.5
-                or m.get("ambiguity_policy") != "impute"):
+                or m.get("ambiguity_policy") != "impute"
+                or (boundaries and m.get("boundary_refinement") != "fine_pass_then_att")):
             bad.append(g)
         shas.add(json.dumps(m.get("checkpoint_sha256"), sort_keys=True))
     if missing or bad or len(shas) > 1:
@@ -107,6 +114,50 @@ def score_mode(ev: pd.DataFrame, genomes: list, run_dir: Path) -> tuple[pd.DataF
     return el, {"calls": calls, "conflated_calls": n_conflated, "absorbed_elements": n_absorbed}
 
 
+def boundary_metrics(ev: pd.DataFrame, genomes: list, run_dir: Path) -> dict:
+    """The second lockbox's boundary endpoints (docs/lockbox2.md), from full regions.tsv files."""
+    ious, cover, att_err = [], [], []
+    n_calls = n_att = 0
+    bp = off = 0
+    for g in genomes:
+        tsv = run_dir / g / "regions.tsv"
+        pred = pd.read_csv(tsv, sep="\t") if tsv.exists() and tsv.stat().st_size > 1 else pd.DataFrame()
+        tr = ev[ev.accession == g]
+        for r in tr.itertuples():
+            on = pred[(pred.contig_id == r.contig) & (pred.end > r.start) & (pred.start < r.end)] if len(pred) else pred
+            ious.append(max(((min(c.end, r.end) - max(c.start, r.start)) / (max(c.end, r.end) - min(c.start, r.start))
+                             for c in on.itertuples()), default=0.0))
+        if pred.empty:
+            continue
+        n_calls += len(pred)
+        n_att += int((pred.boundary == "att").sum())
+        for c in pred.itertuples():
+            t = tr[(tr.contig == c.contig_id) & (tr.end > c.start) & (tr.start < c.end)]
+            bp += int(c.end - c.start)
+            off += int(c.end - c.start) - sum(overlap(x.start, x.end, c.start, c.end) for x in t.itertuples())
+            if len(t) != 1:
+                continue
+            x = t.iloc[0]
+            edges = [("start", int(x.start), c.contig_edge not in ("start", "both")),
+                     ("end", int(x.end), c.contig_edge not in ("end", "both"))]
+            for side, true, real in edges:
+                if not real:
+                    continue
+                if c.boundary == "att":
+                    att_err.append(abs(int(getattr(c, side)) - true))
+                else:
+                    cover.append(int(getattr(c, f"{side}_lo")) <= true <= int(getattr(c, f"{side}_hi")))
+    att_err = np.asarray(att_err)
+    return {"median_iou": float(np.median(ious)) if ious else None,
+            "att_frac_calls": n_att / n_calls if n_calls else None, "n_calls": n_calls, "n_att_calls": n_att,
+            "model_edge_range_coverage": float(np.mean(cover)) if cover else None, "n_model_edges": len(cover),
+            "att_edge_vs_genomad": {"n": int(len(att_err)),
+                                    "median_bp": float(np.median(att_err)) if len(att_err) else None,
+                                    "le100": float(np.mean(att_err <= 100)) if len(att_err) else None,
+                                    "le1000": float(np.mean(att_err <= 1000)) if len(att_err) else None},
+            "Mb_called": bp / 1e6, "Mb_off_element": off / 1e6}
+
+
 def genome_bootstrap(el: pd.DataFrame, genomes: list, n_boot: int, seed: int) -> list:
     per = el.groupby("accession").covered50.agg(["sum", "count"]).reindex(genomes, fill_value=0)
     k, n = per["sum"].to_numpy(), per["count"].to_numpy()
@@ -125,6 +176,7 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--n_boot", type=int, default=10000)
     ap.add_argument("--seed", type=int, default=20260929)
+    ap.add_argument("--boundaries", action="store_true", help="also the boundary endpoints (docs/lockbox2.md)")
     ap.add_argument("--no_metadata_check", action="store_true",
                     help="validation on older runs only (they predate edge snap); never for the lockbox")
     a = ap.parse_args()
@@ -147,7 +199,7 @@ def main() -> None:
     per_element = []
     for mode in [m for m in MODES if m in runs]:
         run_dir = Path(runs[mode])
-        res["modes"][mode] = r = {"runs": check_runs(genomes, run_dir, mode, not a.no_metadata_check)}
+        res["modes"][mode] = r = {"runs": check_runs(genomes, run_dir, mode, not a.no_metadata_check, a.boundaries)}
         el, extra = score_mode(ev, genomes, run_dir)
         k, n = int(el.covered50.sum()), len(el)
         n_calls = sum(extra["calls"].values())
@@ -166,6 +218,8 @@ def main() -> None:
             "descriptive_phage_free_calls_per_genome":
                 float(np.mean([extra["calls"][g] for g in phage_free])) if phage_free else float("nan"),
         })
+        if a.boundaries:
+            r["boundaries"] = b = boundary_metrics(ev, genomes, run_dir)
         per_element.append(el.assign(mode=mode))
         print(f"{mode:12s} covered50 {k / n:.3f} ({k}/{n}) Wilson [{r['covered50_wilson95'][0]:.3f}, "
               f"{r['covered50_wilson95'][1]:.3f}] genome-boot [{r['covered50_genome_boot95'][0]:.3f}, "
@@ -173,6 +227,12 @@ def main() -> None:
               f"{r['calls_per_genome']:.1f} (no-element genomes {r['descriptive_phage_free_calls_per_genome']:.1f}) | "
               f"conflated {r['conflated_calls']} absorbing {r['absorbed_elements']} | gap to 42 "
               f"{r['gap_to_reused']['42']:+.3f}, to 18 {r['gap_to_reused']['18']:+.3f}")
+        if a.boundaries:
+            ae = b["att_edge_vs_genomad"]
+            print(f"    boundaries: median IoU {b['median_iou']:.3f} | att on {b['att_frac_calls']:.3f} of calls | "
+                  f"model-edge range coverage {b['model_edge_range_coverage']:.3f} (n={b['n_model_edges']}) | "
+                  f"att edges vs geNomad median {ae['median_bp']} bp (n={ae['n']}) | "
+                  f"{b['Mb_called']:.2f} Mb called, {b['Mb_off_element']:.2f} off")
         for s, v in r["by_stratum"].items():
             print(f"    {s:>8s} n={v['n']:3d} covered50 {v['covered50']:.3f} [{v['wilson95'][0]:.3f}, {v['wilson95'][1]:.3f}]")
 

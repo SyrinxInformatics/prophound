@@ -148,9 +148,10 @@ def write_gff3(regions: pd.DataFrame, path: Path, mode: str, version: str) -> No
         fh.write(f"# prophound {version}, mode {mode}. Calls are candidate prophage regions, not annotations.\n")
         for r in regions.itertuples(index=False):
             attrs = [f"ID={r.call_id}", "note=candidate"]
-            for k in ("mean_prob", "max_prob", "seed_support", "n_frac", "contig_edge", "window_bp"):
+            for k in ("boundary", "att_core", "mean_prob", "max_prob", "seed_support", "n_frac", "contig_edge",
+                      "window_bp"):
                 v = getattr(r, k, None)
-                if v is not None and not (isinstance(v, float) and pd.isna(v)):
+                if v is not None and v != "" and not (isinstance(v, float) and pd.isna(v)):
                     attrs.append(f"{k}={v:.4f}" if isinstance(v, float) else f"{k}={v}")
             fh.write(f"{r.contig_id}\tprophound\tprophage\t{int(r.start) + 1}\t{int(r.end)}\t{float(r.mean_prob):.4f}"
                      "\t.\t.\t" + ";".join(attrs) + "\n")

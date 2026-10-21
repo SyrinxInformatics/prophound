@@ -28,7 +28,7 @@ import pandas as pd
 import pytest
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
-CALL_COLUMNS = ["call_id", "contig_id", "start", "end", "contig_edge", "seed_support"]
+CALL_COLUMNS = ["call_id", "contig_id", "start", "end", "boundary", "contig_edge", "seed_support"]
 
 
 @pytest.mark.slow

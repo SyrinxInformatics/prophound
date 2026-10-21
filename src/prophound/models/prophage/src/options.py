@@ -67,17 +67,18 @@ DEFAULT_ENSEMBLE = "max"
 DEFAULT_COVERAGE_FRAC = 0.1
 DEFAULT_MAX_GAP_BP = 50000      # 0 turns merging off
 DEFAULT_BRIDGE_PROB = 0.1
-# The fine refinement pass is off by default (0); the other settings are the opt-in
-# "tight boundaries" setting (docs/downstream-postprocessing.md).
-DEFAULT_REFINE_WINDOW_LEN = 0
+# The fine refinement pass, on by default since 0.1.0 (docs/att-boundaries.md "The combined
+# pipeline"; the setting is from docs/downstream-postprocessing.md). 0 turns it off.
+DEFAULT_REFINE_WINDOW_LEN = 5000
 DEFAULT_REFINE_STRIDE = 250
-DEFAULT_REFINE_THRESHOLD = 0.95
-DEFAULT_EDGE_ALPHA = 1.0        # 1 keeps the coarse edges
+DEFAULT_REFINE_THRESHOLD = 0.6
+DEFAULT_EDGE_ALPHA = 0.6        # 1 keeps the coarse edges
+DEFAULT_EDGE_ALPHA_RAMP = (15000, 60000)
 DEFAULT_SPLIT_MIN_GAP_BP = 4000
 # Below DEFAULT_BRIDGE_PROB, so splitting cannot undo a merge.
 DEFAULT_SPLIT_MAX_PROB = 0.05
 # A call at least this fraction N is dropped: `impute` turns a scaffold gap into random
-# sequence, which can be called (docs/v1-scope.md A.3).
+# sequence, which can be called (docs/release-scope-0.1.0.md A.3).
 MAX_CALL_N_FRAC = 0.5
 # A call edge within this fraction of --window-len of a contig end moves onto the end:
 # an element cut by a breakpoint is only partly scored there
@@ -143,6 +144,7 @@ class PredictOptions:
     edge_alpha_ramp: tuple[int, int] | None
     split_min_gap_bp: int
     split_max_prob: float
+    att_search: bool = True         # att boundaries where found (docs/att-boundaries.md)
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
     force: bool = False             # replace outputs already in outdir
     bundled_model: bool = False     # checkpoints are the ones shipped with the package
@@ -179,9 +181,11 @@ class PredictOptions:
         stride = int(args.stride) if args.stride else trained_stride
         if window_len <= 0 or stride <= 0:
             raise PredictError("--window-len and --stride must be positive")
-        ramp = (int(args.edge_alpha_ramp[0]), int(args.edge_alpha_ramp[1])) if args.edge_alpha_ramp else None
-        if ramp and not 0 < ramp[0] < ramp[1]:
-            raise PredictError("--edge-alpha-ramp needs 0 < LO_BP < HI_BP")
+        ramp = (int(args.edge_alpha_ramp[0]), int(args.edge_alpha_ramp[1]))
+        if ramp == (0, 0):   # turns the ramp off
+            ramp = None
+        elif not 0 < ramp[0] < ramp[1]:
+            raise PredictError("--edge-alpha-ramp needs 0 < LO_BP < HI_BP (or 0 0 for no ramp)")
         refine_threshold = DEFAULT_REFINE_THRESHOLD if args.refine_threshold is None else float(args.refine_threshold)
         refine_margin = window_len if args.refine_margin is None else int(args.refine_margin)
         refine_window_len = int(args.refine_window_len or 0)
@@ -220,6 +224,7 @@ class PredictOptions:
             refine_stride=int(args.refine_stride), refine_threshold=refine_threshold, refine_margin=refine_margin,
             edge_alpha=float(args.edge_alpha), edge_alpha_ramp=ramp,
             split_min_gap_bp=int(args.split_min_gap_bp), split_max_prob=float(args.split_max_prob),
+            att_search=getattr(args, "att_search", "on") == "on",
             verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
             force=bool(getattr(args, "force", False)),
             bundled_model=bundled, trust_checkpoint=bool(getattr(args, "trust_checkpoint", False)),
@@ -228,11 +233,13 @@ class PredictOptions:
 
 PREDICT_EPILOG = """\
 outputs (in --outdir; coordinates 0-based half-open, as BED):
-  regions.tsv           the calls, one row each: call_id, contig_id, start, end, mean_prob (rank by
-                        this), max_prob, window_bp, contig_edge, n_frac, seed_support
+  regions.tsv           the calls, one row each: call_id, contig_id, start, end, boundary (att: edges
+                        exact to the base; model: estimates), start_lo..end_hi (where each true edge
+                        lies), mean_prob (rank by this), max_prob, contig_edge, n_frac, seed_support
   regions.filtered.tsv  candidates set aside, same columns plus filter (seed_vote, n_gap)
   regions.bed/.gff3     the calls for genome browsers; BED score = 1000 x mean_prob
   windows.tsv           every window's score (prob; prob_ckpt1.. with --write-seed-scores)
+  fine_windows.tsv      the refinement pass's window scores
   run_metadata.json     settings, hashes, counts, timing and the command
   regions.fna           the calls' sequences (--write-region-fasta)
 
@@ -448,27 +455,37 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="Window step in bp (default: the trained step, 1000).",
     )
-    experimental.add_argument(
+    advanced.add_argument(
+        "--att-search",
+        choices=("on", "off"),
+        default="on",
+        help=(
+            "Look for an att site at each call: a direct repeat with one copy near each edge, left by "
+            "integration. Where one is found, the call's edges are its two copies, exact to the base "
+            "(boundary = att). Default on."
+        ),
+    )
+    advanced.add_argument(
         "--refine-window-len",
         type=int,
         default=DEFAULT_REFINE_WINDOW_LEN,
         help=(
-            "Fine-scale pass, off by default (0). Re-scores each call and its surroundings with windows of "
-            "this length, splits calls whose fine scores show a background gap, and places edges between "
-            "the fine and coarse estimates (--edge-alpha). Never drops a call."
+            "Fine-scale pass (default %(default)s; 0 turns it off). Re-scores each call and its surroundings "
+            "with windows of this length, splits calls whose fine scores show a background gap, and places "
+            "edges between the fine and coarse estimates (--edge-alpha). Never drops a call."
         ),
     )
-    experimental.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
+    advanced.add_argument("--refine-stride", type=int, default=DEFAULT_REFINE_STRIDE,
                               help="Fine-pass window step in bp (default %(default)s).")
-    experimental.add_argument(
+    advanced.add_argument(
         "--refine-threshold",
         type=float,
         default=None,
         help=f"Fine-pass score threshold (default {DEFAULT_REFINE_THRESHOLD}).",
     )
-    experimental.add_argument("--refine-margin", type=int, default=None,
+    advanced.add_argument("--refine-margin", type=int, default=None,
                               help="bp re-scored on either side of each call (default: --window-len).")
-    experimental.add_argument(
+    advanced.add_argument(
         "--edge-alpha",
         type=float,
         default=DEFAULT_EDGE_ALPHA,
@@ -477,24 +494,25 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
             "overextends by about half a window). Default %(default)s."
         ),
     )
-    experimental.add_argument(
+    advanced.add_argument(
         "--edge-alpha-ramp",
         type=int,
         nargs=2,
         metavar=("LO_BP", "HI_BP"),
-        default=None,
+        default=DEFAULT_EDGE_ALPHA_RAMP,
         help=(
             "Scale --edge-alpha with size: 0 for pieces whose fine core is at most LO_BP, --edge-alpha at "
-            "HI_BP and above, log-linear between. Small elements suit the fine core, large ones the coarse edge."
+            "HI_BP and above, log-linear between (default 15000 60000; 0 0 for no ramp). Small elements suit "
+            "the fine core, large ones the coarse edge."
         ),
     )
-    experimental.add_argument(
+    advanced.add_argument(
         "--split-min-gap-bp",
         type=int,
         default=DEFAULT_SPLIT_MIN_GAP_BP,
         help="Shortest fine-score gap (bp) that can split a call (default %(default)s).",
     )
-    experimental.add_argument(
+    advanced.add_argument(
         "--split-max-prob",
         type=float,
         default=DEFAULT_SPLIT_MAX_PROB,

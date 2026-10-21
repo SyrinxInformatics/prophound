@@ -14,15 +14,15 @@ This takes a few seconds on a GPU (Apple M4: 1.6 s) and about 2 minutes on CPU o
 
 `expected_calls.tsv` holds the calls. `expected_regions.tsv` is the full `regions.tsv` from a CPU run.
 
-| call | start–end (0-based, half-open) | length | geNomad element (same coordinates) | seed_support |
-|---|---|---|---|---|
-| `prophound_1` | 51,000–81,000 | 30 kb | 58,836–73,073 (14.2 kb) | 3 |
-| `prophound_2` | 116,000–156,000 | 40 kb | 119,961–154,275 (34.3 kb) | 3 |
+| call | start–end (0-based, half-open) | length | `boundary` | start range | end range | geNomad element (same coordinates) | seed_support |
+|---|---|---|---|---|---|---|---|
+| `prophound_1` | 53,842–81,000 | 27.2 kb | model | 52,348–67,258 | 67,584–82,494 | 58,836–73,073 (14.2 kb) | 3 |
+| `prophound_2` | 116,737–156,000 | 39.3 kb | model | 114,578–136,133 | 136,604–158,159 | 119,961–154,275 (34.3 kb) | 3 |
 
 How to read the calls:
 
 - **Both elements are found, and nothing else is called.** Each call covers its whole element, so both count as found under covered50, the release's recall metric (at least half of an element's length covered).
-- **Boundaries are coarse.** Calls are built from 1 kb bins of the score track, with no gene calling, so they overshoot the element by up to about 8 kb on each side here. Treat the edges as approximate. A gene-based tool, or the call's score track in `windows.tsv`, gives a tighter edge.
+- **These boundaries are model estimates** (`boundary` = `model`): neither element has a findable att site, a direct repeat left at both edges by integration, which about 15% of known elements do. The fine pass places the edges, which still overshoot the elements by 3–8 kb here. The start and end ranges say where each true edge lies, 90% of the time; both elements' edges fall inside them. Where an att site is found, `boundary` is `att` and the edges are exact to the base.
 - **`seed_support` 3** means all three bundled checkpoints make the call on their own. Default mode keeps only those. In Exploratory mode, calls with support 1 are the first to discount.
 - `mean_prob` (0.68 and 0.70) is the mean window score across the call. It ranks calls; it is not a probability that the call is a prophage.
 

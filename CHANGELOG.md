@@ -19,7 +19,7 @@ The first release. Earlier development versions were called `mge-detect`.
 - Contigs of 3–10 kb are scanned with their own thresholds. Contigs under 3 kb are never scanned, and are reported.
 - A call within half a window of a contig end is extended to the end and flagged in `contig_edge`.
 - IUPAC ambiguity codes are replaced by fixed, reproducible bases (`--ambiguity-policy impute`). This changes nothing on sequence without them. The training-time encoding made two adjacent ambiguous bases drop a window's score to zero.
-- Optional fine refinement of boundaries (`--refine-window-len`), off by default.
+- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, a 90% range for model edges. About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
 
 ### Input and output
 

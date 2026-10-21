@@ -55,6 +55,10 @@ def test_predict_defaults_come_from_options():
     assert args.max_gap_bp == options.DEFAULT_MAX_GAP_BP
     assert args.edge_snap_frac == options.DEFAULT_EDGE_SNAP_FRAC
     assert args.ambiguity_policy == options.DEFAULT_AMBIGUITY_POLICY
+    assert args.refine_window_len == options.DEFAULT_REFINE_WINDOW_LEN == 5000
+    assert args.edge_alpha == options.DEFAULT_EDGE_ALPHA
+    assert tuple(args.edge_alpha_ramp) == options.DEFAULT_EDGE_ALPHA_RAMP
+    assert args.att_search == "on"
     assert sorted(_subparsers(build_parser())["predict"]._option_string_actions) == sorted(
         _standalone_parser()._option_string_actions)
 
@@ -72,3 +76,21 @@ def test_standalone_main_accepts_input_fasta(monkeypatch):
         with pytest.raises(SystemExit) as exc:
             predict_genome.main([*argv, "--outdir", "o", "--config", "c.yaml", "--checkpoint", "a.pt"])
         assert exc.value.code == 0 and seen["input_fasta"] == [expected]
+
+
+def _opts(*extra):
+    import argparse
+    p = argparse.ArgumentParser()
+    options.add_predict_arguments(p)
+    args = p.parse_args(["--input", "x.fna", "--outdir", "o", *extra])
+    return options.PredictOptions.from_args(args, trained_window_len=10000, trained_stride=1000)
+
+
+def test_refinement_and_att_are_on_by_default_and_can_be_turned_off():
+    on = _opts()
+    assert (on.refine_window_len, on.refine_threshold, on.edge_alpha, on.edge_alpha_ramp, on.att_search) == (
+        5000, 0.6, 0.6, (15000, 60000), True)
+    off = _opts("--refine-window-len", "0", "--edge-alpha-ramp", "0", "0", "--att-search", "off")
+    assert (off.refine_window_len, off.edge_alpha_ramp, off.att_search) == (0, None, False)
+    with pytest.raises(options.PredictError):
+        _opts("--edge-alpha-ramp", "60000", "15000")
