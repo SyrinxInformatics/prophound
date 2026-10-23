@@ -447,6 +447,7 @@ The results above were scored before the boundary stages (refinement, att, compo
 - **G2 (matched call count) worsens:** Exploratory cut to EVO2 4k's count 0.792 (bar >0.785, still cleared by one element; was 0.805), to geNomad's 0.801 (was a tie at 0.822), to PHASTER's 0.770 (was 0.797). Refinement splits calls, so a count cut keeps fewer distinct regions.
 - **Candidates check:** LIKELY PHAGE (not in corpus) 16 of 19 (was 18), above chance 0.753 (0.538–0.950; was 0.837); all 19 still have a Default call on them. Cut to geNomad's count 13 of 19 (was 16; geNomad 15). Paired with geNomad, prophound-only 1 (was 3), geNomad-only 0. The two that fall under 50% are two of the three novel-flagged prophound-only candidates: an att pair trims `GCF_000196155.1` 4,729,192–4,748,359 (19.2 kb) to a 9.0 kb call (0.47 covered), and composition trims `GCA_017183655.1` 936,999–965,000 (0.61 → 0.41; refinement and att alone 0.55). Candidate coordinates come from language-model windows (most ends on a 1 kb step), so which region is right is unknown. Exploratory, without composition, covers 18 of 19 (was 19). UNLIKELY PHAGE 0.55 (was 0.64).
 - The release text reports both scorings (§2, §4, §9 of `docs/release-text-0.1.0.md`).
+- **User decision (2026-10-23): accept and report.** No compromise rule is fitted on LAMBDA (already used); the second lockbox is the held-out test of the boundary stages.
 
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)
 

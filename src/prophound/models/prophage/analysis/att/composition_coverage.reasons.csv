@@ -1,0 +1,13 @@
+sample,mode,edges,moved,moved_to_ceiling,low_jsd,att,contig_end,host_flank,short_call,no_change_point
+tune42,exploratory,3030,1302,1251,255,182,32,4.0,4.0,0.0
+tune42,default,1208,531,381,145,120,27,3.0,0.0,1.0
+tune42,conservative,720,348,185,63,100,23,1.0,0.0,0.0
+confirm18,exploratory,1444,547,602,194,86,9,0.0,6.0,0.0
+confirm18,default,488,172,172,89,54,1,0.0,0.0,0.0
+confirm18,conservative,234,83,62,42,46,1,0.0,0.0,0.0
+lit7,exploratory,566,212,256,60,28,4,0.0,6.0,0.0
+lit7,default,218,73,93,30,20,2,0.0,0.0,0.0
+lit7,conservative,130,44,52,12,20,2,0.0,0.0,0.0
+lambda,exploratory,3146,1190,1340,404,196,6,2.0,8.0,0.0
+lambda,default,1148,435,404,171,132,6,0.0,0.0,0.0
+lambda,conservative,572,227,150,55,134,6,0.0,0.0,0.0

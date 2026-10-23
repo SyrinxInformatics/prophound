@@ -1,0 +1,145 @@
+name,class,len_kb,cov_frac,best_iou,tool
+Sp1,prophage,10.6,1.0,0.154,prophound exploratory
+Sp2,prophage,12.9,1.0,0.187,prophound exploratory
+Sp3,prophage,38.6,1.0,0.717,prophound exploratory
+Sp4,prophage,49.8,1.0,0.999,prophound exploratory
+Sp5,prophage,62.7,1.0,0.713,prophound exploratory
+SpLE1,remnant,86.2,0.996,0.961,prophound exploratory
+Sp6,prophage,48.4,1.0,0.363,prophound exploratory
+Sp7,prophage,15.5,1.0,0.116,prophound exploratory
+Sp8,prophage,44.4,1.0,0.332,prophound exploratory
+Sp9,prophage,58.1,1.0,0.638,prophound exploratory
+Sp10,prophage,51.2,1.0,0.623,prophound exploratory
+Sp11,prophage,45.8,1.0,0.394,prophound exploratory
+Sp12,prophage,50.9,1.0,0.438,prophound exploratory
+Sp13,prophage,21.1,0.997,0.992,prophound exploratory
+Sp14,prophage,44.0,1.0,0.759,prophound exploratory
+SpLE2,remnant,13.5,0.644,0.641,prophound exploratory
+Sp15,prophage,47.9,1.0,0.492,prophound exploratory
+Sp16,prophage,8.6,1.0,0.425,prophound exploratory
+Sp17,prophage,24.2,1.0,0.763,prophound exploratory
+SpLE3,remnant,23.5,1.0,0.882,prophound exploratory
+SpLE4,remnant,43.5,0.45,0.449,prophound exploratory
+Sp18,prophage,38.8,1.0,0.885,prophound exploratory
+SpLE5,remnant,10.2,1.0,0.997,prophound exploratory
+SpLE6,remnant,34.1,0.0,0.0,prophound exploratory
+Sp1,prophage,10.6,1.0,0.166,prophound default
+Sp2,prophage,12.9,1.0,0.202,prophound default
+Sp3,prophage,38.6,0.954,0.93,prophound default
+Sp4,prophage,49.8,1.0,0.999,prophound default
+Sp5,prophage,62.7,1.0,0.815,prophound default
+SpLE1,remnant,86.2,1.0,0.994,prophound default
+Sp6,prophage,48.4,1.0,0.354,prophound default
+Sp7,prophage,15.5,1.0,0.113,prophound default
+Sp8,prophage,44.4,1.0,0.324,prophound default
+Sp9,prophage,58.1,0.968,0.743,prophound default
+Sp10,prophage,51.2,1.0,1.0,prophound default
+Sp11,prophage,45.8,1.0,0.457,prophound default
+Sp12,prophage,50.9,0.984,0.496,prophound default
+Sp13,prophage,21.1,0.997,0.992,prophound default
+Sp14,prophage,44.0,0.956,0.956,prophound default
+SpLE2,remnant,13.5,0.0,0.0,prophound default
+Sp15,prophage,47.9,0.909,0.495,prophound default
+Sp16,prophage,8.6,1.0,0.509,prophound default
+Sp17,prophage,24.2,1.0,0.975,prophound default
+SpLE3,remnant,23.5,0.78,0.78,prophound default
+SpLE4,remnant,43.5,0.403,0.403,prophound default
+Sp18,prophage,38.8,0.894,0.894,prophound default
+SpLE5,remnant,10.2,1.0,0.997,prophound default
+SpLE6,remnant,34.1,0.0,0.0,prophound default
+Sp1,prophage,10.6,1.0,0.314,prophound conservative
+Sp2,prophage,12.9,1.0,0.382,prophound conservative
+Sp3,prophage,38.6,0.95,0.95,prophound conservative
+Sp4,prophage,49.8,1.0,0.999,prophound conservative
+Sp5,prophage,62.7,1.0,0.815,prophound conservative
+SpLE1,remnant,86.2,0.441,0.441,prophound conservative
+Sp6,prophage,48.4,1.0,0.354,prophound conservative
+Sp7,prophage,15.5,1.0,0.113,prophound conservative
+Sp8,prophage,44.4,1.0,0.324,prophound conservative
+Sp9,prophage,58.1,0.706,0.706,prophound conservative
+Sp10,prophage,51.2,1.0,1.0,prophound conservative
+Sp11,prophage,45.8,1.0,0.46,prophound conservative
+Sp12,prophage,50.9,0.984,0.499,prophound conservative
+Sp13,prophage,21.1,0.997,0.992,prophound conservative
+Sp14,prophage,44.0,0.909,0.909,prophound conservative
+SpLE2,remnant,13.5,0.0,0.0,prophound conservative
+Sp15,prophage,47.9,0.897,0.642,prophound conservative
+Sp16,prophage,8.6,1.0,0.529,prophound conservative
+Sp17,prophage,24.2,1.0,0.984,prophound conservative
+SpLE3,remnant,23.5,0.728,0.728,prophound conservative
+SpLE4,remnant,43.5,0.0,0.0,prophound conservative
+Sp18,prophage,38.8,0.893,0.893,prophound conservative
+SpLE5,remnant,10.2,1.0,0.997,prophound conservative
+SpLE6,remnant,34.1,0.0,0.0,prophound conservative
+Sp1,prophage,10.6,0.997,0.417,geNomad
+Sp2,prophage,12.9,1.0,0.509,geNomad
+Sp3,prophage,38.6,0.963,0.963,geNomad
+Sp4,prophage,49.8,0.994,0.994,geNomad
+Sp5,prophage,62.7,1.0,0.983,geNomad
+SpLE1,remnant,86.2,0.0,0.0,geNomad
+Sp6,prophage,48.4,0.943,0.943,geNomad
+Sp7,prophage,15.5,0.869,0.202,geNomad
+Sp8,prophage,44.4,0.965,0.65,geNomad
+Sp9,prophage,58.1,0.999,0.988,geNomad
+Sp10,prophage,51.2,0.998,0.986,geNomad
+Sp11,prophage,45.8,1.0,0.437,geNomad
+Sp12,prophage,50.9,1.0,0.486,geNomad
+Sp13,prophage,21.1,0.989,0.984,geNomad
+Sp14,prophage,44.0,0.965,0.944,geNomad
+SpLE2,remnant,13.5,0.0,0.0,geNomad
+Sp15,prophage,47.9,1.0,0.846,geNomad
+Sp16,prophage,8.6,0.0,0.0,geNomad
+Sp17,prophage,24.2,0.867,0.867,geNomad
+SpLE3,remnant,23.5,0.0,0.0,geNomad
+SpLE4,remnant,43.5,0.0,0.0,geNomad
+Sp18,prophage,38.8,0.99,0.99,geNomad
+SpLE5,remnant,10.2,0.0,0.0,geNomad
+SpLE6,remnant,34.1,0.0,0.0,geNomad
+Sp1,prophage,10.6,1.0,0.245,PHASTEST (all)
+Sp2,prophage,12.9,1.0,0.298,PHASTEST (all)
+Sp3,prophage,38.6,1.0,0.999,PHASTEST (all)
+Sp4,prophage,49.8,1.0,0.975,PHASTEST (all)
+Sp5,prophage,62.7,1.0,0.89,PHASTEST (all)
+SpLE1,remnant,86.2,0.0,0.0,PHASTEST (all)
+Sp6,prophage,48.4,1.0,0.91,PHASTEST (all)
+Sp7,prophage,15.5,1.0,0.412,PHASTEST (all)
+Sp8,prophage,44.4,1.0,0.871,PHASTEST (all)
+Sp9,prophage,58.1,0.986,0.986,PHASTEST (all)
+Sp10,prophage,51.2,0.996,0.996,PHASTEST (all)
+Sp11,prophage,45.8,1.0,0.454,PHASTEST (all)
+Sp12,prophage,50.9,0.989,0.497,PHASTEST (all)
+Sp13,prophage,21.1,1.0,0.849,PHASTEST (all)
+Sp14,prophage,44.0,1.0,1.0,PHASTEST (all)
+SpLE2,remnant,13.5,0.0,0.0,PHASTEST (all)
+Sp15,prophage,47.9,1.0,0.833,PHASTEST (all)
+Sp16,prophage,8.6,1.0,0.617,PHASTEST (all)
+Sp17,prophage,24.2,0.928,0.473,PHASTEST (all)
+SpLE3,remnant,23.5,0.0,0.0,PHASTEST (all)
+SpLE4,remnant,43.5,0.0,0.0,PHASTEST (all)
+Sp18,prophage,38.8,0.965,0.965,PHASTEST (all)
+SpLE5,remnant,10.2,0.0,0.0,PHASTEST (all)
+SpLE6,remnant,34.1,0.0,0.0,PHASTEST (all)
+Sp1,prophage,10.6,1.0,0.245,PHASTEST (intact+questionable)
+Sp2,prophage,12.9,1.0,0.298,PHASTEST (intact+questionable)
+Sp3,prophage,38.6,1.0,0.999,PHASTEST (intact+questionable)
+Sp4,prophage,49.8,1.0,0.975,PHASTEST (intact+questionable)
+Sp5,prophage,62.7,1.0,0.89,PHASTEST (intact+questionable)
+SpLE1,remnant,86.2,0.0,0.0,PHASTEST (intact+questionable)
+Sp6,prophage,48.4,1.0,0.91,PHASTEST (intact+questionable)
+Sp7,prophage,15.5,1.0,0.412,PHASTEST (intact+questionable)
+Sp8,prophage,44.4,1.0,0.871,PHASTEST (intact+questionable)
+Sp9,prophage,58.1,0.986,0.986,PHASTEST (intact+questionable)
+Sp10,prophage,51.2,0.996,0.996,PHASTEST (intact+questionable)
+Sp11,prophage,45.8,1.0,0.454,PHASTEST (intact+questionable)
+Sp12,prophage,50.9,0.989,0.497,PHASTEST (intact+questionable)
+Sp13,prophage,21.1,1.0,0.849,PHASTEST (intact+questionable)
+Sp14,prophage,44.0,1.0,1.0,PHASTEST (intact+questionable)
+SpLE2,remnant,13.5,0.0,0.0,PHASTEST (intact+questionable)
+Sp15,prophage,47.9,1.0,0.833,PHASTEST (intact+questionable)
+Sp16,prophage,8.6,0.0,0.0,PHASTEST (intact+questionable)
+Sp17,prophage,24.2,0.928,0.473,PHASTEST (intact+questionable)
+SpLE3,remnant,23.5,0.0,0.0,PHASTEST (intact+questionable)
+SpLE4,remnant,43.5,0.0,0.0,PHASTEST (intact+questionable)
+Sp18,prophage,38.8,0.965,0.965,PHASTEST (intact+questionable)
+SpLE5,remnant,10.2,0.0,0.0,PHASTEST (intact+questionable)
+SpLE6,remnant,34.1,0.0,0.0,PHASTEST (intact+questionable)

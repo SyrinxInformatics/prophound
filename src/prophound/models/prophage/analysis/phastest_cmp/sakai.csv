@@ -1,0 +1,7 @@
+genome,tool,calls,covered50,covered,covered50_prophage,covered50_remnant,median_best_iou,Mb_called,Mb_off_curated,edge_median_kb,edges_within_1kb
+sakai,prophound exploratory,53,22/24,23/24,18/18,4/6,0.6305000000000001,1.523,0.702,3.63,9/32
+sakai,prophound default,26,21/24,22/24,18/18,3/6,0.626,1.086,0.295,1.24,14/30
+sakai,prophound conservative,20,20/24,21/24,18/18,2/6,0.5855,0.819,0.113,1.47,12/28
+sakai,geNomad,14,17/24,17/24,17/18,0/6,0.5795,0.681,0.03,0.4,16/22
+sakai,PHASTEST (all),16,18/24,18/24,18/18,0/6,0.5569999999999999,0.778,0.1,1.25,12/26
+sakai,PHASTEST (intact+questionable),15,17/24,17/24,17/18,0/6,0.485,0.764,0.094,1.01,12/24

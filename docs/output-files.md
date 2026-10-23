@@ -71,8 +71,8 @@ One row per call, sorted by contig (in input order), then by start. 0-based, hal
 | `rank` | as in `regions.tsv` |
 | `genome_id` | the input file name without its extension (and without `.gz`/`.bz2`/`.xz`) |
 | `contig_id` | the sequence ID: the first word of the FASTA header, or the versioned accession (`VERSION`) of a GenBank/EMBL record |
-| `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise the model's edges |
-| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are the model's estimate (docs/att-boundaries.md) |
+| `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise estimated edges (refinement, then composition in Default and Conservative; `start_source`/`end_source` say which) |
+| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are estimated, by the model's score and, in Default and Conservative, composition (docs/att-boundaries.md). The same values are `att site` and `estimated` in `regions.tsv`'s `edges` column and the terminal list; `att` and `model` are kept in this file and the GFF3, which scripts read |
 | `start_lo`, `start_hi`, `end_lo`, `end_hi` | where each true edge lies. Equal to the edge for an att edge and for an edge on a contig end. For a model edge, a 90% range relative to the call's length L, clipped to the contig: in Default and Conservative (composition edges) from 0.143·L outside to 0.463·L inside the reported edge (coverage 0.898 tuning, 0.891 and 0.883 on two check samples); in Exploratory from 0.055·L outside to 0.494·L inside (0.90, 0.91, 0.92, measured over all modes before composition edges). Most of each range is inward, because model edges more often overshoot |
 | `n_windows` | windows overlapping the model's call |
 | `region_len_bp` | `end − start` |
@@ -100,7 +100,7 @@ These calls are not in BED, GFF3 or FASTA. They are kept so a discovery user can
 ## `regions.bed`, `regions.gff3`, `regions.fna`
 
 - **BED6:** `contig_id`, `start`, `end`, `call_id`, score, `.`. The score is `round(1000 × mean_prob)`, for display; `rank` is the ranking.
-- **GFF3:** type `prophage` (Sequence Ontology), source `prophound`, score `mean_prob`. Attributes: `ID` (= `call_id`), `note=candidate`, `boundary`, `att_core` (att calls only), `mean_prob`, `max_prob`, `seed_support`, `n_frac`, `contig_edge`, `window_bp`.
+- **GFF3:** type `prophage` (Sequence Ontology), source `prophound`, score `mean_prob`. Attributes: `ID` (= `call_id`), `note=candidate`, `boundary` (`att` or `model`, shown as `att site` / `estimated` in `regions.tsv`), `att_core` (att calls only), `mean_prob`, `max_prob`, `seed_support`, `n_frac`, `contig_edge`, `window_bp`.
 - **FASTA:** `>call_id contig:start-end` (1-based, inclusive), 80 bases per line.
 
 ## `windows.tsv`

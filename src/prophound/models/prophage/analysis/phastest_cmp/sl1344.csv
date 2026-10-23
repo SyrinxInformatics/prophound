@@ -1,0 +1,6 @@
+genome,tool,calls,covered50,covered,covered50_prophage,covered50_remnant,median_best_iou,Mb_called,Mb_off_curated,edge_median_kb,edges_within_1kb
+sl1344,prophound exploratory,44,7/7,7/7,5/5,2/2,0.56,0.822,0.609,5.49,0/10
+sl1344,prophound default,17,7/7,7/7,5/5,2/2,0.642,0.454,0.243,3.78,0/10
+sl1344,prophound conservative,10,7/7,7/7,5/5,2/2,0.721,0.305,0.097,2.56,2/10
+sl1344,PHASTEST (all),9,7/7,7/7,5/5,2/2,0.754,0.333,0.115,3.19,2/10
+sl1344,PHASTEST (intact+questionable),6,6/7,6/7,5/5,1/2,0.754,0.249,0.041,2.33,2/8
