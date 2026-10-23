@@ -176,6 +176,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="lambda_prepare.py output dir")
     ap.add_argument("--prophound_run", default=None, help="run dir: <assembly>/windows.tsv with --write-seed-scores")
+    ap.add_argument("--genomes_dir", default=None,
+                    help="<assembly>.fna: rebuild with every 0.1.0 stage (snap, N filter, refinement, att)")
     ap.add_argument("--draws", type=int, default=1000)
     ap.add_argument("--landing-draws", type=int, default=200, help="rotations for the landing chance (slower)")
     ap.add_argument("--seed", type=int, default=20261020)
@@ -201,7 +203,7 @@ def main() -> None:
     rng = np.random.default_rng(a.seed)
     tools = {t: C[C.tool == t] for t in sorted(C.tool.unique())}
     ran = {t: set(RAN[RAN.tool == t].assembly) for t in tools}
-    for k, v in prophound_calls(a.prophound_run, G).items():
+    for k, v in prophound_calls(a.prophound_run, G, a.genomes_dir).items():
         tools[k], ran[k] = v, set(G.assembly)
     subsets = {"all": G, "not_in_corpus": G[G.corpus_status == "not_in_corpus"]}
 
