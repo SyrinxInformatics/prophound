@@ -1,0 +1,26 @@
+genome,curated,PHASTEST start,prophound start,Δ start,PHASTEST end,prophound end,Δ end,PHASTEST,prophound edges,call
+sakai,Sp1+Sp2,285545,283137,-2408,328828,347000,18172,intact(110),composition/coarse,prophound_2
+sakai,Sp3,891109,892908,1799,929695,930689,994,intact(150),composition/composition,prophound_5
+sakai,Sp4,1159811,1161097,1286,1210888,1210947,59,intact(150),att/att,prophound_6
+sakai,Sp5,1246045,1245001,-1044,1316539,1321935,5396,intact(140),composition/composition,prophound_7
+sakai,Sp6,1538786,1537101,-1685,1591970,1674051,82081,intact(150),fine/composition,prophound_10
+sakai,Sp6+Sp7+Sp8,1586186,1537101,-49085,1623713,1674051,50338,intact(130),fine/composition,prophound_10
+sakai,Sp8,1615690,1537101,-78589,1666662,1674051,7389,intact(150),fine/composition,prophound_10
+sakai,Sp9,1757686,1759501,1815,1814941,1833300,18359,intact(150),composition/composition,prophound_11
+sakai,Sp10,1921578,1921508,-70,1972504,1972645,141,intact(150),att/att,prophound_12
+sakai,Sp11+Sp12,2153549,2154001,452,2254487,2254200,-287,intact(150),composition/composition,prophound_14
+sakai,Sp13,2592243,2593096,853,2617114,2614278,-2836,intact(130),att/att,prophound_15
+sakai,Sp14,2668144,2669911,1767,2712172,2712000,-172,intact(150),composition/composition,prophound_16
+sakai,Sp15,2888909,2856044,-32865,2946414,2939600,-6814,intact(150),composition/composition,prophound_17
+sakai,Sp16,3190654,3186188,-4466,3204509,3203000,-1509,incomplete(60),composition/coarse,prophound_18
+sakai,Sp17,3452848,3475835,22987,3498544,3500651,2107,intact(120),composition/composition,prophound_19
+sakai,Sp18,5042191,5042647,456,5079596,5077308,-2288,intact(150),composition/composition,prophound_25
+sl1344,SLP105,1053398,1034401,-18997,1100342,1114110,13768,intact(150),fine/composition,prophound_4
+sl1344,-,1915403,1908967,-6436,1929338,1926058,-3280,incomplete(60),composition/composition,prophound_7
+sl1344,SLP203,2036601,2027780,-8821,2091868,2092115,247,intact(150),composition/composition,prophound_9
+sl1344,-,2328677,2327451,-1226,2342933,2344738,1805,incomplete(60),composition/composition,prophound_11
+sl1344,SLP272,2713417,2728567,15150,2780416,2781699,1283,intact(150),composition/fine,prophound_12
+sl1344,SLP281,2799564,2813349,13785,2855223,2829012,-26211,incomplete(50),composition/composition,prophound_13
+sl1344,SLP285+SLP289,2855527,2855334,-193,2896825,2906578,9753,intact(150),composition/fine,prophound_14
+sl1344,SLP285+SLP289,2888412,2855334,-33078,2906635,2906578,-57,questionable(75),composition/fine,prophound_14
+sl1344,SLP443,4439207,4439044,-163,4459626,4461432,1806,intact(120),composition/composition,prophound_16
