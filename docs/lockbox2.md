@@ -50,7 +50,7 @@ Scoring happens **once**, after all of the following are final and committed. Th
 ## Status
 
 - [x] 2026-10-21: preregistration written. `lockbox_select.py` gained `--exclude_genera` and `--summary_sha256` (checked on a synthetic summary), `lockbox2_build.slurm` written, `exclude_genera.txt` built. **Not yet submitted.**
-- [ ] Build on ARC (`sbatch scripts/lockbox2_build.slurm`; the user submits).
+- [ ] Build on ARC (`sbatch scripts/lockbox2_build.slurm`; the user submits). **Submitted 2026-10-23 as `848536`** (inputs pushed the same day: `lockbox_select.py`, the launcher, `exclude_genera.txt`). When it ends, read `analysis/_slurm_logs/lockbox2_build_848536.{out,err}` and `analysis/lockbox2/failures.txt`, then pull `analysis/lockbox2/` (genome list, selection table and JSON, `lockbox_elements.csv`); no model output exists on these genomes.
 - [ ] Freeze the defaults (commit), write `scripts/lockbox2_run.slurm` with that commit's MD5s, run once on ARC, score once locally.
 
 ## Amendments
