@@ -62,8 +62,9 @@ MAX_EVALUE = 1e-6
 
 REL_OUT = 0.055          # edge ranges, as fractions of the call's length
 REL_IN = 0.494
-# the same after composition edges (Default and Conservative), calibrated the same way on
-# their model edges (0.898 on the tuning sample; 0.891 and 0.883 on the two check samples)
+# the same after composition edges, calibrated the same way on Default and Conservative model
+# edges (0.898 on the tuning sample; 0.891 and 0.883 on the two check samples); used in every
+# mode since Exploratory gained composition edges (0.89-0.91 there, LAMBDA 0.81)
 RANGE_FRACS_COMPOSITION = (0.143, 0.463)
 
 _CODE = np.full(256, 255, dtype=np.uint8)
@@ -229,7 +230,7 @@ def _sources(calls: pd.DataFrame, side: str) -> np.ndarray:
 
 
 def uses_composition(mode: str, setting: str = "auto") -> bool:
-    """--composition-edges: auto is on in Default and Conservative (src/composition.py MODES)."""
+    """--composition-edges: auto is on in every mode (src/composition.py MODES)."""
     from . import composition
 
     return setting == "on" or (setting == "auto" and mode in composition.MODES)
@@ -238,13 +239,13 @@ def uses_composition(mode: str, setting: str = "auto") -> bool:
 def finish_boundaries(calls: pd.DataFrame, genome: Genome | None, contig_lengths: dict[str, int], mode: str,
                       att_search: bool = True, composition_edges: str = "auto") -> pd.DataFrame:
     """Every boundary stage after finalize, as predict runs it: att boundaries, then composition
-    edges (src/composition.py; by default in Default and Conservative), then the edge ranges.
+    edges (src/composition.py; by default in every mode, with its mode's gate), then the edge ranges.
     `genome` is needed for either stage; without it only the ranges are added."""
     from . import composition
 
     out = apply_boundaries(calls, genome if att_search else None, contig_lengths)
     if genome is not None and uses_composition(mode, composition_edges):
-        out = composition.composition_edges(out, genome.seqs)
+        out = composition.composition_edges(out, genome.seqs, composition.min_jsd(mode))
         out = edge_ranges(out, contig_lengths, *RANGE_FRACS_COMPOSITION)
     return out
 

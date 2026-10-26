@@ -256,6 +256,18 @@ def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame])
     return out
 
 
+def vote_extent(regions_df: pd.DataFrame) -> pd.DataFrame:
+    """The extent the seed vote was taken on: `coarse_start`/`coarse_end` for refined
+    calls and split pieces, the call itself otherwise. Support counted on a piece alone
+    can read below the vote its parent call passed (docs/att-boundaries.md "Split-piece
+    support")."""
+    if "coarse_start" not in regions_df.columns or regions_df.empty:
+        return regions_df
+    has = regions_df["coarse_start"].notna().to_numpy()
+    return regions_df.assign(start=np.where(has, regions_df["coarse_start"], regions_df["start"]).astype(np.int64),
+                             end=np.where(has, regions_df["coarse_end"], regions_df["end"]).astype(np.int64))
+
+
 def apply_seed_vote(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame],
                     min_support: int) -> Tuple[pd.DataFrame, int]:
     """Keep calls that at least `min_support` checkpoints make on their own.
@@ -414,7 +426,9 @@ def finalize(
     `per_seed[k]` holds checkpoint k's calls from every pass; with one checkpoint it is
     empty and no `seed_support` column is added. Filtered candidates get the same columns
     (snapped edges, `n_frac`, `seed_support`) so they can be judged like any call.
-    Snapping comes first, so `n_frac` describes the reported coordinates.
+    Snapping comes first, so `n_frac` describes the reported coordinates. Support is
+    counted on the extent the vote saw (`vote_extent`), so a split piece reports its
+    parent call's support.
     """
     calls, n_snapped = snap_contig_edges(calls, contig_lengths, rules.snap_bp)
     edge_meta = {"frac": edge_snap_frac, "snap_bp": rules.snap_bp, "calls_moved": n_snapped,
@@ -443,9 +457,9 @@ def finalize(
         seed_regs = [pd.concat([x for x in r if len(x)], ignore_index=True) if any(len(x) for x in r)
                      else pd.DataFrame(columns=["contig_id", "start", "end"]) for r in per_seed]
         calls = calls.copy()
-        calls["seed_support"] = seed_support(calls, seed_regs) if len(calls) else []
+        calls["seed_support"] = seed_support(vote_extent(calls), seed_regs) if len(calls) else []
         if len(filtered):
-            filtered = filtered.assign(seed_support=seed_support(filtered, seed_regs))
+            filtered = filtered.assign(seed_support=seed_support(vote_extent(filtered), seed_regs))
         support: Dict[str, object] = {
             "n_checkpoints": len(per_seed),
             "min_seed_support": rules.min_seed_support,

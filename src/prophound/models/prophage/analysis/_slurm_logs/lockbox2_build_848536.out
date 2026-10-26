@@ -1,0 +1,18 @@
+=== job start ===
+Fri Oct 23 12:25:51 CDT 2026
+c013
+[preflight] all inputs present
+[corpus] 2674 accessions, 2656 found in the summary, 2223 genera
+[exclude] 171 more genera from analysis/lockbox2/exclude_genera.txt
+[pool] 499 complete assemblies in 188 genera absent from the corpus
+[done] 150 genomes -> analysis/lockbox2/lockbox_genome_list.txt (sha256 c6f57869ceaa8ce0...)
+[download]
+Fri Oct 23 12:26:00 CDT 2026
+[download] 150 of 150 FASTAs present
+[genomad]
+Fri Oct 23 12:27:02 CDT 2026
+[genomad] 150 of 150 done
+Fri Oct 23 15:43:58 CDT 2026
+[manifest] 186 elements in 73 genomes; by stratum {'30-60kb': 94, '15-30kb': 39, '10-15kb': 26, '60kb+': 23, '5-8kb': 2, '8-10kb': 2}
+=== job end (exit 0) ===
+Fri Oct 23 15:44:01 CDT 2026

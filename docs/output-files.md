@@ -71,9 +71,9 @@ One row per call, sorted by contig (in input order), then by start. 0-based, hal
 | `rank` | as in `regions.tsv` |
 | `genome_id` | the input file name without its extension (and without `.gz`/`.bz2`/`.xz`) |
 | `contig_id` | the sequence ID: the first word of the FASTA header, or the versioned accession (`VERSION`) of a GenBank/EMBL record |
-| `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise estimated edges (refinement, then composition in Default and Conservative; `start_source`/`end_source` say which) |
-| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are estimated, by the model's score and, in Default and Conservative, composition (docs/att-boundaries.md). The same values are `att site` and `estimated` in `regions.tsv`'s `edges` column and the terminal list; `att` and `model` are kept in this file and the GFF3, which scripts read |
-| `start_lo`, `start_hi`, `end_lo`, `end_hi` | where each true edge lies. Equal to the edge for an att edge and for an edge on a contig end. For a model edge, a 90% range relative to the call's length L, clipped to the contig: in Default and Conservative (composition edges) from 0.143·L outside to 0.463·L inside the reported edge (coverage 0.898 tuning, 0.891 and 0.883 on two check samples); in Exploratory from 0.055·L outside to 0.494·L inside (0.90, 0.91, 0.92, measured over all modes before composition edges). Most of each range is inward, because model edges more often overshoot |
+| `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise estimated edges (refinement, then composition; `start_source`/`end_source` say which) |
+| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are estimated, by the model's score and composition (docs/att-boundaries.md). The same values are `att site` and `estimated` in `regions.tsv`'s `edges` column and the terminal list; `att` and `model` are kept in this file and the GFF3, which scripts read |
+| `start_lo`, `start_hi`, `end_lo`, `end_hi` | where each true edge lies. Equal to the edge for an att edge and for an edge on a contig end. For a model edge, a 90% range relative to the call's length L, clipped to the contig: from 0.143·L outside to 0.463·L inside the reported edge, in every mode (fitted on Default and Conservative: coverage 0.898 tuning, 0.891 and 0.883 on two check samples; Exploratory 0.909 tuning, 0.907 and 0.886 on the check samples, 0.804 on LAMBDA). Most of each range is inward, because model edges more often overshoot |
 | `n_windows` | windows overlapping the model's call |
 | `region_len_bp` | `end − start` |
 | `mean_prob` | mean score of those windows (the fine windows when the call was refined), 4 dp. The rank's tie-break |
@@ -81,10 +81,10 @@ One row per call, sorted by contig (in input order), then by start. 0-based, hal
 | `window_bp` | window length that made the call: `--window-len` (10,000 by default), or 5,000 / 3,000 on a contig shorter than that |
 | `contig_edge` | `none`, `start`, `end` or `both`: an edge on a contig end. That edge is the end of the sequence, not a detected element boundary, and the element may continue on another contig |
 | `n_frac` | fraction of the call that is N, 4 dp |
-| `seed_support` | with several checkpoints: how many make an overlapping call of their own (absent with one checkpoint) |
+| `seed_support` | with several checkpoints: how many make an overlapping call of their own (absent with one checkpoint). Counted on the call as the vote saw it (`coarse_start`/`coarse_end` when refinement ran), so a split piece reports its parent call's support and never reads below its mode's vote |
 | `refine_status`, `coarse_start`, `coarse_end`, `n_pieces` | from the refinement pass (on by default; absent with `--refine-window-len 0`). `refine_status` is `refined`, `split` (one coarse call became `n_pieces`), `no_fine_support` (kept unchanged) or `short_contig` (not refined). `coarse_*` is the call before refinement; the att search uses it |
 | `model_start`, `model_end` | the model's edges after refinement, before att and composition |
-| `start_source`, `end_source` | what placed each edge: `att`, `composition` (Default and Conservative; `--composition-edges`), `fine` (the refinement pass), `coarse` (nothing moved it off the 1 kb grid) or `contig_end` |
+| `start_source`, `end_source` | what placed each edge: `att`, `composition` (`--composition-edges`), `fine` (the refinement pass), `coarse` (nothing moved it off the 1 kb grid) or `contig_end` |
 | `att_len`, `att_core` | the att core's length and sequence (empty for a model call). Authors differ on whether one core copy belongs to the element: with this core, `start + att_len` or `end − att_len` gives the other convention |
 
 ## `regions.filtered.tsv`
@@ -129,7 +129,7 @@ Scores are written at full precision, because offline scorers rebuild calls from
 | `input_format` | detected `format` (`fasta`, `genbank`, `embl`, `gff3`), `compression`, `u_read_as_t` (RNA `U` bases read as `T`), and `contig_names` (GenBank/EMBL record name per contig ID, where they differ) |
 | `mode`, `threshold`, `seed_threshold`, `extend_threshold`, `ensemble` | the thresholds actually used |
 | `window_len`, `stride`, `trained_window_len`, `trained_stride`, `grid_offset`, `ambiguity_policy` | window settings |
-| `region_builder`, `coverage_frac`, `fragment_merge`, `refine`, `boundary_refinement` | call-building settings (`refine` only with refinement); `boundary_refinement` names the edge stages that ran (`fine_pass_then_att_then_composition` in Default and Conservative, `fine_pass_then_att` in Exploratory) |
+| `region_builder`, `coverage_frac`, `fragment_merge`, `refine`, `boundary_refinement` | call-building settings (`refine` only with refinement); `boundary_refinement` names the edge stages that ran (`fine_pass_then_att_then_composition` by default in every mode) |
 | `boundaries` | `att_search` and `composition_edges` (whether each ran), `calls_with_att`, `edges_by_source`, and the `edge_range` fractions and coverage |
 | `short_contigs` | contigs under the window length: counts, and the thresholds used to scan them |
 | `seed_support` | the vote: checkpoints, minimum support, calls set aside, calls by support |

@@ -169,7 +169,7 @@ def test_edge_sources():
     assert list(out.end_source) == ["att", "fine", "contig_end"]
 
 
-def test_finish_boundaries_runs_composition_only_in_its_modes():
+def test_finish_boundaries_runs_composition_in_every_mode():
     from prophound.models.prophage.src import composition
     # host: random; element: AT-rich, so the two profiles differ
     rng = np.random.default_rng(5)
@@ -177,13 +177,25 @@ def test_finish_boundaries_runs_composition_only_in_its_modes():
     host[100_000:140_000] = list(rng.choice(list("ACGT"), 40_000, p=[0.4, 0.1, 0.1, 0.4]))
     g = att.Genome({CONTIG: "".join(host)})
     calls = calls_frame([("g", CONTIG, 96_000, 144_000, 48_000, "none")])
-    for mode, moved in (("default", True), ("conservative", True), ("exploratory", False)):
+    for mode, moved in (("default", True), ("conservative", True), ("exploratory", True)):
         out = att.finish_boundaries(calls, g, {CONTIG: 300_000}, mode).iloc[0]
         assert (out.start_source == "composition") is moved
         if moved:   # within one window of the true switch, and the cap respected
             assert abs(out.start - 100_000) <= composition.WIN and abs(out.end - 140_000) <= composition.WIN
     off = att.finish_boundaries(calls, g, {CONTIG: 300_000}, "default", composition_edges="off").iloc[0]
     assert off.start == 96_000 and off.start_source == "coarse"
+
+
+def test_composition_gate_is_per_mode():
+    from prophound.models.prophage.src import composition
+    assert composition.min_jsd("exploratory") < composition.min_jsd("default") == composition.min_jsd("conservative")
+    rng = np.random.default_rng(5)
+    host = list(rng.choice(list("ACGT"), 300_000))
+    host[100_000:140_000] = list(rng.choice(list("ACGT"), 40_000, p=[0.4, 0.1, 0.1, 0.4]))
+    seqs = {CONTIG: "".join(host)}
+    calls = att.edge_ranges(att.apply_boundaries(calls_frame([("g", CONTIG, 96_000, 144_000, 48_000, "none")]),
+                                                 None, {CONTIG: 300_000}), {CONTIG: 300_000})
+    assert (composition.composition_edges(calls, seqs, gate=1.0).start_source == "coarse").all()   # gate blocks
 
 
 def test_composition_moves_are_capped_inward():

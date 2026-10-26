@@ -36,21 +36,21 @@ When a phage integrates, the host's and the phage's attachment sites recombine, 
 Most candidates have no att site. Their ends are placed in two steps:
 
 1. **The model's score** along the genome. It changes gradually over several kb around a real end, so on its own it places an end only roughly, and usually a few kb past the element.
-2. **In Default and Conservative mode, the sequence's composition.** Prophages usually differ from their host in base composition, so each end is moved to where the sequence turns from host-like to element-like, the way tools for genomic islands find edges. In our tests this halved the typical error, to about **2 kb** (median), without losing any element in Default mode. Exploratory mode skips this step, because there it cost a little recall, so its ends are the score's alone (typically 3–4 kb off).
+2. **The sequence's composition.** Prophages usually differ from their host in base composition, so each end is moved to where the sequence turns from host-like to element-like, the way tools for genomic islands find edges. In our tests this halved the typical error, to about **2 kb** (median), without losing any element in Default mode. Exploratory mode applies it a little more often (it accepts host and element compositions that differ less), at the cost of one partially detected element in our tests.
 
 `start_range` and `end_range` say where the true ends lie: in our tests each true end fell inside its range about **90% of the time** (87–91% on the samples the ranges were not fitted to). The ranges are wide, often 10–30 kb: the typical error is small, but a minority of ends are far off, mostly where only part of an element was detected. Most of the width lies inside the region. Two practical readings:
 
 - **Sequence that is almost certainly inside the element** lies between the upper end of `start_range` and the lower end of `end_range`.
 - **To be sure a primer pair or a cloned fragment spans the whole element,** place it outside the lower end of `start_range` and the upper end of `end_range`.
 
-**Ends on a round number** (a multiple of 1,000) are ends nothing could place: the model's score stays high right up to them, and composition did not move them either. `note` says so ("end not refined"). They are the least certain estimated ends; their ranges held less often in our tests (about 70–85%). In Default mode they are about 1 in 20 ends; in Exploratory mode, about 1 in 3.
+**Ends on a round number** (a multiple of 1,000) are ends nothing could place: the model's score stays high right up to them, and composition did not move them either. `note` says so ("end not refined"). They are the least certain estimated ends; their ranges held less often in our tests (about 70–85%). In Default mode they are about 1 in 20 ends; in Exploratory mode, under 1 in 100.
 
 A gene-based look at the region (an integrase gene, a tRNA gene at one end, phage structural genes) narrows an estimated edge much further than the range does.
 
 ## Rank and support
 
 - **`rank`** sorts candidates by how strongly the model scores them (its highest window score, then its average). In our tests this put candidates that match known prophages first. That also means **a truly novel element can rank low**. If you are looking for something new, read past the top of the list. A low-ranked att-site candidate is worth a look: the repeat is evidence of integration that does not depend on the score.
-- **`support`** counts the models that find the candidate independently. Default and Conservative mode keep only `3/3` candidates. In Exploratory mode, `1/3` candidates very rarely match known elements: start triage with those last.
+- **`support`** counts the models that find the candidate independently. Default and Conservative mode keep only `3/3` candidates. A candidate split from a longer one shows the support of the call it was split from. In Exploratory mode, `1/3` candidates very rarely match known elements: start triage with those last.
 
 ## Choosing a mode
 

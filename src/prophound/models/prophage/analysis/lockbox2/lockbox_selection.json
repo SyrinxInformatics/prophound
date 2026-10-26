@@ -1,0 +1,14 @@
+{
+  "summary_file": "analysis/lockbox/assembly_summary_refseq.20260929.txt",
+  "summary_sha256": "3459db2b5ab91279a26cc109b2917abe4a11e44105f5bf2d444d40011651e931",
+  "seed": 20261021,
+  "n_requested": 150,
+  "n": 150,
+  "corpus_genera": 2223,
+  "eligible_genera": 188,
+  "exclude_genera_file": "analysis/lockbox2/exclude_genera.txt",
+  "exclude_genera_sha256": "87f47161c17f71c289be4582ff04edd33eed73d2c0c23aa82a216e81fa751442",
+  "excluded_genera": 171,
+  "list_sha256": "c6f57869ceaa8ce08a6b4750859a8cf683dd15195de4a23f6d31d0398974a4d0",
+  "rule": "bacteria, RefSeq Complete Genome, latest, genus absent from corpus; one per genus (reference > representative > other, then accession); seeded sample of genera"
+}

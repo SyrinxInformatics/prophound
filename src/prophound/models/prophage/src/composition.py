@@ -34,7 +34,9 @@ on a contig end, of a call at least MIN_CALL_BP long:
 
 Chosen on the tuning sample and checked on two others; shipped in Default and
 Conservative mode (user decision 2026-10-21), where it was recall-neutral (Default, all
-three samples) and roughly halved the median edge error.
+three samples) and roughly halved the median edge error, and in Exploratory mode with a
+looser gate (MIN_JSD_EXPLORATORY; user decision 2026-10-23, docs/att-boundaries.md
+"Composition everywhere"), where it cost one tuning-sample element for the same gain.
 """
 
 from __future__ import annotations
@@ -49,9 +51,10 @@ MIN_HOST_BP = 5000
 PSEUDO = 0.5
 MIN_CALL_BP = 3000
 MIN_JSD = 0.01
+MIN_JSD_EXPLORATORY = 0.005    # looser: in Default it cost an element, in Exploratory nothing
 MAX_INWARD_FRAC = 0.15
 MAX_INWARD_BP = 8000
-MODES = ("default", "conservative")
+MODES = ("exploratory", "default", "conservative")
 
 _CODE = np.full(256, 255, dtype=np.uint8)
 for _i, _b in enumerate(b"ACGT"):
@@ -107,8 +110,14 @@ def change_point(contig: str, lo: int, hi: int, elem: np.ndarray, host: np.ndarr
     return int(centres[j]) if j < len(centres) else int(centres[-1])
 
 
-def composition_edges(calls: pd.DataFrame, seqs: dict) -> pd.DataFrame:
+def min_jsd(mode: str) -> float:
+    """The profile-divergence gate for `mode`."""
+    return MIN_JSD_EXPLORATORY if mode == "exploratory" else MIN_JSD
+
+
+def composition_edges(calls: pd.DataFrame, seqs: dict, gate: float = MIN_JSD) -> pd.DataFrame:
     """Move the `model` edges of `calls` (with their ranges) to composition change-points.
+    `gate` is the minimum Jensen-Shannon divergence between element and host profiles.
 
     Returns the calls with start/end moved where the gates pass, and `start_source` /
     `end_source` set to `composition` for moved edges.
@@ -133,7 +142,7 @@ def composition_edges(calls: pd.DataFrame, seqs: dict) -> pd.DataFrame:
             if len(host_seq) < MIN_HOST_BP:
                 continue
             host = profile(kmer_codes(host_seq))
-            if jsd(elem, host) < MIN_JSD:
+            if jsd(elem, host) < gate:
                 continue
             old = s if side == "start" else e
             new = change_point(contig, lo, hi, elem, host, side, old)

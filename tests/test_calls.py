@@ -86,6 +86,19 @@ def test_n_filter_moves_a_passing_call_to_filtered():
     assert out.meta["n_gap_filter"]["calls_dropped"] == 1
 
 
+def test_split_pieces_report_the_support_their_parent_call_passed():
+    # one coarse call over 40-80 kb, made by all three checkpoints; two of them only
+    # cover its left half, so the right piece alone overlaps one checkpoint's call
+    seeds = [pd.DataFrame({"contig_id": ["c"], "start": [s], "end": [e]})
+             for s, e in [(40_000, 80_000), (40_000, 55_000), (40_000, 55_000)]]
+    pieces = pd.DataFrame({"genome_id": "g", "contig_id": "c", "start": [41_000, 62_000], "end": [54_000, 79_000],
+                           "coarse_start": 40_000, "coarse_end": 80_000, "refine_status": "split", "n_pieces": 2})
+    out = finalize(pieces, pieces.iloc[0:0].assign(filter=pd.Series(dtype=str)), [[s] for s in seeds],
+                   {"c": CONTIG_LEN}, lambda df: np.zeros(len(df)), RULES, 0.5)
+    assert out.calls.seed_support.tolist() == [3, 3]
+    assert out.calls.start.tolist() == [41_000, 62_000]   # reported coordinates are the pieces'
+
+
 def test_snap_applies_to_filtered_candidates():
     w = track((0, 20_000))
     per = [w.prob.to_numpy(), np.full(len(w), 0.01), np.full(len(w), 0.01)]

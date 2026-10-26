@@ -28,6 +28,10 @@ Run from src/prophound/models/prophage. The 2026-10-21 check (`arc_data/att_veri
   python scripts/boundary_verify.py reference --out analysis/att/verify2_reference.tsv
   python scripts/boundary_verify.py compare --reference analysis/att/verify2_reference.tsv \\
       --predict_dir ../../../../arc_data/att_verify2
+The 2026-10-26 Exploratory check (`arc_data/att_verify3/run.sh`):
+  python scripts/boundary_verify.py reference --plan exploratory --out analysis/att/verify3_reference.tsv
+  python scripts/boundary_verify.py compare --support --reference analysis/att/verify3_reference.tsv \\
+      --predict_dir ../../../../arc_data/att_verify3
 """
 
 from __future__ import annotations
@@ -44,13 +48,18 @@ import evalkit as ek  # noqa: E402
 RUNS = Path("../../../../arc_data/att_runs")
 GENOMES = {"tune42": "../../../../arc_data/raw/genomes", "confirm18": "../../../../arc_data/ncbi_confirm18",
            "lit7": "../../../../arc_data/raw/genomes"}
-PLAN = (("confirm18", ("default", "conservative")), ("lit7", ("default", "conservative")), ("tune42", ("default",)))
+PLANS = {  # sample -> modes
+    "verify2": (("confirm18", ("default", "conservative")), ("lit7", ("default", "conservative")),
+                ("tune42", ("default",))),
+    # Exploratory composition edges and split-piece support (2026-10-26)
+    "exploratory": (("confirm18", ("exploratory",)), ("lit7", ("exploratory",))),
+}
 KEY = ["genome_id", "contig_id", "start", "end", "boundary", "start_source", "end_source"]
 
 
 def cmd_reference(a) -> None:
     out = []
-    for sample, modes in PLAN:
+    for sample, modes in PLANS[a.plan]:
         r = Path(a.runs) / sample
         ens = ek.load_tracks(str(r))
         seeds = [ek.load_tracks(str(r), f"prob_ckpt{k}") for k in (1, 2, 3)]
@@ -75,8 +84,9 @@ def cmd_compare(a) -> None:
             continue
         parts = [pd.read_csv(g / "regions.detailed.tsv", sep="\t") for g in sorted(d.iterdir())
                  if g.is_dir() and (g / "regions.detailed.tsv").stat().st_size > 1]
-        cli = pd.concat(parts, ignore_index=True)[KEY].sort_values(KEY).reset_index(drop=True)
-        off = r[KEY].sort_values(KEY).reset_index(drop=True)
+        key = KEY + (["seed_support"] if a.support else [])
+        cli = pd.concat(parts, ignore_index=True)[key].sort_values(key).reset_index(drop=True)
+        off = r[key].sort_values(key).reset_index(drop=True)
         same = cli.equals(off)
         total += len(cli)
         bad += not same
@@ -95,10 +105,12 @@ def main() -> None:
     r = sp.add_parser("reference")
     r.add_argument("--runs", default=str(RUNS))
     r.add_argument("--out", required=True)
+    r.add_argument("--plan", choices=sorted(PLANS), default="verify2")
     r.set_defaults(fn=cmd_reference)
     c = sp.add_parser("compare")
     c.add_argument("--reference", required=True)
     c.add_argument("--predict_dir", required=True)
+    c.add_argument("--support", action="store_true", help="also compare seed_support")
     c.set_defaults(fn=cmd_compare)
     a = ap.parse_args()
     a.fn(a)

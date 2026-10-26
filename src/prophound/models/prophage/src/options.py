@@ -145,7 +145,7 @@ class PredictOptions:
     split_min_gap_bp: int
     split_max_prob: float
     att_search: bool = True         # att boundaries where found (docs/att-boundaries.md)
-    composition_edges: str = "auto"  # auto = on in Default and Conservative
+    composition_edges: str = "auto"  # auto = on in every mode
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
     force: bool = False             # replace outputs already in outdir
     bundled_model: bool = False     # checkpoints are the ones shipped with the package
@@ -475,8 +475,7 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         default="auto",
         help=(
             "Move each estimated edge to where the sequence's composition changes from host-like to "
-            "element-like. auto (default): on in default and conservative mode, off in exploratory, where "
-            "it cost recall."
+            "element-like. auto (default): on in every mode, with a looser gate in exploratory."
         ),
     )
     advanced.add_argument(

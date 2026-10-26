@@ -30,7 +30,7 @@ With --boundaries (the second lockbox, docs/lockbox2.md), also its boundary endp
 median IoU per element; the share of calls with att boundaries; coverage of the model
 edges' ranges (start_lo..start_hi, end_lo..end_hi) on calls overlapping one element;
 att edges' distance to geNomad's; bp called and bp off every element. The run check
-then also requires the 0.1.0 edge stages (refinement, then att search).
+then also requires the 0.1.0 edge stages (refinement, att search, composition).
 
 Before scoring, every run is checked: one regions.tsv and run_metadata.json per genome
 and mode, the mode as named, edge snap at 0.5, impute, and one checkpoint-hash set.
@@ -63,8 +63,8 @@ REFERENCE = {
     "18": {"exploratory": 1.000, "default": 1.000, "conservative": 0.962},
 }
 # the 0.1.0 edge stages per mode (run_metadata.json boundary_refinement; docs/lockbox2.md)
-BOUNDARY_STAGES = {"exploratory": "fine_pass_then_att", "default": "fine_pass_then_att_then_composition",
-                   "conservative": "fine_pass_then_att_then_composition"}
+# (Exploratory gained composition edges on 2026-10-23, amendment in docs/lockbox2.md)
+BOUNDARY_STAGES = dict.fromkeys(MODES, "fine_pass_then_att_then_composition")
 STRATA = ["<5kb", "5-8kb", "8-10kb", "10-15kb", "15-30kb", "30-60kb", "60kb+"]
 
 
