@@ -95,9 +95,9 @@ A batch writes one subdirectory per genome, plus combined calls and `batch_summa
 Every figure, its interval and its source are in [`docs/release-text-0.1.0.md`](docs/release-text-0.1.0.md). Briefly:
 
 - **Agreement with geNomad, held out:** Default covers 0.960 of 202 elements (0.924–0.980). The test set was preregistered and scored once ([`docs/lockbox.md`](docs/lockbox.md)). Its lower bound is under 0.95, so 95% recall is not established.
-- **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.5–3.7× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.
+- **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.7–4.1× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.
 - **Alongside geNomad:** adding prophound Default to geNomad recovers 16 more curated LAMBDA prophages and loses none, at about 15 extra calls per genome. Twelve of the 16 come from two genomes.
-- **LAMBDA's own candidates:** prophound covers 18 of the 19 phages LAMBDA's reviewers judged likely but left out of its curated set (0.84 above chance). geNomad covers 15. Most of them are called by annotation tools too.
+- **LAMBDA's own candidates:** prophound has a call on all 19 phages LAMBDA's reviewers judged likely but left out of its curated set, and covers at least half of 16 (0.75 above chance; 18 in the preregistered scoring, before the 0.1.0 boundary stages trimmed two calls). geNomad covers 15. Most of them are called by annotation tools too.
 - **Off-target calls** carry mobile-element features 3.1× as often as matched background, mostly conjugation and integrase/transposase genes rather than phage structural genes. Many look like other integrative elements, not missed prophages.
 
 ## What it does not claim
