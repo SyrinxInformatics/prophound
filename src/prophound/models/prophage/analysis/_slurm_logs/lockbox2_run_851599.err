@@ -1,0 +1,12 @@
+[summary] prophound unknown (not installed) | mode default | 3 checkpoints
+[summary] input: FASTA, 1 contig, 220,000 bp; 25 ambiguity codes (113.64 ppm), policy impute
+[summary] calls: 2 (51,504 bp, 23.4% of input)
+[summary] seed vote: kept calls made by at least 3 of 3 checkpoints; 0 calls set aside in regions.filtered.tsv
+[summary] ran on cuda in 3.1 s
+
+2 candidate prophage regions (default mode), best first:
+  rank  contig              start-end (1-based)  length   edges      support   
+  1     hin_rd_kw20_region  121,179-152,504      31.3 kb  estimated  3/3 models
+  2     hin_rd_kw20_region  56,749-76,926        20.2 kb  estimated  3/3 models
+edges: 'att site' = exact to the base if the repeat is a real att site; 'estimated' = can be several kb off (regions.tsv gives a range for each edge).
+These are candidates to check, not confirmed prophages. How to read them: https://github.com/SyrinxInformatics/mge-detect/blob/main/docs/interpreting-results.md

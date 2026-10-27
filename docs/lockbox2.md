@@ -51,7 +51,7 @@ Scoring happens **once**, after all of the following are final and committed. Th
 
 - [x] 2026-10-21: preregistration written. `lockbox_select.py` gained `--exclude_genera` and `--summary_sha256` (checked on a synthetic summary), `lockbox2_build.slurm` written, `exclude_genera.txt` built. **Not yet submitted.**
 - [x] Build on ARC (`sbatch scripts/lockbox2_build.slurm`; the user submits). **Submitted 2026-10-23 as `848536`; finished the same day (exit 0, empty `.err`, no `failures.txt`); pulled and read 2026-10-26.** 188 genera were eligible (as predicted, at most 188), 150 drawn, 150 of 150 downloaded and labelled by geNomad. List SHA-256 `c6f57869ceaa8ce08a6b4750859a8cf683dd15195de4a23f6d31d0398974a4d0`; exclusion list SHA-256 `87f47161…`; summary SHA-256 matches the preregistered one. Checked locally: 150 distinct genera, none in `exclude_genera.txt` or the first lockbox, the list equals the selection table, 87 reference genomes and 63 others. **Truth: 186 elements in 73 genomes** (77 genomes carry none): 5–8 kb 2, 8–10 kb 2, 10–15 kb 26, 15–30 kb 39, 30–60 kb 94, 60 kb+ 23. That is 16 fewer than the first lockbox's 202, and the sub-10 kb strata (4 elements) are reported with *n* only. At *n* = 186 the "≥95%" rule (Wilson lower bound ≥ 0.95) needs at most 3 misses (183/186, lower bound 0.954); 4 misses gives 0.946. No model output exists on these genomes.
-- [ ] Freeze the defaults (commit), write `scripts/lockbox2_run.slurm` with that commit's MD5s, run once on ARC, score once locally. **The last CPU gates passed on 2026-10-27** (steps 1–3). **Frozen at `0d71e2f` (2026-10-27; steps 4–6 done). The one run is `851599` (submitted 2026-10-27, GPU, 2-day limit). Next is step 7: pull and score once.**
+- [ ] Freeze the defaults (commit), write `scripts/lockbox2_run.slurm` with that commit's MD5s, run once on ARC, score once locally. **The last CPU gates passed on 2026-10-27** (steps 1–3). **Frozen at `0d71e2f` (2026-10-27; steps 4–6 done). The one run was `851599` (2026-10-27, 78 min). **Scored once on 2026-10-27: Default covered50 0.989 (0.962–0.997), so ≥95% is established held out; edge ranges cover 0.78, so they are not called 90% ranges ("Result").**
   - *Freeze (2026-10-27).* `0d71e2f` = `382efba`'s code plus docs and three LAMBDA result files, with no code change. Its archive (`arc_data/prophound_0d71e2f.tar.gz`, 27.4 MB, `src` and `examples`) has the same `src/` as the `wt_final` snapshot the matrix ran, except two scripts written later and never imported by `predict` (`lockbox2_run.slurm`, `split_support_check.py`) and `summary.csv`'s line endings. `analysis/lockbox2/frozen_md5.txt` lists all 745 files under `src/` (sha256 `21e7485299d65f75a47573c9e92a53c092f86756d0fb2703ae95c8e2396d7baf`), and `md5sum -c` passes in the extracted tree. The launcher's preflight was run locally on the extracted archive: it imports from it, and the example genome gives its 2 expected calls (MPS).
   - *Result (2026-10-27).* Head against new: 27 identical, and the 3 that differ are exactly `complete_exploratory`, `gappy_exploratory` and `shred_exploratory`. New against support-fix: **30 identical**. No reference case has a split piece whose support changes, so the matrix shows that the fix changes nothing else; its evidence is `tests/test_calls.py` and `scripts/split_support_check.py`. Both pass the rule in step 3.
   1. *Done.* **The paused matrices.** Two CPU reference matrices were frozen in place with `SIGSTOP` at 16:00 (the bracketed first letter in the patterns keeps `pkill -f` from matching the shell that runs it) (if the session or the machine restarted since, they are gone; see 2). Resume them with `pkill -CONT -f "[f]rom prophound.cli import main"; pkill -CONT -f "[r]eference_outputs.py run"`. They run from snapshots, so later edits cannot leak in: `arc_data/head_ef4faac` (the baseline), `arc_data/wt_expl_comp` (Exploratory composition only) and `arc_data/wt_final` (`382efba`'s code: composition plus the support fix; only `calls.py` differs from `wt_expl_comp`). Outputs go to `src/prophound/models/prophage/analysis/refout/{expl_comp_head_cpu,expl_comp_new_cpu,support_fix_cpu}`; logs to `arc_data/{expl_comp_head,expl_comp_new,support_fix}.log`. One chain runs head and then new; the support-fix matrix runs beside it.
@@ -60,7 +60,71 @@ Scoring happens **once**, after all of the following are final and committed. Th
   4. **Freeze commit** (the user commits): `382efba` plus whatever the comparisons needed; no code change after it. Record its hash here.
   5. **Fill the launcher**: `git archive --format=tar.gz -o arc_data/prophound_<sha>.tar.gz <sha> src examples`; extract it to a scratch directory and write `analysis/lockbox2/frozen_md5.txt` as `md5sum` lines (`<md5>  src/...`) for every file under `src/` (`md5sum -c` on ARC reads it from the extracted root); set `FREEZE=<sha>` and `MD5S_SHA=<sha256 of frozen_md5.txt>` in `scripts/lockbox2_run.slurm`; commit both (second commit; the code stays the freeze commit's).
   6. **Push** (the user, `docs/environment.md`: `scp`, then a plain `ssh`, then verify with `ls -la`): the archive into `/work/pke835/mge_explorer/`, extracted to `/work/pke835/mge_explorer/prophound_<sha>/`; `frozen_md5.txt` into `data_refactored/analysis/lockbox2/`; the launcher into `data_refactored/scripts/`. Then `sbatch scripts/lockbox2_run.slurm` from `data_refactored`. The preflight runs the example genome on the V100 first: it also catches a missing dependency in `mge_explorer_gpu` (the package needs `biopython>=1.86`, never needed by an ARC job before).
-  7. Pull `analysis/lockbox2/prophound/` and the logs, then score once: `lockbox_score.py --boundaries` (endpoints above; "≥95%" needs at most 3 misses of 186).
+  7. *Done 2026-10-27.* Pull `analysis/lockbox2/prophound/` and the logs, then score once: `lockbox_score.py --boundaries` (endpoints above; "≥95%" needs at most 3 misses of 186).
+
+## Result (scored once, 2026-10-27)
+
+ARC `851599` ran the archive of the freeze on a V100 in 78 minutes (09:34–10:52 on 2026-10-27). Scored once locally with `scripts/lockbox_score.py --boundaries`, giving `analysis/lockbox2/results.{json,elements.csv}`.
+
+**Pre-scoring checks, all passed.**
+- The preflight passed on ARC: the genome list's SHA-256, `frozen_md5.txt` (745 files) and its SHA-256, no extra modules, `prophound` importing from the archive, all 150 FASTAs, and the example genome's 2 expected calls on CUDA.
+- All 450 runs (150 genomes × 3 modes) completed. Their directories match the genome list exactly, there is no `failures.txt`, and the job exited 0.
+- `.err` holds only the preflight's own example-genome summary, which goes to stderr by design.
+- Every run used CUDA and `boundary_refinement` = `fine_pass_then_att_then_composition`, with one checkpoint-hash set that equals `model/manifest.json`.
+- `prophound_version` reads "unknown (not installed)" in every run's metadata, because the archive ran from `PYTHONPATH`. The code's identity is the MD5 preflight.
+
+The truth is 186 geNomad elements in 73 of the 150 genomes; the other 77 have none.
+
+**Primary endpoint: Default covered50 0.989 (184 of 186; Wilson 0.962–0.997; genome bootstrap 0.972–1.000), at 12.4 calls per genome.** The Wilson lower bound is above 0.95, so **by the preregistered rule the release may state "≥95%"** for Default, held out. The first lockbox (0.960, lower bound 0.924, under the pre-boundary defaults) could not.
+
+| | Exploratory | **Default** | Conservative |
+|---|---|---|---|
+| covered50 | 0.984 (183) | **0.989 (184)** | 0.903 (168) |
+| Wilson 95% | 0.954–0.994 | **0.962–0.997** | 0.852–0.938 |
+| genome bootstrap 95% | 0.956–1.000 | 0.972–1.000 | 0.858–0.949 |
+| covered (≥1 bp) | 1.000 | 0.989 | 0.925 |
+| calls per genome | 37.4 | 12.4 | 5.0 |
+| … on the 77 genomes with no element (descriptive) | 31.6 | 9.2 | 2.7 |
+| conflated calls / absorbed elements | 5 / 10 | 5 / 10 | 5 / 10 |
+| gap: the 42's covered50 minus this | +0.010 | −0.017 | +0.041 |
+| gap: the 18's covered50 minus this | +0.016 | +0.011 | +0.059 |
+
+**By size, Default** (Wilson 95%):
+
+| stratum | n | covered50 | Wilson 95% |
+|---|---|---|---|
+| 5–8 kb | 2 | 1 of 2 | — |
+| 8–10 kb | 2 | 2 of 2 | — |
+| 10–15 kb | 26 | 1.000 | 0.871–1.000 |
+| 15–30 kb | 39 | 1.000 | 0.910–1.000 |
+| 30–60 kb | 94 | 0.989 | 0.942–0.998 |
+| 60 kb+ | 23 | 1.000 | 0.857–1.000 |
+
+Below 10 kb n = 2 per stratum: reported as counts, not claims. Conservative's weakest stratum is 15–30 kb (0.821, 0.673–0.910).
+
+**Boundary endpoints:**
+
+| | Exploratory | Default | Conservative |
+|---|---|---|---|
+| median IoU per element | 0.752 | 0.742 | 0.746 |
+| calls with att boundaries | 0.055 (306 of 5,611) | 0.084 (157 of 1,863) | 0.108 (81 of 749) |
+| model-edge range coverage (Wilson 95%) | 0.765 (238/311; 0.715–0.809) | **0.782 (237/303; 0.732–0.825)** | 0.777 (216/278; 0.724–0.822) |
+| att edges vs geNomad's: median, ≤100 bp, ≤1 kb | 1,087 bp, 0.06, 0.48 (n = 48) | 871 bp, 0.10, 0.52 (n = 50) | 1,087 bp, 0.10, 0.48 (n = 48) |
+| Mb called / Mb off every element | 82.8 / 76.4 | 45.0 / 38.7 | 21.3 / 15.5 |
+
+- **Edge ranges: by the preregistered rule they are not "90% ranges".** Default coverage is 0.782, and its Wilson interval (0.732–0.825) lies below 0.90. The release states the measured coverage, about 78% held out, instead. On the development samples it was 0.88–0.92 (`docs/att-boundaries.md`), so the ranges were fitted too narrow for new genera.
+- **Att edges sit further from geNomad's here** (median 0.9–1.1 kb, against 0.5–0.7 kb on the development samples). As preregistered, this measures agreement with geNomad's gene-edge borders, not att accuracy.
+- **Median IoU is lower than on the tuning sample** (0.742 against 0.812), but in line with the check samples and LAMBDA (0.72–0.82).
+
+**Misses (diagnosis after scoring; nothing is re-scored).**
+- **Default misses 2 elements, both of which Exploratory reaches:**
+  - a 6.1 kb element in `GCF_052828705.1` (no Default call; Exploratory 0.85);
+  - a 34.9 kb element in `GCF_060445945.1` (no Default call; Exploratory 0.32).
+- **Exploratory misses 3,** two of them partial detections that Default covers just over half:
+  - `GCF_005601135.1` 597,338–618,137: Default 0.55, Exploratory 0.45;
+  - `GCF_060445945.1` 5,499,362–5,535,423: Default 0.53, Exploratory 0.40.
+
+  In both, Exploratory's looser composition gate (0.005) moved the right edge inward, by 2.3 kb and 5.9 kb. Default's gate (0.01) left that edge on the fine pass. This is the cost measured when Exploratory composition was adopted (one tuning-sample element, 0.994 → 0.989; `docs/att-boundaries.md`). Held out it is two elements, so Exploratory covers one element fewer than Default. Without them it would read 0.995. That is not a figure the release may use; it is the evidence for revisiting the gate after 0.1.0.
 
 ## Amendments
 

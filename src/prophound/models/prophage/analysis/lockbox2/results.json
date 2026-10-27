@@ -1,0 +1,314 @@
+{
+ "n_genomes": 150,
+ "n_elements": 186,
+ "n_genomes_with_elements": 73,
+ "n_genomes_without_elements": 77,
+ "modes": {
+  "default": {
+   "runs": {
+    "n_runs": 150,
+    "checkpoint_sha256": {
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r1.pt": "6687742a081af0132cce0fc546ea62364805325c387cd6ca6f12d3769259475e",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r2.pt": "29133fd4e1db0a1bc42c951e9ad2149747c4eaea621d1268e208d04434638c2b",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r3.pt": "736d672e8837a6769f61379753a3e750f629c4233f98959381f08f4f2b4607dc"
+    }
+   },
+   "covered50": 0.989247311827957,
+   "k": 184,
+   "n": 186,
+   "covered50_wilson95": [
+    0.9616484423738656,
+    0.9970462551516148
+   ],
+   "covered50_genome_boot95": [
+    0.9720660624291909,
+    1.0
+   ],
+   "covered": 0.989247311827957,
+   "calls_per_genome": 12.42,
+   "conflated_calls": 5,
+   "absorbed_elements": 10,
+   "by_stratum": {
+    "5-8kb": {
+     "n": 2,
+     "k": 1,
+     "covered50": 0.5,
+     "wilson95": [
+      0.09453120463920084,
+      0.9054687953607992
+     ]
+    },
+    "8-10kb": {
+     "n": 2,
+     "k": 2,
+     "covered50": 1.0,
+     "wilson95": [
+      0.3423802239546494,
+      1.0
+     ]
+    },
+    "10-15kb": {
+     "n": 26,
+     "k": 26,
+     "covered50": 1.0,
+     "wilson95": [
+      0.871271076371412,
+      1.0
+     ]
+    },
+    "15-30kb": {
+     "n": 39,
+     "k": 39,
+     "covered50": 1.0,
+     "wilson95": [
+      0.9103331450047065,
+      1.0
+     ]
+    },
+    "30-60kb": {
+     "n": 94,
+     "k": 93,
+     "covered50": 0.9893617021276596,
+     "wilson95": [
+      0.9421770864340252,
+      0.9981196042726924
+     ]
+    },
+    "60kb+": {
+     "n": 23,
+     "k": 23,
+     "covered50": 1.0,
+     "wilson95": [
+      0.8568833796149266,
+      1.0
+     ]
+    }
+   },
+   "gap_to_reused": {
+    "42": -0.017247311827957024,
+    "18": 0.010752688172043001
+   },
+   "descriptive_phage_free_calls_per_genome": 9.155844155844155,
+   "boundaries": {
+    "median_iou": 0.7422664535018659,
+    "att_frac_calls": 0.08427267847557703,
+    "n_calls": 1863,
+    "n_att_calls": 157,
+    "model_edge_range_coverage": 0.7821782178217822,
+    "n_model_edges": 303,
+    "att_edge_vs_genomad": {
+     "n": 50,
+     "median_bp": 870.5,
+     "le100": 0.1,
+     "le1000": 0.52
+    },
+    "Mb_called": 45.043407,
+    "Mb_off_element": 38.732125
+   }
+  },
+  "exploratory": {
+   "runs": {
+    "n_runs": 150,
+    "checkpoint_sha256": {
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r1.pt": "6687742a081af0132cce0fc546ea62364805325c387cd6ca6f12d3769259475e",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r2.pt": "29133fd4e1db0a1bc42c951e9ad2149747c4eaea621d1268e208d04434638c2b",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r3.pt": "736d672e8837a6769f61379753a3e750f629c4233f98959381f08f4f2b4607dc"
+    }
+   },
+   "covered50": 0.9838709677419355,
+   "k": 183,
+   "n": 186,
+   "covered50_wilson95": [
+    0.9536598201636657,
+    0.9944997707956007
+   ],
+   "covered50_genome_boot95": [
+    0.9556962025316456,
+    1.0
+   ],
+   "covered": 1.0,
+   "calls_per_genome": 37.406666666666666,
+   "conflated_calls": 5,
+   "absorbed_elements": 10,
+   "by_stratum": {
+    "5-8kb": {
+     "n": 2,
+     "k": 2,
+     "covered50": 1.0,
+     "wilson95": [
+      0.3423802239546494,
+      1.0
+     ]
+    },
+    "8-10kb": {
+     "n": 2,
+     "k": 2,
+     "covered50": 1.0,
+     "wilson95": [
+      0.3423802239546494,
+      1.0
+     ]
+    },
+    "10-15kb": {
+     "n": 26,
+     "k": 26,
+     "covered50": 1.0,
+     "wilson95": [
+      0.871271076371412,
+      1.0
+     ]
+    },
+    "15-30kb": {
+     "n": 39,
+     "k": 38,
+     "covered50": 0.9743589743589743,
+     "wilson95": [
+      0.8681900970295746,
+      0.9954592969492493
+     ]
+    },
+    "30-60kb": {
+     "n": 94,
+     "k": 92,
+     "covered50": 0.9787234042553191,
+     "wilson95": [
+      0.9257097944865471,
+      0.9941456638135024
+     ]
+    },
+    "60kb+": {
+     "n": 23,
+     "k": 23,
+     "covered50": 1.0,
+     "wilson95": [
+      0.8568833796149266,
+      1.0
+     ]
+    }
+   },
+   "gap_to_reused": {
+    "42": 0.010129032258064496,
+    "18": 0.016129032258064502
+   },
+   "descriptive_phage_free_calls_per_genome": 31.5974025974026,
+   "boundaries": {
+    "median_iou": 0.7521166283454075,
+    "att_frac_calls": 0.05453573338085903,
+    "n_calls": 5611,
+    "n_att_calls": 306,
+    "model_edge_range_coverage": 0.7652733118971061,
+    "n_model_edges": 311,
+    "att_edge_vs_genomad": {
+     "n": 48,
+     "median_bp": 1086.5,
+     "le100": 0.0625,
+     "le1000": 0.4791666666666667
+    },
+    "Mb_called": 82.804556,
+    "Mb_off_element": 76.433468
+   }
+  },
+  "conservative": {
+   "runs": {
+    "n_runs": 150,
+    "checkpoint_sha256": {
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r1.pt": "6687742a081af0132cce0fc546ea62364805325c387cd6ca6f12d3769259475e",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r2.pt": "29133fd4e1db0a1bc42c951e9ad2149747c4eaea621d1268e208d04434638c2b",
+     "/work/pke835/mge_explorer/prophound_0d71e2f/src/prophound/models/prophage/model/prophage_v2_pool_r3.pt": "736d672e8837a6769f61379753a3e750f629c4233f98959381f08f4f2b4607dc"
+    }
+   },
+   "covered50": 0.9032258064516129,
+   "k": 168,
+   "n": 186,
+   "covered50_wilson95": [
+    0.8522260686465989,
+    0.9379069238194563
+   ],
+   "covered50_genome_boot95": [
+    0.8584070796460177,
+    0.9491525423728814
+   ],
+   "covered": 0.9247311827956989,
+   "calls_per_genome": 4.993333333333333,
+   "conflated_calls": 5,
+   "absorbed_elements": 10,
+   "by_stratum": {
+    "5-8kb": {
+     "n": 2,
+     "k": 1,
+     "covered50": 0.5,
+     "wilson95": [
+      0.09453120463920084,
+      0.9054687953607992
+     ]
+    },
+    "8-10kb": {
+     "n": 2,
+     "k": 1,
+     "covered50": 0.5,
+     "wilson95": [
+      0.09453120463920084,
+      0.9054687953607992
+     ]
+    },
+    "10-15kb": {
+     "n": 26,
+     "k": 24,
+     "covered50": 0.9230769230769231,
+     "wilson95": [
+      0.7585844605936842,
+      0.9786449117205875
+     ]
+    },
+    "15-30kb": {
+     "n": 39,
+     "k": 32,
+     "covered50": 0.8205128205128205,
+     "wilson95": [
+      0.6733195420678146,
+      0.9102273457557151
+     ]
+    },
+    "30-60kb": {
+     "n": 94,
+     "k": 88,
+     "covered50": 0.9361702127659575,
+     "wilson95": [
+      0.867670263797917,
+      0.9704202648754616
+     ]
+    },
+    "60kb+": {
+     "n": 23,
+     "k": 22,
+     "covered50": 0.9565217391304348,
+     "wilson95": [
+      0.7900884474454931,
+      0.9922833339420488
+     ]
+    }
+   },
+   "gap_to_reused": {
+    "42": 0.04077419354838707,
+    "18": 0.05877419354838709
+   },
+   "descriptive_phage_free_calls_per_genome": 2.7012987012987013,
+   "boundaries": {
+    "median_iou": 0.7456184026124638,
+    "att_frac_calls": 0.1081441922563418,
+    "n_calls": 749,
+    "n_att_calls": 81,
+    "model_edge_range_coverage": 0.7769784172661871,
+    "n_model_edges": 278,
+    "att_edge_vs_genomad": {
+     "n": 48,
+     "median_bp": 1086.5,
+     "le100": 0.10416666666666667,
+     "le1000": 0.4791666666666667
+    },
+    "Mb_called": 21.325482,
+    "Mb_off_element": 15.534615
+   }
+  }
+ }
+}
