@@ -1,0 +1,153 @@
+{
+ "primary": {
+  "difference": 0.03299503606588973,
+  "genome_boot95": [
+   0.019262249790779163,
+   0.04962652808582637
+  ],
+  "candidate_rate": 0.03633114949374628,
+  "composition_control_rate": 0.003336113427856547,
+  "n_candidates": 1679,
+  "n_composition_controls": 1199,
+  "unmatched_composition_controls": 480
+ },
+ "secondary": {
+  "vs_length_matched": {
+   "difference": 0.03146200767999095,
+   "genome_boot95": [
+    0.0177897178395506,
+    0.04825232218707214
+   ]
+  },
+  "by_set": [
+   {
+    "kind": "candidate_default",
+    "n": 1679,
+    "v2_pass": 61,
+    "v2_rate": 0.03633114949374628,
+    "v1_rate": 0.0410958904109589
+   },
+   {
+    "kind": "candidate_exploratory_only",
+    "n": 3748,
+    "v2_pass": 17,
+    "v2_rate": 0.004535752401280683,
+    "v1_rate": 0.004535752401280683
+   },
+   {
+    "kind": "composition_control",
+    "n": 1199,
+    "v2_pass": 4,
+    "v2_rate": 0.003336113427856547,
+    "v1_rate": NaN
+   },
+   {
+    "kind": "negative_control",
+    "n": 1643,
+    "v2_pass": 8,
+    "v2_rate": 0.004869141813755326,
+    "v1_rate": 0.006695069993913573
+   },
+   {
+    "kind": "positive_control",
+    "n": 43,
+    "v2_pass": 40,
+    "v2_rate": 0.9302325581395349,
+    "v1_rate": 0.9534883720930233
+   },
+   {
+    "kind": "positive_genomad_missed",
+    "n": 39,
+    "v2_pass": 9,
+    "v2_rate": 0.23076923076923078,
+    "v1_rate": NaN
+   }
+  ],
+  "named": [
+   {
+    "region": "cand_d_709",
+    "v2_genes": 4,
+    "v2_pass": true,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_716",
+    "v2_genes": 4,
+    "v2_pass": true,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_723",
+    "v2_genes": 2,
+    "v2_pass": true,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_1250",
+    "v2_genes": 3,
+    "v2_pass": true,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_1557",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_1787",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_1830",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_1911",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_2922",
+    "v2_genes": 2,
+    "v2_pass": true,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_4466",
+    "v2_genes": 0,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_5281",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_5874",
+    "v2_genes": 0,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_6761",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   },
+   {
+    "region": "cand_d_6921",
+    "v2_genes": 1,
+    "v2_pass": false,
+    "v1_pass": true
+   }
+  ]
+ }
+}
