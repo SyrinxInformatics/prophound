@@ -1,0 +1,5 @@
+set	n	protein_pass	median_protein_cov
+default	9	0	0.094
+exploratory_only	25	0	0.173
+positive_control	7	7	0.785
+negative_control	16	0	0.08299999999999999

@@ -1,0 +1,58 @@
+set	region	where	kb	protein_cov	loci	phage_specific_loci	integrase_transposase_loci	protein_pass	phage_specific_hits
+default	prophound_1	NC_002695.2:244357-275688	31.3	0.108	3	0	0	False	
+default	prophound_3	NC_002695.2:653224-676247	23.0	0.094	2	0	0	False	
+default	prophound_4	NC_002695.2:807441-816200	8.8	0.052	1	0	0	False	
+default	prophound_9	NC_002695.2:1490696-1499466	8.8	0.054	1	1	0	False	tail length tape measure protein (Clostridium phage LPCPA6, 41%)
+default	prophound_13	NC_002695.2:2042001-2080000	38.0	0.126	6	0	0	False	
+default	prophound_20	NC_002695.2:3599689-3609792	10.1	0.0	0	0	0	False	
+default	prophound_21	NC_002695.2:3725401-3737496	12.1	0.06	1	0	0	False	
+default	prophound_22	NC_002695.2:3838251-3845610	7.4	0.163	2	0	0	False	
+default	prophound_27	NC_002128.1:6706-92721	86.0	0.15	18	0	5	False	
+exploratory_only	expl_prophound_1	NC_002695.2:19089-25875	6.8	0.0	0	0	0	False	
+exploratory_only	expl_prophound_4	NC_002695.2:588776-593897	5.1	0.813	1	0	0	False	
+exploratory_only	expl_prophound_8	NC_002695.2:959542-966130	6.6	0.144	2	0	0	False	
+exploratory_only	expl_prophound_9	NC_002695.2:1105089-1110168	5.1	0.0	0	0	0	False	
+exploratory_only	expl_prophound_17	NC_002695.2:2023963-2027288	3.3	0.173	2	0	0	False	
+exploratory_only	expl_prophound_19	NC_002695.2:2108661-2115548	6.9	0.0	0	0	0	False	
+exploratory_only	expl_prophound_21	NC_002695.2:2399133-2405225	6.1	0.389	2	0	0	False	
+exploratory_only	expl_prophound_22	NC_002695.2:2421826-2425883	4.1	0.201	1	0	0	False	
+exploratory_only	expl_prophound_23	NC_002695.2:2482313-2488438	6.1	0.139	1	0	0	False	
+exploratory_only	expl_prophound_24	NC_002695.2:2506739-2512512	5.8	0.067	2	0	0	False	
+exploratory_only	expl_prophound_28	NC_002695.2:2814799-2819183	4.4	0.408	4	0	0	False	
+exploratory_only	expl_prophound_30	NC_002695.2:3064863-3072388	7.5	0.35	4	0	0	False	
+exploratory_only	expl_prophound_31	NC_002695.2:3084415-3093584	9.2	0.232	2	0	2	False	
+exploratory_only	expl_prophound_33	NC_002695.2:3375963-3382788	6.8	0.475	3	0	0	False	
+exploratory_only	expl_prophound_40	NC_002695.2:3906763-3914988	8.2	0.039	1	0	0	False	
+exploratory_only	expl_prophound_41	NC_002695.2:4298851-4305150	6.3	0.0	0	0	0	False	
+exploratory_only	expl_prophound_42	NC_002695.2:4408051-4412950	4.9	0.234	1	0	0	False	
+exploratory_only	expl_prophound_43	NC_002695.2:4466089-4471168	5.1	0.04	1	0	0	False	
+exploratory_only	expl_prophound_44	NC_002695.2:4506499-4535954	29.5	0.041	4	1	0	False	tail protein (Pantoea phage vB_PagM_LIET2, 34%)
+exploratory_only	expl_prophound_46	NC_002695.2:4929061-4935800	6.7	0.1	1	0	1	False	
+exploratory_only	expl_prophound_47	NC_002695.2:4991001-4992750	1.8	0.794	1	0	0	False	
+exploratory_only	expl_prophound_48	NC_002695.2:5023647-5029512	5.9	0.0	0	0	0	False	
+exploratory_only	expl_prophound_50	NC_002695.2:5113651-5121866	8.2	0.283	2	0	0	False	
+exploratory_only	expl_prophound_51	NC_002695.2:5325139-5333030	7.9	0.304	3	0	0	False	
+exploratory_only	expl_prophound_53	NC_002695.2:5436913-5445838	8.9	0.274	2	0	0	False	
+positive_control	pos_prophound_5	NC_002695.2:892908-930689	37.8	0.789	32	13	0	True	holin (Enterobacteria phage VT2-Sakai, 92%); endolysin (Escherichia phage JLK-2012, 98%); terminase small subunit (Enterobacteria phage mEp460, 84%); terminase large subunit (Enterobacteria phage mEp460, 99%); portal protein (Enterobacteria phage mEp460, 100%); tail protein (Enterobacteria phage cdtI, 99%); major tail protein (Enterobacteria phage mEp460, 98%); minor tail protein (Enterobacteria phage cdtI, 95%); tail length tape measure protein (Enterobacteria phage mEp460, 98%); minor tail protein (Enterobacteria phage mEp460, 100%); tail fiber protein (Escherichia phage 2B8, 97%); tail protein (Escherichia phage JLK-2012, 92%); tail fiber assembly protein (Escherichia phage 2B8, 71%)
+positive_control	pos_prophound_6	NC_002695.2:1161097-1210947	49.9	0.7	41	11	5	True	Rz-like spanin (Enterobacteria phage BP-4795, 90%); lysozyme (Stx1 converting phage AU6Stx1, 94%); holin (Enterobacteria phage BP-4795, 94%); terminase small subunit (Escherichia phage N15, 46%); terminase large subunit (Escherichia phage ev017, 92%); major tail protein (Escherichia phage ev017, 79%); minor tail protein (Enterobacteria phage O276, 72%); tail length tape measure protein (Escherichia phage 2B8, 83%); putative tail fiber component (Enterobacteria phage BP-4795, 94%); tail fiber protein (Stx2-converting phage Stx2a_WGPS2, 98%); protail fiber N-terminal domain-containing protein (Stx2-converting phage Stx2a_WGPS8, 97%)
+positive_control	pos_prophound_12	NC_002695.2:1921508-1972645	51.1	0.79	45	12	1	True	holin (Escherichia Stx1 converting phage, 87%); lysozyme (Enterobacteria phage YYZ-2008, 100%); Rz-like spanin (Enterobacteria phage VT2-Sakai, 100%); terminase large subunit (Enterobacteria phage 2851, 100%); major capsid protein (Stx2-converting phage 1717, 99%); portal protein (Enterobacteria phage 2851, 95%); putative major tail subunit (Enterobacteria phage BP-4795, 95%); tail protein (Escherichia phage HK106, 61%); tail tape measure protein (Stx2-converting phage 1717, 94%); putative tail fiber component (Enterobacteria phage BP-4795, 96%); tail fiber protein (Stx2-converting phage Stx2a_WGPS6, 94%); protail fiber N-terminal domain-containing protein (Enterobacteria phage BP-4795, 97%)
+positive_control	pos_prophound_14	NC_002695.2:2154001-2254200	100.2	0.659	75	19	6	True	tail fiber protein (Enterobacteria phage BP-4795, 97%); tail fiber protein (Enterobacteria phage YYZ-2008, 99%); putative tail fiber component (Enterobacteria phage BP-4795, 97%); tail length tape measure protein (Escherichia phage 2B8, 51%); minor tail protein (Enterobacteria phage O276, 55%); major tail protein (Escherichia phage ev017, 80%); major capsid protein (Escherichia phage 2B8, 99%); terminase large subunit (Escherichia phage DE3, 98%); lysozyme (Enterobacteria phage YYZ-2008, 100%); holin (Stx2-converting phage Stx2a_WGPS2, 96%); tail fiber protein (Stx2-converting phage Stx2a_WGPS6, 98%); tail assembly protein (Enterobacteria phage 2851, 98%); minor tail protein (Escherichia phage JLK-2012, 97%); tail tape measure protein (Enterobacteria phage YYZ-2008, 98%); tail protein (Escherichia phage HK97, 61%); portal protein (Stx2-converting phage Stx2a_WGPS6, 97%); major capsid protein (Stx2-converting phage 1717, 99%); terminase large subunit (Stx2-converting phage Stx2a_WGPS6, 100%); Rz-like spanin (Enterobacteria phage VT2-Sakai, 100%)
+positive_control	pos_prophound_15	NC_002695.2:2593096-2614278	21.2	0.77	20	6	2	True	tail fiber assembly (Escherichia phage vB_EcoM-Ro157c2YLVW, 93%); tail protein (Escherichia phage P88, 100%); tail tape measure protein (Escherichia phage 500465-2, 95%); tail protein (Escherichia phage 500465-2, 100%); Phage tail sheath monomer (Xuanwuvirus P884B11, 98%); tail protein (Escherichia phage 500465-2, 97%)
+positive_control	pos_prophound_16	NC_002695.2:2669911-2712000	42.1	0.785	38	11	2	True	tail protein (Escherichia phage JLK-2012, 97%); tail fiber protein (Enterobacteria phage YYZ-2008, 99%); putative tail fiber component (Enterobacteria phage BP-4795, 97%); tail length tape measure protein (Escherichia phage 2B8, 83%); minor tail protein (Enterobacteria phage O276, 72%); major tail protein (Escherichia phage ev017, 79%); terminase large subunit (Escherichia phage ev017, 92%); terminase small subunit (Escherichia phage N15, 36%); Rz-like spanin (Enterobacteria phage BP-4795, 84%); lysozyme (Stx2-converting phage Stx2a_WGPS2, 98%); holin (Enterobacteria phage BP-4795, 97%)
+positive_control	pos_prophound_25	NC_002695.2:5042647-5077308	34.7	0.838	35	18	2	True	endolysin (Xanthomonas phage CP1, 41%); Rz-like spanin (Shigella phage SfII, 36%); terminase small subunit (Escherichia phage D108, 57%); terminase family protein (Shigella phage SfMu, 73%); portal protein (Escherichia phage Mu, 57%); tail completion or Neck1 protein (Escherichia phage Mu, 54%); major head protein (Shigella phage SfMu, 67%); portal protein (Shigella phage SfMu, 48%); tail sheath (Escherichia phage D108, 51%); tail tube protein (Escherichia phage D108, 52%); tail assembly chaperone (Escherichia phage Mu, 49%); tail length tape measure protein (Shigella phage SfMu, 34%); baseplate hub (Escherichia phage D108, 48%); baseplate assembly protein V (Escherichia phage D108, 52%); baseplate wedge subunit (Escherichia phage D108, 54%); baseplate protein (Escherichia phage Mu, 53%); tail fiber protein (Escherichia phage D108, 48%); tail fiber assembly protein (Salmonella phage SEN8, 33%)
+negative_control	neg_prophound_1_0	NC_002695.2:3987745-4019076	31.3	0.187	6	0	0	False	
+negative_control	neg_prophound_1_1	NC_002695.2:5396681-5428012	31.3	0.094	4	0	1	False	
+negative_control	neg_prophound_3_0	NC_002695.2:5268898-5291921	23.0	0.102	3	0	2	False	
+negative_control	neg_prophound_3_1	NC_002695.2:3296119-3319142	23.0	0.072	3	0	0	False	
+negative_control	neg_prophound_4_0	NC_002695.2:185928-194687	8.8	0.052	1	0	0	False	
+negative_control	neg_prophound_4_1	NC_002695.2:48824-57583	8.8	0.146	2	0	0	False	
+negative_control	neg_prophound_9_0	NC_002695.2:2432719-2441489	8.8	0.067	1	0	0	False	
+negative_control	neg_prophound_9_1	NC_002695.2:2302439-2311209	8.8	0.0	0	0	0	False	
+negative_control	neg_prophound_13_0	NC_002695.2:3782890-3820889	38.0	0.153	5	0	0	False	
+negative_control	neg_prophound_13_1	NC_002695.2:3325154-3363153	38.0	0.237	13	0	0	False	
+negative_control	neg_prophound_20_0	NC_002695.2:715486-725589	10.1	0.328	4	0	0	False	
+negative_control	neg_prophound_20_1	NC_002695.2:858009-868112	10.1	0.067	1	0	0	False	
+negative_control	neg_prophound_21_0	NC_002695.2:4151233-4163328	12.1	0.054	1	0	0	False	
+negative_control	neg_prophound_21_1	NC_002695.2:220771-232866	12.1	0.126	3	0	0	False	
+negative_control	neg_prophound_22_0	NC_002695.2:4779423-4786782	7.4	0.0	0	0	0	False	
+negative_control	neg_prophound_22_1	NC_002695.2:4484481-4491840	7.4	0.057	1	0	0	False	
