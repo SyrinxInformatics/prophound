@@ -40,6 +40,7 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 - **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.7–4.1× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.
 - **Alongside geNomad:** adding prophound Default to geNomad recovers 16 more curated LAMBDA prophages and loses none, at about 15 extra calls per genome. Twelve of the 16 come from two genomes.
 - **LAMBDA's own candidates:** prophound has a call on all 19 phages LAMBDA's reviewers judged likely but left out of its curated set, and covers at least half of 16 (0.75 above chance; 18 in the preregistered scoring, before the 0.1.0 boundary stages trimmed two calls). geNomad covers 15. Most of them are called by annotation tools too.
+- **What the extra calls are made of** (held out): of Default calls outside known elements, about 4 in 10 carry a mobile-element or phage signal (about 1 in 10 for random host sequence of the same length), and 6 in 10 show no detectable signal. Long calls carry signal far more often than short ones (release text §8b).
 - **Off-target calls** carry mobile-element features 3.1× as often as matched background, mostly conjugation and integrase/transposase genes rather than phage structural genes. Many look like other integrative elements, not missed prophages.
 
 ## What it does not claim

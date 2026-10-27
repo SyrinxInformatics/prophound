@@ -1,0 +1,258 @@
+{
+ "bins": {
+  "candidate_default": {
+   "n": 1679,
+   "bins": {
+    "known to geNomad": {
+     "share": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "bp_share": 0.0
+    },
+    "phage-like": {
+     "share": 0.036,
+     "ci": [
+      0.022,
+      0.054
+     ],
+     "bp_share": 0.058
+    },
+    "other mobile element": {
+     "share": 0.243,
+     "ci": [
+      0.216,
+      0.268
+     ],
+     "bp_share": 0.317
+    },
+    "island, function unknown": {
+     "share": 0.122,
+     "ci": [
+      0.102,
+      0.142
+     ],
+     "bp_share": 0.114
+    },
+    "no detectable signal": {
+     "share": 0.599,
+     "ci": [
+      0.565,
+      0.633
+     ],
+     "bp_share": 0.511
+    }
+   }
+  },
+  "candidate_exploratory_only": {
+   "n": 3748,
+   "bins": {
+    "known to geNomad": {
+     "share": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "bp_share": 0.0
+    },
+    "phage-like": {
+     "share": 0.005,
+     "ci": [
+      0.002,
+      0.007
+     ],
+     "bp_share": 0.009
+    },
+    "other mobile element": {
+     "share": 0.098,
+     "ci": [
+      0.085,
+      0.112
+     ],
+     "bp_share": 0.115
+    },
+    "island, function unknown": {
+     "share": 0.078,
+     "ci": [
+      0.067,
+      0.09
+     ],
+     "bp_share": 0.089
+    },
+    "no detectable signal": {
+     "share": 0.82,
+     "ci": [
+      0.801,
+      0.838
+     ],
+     "bp_share": 0.787
+    }
+   }
+  },
+  "negative_control": {
+   "n": 1643,
+   "bins": {
+    "known to geNomad": {
+     "share": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "bp_share": 0.0
+    },
+    "phage-like": {
+     "share": 0.005,
+     "ci": [
+      0.002,
+      0.008
+     ],
+     "bp_share": 0.01
+    },
+    "other mobile element": {
+     "share": 0.075,
+     "ci": [
+      0.059,
+      0.092
+     ],
+     "bp_share": 0.119
+    },
+    "island, function unknown": {
+     "share": 0.036,
+     "ci": [
+      0.028,
+      0.044
+     ],
+     "bp_share": 0.033
+    },
+    "no detectable signal": {
+     "share": 0.884,
+     "ci": [
+      0.866,
+      0.902
+     ],
+     "bp_share": 0.839
+    }
+   }
+  },
+  "composition_control": {
+   "n": 1199,
+   "bins": {
+    "known to geNomad": {
+     "share": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "bp_share": 0.0
+    },
+    "phage-like": {
+     "share": 0.003,
+     "ci": [
+      0.001,
+      0.007
+     ],
+     "bp_share": 0.006
+    },
+    "other mobile element": {
+     "share": 0.069,
+     "ci": [
+      0.052,
+      0.086
+     ],
+     "bp_share": 0.103
+    },
+    "island, function unknown": {
+     "share": 0.069,
+     "ci": [
+      0.053,
+      0.087
+     ],
+     "bp_share": 0.062
+    },
+    "no detectable signal": {
+     "share": 0.858,
+     "ci": [
+      0.834,
+      0.88
+     ],
+     "bp_share": 0.828
+    }
+   }
+  }
+ },
+ "multi_label": {
+  "candidate_default": {
+   "phage_v21": 0.036,
+   "phage_v1": 0.041,
+   "mobile_any": 0.27,
+   "atypical": 0.216,
+   "conjscan": 0.045,
+   "plasmid_hallmark": 0.083,
+   "virus_hallmark": 0.089,
+   "integrase_family": 0.099,
+   "att": 0.077,
+   "amr": 0.066,
+   "theme_biosynthetic cluster": 0.009,
+   "theme_defense": 0.083,
+   "theme_secretion or pilus": 0.079,
+   "theme_surface polysaccharide": 0.021,
+   "theme_metabolism": 0.358,
+   "theme_phage-like": 0.095
+  },
+  "candidate_exploratory_only": {
+   "phage_v21": 0.005,
+   "phage_v1": 0.005,
+   "mobile_any": 0.1,
+   "atypical": 0.104,
+   "conjscan": 0.007,
+   "plasmid_hallmark": 0.018,
+   "virus_hallmark": 0.017,
+   "integrase_family": 0.032,
+   "att": 0.042,
+   "amr": 0.034,
+   "theme_biosynthetic cluster": 0.008,
+   "theme_defense": 0.027,
+   "theme_secretion or pilus": 0.042,
+   "theme_surface polysaccharide": 0.013,
+   "theme_metabolism": 0.293,
+   "theme_phage-like": 0.019
+  },
+  "negative_control": {
+   "phage_v21": 0.005,
+   "phage_v1": 0.007,
+   "mobile_any": 0.077,
+   "atypical": 0.044,
+   "conjscan": 0.009,
+   "plasmid_hallmark": 0.021,
+   "virus_hallmark": 0.016,
+   "integrase_family": 0.04,
+   "att": 0.0,
+   "amr": 0.092,
+   "theme_biosynthetic cluster": 0.015,
+   "theme_defense": 0.032,
+   "theme_secretion or pilus": 0.068,
+   "theme_surface polysaccharide": 0.063,
+   "theme_metabolism": 0.606,
+   "theme_phage-like": 0.029
+  },
+  "composition_control": {
+   "phage_v21": 0.003,
+   "phage_v1": 0.0,
+   "mobile_any": 0.07,
+   "atypical": 0.076,
+   "conjscan": 0.011,
+   "plasmid_hallmark": 0.017,
+   "virus_hallmark": 0.023,
+   "integrase_family": 0.034,
+   "att": 0.0,
+   "amr": 0.068,
+   "theme_biosynthetic cluster": 0.01,
+   "theme_defense": 0.027,
+   "theme_secretion or pilus": 0.073,
+   "theme_surface polysaccharide": 0.054,
+   "theme_metabolism": 0.522,
+   "theme_phage-like": 0.016
+  }
+ }
+}

@@ -52,6 +52,23 @@ A gene-based look at the region (an integrase gene, a tRNA gene at one end, phag
 - **`rank`** sorts candidates by how strongly the model scores them (its highest window score, then its average). In our tests this put candidates that match known prophages first. That also means **a truly novel element can rank low**. If you are looking for something new, read past the top of the list. A low-ranked att-site candidate is worth a look: the repeat is evidence of integration that does not depend on the score.
 - **`support`** counts the models that find the candidate independently. Default and Conservative mode keep only `3/3` candidates. A candidate split from a longer one shows the support of the call it was split from. In Exploratory mode, `1/3` candidates very rarely match known elements: start triage with those last.
 
+## What most candidates are
+
+On 150 held-out genomes, we sorted every Default candidate that touches no known element by what its genes and sequence show:
+
+| | share | what it means |
+|---|---|---|
+| phage-like | about 4% | two or more phage structural genes |
+| other mobile element | about 24% | conjugation, plasmid or virus hallmark genes, an integrase or transposase, or an att site |
+| island of unknown function | about 12% | composition unlike the rest of the genome, nothing else |
+| no detectable signal | about 60% | none of the above |
+
+- **Expect most candidates outside known prophages to show no detectable signal.** That is the price of finding as much as possible. Some of those may still be real, because these checks only recognize what databases already know.
+- **Long candidates are worth checking first.** Under 10 kb, about 7 in 10 show no signal. At 60 kb or more, about 6 in 10 carry a mobile-element or phage signal.
+- **A known false alarm:** clusters of ribosomal-protein genes, whose unusual composition can look element-like. If a candidate is mostly ribosomal-protein genes, set it aside.
+
+Details: `docs/extra-calls.md`.
+
 ## Choosing a mode
 
 The mode sets how many candidates you get, which is the cost of following them up.

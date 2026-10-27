@@ -188,6 +188,25 @@ Every figure in this section is † (ARC runs). The boundary stages trim calls (
 
 Wording: *"off-target candidates are enriched for mobile-element features (3.1× over background)"*. Not "phage", and never "novel elements".
 
+### 8b. What the extra calls are made of (second lockbox, preregistered)
+
+Every Default call on the second lockbox that touches no geNomad element (1,679 calls in 139 genomes) was sorted, by rules fixed before the data was pulled, into one bin. The same rules were applied to random host stretches of the same length (`docs/extra-calls.md`).
+
+| bin | extra Default calls | random host stretches |
+|---|---|---|
+| phage-like (≥2 phage structural genes; homology v2.1) | 0.036 (0.022–0.054) | 0.005 |
+| other mobile element (conjugation, plasmid or virus hallmark, integrase family, att site) | 0.243 (0.216–0.268) | 0.075 |
+| island of unknown function (atypical composition only) | 0.122 (0.102–0.142) | 0.036 |
+| **no detectable signal** | **0.599** (0.565–0.633) | 0.884 |
+
+- **Most extra calls have no detectable signal.** This is the cost of the tool's recall, and users should expect it. The 0.60 is an upper bound on uninformative calls: annotation-based rules cannot tell a truly novel element from ordinary host sequence.
+- **The rest are not chance.** Mobile-element and phage signals are 3–7× as frequent as in host sequence of the same length, and the phage signal survives composition-matched controls (+0.024, 0.014–0.036; `docs/candidate-phage-homology.md`).
+- **Length is the best triage cue.** Calls under 10 kb show no signal 71% of the time, and calls of 60 kb and more 37% of the time (with 44% mobile-element and 13% phage-like signal).
+- **Exploratory's additional calls are close to background** (0.82 no signal, against 0.88).
+- **One recurring false-positive class:** ribosomal-protein operons, whose high expression gives them atypical composition. They are about 1% of the no-signal calls.
+
+Wording: *"on held-out genomes, about 4 in 10 Default calls outside known elements carry a mobile-element or phage signal (against about 1 in 10 for random host sequence); the rest show none detectable"*. Not "the extra calls are novel elements".
+
 ### 9. LAMBDA's reviewed candidates outside its curated set (preregistered)
 
 LAMBDA's authors list regions their language models proposed, which reviewers graded but left out of the curated truth (`docs/claims-and-evidence.md` "LAMBDA candidates check", scored once on 2026-10-20, before the boundary stages). The preregistered result stands as scored. The 0.1.0 re-score is reported beside it (`scripts/lambda_candidates.py --genomes_dir`, `analysis/external_benchmarks/lambda/candidates_0.1.0.json`).
