@@ -20,8 +20,10 @@ Uses NCBI's BLAST URL API (https://blast.ncbi.nlm.nih.gov/doc/blast-help/urlapi.
 of `blastn -remote`, which keeps the request ID only in memory. The jobs file is the only
 state: one row per search, with its request ID (RID), the query file's SHA-256, the search's
 settings and the submission time. `submit` writes a row as soon as NCBI accepts a search.
-`fetch` reads only the jobs file, polls each RID at most once per minute (NCBI's guideline),
-and saves the tabular result next to the jobs file. NCBI keeps results for about 36 hours.
+`fetch` reads only the jobs file, polls in rounds (each RID at most once per minute, NCBI's
+guideline), and saves each result as BLAST XML next to the jobs file; a server error page is
+recorded as `failed`, not as a result. `--split` submits each record of a multi-FASTA query as
+its own search (large multi-query searches exceed NCBI's server limits). NCBI keeps results for about 36 hours.
 After that, `fetch` reports the RID as expired, and `submit --resubmit_expired` sends that
 search again with the same settings.
 
@@ -83,12 +85,24 @@ def cmd_submit(a) -> None:
     if a.resubmit_expired:
         todo = [r for r in rows if r["status"] in ("expired", "failed")]
     else:
-        if any(r["name"] == a.name for r in rows):
-            print(f"[submit] {a.name}: already in {jobs}"); return
-        row = {"name": a.name, "query": str(Path(a.query)), "db": a.db, "entrez": a.entrez or "",
-               "evalue": str(a.evalue), "hits": str(a.hits), "status": "submitted",
-               "query_sha256": hashlib.sha256(Path(a.query).read_bytes()).hexdigest()}
-        rows.append(row); todo = [row]
+        queries = [(a.name, Path(a.query))]
+        if a.split:
+            outdir = Path(a.jobs).parent / "blast_queries"; outdir.mkdir(exist_ok=True)
+            queries, cur = [], None
+            for line in Path(a.query).read_text().splitlines(keepends=True):
+                if line.startswith(">"):
+                    rec = line[1:].split("|")[0].split()[0]
+                    cur = outdir / f"{a.name}__{rec}.fna"; cur.write_text(line); queries.append((f"{a.name}__{rec}", cur))
+                else:
+                    with open(cur, "a") as fh:
+                        fh.write(line)
+        todo = []
+        for name, q in queries:
+            if any(r["name"] == name for r in rows):
+                continue
+            row = {"name": name, "query": str(q), "db": a.db, "entrez": a.entrez or "", "evalue": str(a.evalue),
+                   "hits": str(a.hits), "status": "submitted", "query_sha256": hashlib.sha256(q.read_bytes()).hexdigest()}
+            rows.append(row); todo.append(row)
     for r in todo:
         r["rid"] = put(r)
         r["submitted_utc"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
@@ -100,28 +114,34 @@ def cmd_submit(a) -> None:
 
 def cmd_fetch(a) -> None:
     jobs = Path(a.jobs)
-    rows = read_jobs(jobs)
-    for r in rows:
-        out = jobs.parent / f"blast_{r['name']}.tabular.txt"
-        if r["status"] == "done" and out.exists():
-            continue
-        info = http({"CMD": "Get", "FORMAT_OBJECT": "SearchInfo", "RID": r["rid"]})
-        st = re.search(r"Status=(\w+)", info)
-        st = st.group(1) if st else "UNKNOWN"
-        if st == "READY":
-            res = http({"CMD": "Get", "FORMAT_TYPE": "Tabular", "RID": r["rid"], "ALIGNMENT_VIEW": "Tabular",
-                        "DESCRIPTIONS": r["hits"], "ALIGNMENTS": r["hits"]})
-            out.write_text(res)
-            r["status"] = "done"
-        elif st == "WAITING":
-            r["status"] = "waiting"
-        elif st == "FAILED":
-            r["status"] = "failed"
-        else:
-            r["status"] = "expired"
-        print(f"[fetch] {r['name']}: {r['status']}", flush=True)
-        write_jobs(jobs, rows)
-        time.sleep(61)
+    for rnd in range(a.rounds):
+        rows = read_jobs(jobs)
+        pending = [r for r in rows if r["status"] in ("submitted", "waiting")]
+        if not pending:
+            break
+        for r in pending:
+            info = http({"CMD": "Get", "FORMAT_OBJECT": "SearchInfo", "RID": r["rid"]})
+            m = re.search(r"Status=(\w+)", info)
+            st = m.group(1) if m else "UNKNOWN"
+            if st == "READY":
+                res = http({"CMD": "Get", "FORMAT_TYPE": "XML", "RID": r["rid"]})
+                if "error has occurred" in res.lower() or "<BlastOutput" not in res:
+                    r["status"] = "failed"
+                else:
+                    (jobs.parent / f"blast_{r['name']}.xml").write_text(res)
+                    r["status"] = "done"
+            elif st == "WAITING":
+                r["status"] = "waiting"
+            elif st == "FAILED":
+                r["status"] = "failed"
+            else:
+                r["status"] = "expired"
+            write_jobs(jobs, rows)
+            time.sleep(3)
+        n = {k: sum(r["status"] == k for r in rows) for k in ("done", "waiting", "submitted", "failed", "expired")}
+        print(f"[fetch] round {rnd + 1}: {n}", flush=True)
+        if any(r["status"] in ("submitted", "waiting") for r in rows):
+            time.sleep(61)
 
 
 def main() -> None:
@@ -132,7 +152,9 @@ def main() -> None:
     s.add_argument("--db", default="core_nt"); s.add_argument("--entrez", default="")
     s.add_argument("--evalue", type=float, default=1e-10); s.add_argument("--hits", type=int, default=20)
     s.add_argument("--resubmit_expired", action="store_true")
+    s.add_argument("--split", action="store_true", help="one search per FASTA record")
     f = sub.add_parser("fetch"); f.add_argument("--jobs", required=True)
+    f.add_argument("--rounds", type=int, default=30, help="polling rounds before giving up for now")
     a = ap.parse_args()
     if a.cmd == "submit" and not a.resubmit_expired and not (a.name and a.query):
         ap.error("submit needs --name and --query (or --resubmit_expired)")
