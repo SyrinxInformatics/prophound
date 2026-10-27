@@ -365,6 +365,7 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 - **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
 - **Installed-environment size** for both tools, once the bioconda package exists.
 - **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
+- **A shuffled-genome null** (the false-call rate on sequence with no biology), and the **Linux clean-install check** (`docs/robustness-checks.md` "Still to run").
 
 ## Reproduction
 
