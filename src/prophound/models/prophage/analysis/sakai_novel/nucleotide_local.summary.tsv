@@ -1,0 +1,5 @@
+search	regions	passed	median_cov	max_cov
+default	9	0	0.0	0.056
+exploratory_only	25	1	0.0	0.144
+negative_control	16	0	0.0	0.093
+positive_control	7	6	0.624	0.861

@@ -285,8 +285,8 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
         default="default",
         help=(
             "How many calls to make (default: default). exploratory: seed threshold 0.90, every call kept, "
-            "about 32 calls per genome. default: 0.95, a call is kept only if all 3 checkpoints make it, "
-            "about 11 per genome. conservative: 0.995, all 3 checkpoints, about 5 per genome. The call "
+            "about 37 calls per genome. default: 0.95, a call is kept only if all 3 checkpoints make it, "
+            "about 12 per genome. conservative: 0.995, all 3 checkpoints, about 5 per genome. The call "
             "counts are from a held-out test on 150 complete bacterial genomes."
         ),
     )

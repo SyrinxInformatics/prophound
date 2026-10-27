@@ -1,0 +1,4 @@
+protein	region	best_vog	bitscore	evalue	phage_specific
+cand_d_3411|0	cand_d_3411	VOG34046	150.56564331054688	9.134734129469038e-48	False
+cand_d_295|0	cand_d_295	VOG04999	135.74415588378906	1.3415331448876848e-43	False
+cand_e_2223|0	cand_e_2223	VOG49374	1277.235107421875	0.0	False

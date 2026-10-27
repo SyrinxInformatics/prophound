@@ -39,8 +39,9 @@ it was measured, and a narrower search would cut some repeats differently.
 
 Every other edge is a model estimate. Its range is relative to the call's length
 L: the true edge lies from REL_OUT * L outside to REL_IN * L inside the reported
-edge (the 5th and 95th percentiles of the tuning sample's model-edge errors; 90%
-coverage held on both check samples). An att edge has a zero-width range, and so
+edge (the 5th and 95th percentiles of the tuning sample's model-edge errors; about
+90% coverage on both check samples, but 0.78 on the held-out second lockbox, so these
+are not called 90% ranges: docs/lockbox2.md "Result"). An att edge has a zero-width range, and so
 does an edge on a contig end, which is the end of the sequence, not a boundary.
 """
 
@@ -252,7 +253,8 @@ def finish_boundaries(calls: pd.DataFrame, genome: Genome | None, contig_lengths
 
 def edge_ranges(calls: pd.DataFrame, contig_lengths: dict[str, int], rel_out: float = REL_OUT,
                 rel_in: float = REL_IN) -> pd.DataFrame:
-    """start_lo..start_hi and end_lo..end_hi: where each true edge lies (90% for a model edge)."""
+    """start_lo..start_hi and end_lo..end_hi: where each true edge lies (for a model edge, fitted
+    as a 90% range; 0.78 held out)."""
     out = calls.copy()
     s, e = out["start"].to_numpy(dtype=np.int64), out["end"].to_numpy(dtype=np.int64)
     span = e - s

@@ -1,0 +1,67 @@
+search	region	kb	nt_cov	pass_10pct	hsps	longest_aln	longest_pident	longest_hit
+default (non-Escherichia search)	prophound_1	31.3	0.815	True	124	10371	79.7	Salmonella enterica subsp. enterica serovar Dublin L-6074 DNA, complete genome
+default (non-Escherichia search)	prophound_13	38.0	0.836	True	266	11835	95.5	Synthetic Escherichia coli Syn61 substr. Delta3(ev5) chromosome, complete genome
+default (non-Escherichia search)	prophound_20	10.1	0.924	True	61	4763	75.0	Citrobacter portucalensis strain OT205 chromosome, complete genome
+default (non-Escherichia search)	prophound_21	12.1	0.343	True	28	1885	97.8	MAG TPA_asm: Bacteriophage sp. isolate ctXkQ5, partial genome
+default (non-Escherichia search)	prophound_22	7.4	1.0	True	92	5487	97.0	Synthetic Escherichia coli Syn61 substr. Delta3(ev5) chromosome, complete genome
+default (non-Escherichia search)	prophound_27	86.0	0.93	True	349	44538	99.9	MAG: Caudoviricetes sp. isolate MSP0750 genomic sequence
+default (non-Escherichia search)	prophound_3	23.0	0.858	True	55	7267	98.8	Vector peccDNA113, complete sequence >gi|3192496179|gb|PX560936.1| Escherichia coli plasmi
+default (non-Escherichia search)	prophound_4	8.8	0.826	True	68	3930	97.6	Uncultured bacterium Contig1622 genomic sequence
+default (non-Escherichia search)	prophound_9	8.8	0.989	True	42	5560	80.1	Citrobacter sedlakii strain 3347689II chromosome, complete genome
+default	prophound_1	31.3	0.029	False	3	887	92.9	Escherichia coli MP1 chromosome, complete genome
+default	prophound_13	38.0	0.722	True	66	21062	95.7	Escherichia coli MP1 chromosome, complete genome
+default	prophound_20	10.1	1.0	True	17	10119	95.3	Escherichia coli MP1 chromosome, complete genome
+default	prophound_21	12.1	0.267	True	9	1885	97.8	MAG TPA_asm: Bacteriophage sp. isolate ctXkQ5, partial genome
+default	prophound_22	7.4	1.0	True	20	5394	97.4	Escherichia coli MP1 chromosome, complete genome
+default	prophound_27	86.0	0.739	True	195	44538	99.9	MAG: Caudoviricetes sp. isolate MSP0750 genomic sequence
+default	prophound_3	23.0	0.436	True	24	6230	98.0	Escherichia coli MP1 chromosome, complete genome
+default	prophound_4	8.8	0.212	True	9	913	93.5	Escherichia coli MP1 chromosome, complete genome
+default	prophound_9	8.8	1.0	True	8	8772	97.5	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_1	6.8	0.105	True	5	709	97.0	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_17	3.3	0.861	True	4	1501	96.8	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_19	6.9	0.301	True	7	1209	95.0	MAG TPA_asm: Inoviridae sp. isolate ctJES1, partial genome
+exploratory_only	expl_prophound_21	6.1	0.858	True	13	4607	98.2	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_22	4.1	1.0	True	2	4059	97.2	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_23	6.1	0.106	True	2	482	98.5	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_24	5.8	1.0	True	27	5778	97.8	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_28	4.4	0.83	True	9	3441	98.0	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_30	7.5	1.0	True	26	7556	89.1	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_31	9.2	1.0	True	29	3302	96.6	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_33	6.8	1.0	True	24	5487	82.8	MAG: Caudoviricetes sp. isolate MSP0067 genomic sequence
+exploratory_only	expl_prophound_4	5.1	0.0	False	0	0		
+exploratory_only	expl_prophound_40	8.2	0.997	True	4	8204	97.7	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_41	6.3	0.706	True	9	2286	94.9	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_42	4.9	0.999	True	2	4900	97.6	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_43	5.1	1.0	True	13	2798	97.6	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_44	29.5	0.752	True	30	7821	96.9	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_46	6.7	0.205	True	4	1383	96.7	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_47	1.8	1.0	True	6	1756	87.3	Erwinia amylovora ATCC 49946 chromosomal sequence
+exploratory_only	expl_prophound_48	5.9	0.887	True	26	3300	83.4	Salmonella enterica subsp. enterica serovar Typhimurium var. monophasic 4,5,12:i:- strain 
+exploratory_only	expl_prophound_50	8.2	0.947	True	19	6552	97.5	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_51	7.9	0.401	True	28	3165	97.1	Escherichia coli MP1 chromosome, complete genome
+exploratory_only	expl_prophound_53	8.9	0.2	True	4	1106	74.3	Pseudomonas aeruginosa strain K34-7 chromosome, complete genome
+exploratory_only	expl_prophound_8	6.6	1.0	True	13	6589	97.8	MAG: Caudoviricetes sp. isolate MSP0063 genomic sequence
+exploratory_only	expl_prophound_9	5.1	1.0	True	6	5120	76.5	Erwinia amylovora ATCC 49946 chromosomal sequence
+negative_control	neg_prophound_13_0	38.0	0.861	True	73	11457	96.7	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_13_1	38.0	0.79	True	80	20734	97.1	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_1_0	31.3	0.928	True	64	14644	96.9	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_1_1	31.3	0.681	True	12	6853	97.8	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_20_0	10.1	0.839	True	13	5512	92.3	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_20_1	10.1	1.0	True	189	7486	98.5	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_21_0	12.1	0.996	True	262	6368	97.1	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_21_1	12.1	1.0	True	309	12102	98.2	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_22_0	7.4	1.0	True	7	7375	96.8	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_22_1	7.4	0.67	True	34	3552	97.9	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_3_0	23.0	0.95	True	37	11572	96.5	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_3_1	23.0	0.917	True	50	21110	97.6	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_4_0	8.8	0.99	True	25	6185	97.6	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_4_1	8.8	1.0	True	13	8760	97.9	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_9_0	8.8	1.0	True	2	8771	97.0	Escherichia coli MP1 chromosome, complete genome
+negative_control	neg_prophound_9_1	8.8	1.0	True	26	8774	97.6	Escherichia coli MP1 chromosome, complete genome
+positive_control	pos_prophound_12	51.1	0.588	True	165	15476	96.5	Stx2-converting phage Stx2a_1447 proviral DNA, complete genome
+positive_control	pos_prophound_14	100.2	0.649	True	423	21976	96.0	Stx1a-converting phage Stx1_EH1995 DNA, complete genome
+positive_control	pos_prophound_15	21.2	0.884	True	73	7322	96.2	MAG TPA_asm: Caudoviricetes sp. isolate ctvDL5, partial genome
+positive_control	pos_prophound_16	42.1	0.396	True	165	12077	94.0	Stx2a-converting phage Stx2a_JNE090279 DNA, complete genome
+positive_control	pos_prophound_25	34.7	0.999	True	61	13440	97.4	MAG TPA_asm: Caudoviricetes sp. isolate ct1Am2, partial genome
+positive_control	pos_prophound_5	37.8	0.948	True	87	19452	96.7	Escherichia phage mEp460_ev081 genome assembly, chromosome: 1
+positive_control	pos_prophound_6	49.9	0.761	True	167	10508	95.4	MAG TPA_asm: Bacteriophage sp. isolate ctVsY2, partial genome

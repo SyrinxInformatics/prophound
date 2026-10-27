@@ -1,0 +1,58 @@
+search	region	kb	nt_cov	pass_10pct	hsps	longest_aln	longest_pident	longest_hit
+default	prophound_1	31.3	0.0	False	0	0		
+default	prophound_3	23.0	0.003	False	4	78	88.5	Proteus phage Stubb, complete genome
+default	prophound_4	8.8	0.0	False	0	0		
+default	prophound_9	8.8	0.0	False	0	0		
+default	prophound_13	38.0	0.0	False	0	0		
+default	prophound_20	10.1	0.0	False	0	0		
+default	prophound_21	12.1	0.0	False	0	0		
+default	prophound_22	7.4	0.0	False	0	0		
+default	prophound_27	86.0	0.056	False	69	1315	99.6	Stx2-converting phage Stx2a_WGPS2 proviral DNA, complete genome
+exploratory_only	expl_prophound_1	6.8	0.0	False	0	0		
+exploratory_only	expl_prophound_4	5.1	0.0	False	0	0		
+exploratory_only	expl_prophound_8	6.6	0.0	False	0	0		
+exploratory_only	expl_prophound_9	5.1	0.0	False	0	0		
+exploratory_only	expl_prophound_17	3.3	0.0	False	0	0		
+exploratory_only	expl_prophound_19	6.9	0.0	False	0	0		
+exploratory_only	expl_prophound_21	6.1	0.0	False	0	0		
+exploratory_only	expl_prophound_22	4.1	0.0	False	0	0		
+exploratory_only	expl_prophound_23	6.1	0.0	False	0	0		
+exploratory_only	expl_prophound_24	5.8	0.0	False	0	0		
+exploratory_only	expl_prophound_28	4.4	0.0	False	0	0		
+exploratory_only	expl_prophound_30	7.5	0.019	False	3	142	93.0	Salmonella phage SJ46, complete genome
+exploratory_only	expl_prophound_31	9.2	0.144	True	16	1323	99.7	Stx2-converting phage 1717, complete prophage genome
+exploratory_only	expl_prophound_33	6.8	0.0	False	0	0		
+exploratory_only	expl_prophound_40	8.2	0.0	False	0	0		
+exploratory_only	expl_prophound_41	6.3	0.0	False	0	0		
+exploratory_only	expl_prophound_42	4.9	0.0	False	0	0		
+exploratory_only	expl_prophound_43	5.1	0.0	False	0	0		
+exploratory_only	expl_prophound_44	29.5	0.0	False	0	0		
+exploratory_only	expl_prophound_46	6.7	0.0	False	0	0		
+exploratory_only	expl_prophound_47	1.8	0.0	False	0	0		
+exploratory_only	expl_prophound_48	5.9	0.0	False	0	0		
+exploratory_only	expl_prophound_50	8.2	0.0	False	0	0		
+exploratory_only	expl_prophound_51	7.9	0.0	False	0	0		
+exploratory_only	expl_prophound_53	8.9	0.0	False	0	0		
+negative_control	neg_prophound_1_0	31.3	0.0	False	0	0		
+negative_control	neg_prophound_1_1	31.3	0.0	False	0	0		
+negative_control	neg_prophound_3_0	23.0	0.054	False	3	1235	94.9	Escherichia phage RCS47, complete genome
+negative_control	neg_prophound_3_1	23.0	0.0	False	0	0		
+negative_control	neg_prophound_4_0	8.8	0.0	False	0	0		
+negative_control	neg_prophound_4_1	8.8	0.0	False	0	0		
+negative_control	neg_prophound_9_0	8.8	0.0	False	0	0		
+negative_control	neg_prophound_9_1	8.8	0.0	False	0	0		
+negative_control	neg_prophound_13_0	38.0	0.0	False	0	0		
+negative_control	neg_prophound_13_1	38.0	0.093	False	1	3540	98.4	Escherichia phage TL-2011b, complete genome
+negative_control	neg_prophound_20_0	10.1	0.0	False	0	0		
+negative_control	neg_prophound_20_1	10.1	0.032	False	8	88	85.2	Yersinia phage fHe-Yen9-04 genome assembly, complete genome: monopartite
+negative_control	neg_prophound_21_0	12.1	0.022	False	3	136	100.0	SsRNA phage SRR5466337_3 genomic sequence
+negative_control	neg_prophound_21_1	12.1	0.047	False	4	299	99.7	SsRNA phage SRR5466369_2 genomic sequence
+negative_control	neg_prophound_22_0	7.4	0.0	False	0	0		
+negative_control	neg_prophound_22_1	7.4	0.0	False	0	0		
+positive_control	pos_prophound_5	37.8	0.82	True	158	19441	97.0	Enterobacteria phage mEp460, complete genome
+positive_control	pos_prophound_6	49.9	0.539	True	146	6525	78.3	Escherichia virus Lambda_1H12 genome assembly, chromosome: 1
+positive_control	pos_prophound_12	51.1	0.609	True	145	15476	96.5	Stx2-converting phage Stx2a_WGPS2 proviral DNA, complete genome
+positive_control	pos_prophound_14	100.2	0.644	True	338	20471	97.6	Enterobacteria phage YYZ-2008, complete prophage genome
+positive_control	pos_prophound_15	21.2	0.861	True	41	6029	91.9	Escherichia virus P88_4B11 genome assembly, chromosome: 1
+positive_control	pos_prophound_16	42.1	0.624	True	133	8144	92.2	Enterobacteria phage BP-4795, complete genome
+positive_control	pos_prophound_25	34.7	0.044	False	20	1552	77.4	Stx1 converting phage DNA, complete genome

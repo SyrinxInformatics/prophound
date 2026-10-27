@@ -165,6 +165,6 @@ After the result, two hash-checked modules changed in text only:
 Checks:
 - Removing docstrings leaves `att.py`'s syntax tree identical to the scored code's, and `options.py`'s differs only in that help string.
 - The fast tests (198) and the smoke test pass.
-- CPU reference matrix against `support_fix_cpu`, which ran the scored code: **running** (`analysis/refout/helptext_cpu`; it must be 30/30 identical).
+- CPU reference matrix against `support_fix_cpu`, which ran the scored code: **30 of 30 identical** (`analysis/refout/helptext_cpu`, 2026-10-27 12:52–14:52).
 
 Nothing that produces a call changed, so the result above describes the shipped code.

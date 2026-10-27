@@ -1,0 +1,6 @@
+search	regions	passed	median_cov	max_cov
+default (non-Escherichia search)	9	9	0.858	1.0
+default	9	8	0.722	1.0
+exploratory_only	25	24	0.887	1.0
+negative_control	16	16	0.97	1.0
+positive_control	7	7	0.761	0.999
