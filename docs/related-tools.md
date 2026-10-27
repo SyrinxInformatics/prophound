@@ -16,17 +16,56 @@ The tool is presented as **a new tool in its own class: novel in concept, even t
 
 - **The method.** Neural networks on raw nucleotides (Seeker, Jaeger, the LAMBDA gLMs), database-free ML (PhageBoost, PIDE) and sliding-window genome scans (LAMBDA, Jaeger, DRAD, DBSCAN-SWA) all exist.
 - **Being database-free, and the word "discovery".** PhageBoost's paper is titled *Rapid discovery of novel prophages*. Prophage Hunter offers a similarity-free option explicitly to find novel phages.
-- **Being recall-leaning, and having modes.** Philympics characterizes VirSorter, VirSorter2 and DBSCAN-SWA as trading precision for recall. geNomad ships `--conservative` and `--relaxed` presets for its post-classification filters. What is distinct here is stating the recall target explicitly and pricing each mode in follow-up cost (calls/genome), not having a recall-leaning mode at all.
+- **Being recall-leaning, and having modes.** Philympics characterizes VirSorter, VirSorter2 and DBSCAN-SWA as trading precision for recall. geNomad ships `--conservative` and `--relaxed` presets for its post-classification filters, and its developer says plainly that "by default, precision is preferred over recall. If you want to maximize discovery, use the `--relaxed` parameter" (issue #110). Jaeger's prophage extraction has a `--sensitivity` knob (0–4, default 1.5). What is distinct here is stating the recall target explicitly and pricing each mode in follow-up cost (calls/genome), not having a recall-leaning mode at all.
 - **The idea that unannotated calls can be real phages.** LAMBDA reviewed 305 genome-wide calls that fell outside its curated truth and judged 22 of them "likely phage". This appears there as a *finding* about a benchmark, not as a tool's design.
 
 ### What is distinct, as far as this survey found
 
 1. **The contract.** Every tool surveyed is tuned so that its calls are trustworthy annotations. None sets a recall target on known elements, prices its modes as follow-up cost (calls/genome), or presents itself as a candidate generator meant to run *alongside* annotation tools. This is the main basis for the "own class" claim.
-2. **It learns integrated elements in their host context.** Jaeger masks prophages out of its training genomes with N, so it learns free phage versus host. LAMBDA and Seeker train on free phage genomes versus bacterial genomes. prophound trains on prophages *as they sit in the chromosome*, with host sequence within 5 kb of each element as hard negatives. It learns the actual task, which is telling an integrated element from its own flanking host. The honest counterpart belongs next to it: those tools' positive labels are independent of any prophage caller, while ours come from geNomad.
+2. **It learns integrated elements in their host context.** Jaeger masks prophages out of its training genomes with N, so it learns free phage versus host. LAMBDA and Seeker train on free phage genomes versus bacterial genomes. prophound trains on prophages *as they sit in the chromosome*, with host sequence within 5 kb of each element as hard negatives. It learns the actual task, which is telling an integrated element from its own flanking host. The honest counterpart belongs next to it: those tools' positive labels are independent of any prophage caller, while ours come from geNomad. **Scope (re-checked 2026-10-26):** the distinction holds among sequence-level models. Gene-based callers also learn from genes in host genomes (geNomad's provirus CRF; PhageBoost, whose labels are phage-like gene stretches in bacterial genomes), so say "among nucleotide-level models", not "the only tool trained in host context".
 3. **Boundaries come from the score track alone, with no gene calling anywhere in the pipeline.** Jaeger's prophage mode always runs gene prediction (pyrodigal-gv) to snap boundaries to intergenic positions, and it uses tRNAs and integrases when an annotation is supplied. geNomad, PhageBoost and PIDE all start from gene calls. LAMBDA's pipeline is gene-free, but it is not a packaged tool (see 4).
 4. **It is a packaged tool that works on fragmented input.** Jaeger's prophage mode only scans contigs longer than **500 kb** by default (`--lc 500000`), so it is aimed at near-complete genomes. prophound scans contigs down to 3 kb with calibrated per-scale thresholds (`--short-contigs scan`). **Measured 2026-10-01 (G5): this is a usability difference, not a performance one.** With `--lc` lowered, Jaeger retains as much recall on MAG-like shreds as prophound or more, and so does geNomad end-to-end. Claim the default, never better fragmented-input recall (`docs/claims-and-evidence.md` "G5 result"). LAMBDA is a SLURM research pipeline: its fine-tuned checkpoints are available on request, and the released ones need the 7 B-parameter Evo2 base model.
 
 Items 2–4 are facts about design, and each should be stated as such. Item 1 is the concept. What the contract delivers in practice rests on the evidence in checklist §3 ("Exploratory-claim evidence").
+
+## Re-check, 2026-10-26
+
+A second web survey, after the boundary stages and Exploratory composition shipped. The user asked whether the exploratory-tool novelty is justified, "at least for a tool of this style". This section answers that question and checks the new boundary stages. It does not replace the survey above.
+
+**Nothing new in the landscape.** No prophage detector released since 2026-09-28 turned up. Jaeger's latest release is still v1.26.5 (2026-09-04), the version whose source was read, and no geNomad 2 was found. These are search results, so "none found" is not "none exist".
+
+### The exploratory contract, among tools of this style
+
+The comparison set is the database-free, sequence-level ML callers: PhageBoost, PIDE, Jaeger, Seeker and LAMBDA's models. Each part of the contract taken alone has a precedent:
+
+| part of the contract | precedent |
+|---|---|
+| discovery framing | PhageBoost ("Rapid discovery of novel prophages"); Jaeger (phages "hidden within metagenomes", newly found phages lacking database similarity); Prophage Hunter's similarity-free option; geNomad's `--relaxed` "to maximize discovery" |
+| adjustable sensitivity | Jaeger `--sensitivity`; geNomad presets; DBSCAN-SWA's adjustable cluster parameters |
+| recall over precision, extra calls read as possibly real | DBSCAN-SWA: a search result quotes its preprint as calling its predictions "highly nonconservative" (precision ~0.45) and likely to "identify additional putative active prophages". **Not verified:** the published version (PMC9061938) does not say this, and the preprint was rate-limited. LAMBDA's 22 "likely phage" off-truth regions are a benchmark finding. |
+| accuracy framing (the opposite) | PIDE ("Highly accurate", "precise boundaries"); every tool's headline is precision, F1 or MCC |
+
+What none of them was found to do is the combination:
+- a recall target on known elements, reported with intervals on a preregistered held-out set;
+- modes priced in calls per genome (the follow-up budget), not in precision or F1;
+- ranked candidates with per-call triage fields (seed support, the source of each end, a range on every estimated end), meant to be followed up alongside annotation tools.
+
+**Verdict: the "own class" claim holds as a claim about the contract, not about any one ingredient.** The wording should say so. Discovery framing and sensitivity settings are not new (cite PhageBoost, Jaeger and geNomad `--relaxed`). What we did not find in any tool of this style is a stated, measured recall target with modes priced as follow-up cost. Two limits apply. This rests on what each tool documents, not on a full read of every paper; PIDE's and Jaeger's full texts were not re-read on 2026-10-26. And the contract's value for discovery is still untested, since no candidate has been confirmed in the lab (release text "Limits").
+
+### Prior art for the boundary stages
+
+- **Att sites from direct repeats are old.**
+  - Phage_Finder (Fouts 2006) found att sites with FASTA33, MUMmer or BLASTN and reports attL/attR.
+  - PhiSpy writes attL/attR coordinates and sequences.
+  - DEPhT finds repeats on both flanks with BLASTN and scores the pairs (cores of 8–39 bp, mismatches allowed).
+  - Studies map att cores from PHASTER output.
+  - Prophage Tracer gets exact att ends from split reads, so it needs sequencing reads.
+
+  Each of these pairs the repeat search with gene calls, homology or reads. prophound's rule is exact repeats only, so it misses mismatched cores that DEPhT would accept. That is a cost of exactness, and it belongs with the "about one call in seven" figure.
+- **Composition change-points at island edges are old too.** Alien_Hunter (Vernikos & Parkhill 2006) refines boundaries with a two-state HMM change-point step over IVOM scores. The cumulative GC profile places domain boundaries to a single base (Zhang & Zhang). Zisland Explorer (2016) and MTGIpick (GC-based boundary refinement) build on it. All are gene-free genomic-island tools.
+- **Ranges on estimated ends:** none of the surveyed tools reports a boundary uncertainty. Don't claim that as new ("not found" again); state it as a feature.
+
+**Consequence for wording.** "Gene-free boundaries" is a design fact of the pipeline, and its ingredients have to be cited. The distinct part is a packaged prophage caller combining a model's score track, att repeats and composition with no gene calls at all. LAMBDA's pipeline is gene-free too, but it is unpackaged and its edges sit on the window grid. Release text, "What prophound is", updated the same day.
 
 ## The landscape
 
@@ -94,4 +133,5 @@ A community gold standard: 78 manually curated genomes with CDS-level `is_phage`
 - PhiSpy: [NAR 2012](https://academic.oup.com/nar/article/40/16/e126/1027055); DRAD: [PLOS One](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0001193); DBSCAN-SWA: [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9061938/)
 - Prophage Hunter: [NAR 2019](https://academic.oup.com/nar/article/47/W1/W74/5494712)
 - Philympics: [paper](https://f1000research.com/articles/10-758), [framework](https://github.com/linsalrob/ProphagePredictionComparisons)
-- geNomad presets: [post-classification filtering](https://portal.nersc.gov/genomad/post_classification_filtering.html)
+- geNomad presets: [post-classification filtering](https://portal.nersc.gov/genomad/post_classification_filtering.html), [issue #110 (precision vs recall, `--relaxed`)](https://github.com/apcamargo/genomad/issues/110)
+- Re-check 2026-10-26: [Jaeger releases](https://github.com/Yasas1994/Jaeger/releases), [Jaeger on PyPI (`--sensitivity`)](https://pypi.org/project/jaeger-bio/1.1.25); [Phage_Finder](https://phage-finder.sourceforge.net/documentation.htm); [PhiSpy](https://pypi.org/project/PhiSpy/4.1.7); [DEPhT att scheme](https://pmc.ncbi.nlm.nih.gov/articles/PMC9303363/figure/F5); [Prophage Tracer](https://pmc.ncbi.nlm.nih.gov/articles/PMC8682789/); [DBSCAN-SWA (published)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9061938/), [DBSCAN-SWA (preprint)](https://www.biorxiv.org/content/10.1101/2020.07.12.199018.full.pdf); [Alien_Hunter](https://manpages.debian.org/testing/alien-hunter/alien_hunter.1.en.html); [Zisland Explorer](https://pmc.ncbi.nlm.nih.gov/articles/PMC6454522); [MTGIpick](https://utsouthwestern.elsevierpure.com/en/publications/mtgipick-allows-robust-identification-of-genomic-islands-from-a-s); [PhageBoost](https://pmc.ncbi.nlm.nih.gov/articles/PMC7787355); [PIDE preprint](https://www.biorxiv.org/content/10.1101/2025.02.26.640259.full.pdf)

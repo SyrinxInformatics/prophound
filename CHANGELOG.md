@@ -35,6 +35,7 @@ The first release. Earlier development versions were called `mge-detect`.
 - Apple MPS gave wrong scores, through adaptive max pooling, until 2026-10-19. CUDA and CPU were unaffected.
 - IUPAC ambiguity codes silently collapsed scores to zero, fixed 2026-09-24.
 - Contigs under 10 kb were skipped without a warning. They are now scanned down to 3 kb.
+- A call split by refinement reported `seed_support` counted on each piece, so a piece could show less support than the vote it had passed (2/3 in Default, for example). Support is now counted on the call the vote saw, fixed 2026-10-26. Coordinates were unaffected.
 
 ### Known limitations
 

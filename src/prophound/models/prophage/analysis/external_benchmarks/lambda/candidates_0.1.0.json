@@ -15,23 +15,23 @@
           "LIKELY or POSSIBLE PHAGE": 0.046722454672245464
         },
         "chance": {
-          "off_truth_calls": 1490.14,
-          "LIKELY PHAGE": 0.004890343712974787,
-          "POSSIBLE PHAGE": 0.014474936512669068,
-          "WEAK PHAGE SIGNAL": 0.019123070595589545,
-          "GENOMIC ISLAND": 0.0027347223913284317,
-          "GENOMIC ISLAND / ICE": 0.0030801488644671597,
-          "UNLIKELY PHAGE": 0.002611026728647234,
-          "LIKELY or POSSIBLE PHAGE": 0.019365280225643856
+          "off_truth_calls": 1492.935,
+          "LIKELY PHAGE": 0.004746877180794969,
+          "POSSIBLE PHAGE": 0.013848227298313856,
+          "WEAK PHAGE SIGNAL": 0.018407912025179555,
+          "GENOMIC ISLAND": 0.0026023315264470537,
+          "GENOMIC ISLAND / ICE": 0.002923585619374338,
+          "UNLIKELY PHAGE": 0.0024516589771885933,
+          "LIKELY or POSSIBLE PHAGE": 0.018595104479108823
         },
         "enrichment": {
-          "LIKELY PHAGE": 2.9945444173139752,
-          "POSSIBLE PHAGE": 2.216113568424582,
-          "WEAK PHAGE SIGNAL": 2.2244520847842435,
-          "GENOMIC ISLAND": 1.784989402808748,
-          "GENOMIC ISLAND / ICE": 2.2640141773006244,
-          "UNLIKELY PHAGE": 2.4037098351983244,
-          "LIKELY or POSSIBLE PHAGE": 2.412691896416492
+          "LIKELY PHAGE": 3.0850495824251825,
+          "POSSIBLE PHAGE": 2.3164050182593487,
+          "WEAK PHAGE SIGNAL": 2.310873400288347,
+          "GENOMIC ISLAND": 1.8757988513514499,
+          "GENOMIC ISLAND / ICE": 2.3852561905959964,
+          "UNLIKELY PHAGE": 2.5599606984541357,
+          "LIKELY or POSSIBLE PHAGE": 2.512621250648905
         }
       },
       "landing/not_in_corpus": {
@@ -46,23 +46,23 @@
           "LIKELY or POSSIBLE PHAGE": 0.048451151707704525
         },
         "chance": {
-          "off_truth_calls": 1304.505,
-          "LIKELY PHAGE": 0.005277454505812238,
-          "POSSIBLE PHAGE": 0.014818784450415717,
-          "WEAK PHAGE SIGNAL": 0.02053777784540075,
-          "GENOMIC ISLAND": 0.0019317511954945593,
-          "GENOMIC ISLAND / ICE": 0.0025182108679589273,
-          "UNLIKELY PHAGE": 0.003104088249381185,
-          "LIKELY or POSSIBLE PHAGE": 0.02009623895622795
+          "off_truth_calls": 1306.49,
+          "LIKELY PHAGE": 0.00506654131971772,
+          "POSSIBLE PHAGE": 0.014146290070001944,
+          "WEAK PHAGE SIGNAL": 0.019572885896569442,
+          "GENOMIC ISLAND": 0.0018216459727423183,
+          "GENOMIC ISLAND / ICE": 0.0023496954878544493,
+          "UNLIKELY PHAGE": 0.0029233803002084568,
+          "LIKELY or POSSIBLE PHAGE": 0.019212831389719662
         },
         "enrichment": {
-          "LIKELY PHAGE": 3.0100919852984855,
-          "POSSIBLE PHAGE": 2.197584309694724,
-          "WEAK PHAGE SIGNAL": 2.2044267566999065,
-          "GENOMIC ISLAND": 2.055857859409247,
-          "GENOMIC ISLAND / ICE": 2.523319029847328,
-          "UNLIKELY PHAGE": 2.302940511195309,
-          "LIKELY or POSSIBLE PHAGE": 2.4109561900232683
+          "LIKELY PHAGE": 3.1353979980188647,
+          "POSSIBLE PHAGE": 2.3020543220755023,
+          "WEAK PHAGE SIGNAL": 2.313099215149218,
+          "GENOMIC ISLAND": 2.1801194837557363,
+          "GENOMIC ISLAND / ICE": 2.7042863371590764,
+          "UNLIKELY PHAGE": 2.445296145464044,
+          "LIKELY or POSSIBLE PHAGE": 2.5218121538103753
         }
       }
     },
@@ -814,15 +814,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "LIKELY PHAGE",
       "n_candidates": 20,
-      "covered50": 0.95,
-      "covered50_chance": 0.13115000000000004,
-      "covered50_above_chance": 0.81885,
+      "covered50": 0.9,
+      "covered50_chance": 0.1092,
+      "covered50_above_chance": 0.7908,
       "above_chance_boot95": [
-        0.6315640394088669,
-        0.9357012499999999
+        0.5957637700534759,
+        0.9444175
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.37334999999999996
+      "any_overlap_chance": 0.35755
     },
     {
       "tool": "prophound exploratory",
@@ -833,15 +833,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 46,
-      "covered50": 0.6739130434782609,
-      "covered50_chance": 0.11721739130434783,
-      "covered50_above_chance": 0.556695652173913,
+      "covered50": 0.6304347826086957,
+      "covered50_chance": 0.09034782608695653,
+      "covered50_above_chance": 0.5400869565217391,
       "above_chance_boot95": [
-        0.4061444444444445,
-        0.703055726744186
+        0.39360965909090906,
+        0.6897894281914894
       ],
       "any_overlap": 0.9565217391304348,
-      "any_overlap_chance": 0.39465217391304347
+      "any_overlap_chance": 0.3770652173913044
     },
     {
       "tool": "prophound exploratory",
@@ -852,15 +852,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 57,
-      "covered50": 0.5263157894736842,
-      "covered50_chance": 0.09477192982456141,
-      "covered50_above_chance": 0.4315438596491228,
+      "covered50": 0.5087719298245614,
+      "covered50_chance": 0.07549122807017544,
+      "covered50_above_chance": 0.43328070175438593,
       "above_chance_boot95": [
-        0.2903596590909091,
-        0.5414584692028986
+        0.2855969318181818,
+        0.5499321917808219
       ],
       "any_overlap": 0.8596491228070176,
-      "any_overlap_chance": 0.41989473684210527
+      "any_overlap_chance": 0.4051929824561403
     },
     {
       "tool": "prophound exploratory",
@@ -871,15 +871,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "GENOMIC ISLAND",
       "n_candidates": 8,
-      "covered50": 0.5,
-      "covered50_chance": 0.219375,
-      "covered50_above_chance": 0.280625,
+      "covered50": 0.375,
+      "covered50_chance": 0.17825,
+      "covered50_above_chance": 0.19675000000000004,
       "above_chance_boot95": [
-        -0.12116666666666666,
-        0.7885
+        -0.21257142857142858,
+        0.6834049999999999
       ],
       "any_overlap": 0.75,
-      "any_overlap_chance": 0.515375
+      "any_overlap_chance": 0.49062500000000003
     },
     {
       "tool": "prophound exploratory",
@@ -891,14 +891,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 10,
       "covered50": 0.8,
-      "covered50_chance": 0.1839,
-      "covered50_above_chance": 0.6161000000000001,
+      "covered50_chance": 0.1547,
+      "covered50_above_chance": 0.6453,
       "above_chance_boot95": [
-        0.34161767676767685,
-        0.8728333333333333
+        0.37835176767676765,
+        0.890171875
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.44279999999999997
+      "any_overlap_chance": 0.4231999999999999
     },
     {
       "tool": "prophound exploratory",
@@ -909,15 +909,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "UNLIKELY PHAGE",
       "n_candidates": 11,
-      "covered50": 0.8181818181818182,
-      "covered50_chance": 0.12754545454545457,
-      "covered50_above_chance": 0.6906363636363637,
+      "covered50": 0.7272727272727273,
+      "covered50_chance": 0.10372727272727272,
+      "covered50_above_chance": 0.6235454545454545,
       "above_chance_boot95": [
-        0.392648076923077,
-        0.9164025
+        0.29698846153846153,
+        0.8980041666666666
       ],
       "any_overlap": 0.8181818181818182,
-      "any_overlap_chance": 0.3276363636363636
+      "any_overlap_chance": 0.3114545454545455
     },
     {
       "tool": "prophound exploratory",
@@ -928,15 +928,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 66,
-      "covered50": 0.7575757575757576,
-      "covered50_chance": 0.12143939393939392,
-      "covered50_above_chance": 0.6361363636363636,
+      "covered50": 0.7121212121212122,
+      "covered50_chance": 0.09606060606060607,
+      "covered50_above_chance": 0.6160606060606061,
       "above_chance_boot95": [
-        0.5015975467660115,
-        0.7565232501067006
+        0.48657493506493515,
+        0.7360857276995304
       ],
       "any_overlap": 0.9696969696969697,
-      "any_overlap_chance": 0.3881969696969697
+      "any_overlap_chance": 0.3711515151515152
     },
     {
       "tool": "prophound exploratory",
@@ -947,15 +947,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "LIKELY PHAGE",
       "n_candidates": 6,
-      "covered50": 0.8333333333333334,
-      "covered50_chance": 0.2245,
-      "covered50_above_chance": 0.6088333333333333,
+      "covered50": 0.6666666666666666,
+      "covered50_chance": 0.18483333333333332,
+      "covered50_above_chance": 0.48183333333333334,
       "above_chance_boot95": [
-        0.2227825,
-        0.895
+        0.05566666666666666,
+        0.9135
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.46316666666666667
+      "any_overlap_chance": 0.43766666666666665
     },
     {
       "tool": "prophound exploratory",
@@ -966,15 +966,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 42,
-      "covered50": 0.6428571428571429,
-      "covered50_chance": 0.1187857142857143,
-      "covered50_above_chance": 0.5240714285714286,
+      "covered50": 0.5952380952380952,
+      "covered50_chance": 0.0913809523809524,
+      "covered50_above_chance": 0.5038571428571429,
       "above_chance_boot95": [
-        0.3637325569968554,
-        0.6795
+        0.35331295990078543,
+        0.6612499999999999
       ],
       "any_overlap": 0.9523809523809523,
-      "any_overlap_chance": 0.3933333333333333
+      "any_overlap_chance": 0.375452380952381
     },
     {
       "tool": "prophound exploratory",
@@ -985,15 +985,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 55,
-      "covered50": 0.509090909090909,
-      "covered50_chance": 0.09469090909090908,
-      "covered50_above_chance": 0.41440000000000005,
+      "covered50": 0.4909090909090909,
+      "covered50_chance": 0.0756,
+      "covered50_above_chance": 0.415309090909091,
       "above_chance_boot95": [
-        0.2758437295417348,
-        0.5272014516129032
+        0.26832461734693874,
+        0.5344183333333333
       ],
       "any_overlap": 0.8545454545454545,
-      "any_overlap_chance": 0.42399999999999993
+      "any_overlap_chance": 0.4093636363636364
     },
     {
       "tool": "prophound exploratory",
@@ -1004,15 +1004,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "GENOMIC ISLAND",
       "n_candidates": 8,
-      "covered50": 0.5,
-      "covered50_chance": 0.219375,
-      "covered50_above_chance": 0.280625,
+      "covered50": 0.375,
+      "covered50_chance": 0.17825,
+      "covered50_above_chance": 0.19675000000000004,
       "above_chance_boot95": [
-        -0.12378560606060604,
-        0.7885074999999999
+        -0.2105,
+        0.6969999999999998
       ],
       "any_overlap": 0.75,
-      "any_overlap_chance": 0.515375
+      "any_overlap_chance": 0.49062500000000003
     },
     {
       "tool": "prophound exploratory",
@@ -1024,14 +1024,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 9,
       "covered50": 0.7777777777777778,
-      "covered50_chance": 0.19166666666666665,
-      "covered50_above_chance": 0.5861111111111111,
+      "covered50_chance": 0.161,
+      "covered50_above_chance": 0.6167777777777778,
       "above_chance_boot95": [
-        0.2893333333333334,
-        0.8672086363636363
+        0.32683333333333336,
+        0.8853781250000001
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.46544444444444444
+      "any_overlap_chance": 0.44566666666666666
     },
     {
       "tool": "prophound exploratory",
@@ -1042,15 +1042,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "UNLIKELY PHAGE",
       "n_candidates": 7,
-      "covered50": 0.7142857142857143,
-      "covered50_chance": 0.16514285714285712,
-      "covered50_above_chance": 0.5491428571428572,
+      "covered50": 0.5714285714285714,
+      "covered50_chance": 0.13385714285714287,
+      "covered50_above_chance": 0.43757142857142856,
       "above_chance_boot95": [
-        0.15056964285714286,
-        0.89425
+        0.04142857142857142,
+        0.8373194805194798
       ],
       "any_overlap": 0.7142857142857143,
-      "any_overlap_chance": 0.4355714285714286
+      "any_overlap_chance": 0.4151428571428571
     },
     {
       "tool": "prophound exploratory",
@@ -1061,15 +1061,15 @@
       "calls_per_genome": 40.333333333333336,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 48,
-      "covered50": 0.6666666666666666,
-      "covered50_chance": 0.132,
-      "covered50_above_chance": 0.5346666666666667,
+      "covered50": 0.6041666666666666,
+      "covered50_chance": 0.1030625,
+      "covered50_above_chance": 0.5011041666666668,
       "above_chance_boot95": [
-        0.38852387931034477,
-        0.6833055418109846
+        0.36006852325581395,
+        0.6522248352010547
       ],
       "any_overlap": 0.9583333333333334,
-      "any_overlap_chance": 0.4020625
+      "any_overlap_chance": 0.3832291666666667
     },
     {
       "tool": "prophound exploratory",
@@ -1080,15 +1080,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "LIKELY PHAGE",
       "n_candidates": 19,
-      "covered50": 0.9473684210526315,
-      "covered50_chance": 0.12757894736842107,
-      "covered50_above_chance": 0.8197894736842105,
+      "covered50": 0.8947368421052632,
+      "covered50_chance": 0.10942105263157893,
+      "covered50_above_chance": 0.7853157894736843,
       "above_chance_boot95": [
-        0.6205398214285713,
-        0.9421828282828283
+        0.5733650928792571,
+        0.9503753472222222
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.36794736842105263
+      "any_overlap_chance": 0.3540526315789474
     },
     {
       "tool": "prophound exploratory",
@@ -1099,15 +1099,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 42,
-      "covered50": 0.6666666666666666,
-      "covered50_chance": 0.1136666666666667,
-      "covered50_above_chance": 0.553,
+      "covered50": 0.6190476190476191,
+      "covered50_chance": 0.08811904761904762,
+      "covered50_above_chance": 0.5309285714285714,
       "above_chance_boot95": [
-        0.3875431277056277,
-        0.7114013636363635
+        0.37465519736842107,
+        0.6924868243243243
       ],
       "any_overlap": 0.9523809523809523,
-      "any_overlap_chance": 0.397452380952381
+      "any_overlap_chance": 0.38102380952380954
     },
     {
       "tool": "prophound exploratory",
@@ -1118,15 +1118,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 52,
-      "covered50": 0.5384615384615384,
-      "covered50_chance": 0.09173076923076924,
-      "covered50_above_chance": 0.44673076923076926,
+      "covered50": 0.5192307692307693,
+      "covered50_chance": 0.07275000000000001,
+      "covered50_above_chance": 0.4464807692307691,
       "above_chance_boot95": [
-        0.2969042798913044,
-        0.5601813204887217
+        0.28605799396681747,
+        0.5682006002824858
       ],
       "any_overlap": 0.8653846153846154,
-      "any_overlap_chance": 0.42013461538461533
+      "any_overlap_chance": 0.40628846153846143
     },
     {
       "tool": "prophound exploratory",
@@ -1137,15 +1137,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "GENOMIC ISLAND",
       "n_candidates": 4,
-      "covered50": 0.75,
-      "covered50_chance": 0.23324999999999999,
-      "covered50_above_chance": 0.51675,
+      "covered50": 0.5,
+      "covered50_chance": 0.19524999999999998,
+      "covered50_above_chance": 0.30475,
       "above_chance_boot95": [
-        -0.368,
-        0.968
+        -0.36,
+        0.9739999999999999
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.54975
+      "any_overlap_chance": 0.52825
     },
     {
       "tool": "prophound exploratory",
@@ -1157,14 +1157,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 8,
       "covered50": 0.875,
-      "covered50_chance": 0.14787499999999998,
-      "covered50_above_chance": 0.727125,
+      "covered50_chance": 0.12237500000000001,
+      "covered50_above_chance": 0.7526250000000001,
       "above_chance_boot95": [
-        0.41600000000000004,
-        0.908
+        0.43025,
+        0.92
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.38499999999999995
+      "any_overlap_chance": 0.366125
     },
     {
       "tool": "prophound exploratory",
@@ -1175,15 +1175,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "UNLIKELY PHAGE",
       "n_candidates": 11,
-      "covered50": 0.8181818181818182,
-      "covered50_chance": 0.12763636363636363,
-      "covered50_above_chance": 0.6905454545454546,
+      "covered50": 0.7272727272727273,
+      "covered50_chance": 0.10218181818181817,
+      "covered50_above_chance": 0.6250909090909091,
       "above_chance_boot95": [
-        0.39434594155844155,
-        0.9149999999999999
+        0.292965625,
+        0.9006371212121212
       ],
       "any_overlap": 0.8181818181818182,
-      "any_overlap_chance": 0.326
+      "any_overlap_chance": 0.3104545454545455
     },
     {
       "tool": "prophound exploratory",
@@ -1194,15 +1194,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 61,
-      "covered50": 0.7540983606557377,
-      "covered50_chance": 0.11800000000000001,
-      "covered50_above_chance": 0.6360983606557378,
+      "covered50": 0.7049180327868853,
+      "covered50_chance": 0.09475409836065572,
+      "covered50_above_chance": 0.6101639344262294,
       "above_chance_boot95": [
-        0.49290433843085113,
-        0.7685366509926854
+        0.4726068036853296,
+        0.7426546103896103
       ],
       "any_overlap": 0.9672131147540983,
-      "any_overlap_chance": 0.38826229508196713
+      "any_overlap_chance": 0.37262295081967206
     },
     {
       "tool": "prophound exploratory",
@@ -1213,15 +1213,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "LIKELY PHAGE",
       "n_candidates": 5,
-      "covered50": 0.8,
-      "covered50_chance": 0.23559999999999998,
-      "covered50_above_chance": 0.5644,
+      "covered50": 0.6,
+      "covered50_chance": 0.1998,
+      "covered50_above_chance": 0.40020000000000006,
       "above_chance_boot95": [
-        0.07850000000000004,
-        0.905
+        -0.076,
+        0.922
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.4758
+      "any_overlap_chance": 0.4546
     },
     {
       "tool": "prophound exploratory",
@@ -1232,15 +1232,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 38,
-      "covered50": 0.631578947368421,
-      "covered50_chance": 0.11460526315789472,
-      "covered50_above_chance": 0.5169736842105264,
+      "covered50": 0.5789473684210527,
+      "covered50_chance": 0.08852631578947369,
+      "covered50_above_chance": 0.4904210526315789,
       "above_chance_boot95": [
-        0.34040565257352945,
-        0.6820690540540542
+        0.3261082954545454,
+        0.6590060000000001
       ],
       "any_overlap": 0.9473684210526315,
-      "any_overlap_chance": 0.39521052631578946
+      "any_overlap_chance": 0.37821052631578944
     },
     {
       "tool": "prophound exploratory",
@@ -1251,15 +1251,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 50,
-      "covered50": 0.52,
-      "covered50_chance": 0.09148000000000002,
-      "covered50_above_chance": 0.42851999999999996,
+      "covered50": 0.5,
+      "covered50_chance": 0.07278,
+      "covered50_above_chance": 0.42721999999999993,
       "above_chance_boot95": [
-        0.28059947368421057,
-        0.5455349963316214
+        0.26694728260869566,
+        0.5532331189467312
       ],
       "any_overlap": 0.86,
-      "any_overlap_chance": 0.42410000000000003
+      "any_overlap_chance": 0.41047999999999996
     },
     {
       "tool": "prophound exploratory",
@@ -1270,15 +1270,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "GENOMIC ISLAND",
       "n_candidates": 4,
-      "covered50": 0.75,
-      "covered50_chance": 0.23324999999999999,
-      "covered50_above_chance": 0.51675,
+      "covered50": 0.5,
+      "covered50_chance": 0.19524999999999998,
+      "covered50_above_chance": 0.30475,
       "above_chance_boot95": [
-        -0.368,
-        0.968
+        -0.36,
+        0.974
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.54975
+      "any_overlap_chance": 0.52825
     },
     {
       "tool": "prophound exploratory",
@@ -1290,14 +1290,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 7,
       "covered50": 0.8571428571428571,
-      "covered50_chance": 0.15214285714285714,
-      "covered50_above_chance": 0.7050000000000001,
+      "covered50_chance": 0.12528571428571428,
+      "covered50_above_chance": 0.7318571428571428,
       "above_chance_boot95": [
-        0.3345,
-        0.9172
+        0.36475,
+        0.9286
       ],
       "any_overlap": 1.0,
-      "any_overlap_chance": 0.4057142857142857
+      "any_overlap_chance": 0.38757142857142857
     },
     {
       "tool": "prophound exploratory",
@@ -1308,15 +1308,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "UNLIKELY PHAGE",
       "n_candidates": 7,
-      "covered50": 0.7142857142857143,
-      "covered50_chance": 0.16742857142857143,
-      "covered50_above_chance": 0.5468571428571429,
+      "covered50": 0.5714285714285714,
+      "covered50_chance": 0.1352857142857143,
+      "covered50_above_chance": 0.4361428571428571,
       "above_chance_boot95": [
-        0.15650714285714293,
-        0.887
+        0.03885071428571428,
+        0.838358333333333
       ],
       "any_overlap": 0.7142857142857143,
-      "any_overlap_chance": 0.4311428571428571
+      "any_overlap_chance": 0.41157142857142853
     },
     {
       "tool": "prophound exploratory",
@@ -1327,15 +1327,15 @@
       "calls_per_genome": 40.294117647058826,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 43,
-      "covered50": 0.6511627906976745,
-      "covered50_chance": 0.12867441860465118,
-      "covered50_above_chance": 0.5224883720930233,
+      "covered50": 0.5813953488372093,
+      "covered50_chance": 0.10146511627906978,
+      "covered50_above_chance": 0.47993023255813955,
       "above_chance_boot95": [
-        0.36159445970695975,
-        0.6856642436974789
+        0.3289978571428572,
+        0.6396766964285715
       ],
       "any_overlap": 0.9534883720930233,
-      "any_overlap_chance": 0.4045813953488372
+      "any_overlap_chance": 0.38709302325581396
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1347,14 +1347,14 @@
       "class": "LIKELY PHAGE",
       "n_candidates": 19,
       "covered50": 0.6842105263157895,
-      "covered50_chance": 0.037894736842105266,
-      "covered50_above_chance": 0.6463157894736842,
+      "covered50_chance": 0.033947368421052636,
+      "covered50_above_chance": 0.6502631578947369,
       "above_chance_boot95": [
-        0.32658281249999993,
-        0.9148435526315788
+        0.3313046875,
+        0.9185569444444444
       ],
       "any_overlap": 0.7894736842105263,
-      "any_overlap_chance": 0.07263157894736842
+      "any_overlap_chance": 0.0691578947368421
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1365,15 +1365,15 @@
       "calls_per_genome": 4.4375,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 38,
-      "covered50": 0.4473684210526316,
-      "covered50_chance": 0.04239473684210527,
-      "covered50_above_chance": 0.4049736842105264,
+      "covered50": 0.42105263157894735,
+      "covered50_chance": 0.03723684210526315,
+      "covered50_above_chance": 0.38381578947368417,
       "above_chance_boot95": [
-        0.24114241071428572,
-        0.5646596428571427
+        0.2169275,
+        0.5519794117647058
       ],
       "any_overlap": 0.5263157894736842,
-      "any_overlap_chance": 0.08371052631578947
+      "any_overlap_chance": 0.07878947368421053
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1385,14 +1385,14 @@
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 51,
       "covered50": 0.11764705882352941,
-      "covered50_chance": 0.03303921568627451,
-      "covered50_above_chance": 0.08460784313725489,
+      "covered50_chance": 0.028627450980392162,
+      "covered50_above_chance": 0.08901960784313724,
       "above_chance_boot95": [
-        0.0034636065573770474,
-        0.16940889668367343
+        0.00757978571428571,
+        0.1741833951762523
       ],
       "any_overlap": 0.13725490196078433,
-      "any_overlap_chance": 0.07911764705882353
+      "any_overlap_chance": 0.0757843137254902
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1404,14 +1404,14 @@
       "class": "GENOMIC ISLAND",
       "n_candidates": 2,
       "covered50": 0.0,
-      "covered50_chance": 0.065,
-      "covered50_above_chance": -0.065,
+      "covered50_chance": 0.062,
+      "covered50_above_chance": -0.062,
       "above_chance_boot95": [
         -0.094,
         0.0
       ],
       "any_overlap": 0.0,
-      "any_overlap_chance": 0.10550000000000001
+      "any_overlap_chance": 0.1005
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1423,14 +1423,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 8,
       "covered50": 0.125,
-      "covered50_chance": 0.034624999999999996,
-      "covered50_above_chance": 0.09037499999999998,
+      "covered50_chance": 0.029750000000000002,
+      "covered50_above_chance": 0.09524999999999999,
       "above_chance_boot95": [
-        -0.040125446428571424,
-        0.40588888888888885
+        -0.0335,
+        0.4093333333333333
       ],
       "any_overlap": 0.125,
-      "any_overlap_chance": 0.054125
+      "any_overlap_chance": 0.051125
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1442,14 +1442,14 @@
       "class": "UNLIKELY PHAGE",
       "n_candidates": 11,
       "covered50": 0.18181818181818182,
-      "covered50_chance": 0.03654545454545454,
-      "covered50_above_chance": 0.14527272727272728,
+      "covered50_chance": 0.03200000000000001,
+      "covered50_above_chance": 0.14981818181818182,
       "above_chance_boot95": [
-        -0.04980083333333333,
-        0.3714
+        -0.04440041666666667,
+        0.3752049999999999
       ],
       "any_overlap": 0.18181818181818182,
-      "any_overlap_chance": 0.05381818181818183
+      "any_overlap_chance": 0.05063636363636365
     },
     {
       "tool": "prophound exploratory at geNomad's cost",
@@ -1460,15 +1460,15 @@
       "calls_per_genome": 4.4375,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 57,
-      "covered50": 0.5263157894736842,
-      "covered50_chance": 0.04089473684210526,
-      "covered50_above_chance": 0.4854210526315789,
+      "covered50": 0.5087719298245614,
+      "covered50_chance": 0.03614035087719299,
+      "covered50_above_chance": 0.47263157894736846,
       "above_chance_boot95": [
-        0.3162252530364373,
-        0.6368464788732394
+        0.3135913527934714,
+        0.6186571660482373
       ],
       "any_overlap": 0.6140350877192983,
-      "any_overlap_chance": 0.08001754385964913
+      "any_overlap_chance": 0.07557894736842105
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1480,14 +1480,14 @@
       "class": "LIKELY PHAGE",
       "n_candidates": 19,
       "covered50": 0.631578947368421,
-      "covered50_chance": 0.03236842105263158,
-      "covered50_above_chance": 0.5992105263157894,
+      "covered50_chance": 0.02868421052631579,
+      "covered50_above_chance": 0.6028947368421053,
       "above_chance_boot95": [
-        0.2777851214574899,
-        0.8796549783549781
+        0.2821513157894736,
+        0.8831110389610387
       ],
       "any_overlap": 0.7368421052631579,
-      "any_overlap_chance": 0.0645263157894737
+      "any_overlap_chance": 0.061631578947368426
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1498,15 +1498,15 @@
       "calls_per_genome": 3.6363636363636362,
       "class": "POSSIBLE PHAGE",
       "n_candidates": 38,
-      "covered50": 0.2894736842105263,
-      "covered50_chance": 0.03847368421052631,
-      "covered50_above_chance": 0.251,
+      "covered50": 0.2631578947368421,
+      "covered50_chance": 0.03357894736842105,
+      "covered50_above_chance": 0.22957894736842105,
       "above_chance_boot95": [
-        0.11924906914893618,
-        0.3906275096525096
+        0.10010450657894737,
+        0.3697107303732302
       ],
       "any_overlap": 0.3157894736842105,
-      "any_overlap_chance": 0.07544736842105264
+      "any_overlap_chance": 0.07055263157894735
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1518,14 +1518,14 @@
       "class": "WEAK PHAGE SIGNAL",
       "n_candidates": 52,
       "covered50": 0.057692307692307696,
-      "covered50_chance": 0.027653846153846154,
-      "covered50_above_chance": 0.030038461538461528,
+      "covered50_chance": 0.024192307692307694,
+      "covered50_above_chance": 0.0335,
       "above_chance_boot95": [
-        -0.026938790970933824,
-        0.0900751650401837
+        -0.023250612745098043,
+        0.09320650452488687
       ],
       "any_overlap": 0.057692307692307696,
-      "any_overlap_chance": 0.060346153846153855
+      "any_overlap_chance": 0.057596153846153846
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1537,14 +1537,14 @@
       "class": "GENOMIC ISLAND",
       "n_candidates": 3,
       "covered50": 0.0,
-      "covered50_chance": 0.05433333333333334,
-      "covered50_above_chance": -0.05433333333333334,
+      "covered50_chance": 0.052333333333333336,
+      "covered50_above_chance": -0.052333333333333336,
       "above_chance_boot95": [
         -0.109,
         0.0
       ],
       "any_overlap": 0.0,
-      "any_overlap_chance": 0.08900000000000001
+      "any_overlap_chance": 0.08666666666666667
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1556,14 +1556,14 @@
       "class": "GENOMIC ISLAND / ICE",
       "n_candidates": 8,
       "covered50": 0.25,
-      "covered50_chance": 0.03875,
-      "covered50_above_chance": 0.21125,
+      "covered50_chance": 0.035,
+      "covered50_above_chance": 0.215,
       "above_chance_boot95": [
-        -0.042,
-        0.6113333333333333
+        -0.036333333333333336,
+        0.6153916666666666
       ],
       "any_overlap": 0.25,
-      "any_overlap_chance": 0.058125
+      "any_overlap_chance": 0.053875
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1575,14 +1575,14 @@
       "class": "UNLIKELY PHAGE",
       "n_candidates": 11,
       "covered50": 0.18181818181818182,
-      "covered50_chance": 0.03836363636363637,
-      "covered50_above_chance": 0.14345454545454547,
+      "covered50_chance": 0.03427272727272728,
+      "covered50_above_chance": 0.14754545454545454,
       "above_chance_boot95": [
-        -0.051,
-        0.3666049999999999
+        -0.0461675,
+        0.3708
       ],
       "any_overlap": 0.18181818181818182,
-      "any_overlap_chance": 0.061090909090909105
+      "any_overlap_chance": 0.05790909090909092
     },
     {
       "tool": "prophound exploratory at PHASTER's cost",
@@ -1593,15 +1593,15 @@
       "calls_per_genome": 3.6363636363636362,
       "class": "LIKELY or POSSIBLE PHAGE",
       "n_candidates": 57,
-      "covered50": 0.40350877192982454,
-      "covered50_chance": 0.036438596491228076,
-      "covered50_above_chance": 0.36707017543859644,
+      "covered50": 0.38596491228070173,
+      "covered50_chance": 0.031947368421052634,
+      "covered50_above_chance": 0.3540175438596491,
       "above_chance_boot95": [
-        0.21465268199233717,
-        0.5088423809523809
+        0.2133613134206219,
+        0.4852977495543672
       ],
       "any_overlap": 0.45614035087719296,
-      "any_overlap_chance": 0.07180701754385965
+      "any_overlap_chance": 0.06757894736842106
     },
     {
       "tool": "prophound default",

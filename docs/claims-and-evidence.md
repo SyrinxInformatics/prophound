@@ -449,6 +449,13 @@ The results above were scored before the boundary stages (refinement, att, compo
 - The release text reports both scorings (§2, §4, §9 of `docs/release-text-0.1.0.md`).
 - **User decision (2026-10-23): accept and report.** No compromise rule is fitted on LAMBDA (already used); the second lockbox is the held-out test of the boundary stages.
 
+### Amendment 2026-10-27: Exploratory re-scored with composition edges
+
+The 2026-10-23 files were scored before Exploratory gained composition edges (gate 0.005). Re-run with the same three commands on `382efba`'s code, `chance_0.1.0.json` and `candidates_0.1.0.{json,csv}` were replaced; the earlier versions are in git. **Only Exploratory rows changed.** Default, Conservative, every other tool and `scores_0.1.0.*` are identical (byte for byte, for the scores).
+- **Curated recall and calls unchanged:** Exploratory 0.946. It now calls 12.8% of each chromosome (was 15.0%), so chance falls to 0.145 (was 0.177) and recall above chance rises to 0.801 (was 0.769).
+- **Candidates check, Exploratory:** LIKELY PHAGE (not in corpus) 17 of 19 (0.895; was 18 of 19), above chance 0.785 (0.573–0.950; was 0.820). All 19 still have an Exploratory call on them. UNLIKELY PHAGE 0.727 (was 0.818). Composition trims calls inward, so some candidates whose coordinates come from 1 kb language-model windows fall under 50% coverage. As in the 2026-10-23 amendment, which region is right is unknown.
+- The preregistered endpoint is Default's and is unaffected. The release text quotes no Exploratory candidates figure.
+
 ### LAMBDA baseline on the clean subset (39 genomes, 154 curated regions, 18 under 10 kb) — superseded 2026-09-29 (see amendment above)
 
 Computed 2026-09-28 from the published per-genome predictions, using our own metric (covered50: ≥50% of the element's bp under calls) so that every tool is scored the same way:

@@ -8,7 +8,7 @@
 
 *prophound is a recall-first prophage screen. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is designed to run alongside annotation-based tools and to surface what they may not call.*
 
-**Method in one line:** an exploratory, database-free prophage caller that learns directly from sequence, trained on geNomad-labelled genomes. It is a reverse-complement-symmetric CNN, scored over 10 kb windows by an ensemble of three training replicates. Regions are built from the score track with no gene calling. Their ends are then placed without genes too: a finer 5 kb scoring pass, then a direct-repeat (att site) search that gives base-exact ends where it finds a pair, and, in Default and Conservative, a host-to-element composition change-point for the rest. Every end carries its source and, where estimated, a range.
+**Method in one line:** an exploratory, database-free prophage caller that learns directly from sequence, trained on geNomad-labelled genomes. It is a reverse-complement-symmetric CNN, scored over 10 kb windows by an ensemble of three training replicates. Regions are built from the score track with no gene calling. Their ends are then placed without genes too: a finer 5 kb scoring pass, then a direct-repeat (att site) search that gives base-exact ends where it finds a pair, and a host-to-element composition change-point for the rest (every mode; a looser gate in Exploratory). Every end carries its source and, where estimated, a range.
 
 **What is distinct is the contract, not the method.** Database-free and nucleotide-level detection already exist (PhageBoost, PIDE, Jaeger, Seeker, LAMBDA's genomic language models; `docs/related-tools.md`). prophound's contract has four parts:
 1. a recall target on known elements, measured and reported with intervals;
@@ -17,8 +17,8 @@
 4. use alongside annotation tools.
 
 It rests on three design facts, each checked against the nearest tools:
-- **Host-context training.** It is trained on prophages in their host genomes. Jaeger and LAMBDA's models train on free phage genomes, with Jaeger masking prophages out.
-- **Gene-free boundaries.** Boundaries come from the score track, att direct repeats and sequence composition, never from genes. Jaeger snaps them with gene prediction.
+- **Host-context training.** It is trained on prophages in their host genomes. Jaeger and LAMBDA's models, the nearest nucleotide-level ones, train on free phage genomes, with Jaeger masking prophages out. Gene-based callers (geNomad's provirus model, PhageBoost) also learn from genes in host genomes, so the distinction is among sequence-level models.
+- **Gene-free boundaries.** Boundaries come from the score track, att direct repeats and sequence composition, never from genes. Jaeger snaps them with gene prediction. Neither ingredient is new: direct-repeat att searches go back to Phage_Finder (2006) and are in PhiSpy and DEPhT, and composition change-points have placed genomic-island edges since Alien_Hunter (2006). What is distinct is a packaged prophage caller that combines them with a model's score track and calls no genes anywhere (`docs/related-tools.md` "Prior art for the boundary stages").
 - **Fragments scanned by default.** It scans contigs down to 3 kb. Jaeger's prophage mode scans contigs over 500 kb by default.
 
 ## How to read every number below
