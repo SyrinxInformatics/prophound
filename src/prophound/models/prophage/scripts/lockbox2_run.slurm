@@ -31,10 +31,10 @@ module load miniconda
 conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
-FREEZE=__FREEZE_COMMIT__                                              # filled at the freeze
+FREEZE=0d71e2f                                                        # the freeze commit (docs/lockbox2.md Status)
 CODE=/work/$USER/mge_explorer/prophound_$FREEZE
 MD5S=analysis/lockbox2/frozen_md5.txt
-MD5S_SHA=__FROZEN_MD5_SHA256__                                        # filled at the freeze
+MD5S_SHA=21e7485299d65f75a47573c9e92a53c092f86756d0fb2703ae95c8e2396d7baf   # sha256 of frozen_md5.txt (745 files under src/)
 LB=analysis/lockbox2
 LIST=$LB/lockbox_genome_list.txt
 LIST_SHA=c6f57869ceaa8ce08a6b4750859a8cf683dd15195de4a23f6d31d0398974a4d0   # docs/lockbox2.md Status
