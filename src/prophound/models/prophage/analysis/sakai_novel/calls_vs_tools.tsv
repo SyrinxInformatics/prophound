@@ -1,0 +1,82 @@
+mode	call_id	rank	contig	start	end	kb	boundary	support	max_prob	PHASTEST	geNomad	literature	lit_names	any_other
+default	prophound_1	20	NC_002695.2	244356	275688	31.3	model	3	0.998	0.0	0.0	0.0		0.0
+default	prophound_2	14	NC_002695.2	283136	347000	63.9	model	3	1.0	0.68	0.4	0.37	Sp1,Sp2	0.68
+default	prophound_3	23	NC_002695.2	653223	676247	23.0	model	3	0.997	0.0	0.0	0.0		0.0
+default	prophound_4	21	NC_002695.2	807440	816200	8.8	model	3	0.998	0.0	0.0	0.0		0.0
+default	prophound_5	8	NC_002695.2	892907	930689	37.8	model	3	1.0	0.97	0.94	0.97	Sp3	0.97
+default	prophound_6	6	NC_002695.2	1161096	1210947	49.9	att	3	1.0	1.0	0.99	1.0	Sp4	1.0
+default	prophound_7	2	NC_002695.2	1245000	1321935	76.9	model	3	1.0	0.92	0.83	0.82	Sp5	0.92
+default	prophound_8	18	NC_002695.2	1370400	1457185	86.8	model	3	0.999	0.0	0.0	0.99	SpLE1	0.99
+default	prophound_9	27	NC_002695.2	1490695	1499466	8.8	model	3	0.985	0.0	0.0	0.0		0.0
+default	prophound_10	4	NC_002695.2	1537100	1674051	137.0	model	3	1.0	0.93	0.8	0.79	Sp6,Sp7,Sp8	0.93
+default	prophound_11	13	NC_002695.2	1759500	1833300	73.8	model	3	1.0	0.75	0.77	0.76	Sp9	0.77
+default	prophound_12	3	NC_002695.2	1921507	1972645	51.1	att	3	1.0	1.0	1.0	1.0	Sp10	1.0
+default	prophound_13	24	NC_002695.2	2042000	2080000	38.0	model	3	0.997	0.0	0.0	0.0		0.0
+default	prophound_14	1	NC_002695.2	2154000	2254200	100.2	model	3	1.0	1.0	1.0	0.96	Sp11,Sp12	1.0
+default	prophound_15	9	NC_002695.2	2593095	2614278	21.2	att	3	1.0	1.0	0.99	0.99	Sp13	1.0
+default	prophound_16	5	NC_002695.2	2669910	2712000	42.1	model	3	1.0	1.0	1.0	1.0	Sp14	1.0
+default	prophound_17	10	NC_002695.2	2856043	2939600	83.6	model	3	1.0	0.61	0.61	0.52	Sp15	0.61
+default	prophound_18	17	NC_002695.2	3186187	3203000	16.8	model	3	0.999	0.73	0.0	0.51	Sp16	0.73
+default	prophound_19	11	NC_002695.2	3475834	3500651	24.8	model	3	1.0	0.92	0.85	0.97	Sp17	0.97
+default	prophound_20	15	NC_002695.2	3599688	3609792	10.1	model	3	1.0	0.0	0.0	0.0		0.0
+default	prophound_21	26	NC_002695.2	3725400	3737496	12.1	model	3	0.993	0.0	0.0	0.0		0.0
+default	prophound_22	16	NC_002695.2	3838250	3845610	7.4	model	3	0.999	0.0	0.0	0.0		0.0
+default	prophound_23	22	NC_002695.2	3854211	3872502	18.3	model	3	0.997	0.0	0.0	1.0	SpLE3	1.0
+default	prophound_24	25	NC_002695.2	4583916	4601436	17.5	model	3	0.994	0.0	0.0	1.0	SpLE4	1.0
+default	prophound_25	7	NC_002695.2	5042646	5077308	34.7	model	3	1.0	1.0	1.0	1.0	Sp18	1.0
+default	prophound_26	19	NC_002695.2	5347185	5357447	10.3	att	3	0.998	0.0	0.0	1.0	SpLE5	1.0
+default	prophound_27	12	NC_002128.1	6705	92721	86.0	model	3	1.0	0.0	0.0	0.0		0.0
+exploratory	prophound_1	42	NC_002695.2	19088	25875	6.8	model	2	0.952	0.0	0.0	0.0		0.0
+exploratory	prophound_2	21	NC_002695.2	241218	274904	33.7	model	3	0.998	0.0	0.0	0.0		0.0
+exploratory	prophound_3	14	NC_002695.2	282937	355000	72.1	model	3	1.0	0.6	0.35	0.33	Sp1,Sp2	0.6
+exploratory	prophound_4	19	NC_002695.2	588775	593897	5.1	att	2	0.999	0.0	0.0	0.0		0.0
+exploratory	prophound_5	24	NC_002695.2	649594	676372	26.8	model	3	0.997	0.0	0.0	0.0		0.0
+exploratory	prophound_6	22	NC_002695.2	807440	816200	8.8	model	3	0.998	0.0	0.0	0.0		0.0
+exploratory	prophound_7	7	NC_002695.2	892907	930689	37.8	model	3	1.0	0.97	0.94	0.97	Sp3	0.97
+exploratory	prophound_8	34	NC_002695.2	959541	966130	6.6	model	1	0.986	0.0	0.0	0.0		0.0
+exploratory	prophound_9	48	NC_002695.2	1105088	1110168	5.1	model	1	0.909	0.0	0.0	0.0		0.0
+exploratory	prophound_10	5	NC_002695.2	1161096	1210947	49.9	att	3	1.0	1.0	0.99	1.0	Sp4	1.0
+exploratory	prophound_11	3	NC_002695.2	1238000	1321977	84.0	model	3	1.0	0.84	0.76	0.75	Sp5	0.84
+exploratory	prophound_12	18	NC_002695.2	1370400	1457185	86.8	model	3	0.999	0.0	0.0	0.99	SpLE1	0.99
+exploratory	prophound_13	36	NC_002695.2	1490695	1499466	8.8	model	3	0.985	0.0	0.0	0.0		0.0
+exploratory	prophound_14	2	NC_002695.2	1545100	1674051	129.0	model	3	1.0	0.94	0.83	0.81	Sp6,Sp7,Sp8	0.94
+exploratory	prophound_15	13	NC_002695.2	1759500	1834500	75.0	model	3	1.0	0.74	0.76	0.75	Sp9	0.76
+exploratory	prophound_16	8	NC_002695.2	1923600	1989700	66.1	model	3	1.0	0.74	0.75	0.74	Sp10	0.75
+exploratory	prophound_17	51	NC_002695.2	2023962	2027288	3.3	model	2	0.83	0.0	0.0	0.0		0.0
+exploratory	prophound_18	25	NC_002695.2	2047331	2082509	35.2	model	3	0.997	0.0	0.0	0.0		0.0
+exploratory	prophound_19	47	NC_002695.2	2108660	2115548	6.9	model	3	0.932	0.0	0.0	0.0		0.0
+exploratory	prophound_20	1	NC_002695.2	2154000	2254200	100.2	model	3	1.0	1.0	1.0	0.96	Sp11,Sp12	1.0
+exploratory	prophound_21	46	NC_002695.2	2399132	2405225	6.1	model	1	0.934	0.0	0.0	0.0		0.0
+exploratory	prophound_22	52	NC_002695.2	2421825	2425883	4.1	model	1	0.823	0.0	0.0	0.0		0.0
+exploratory	prophound_23	45	NC_002695.2	2482312	2488438	6.1	model	2	0.946	0.0	0.0	0.0		0.0
+exploratory	prophound_24	33	NC_002695.2	2506738	2512512	5.8	model	1	0.986	0.0	0.0	0.0		0.0
+exploratory	prophound_25	9	NC_002695.2	2593095	2614278	21.2	att	3	1.0	1.0	0.99	0.99	Sp13	1.0
+exploratory	prophound_26	4	NC_002695.2	2669910	2712000	42.1	model	3	1.0	1.0	1.0	1.0	Sp14	1.0
+exploratory	prophound_27	43	NC_002695.2	2742519	2751228	8.7	model	2	0.948	0.0	0.0	1.0	SpLE2	1.0
+exploratory	prophound_28	49	NC_002695.2	2814798	2819183	4.4	model	2	0.889	0.0	0.0	0.0		0.0
+exploratory	prophound_29	10	NC_002695.2	2856043	2939600	83.6	model	3	1.0	0.61	0.61	0.52	Sp15	0.61
+exploratory	prophound_30	35	NC_002695.2	3064862	3072388	7.5	model	3	0.985	0.0	0.0	0.0		0.0
+exploratory	prophound_31	38	NC_002695.2	3084414	3093584	9.2	model	3	0.982	0.0	0.0	0.0		0.0
+exploratory	prophound_32	17	NC_002695.2	3186238	3202002	15.8	model	3	0.999	0.72	0.0	0.54	Sp16	0.72
+exploratory	prophound_33	26	NC_002695.2	3375962	3382788	6.8	model	3	0.996	0.0	0.0	0.0		0.0
+exploratory	prophound_34	54	NC_002695.2	3455562	3458198	2.6	model	1	0.791	1.0	0.0	0.0		1.0
+exploratory	prophound_35	11	NC_002695.2	3475925	3500706	24.8	model	3	1.0	0.91	0.85	0.98	Sp17	0.98
+exploratory	prophound_36	15	NC_002695.2	3599688	3609792	10.1	model	3	1.0	0.0	0.0	0.0		0.0
+exploratory	prophound_37	30	NC_002695.2	3718955	3737514	18.6	model	3	0.993	0.0	0.0	0.0		0.0
+exploratory	prophound_38	16	NC_002695.2	3838250	3845610	7.4	model	3	0.999	0.0	0.0	0.0		0.0
+exploratory	prophound_39	23	NC_002695.2	3854280	3872893	18.6	model	3	0.997	0.0	0.0	1.0	SpLE3	1.0
+exploratory	prophound_40	37	NC_002695.2	3906762	3914988	8.2	model	3	0.982	0.0	0.0	0.0		0.0
+exploratory	prophound_41	40	NC_002695.2	4298850	4305150	6.3	model	1	0.973	0.0	0.0	0.0		0.0
+exploratory	prophound_42	53	NC_002695.2	4408050	4412950	4.9	model	1	0.82	0.0	0.0	0.0		0.0
+exploratory	prophound_43	29	NC_002695.2	4466088	4471168	5.1	model	1	0.994	0.0	0.0	0.0		0.0
+exploratory	prophound_44	28	NC_002695.2	4506498	4535954	29.5	model	2	0.994	0.0	0.0	0.0		0.0
+exploratory	prophound_45	27	NC_002695.2	4583840	4601537	17.7	model	3	0.994	0.0	0.0	1.0	SpLE4	1.0
+exploratory	prophound_46	39	NC_002695.2	4929060	4935800	6.7	model	1	0.981	0.0	0.0	0.0		0.0
+exploratory	prophound_47	50	NC_002695.2	4991000	4992750	1.8	model	1	0.845	0.0	0.0	0.0		0.0
+exploratory	prophound_48	44	NC_002695.2	5023646	5029512	5.9	model	1	0.947	0.0	0.0	0.0		0.0
+exploratory	prophound_49	6	NC_002695.2	5042646	5077308	34.7	model	3	1.0	1.0	1.0	1.0	Sp18	1.0
+exploratory	prophound_50	41	NC_002695.2	5113650	5121866	8.2	model	2	0.971	0.0	0.0	0.0		0.0
+exploratory	prophound_51	32	NC_002695.2	5325138	5333030	7.9	model	1	0.993	0.0	0.0	0.0		0.0
+exploratory	prophound_52	20	NC_002695.2	5347185	5357447	10.3	att	3	0.998	0.0	0.0	1.0	SpLE5	1.0
+exploratory	prophound_53	31	NC_002695.2	5436912	5445838	8.9	model	3	0.993	0.0	0.0	0.0		0.0
+exploratory	prophound_54	12	NC_002128.1	6705	92721	86.0	model	3	1.0	0.0	0.0	0.0		0.0
