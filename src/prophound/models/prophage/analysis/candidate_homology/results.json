@@ -1,0 +1,88 @@
+{
+  "primary": {
+    "candidate_rate": 0.0410958904109589,
+    "negative_rate": 0.006695069993913573,
+    "difference": 0.03440082041704533,
+    "genome_boot95": [
+      0.021679841628197548,
+      0.05064591996631688
+    ],
+    "n_candidates": 1679,
+    "n_negatives": 1643,
+    "n_genomes_with_candidates": 139
+  },
+  "by_set": [
+    {
+      "kind": "candidate_default",
+      "n": 1679,
+      "passed": 69,
+      "rate": 0.0410958904109589,
+      "median_cov": 0.131
+    },
+    {
+      "kind": "candidate_exploratory_only",
+      "n": 3748,
+      "passed": 17,
+      "rate": 0.004535752401280683,
+      "median_cov": 0.113
+    },
+    {
+      "kind": "negative_control",
+      "n": 1643,
+      "passed": 11,
+      "rate": 0.006695069993913573,
+      "median_cov": 0.147
+    },
+    {
+      "kind": "positive_control",
+      "n": 43,
+      "passed": 41,
+      "rate": 0.9534883720930233,
+      "median_cov": 0.548
+    }
+  ],
+  "secondary": {
+    "support": {
+      "3.0": {
+        "size": 1679,
+        "sum": 69
+      }
+    },
+    "boundary": {
+      "att": {
+        "size": 130,
+        "sum": 2
+      },
+      "model": {
+        "size": 1549,
+        "sum": 67
+      }
+    },
+    "size_kb": {
+      "<5": {
+        "size": 32,
+        "sum": 1
+      },
+      "5-10": {
+        "size": 494,
+        "sum": 3
+      },
+      "10-15": {
+        "size": 393,
+        "sum": 11
+      },
+      "15-30": {
+        "size": 417,
+        "sum": 19
+      },
+      "30-60": {
+        "size": 258,
+        "sum": 19
+      },
+      "60+": {
+        "size": 85,
+        "sum": 16
+      }
+    }
+  }
+}
