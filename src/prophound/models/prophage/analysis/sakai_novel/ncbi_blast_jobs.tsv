@@ -1,0 +1,6 @@
+name	rid	query	query_sha256	db	entrez	evalue	hits	submitted_utc	status
+viruses_default	E1Z49AEH014	analysis/sakai_novel/default_novel.fna	0f8243791f64d8d0203a852b477cb4955730a24d14895c60dbac204124a0f69b	core_nt	txid10239[Organism:exp]	1e-10	20	2026-10-27T19:33:29+00:00	done
+viruses_q_positive_control	E1Z4NPM4014	analysis/sakai_novel/q_positive_control.fna	76c0a892790c8f57d58315a7eada0014b6c70e91731f33f2cf8f66cf3b76aaa4	core_nt	txid10239[Organism:exp]	1e-10	20	2026-10-27T19:33:42+00:00	submitted
+viruses_q_negative_control	E1Z51UPR014	analysis/sakai_novel/q_negative_control.fna	a319cf69e4ec940f82b4289823627b627e60fdae477fb34ea5592fa3c5d6757e	core_nt	txid10239[Organism:exp]	1e-10	20	2026-10-27T19:33:54+00:00	submitted
+viruses_q_exploratory_only	E1Z5EPSZ014	analysis/sakai_novel/q_exploratory_only.fna	aca453ef734d51ea9e887b88ac7a6e278a9595b6f031872eba49b8e9cf6f482d	core_nt	txid10239[Organism:exp]	1e-10	20	2026-10-27T19:34:06+00:00	submitted
+non_escherichia_default	E1Z5UNU4014	analysis/sakai_novel/default_novel.fna	0f8243791f64d8d0203a852b477cb4955730a24d14895c60dbac204124a0f69b	core_nt	all[filter] NOT txid561[Organism:exp] NOT txid620[Organism:exp]	1e-10	20	2026-10-27T19:34:19+00:00	submitted
