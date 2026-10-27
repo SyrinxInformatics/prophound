@@ -1,0 +1,86 @@
+{
+ "floor_calls_per_mb": 2.2075493635358066,
+ "rows": [
+  {
+   "input": "archaea: Methanosarcina mazei",
+   "mb": 4.1,
+   "calls": 5,
+   "calls_per_mb": 1.22,
+   "frac_called": 0.014,
+   "median_call_kb": 10.6
+  },
+  {
+   "input": "archaea: Thermococcus kodakarensis",
+   "mb": 2.09,
+   "calls": 18,
+   "calls_per_mb": 8.62,
+   "frac_called": 0.349,
+   "median_call_kb": 30.0
+  },
+  {
+   "input": "archaea: Sulfolobus acidocaldarius",
+   "mb": 2.23,
+   "calls": 3,
+   "calls_per_mb": 1.35,
+   "frac_called": 0.012,
+   "median_call_kb": 10.1
+  },
+  {
+   "input": "archaea: Haloferax volcanii",
+   "mb": 4.01,
+   "calls": 19,
+   "calls_per_mb": 4.73,
+   "frac_called": 0.107,
+   "median_call_kb": 16.1
+  },
+  {
+   "input": "archaea: Methanocaldococcus jannaschii",
+   "mb": 1.74,
+   "calls": 19,
+   "calls_per_mb": 10.92,
+   "frac_called": 0.4,
+   "median_call_kb": 30.5
+  },
+  {
+   "input": "eukaryote: Saccharomyces cerevisiae",
+   "mb": 12.16,
+   "calls": 25,
+   "calls_per_mb": 2.06,
+   "frac_called": 0.03,
+   "median_call_kb": 11.1
+  },
+  {
+   "input": "eukaryotic virus: herpes simplex 1",
+   "mb": 0.15,
+   "calls": 0,
+   "calls_per_mb": 0.0,
+   "frac_called": 0.0,
+   "median_call_kb": null
+  },
+  {
+   "input": "eukaryotic virus: vaccinia",
+   "mb": 0.19,
+   "calls": 0,
+   "calls_per_mb": 0.0,
+   "frac_called": 0.0,
+   "median_call_kb": null
+  },
+  {
+   "input": "eukaryotic virus: mimivirus",
+   "mb": 1.18,
+   "calls": 0,
+   "calls_per_mb": 0.0,
+   "frac_called": 0.0,
+   "median_call_kb": null
+  },
+  {
+   "input": "eukaryote: human chr21 10 Mb",
+   "mb": 10.0,
+   "calls": 41,
+   "calls_per_mb": 4.1,
+   "frac_called": 0.57,
+   "median_call_kb": 105.0
+  }
+ ],
+ "eukaryote_warning": true
+}

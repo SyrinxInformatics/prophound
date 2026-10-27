@@ -65,6 +65,7 @@ On 150 held-out genomes, we sorted every Default candidate that touches no known
 
 - **Expect most candidates outside known prophages to show no detectable signal.** That is the price of finding as much as possible. Some of those may still be real, because these checks only recognize what databases already know.
 - **Long candidates are worth checking first.** Under 10 kb, about 7 in 10 show no signal. At 60 kb or more, about 6 in 10 carry a mobile-element or phage signal.
+- **Input should be bacterial.** Eukaryotic sequence is called, often in large blocks. On human sequence over half of a 10 Mb slice was called. Archaeal genomes are untested, and on some archaea a third or more of the genome is called. If a metagenome or assembly may contain host or eukaryotic contigs, remove them first.
 - **Plasmids are often called whole.** On held-out genomes, a third of plasmids had a single call covering most of the plasmid. Such a call describes the plasmid, which may itself be mobile, not an element inside it. Check the contig before reading it as a prophage.
 - **A known false alarm:** clusters of ribosomal-protein genes, whose unusual composition can look element-like. If a candidate is mostly ribosomal-protein genes, set it aside.
 

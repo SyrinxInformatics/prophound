@@ -84,6 +84,8 @@ prophound predict --input-list genomes.txt --outdir out         # or list paths 
 
 Contigs of 3–10 kb are scanned with their own thresholds, so draft assemblies and MAGs work as input. Contigs under 3 kb are never scanned, and the run reports how many there were.
 
+**NOTE:** input should be bacterial. On eukaryotic sequence prophound makes calls, often large ones: over half of a 10 Mb stretch of human chromosome was called. So remove host or eukaryotic contigs first. Archaeal genomes are untested: on some, a third or more of the genome is called. Calls on archaea need extra caution.
+
 ### Modes
 
 `--mode` sets how many candidates to make, that is, the follow-up budget:
