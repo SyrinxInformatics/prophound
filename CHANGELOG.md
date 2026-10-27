@@ -44,4 +44,5 @@ These are in the release text (`docs/release-text-0.1.0.md`). In short:
 - Every agreement figure is measured against geNomad, which also supplied the training labels.
 - Boundaries are coarser than gene-based tools'.
 - Recall on elements under 10 kb is low and partly measured on synthetic implants.
+- Results are not fully strand-symmetric. On sequence with IUPAC ambiguity codes, imputation differs between a contig and its reverse complement, which can move a call. On clean sequence, composition-placed ends can differ by about 100 bp.
 - No call has been validated in the lab, and the release makes no claim to novel elements.

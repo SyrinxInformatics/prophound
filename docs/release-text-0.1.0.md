@@ -156,11 +156,11 @@ Wording: *"on MAG-like fragmented input, prophound Default kept 0.92–0.94 of i
 
 ### 7. Robustness (self-referential)
 
-Every row is † except the composition baseline, which is about the model, not the calls. In particular, reverse-complement symmetry of the boundary stages (att search, composition change-points) has not been re-checked.
+Every row is † except the composition baseline, which is about the model, not the calls, and the reverse-complement row, which was re-run under 0.1.0.
 
 | property | result | n / source |
 |---|---|---|
-| reverse complement | window scores exact; region calls identical on whole contigs (before the boundary stages) | `docs/scientific-validity.md` standing check |
+| reverse complement, 0.1.0 pipeline | on sequence without ambiguity codes: window scores agree to 2e-7, coarse calls and all 15 att calls identical, composition ends differ by a median 81 bp (90% within 158 bp), and 1 of 245 refinement splits differs. **With ambiguity codes, imputation is not strand-symmetric:** on EDL933 (1,182 ppm) 4 of 28 Default calls differ, one by 8 kb | 6 genomes × 2 modes; `scripts/rc_boundary_check.py`, `docs/scientific-validity.md` RC-3 |
 | ambiguity codes (IUPAC, incl. N), `impute` default | ≤2 of 179 elements lost up to 3,000 ppm scattered codes; the old encoding lost 172 | `821396`, tuning sample |
 | long internal N gaps | a 20 kb gap costs 6 of 179 elements at Default. Calls ≥50% N are dropped, removing exactly the spurious gap calls with no recall change at ≤5 kb gaps | `822054`, `docs/release-scope-0.1.0.md` A.3 |
 | grid phase | 1.7% of elements phase-unstable; ~5% call-count spread | `816447` |
@@ -339,7 +339,6 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 - **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
 - **Installed-environment size** for both tools, once the bioconda package exists.
 - **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
-- **Reverse-complement symmetry of the boundary stages** (§7).
 
 ## Reproduction
 
