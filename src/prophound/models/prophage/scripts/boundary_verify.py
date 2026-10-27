@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """predict = offline: the shipped CLI reproduces the offline rebuild of every boundary stage
-(docs/att-boundaries.md; CLAUDE.md method-change procedure, step 4).
+(docs/att-boundaries.md; docs/project-principles.md method-change procedure, step 4).
 
   reference  calls rebuilt by evalkit.shipped_calls (refinement from stored fine tracks,
              att, composition edges, ranges) from Exploratory refinement-on runs with

@@ -19,7 +19,7 @@
 docs/att-boundaries.md "Composition everywhere". For each sample, rebuilds every mode's calls
 with the shipped pipeline (evalkit.shipped_calls on a refinement-on run's tracks) twice:
 composition as shipped (`auto`: Default and Conservative) and composition `on` (all modes).
-Per mode and variant it reports the method-change costs (CLAUDE.md): covered50, covered,
+Per mode and variant it reports the method-change costs (docs/project-principles.md): covered50, covered,
 matched, median IoU, absorbed, Mb called and off-element, calls per genome, edge error,
 edge-range coverage (calls on exactly one element, estimated edges not on a contig end),
 and each edge's source. For the composition stage's input (the `off` calls) it also tags

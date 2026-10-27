@@ -30,7 +30,7 @@ Written 2026-09-29 (user: "ensure we are working with integrity and good scienti
 - **Two-layer accuracy:** agreement with geNomad is reported as agreement, not accuracy. No novelty claim is made (`docs/claims-and-evidence.md`).
 - **Input-robustness checks:** reverse complement, N regions, grid phase, short contigs.
 - **The permutation null:** it rotates calls within each contig, which preserves clumping, as regioneR's circular randomization does.
-- **A dated decision trail** (`SESSIONS.md`, decisions in each doc). It makes the forking paths below auditable at all.
+- **A dated decision trail** (decisions dated in each doc, and an internal session log). It makes the forking paths below auditable at all.
 - **Job hygiene:** launcher preflights and exit-code propagation.
 
 ## Findings

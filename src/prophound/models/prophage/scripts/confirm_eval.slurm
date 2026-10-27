@@ -1,5 +1,5 @@
 #!/bin/bash
-# docs/release-checklist.md §3: independent confirmation of the shipped pipeline
+# the internal release checklist §3: independent confirmation of the shipped pipeline
 # on samples that played no part in tuning.
 #   - the original 18-genome / 52-element sample (eval_genome_list.txt): modes,
 #     short contigs (scan, now default), impute (now default; EDL933 is in it),

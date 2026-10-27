@@ -1,35 +1,49 @@
 # prophound
 
-`prophound` is a recall-first prophage screen for prokaryotic genomes. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is built to run alongside annotation-based tools and to surface what they may not call.
+`prophound` is a recall-first prophage screen for prokaryotic genomes. It finds candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time, and returns them ranked, for follow-up alongside annotation-based tools.
 
-The name is a prophage hound, and a homophone of "profound". The project was called `mge-detect` until 2026-09-29. Other mobile-element types may follow the prophage detector, which is why the code keeps a `models/prophage/` layout.
-
-**Status: version 0.1.0, not yet released.** This is research software. Read [What it does not claim](#what-it-does-not-claim) before using its calls.
-
-## How it works
-
-A reverse-complement-symmetric CNN scores 10 kb windows along each contig, sliding 1 kb at a time. Three training replicates run as an ensemble, and they ship with the package (16.5 MB in all). Calls are built from the score track: stretches where enough windows score high, merged across dips inside large elements. The model was trained on genomes labelled by geNomad 1.9.4, but it never sees geNomad's inputs (gene calls, marker HMMs), and nothing is looked up at run time.
+**NOTE:** version 0.1.0 is not yet released, and this is research software. Its calls are candidates, not annotations. Read [About prophound](docs/overview.md), and especially [what it does not claim](docs/overview.md#what-it-does-not-claim), before using them.
 
 ## Install
 
-From source, with [pixi](https://pixi.sh):
+### Install pixi
+
+prophound is developed with [pixi](https://pixi.sh), which installs Python, PyTorch and every other dependency into a project environment. Follow the [pixi installation instructions](https://pixi.sh/latest/#installation), then check it:
+
+```bash
+pixi --version
+```
+
+### Install prophound
 
 ```bash
 git clone https://github.com/SyrinxInformatics/mge-detect.git
 cd mge-detect
 pixi install
-pixi run prophound --version
 ```
 
-With pip, into an environment with Python 3.11 or later (installs PyTorch from PyPI):
+The model (three checkpoints, 16.5 MB) ships with the package, so there is nothing else to download.
+
+**NOTE:** under pixi, run every command below as `pixi run prophound ...` from the `mge-detect` directory, or open a shell in the environment first with `pixi shell`.
+
+**With pip instead:** into an environment with Python 3.11 or later (PyTorch is installed from PyPI):
 
 ```bash
 pip install git+https://github.com/SyrinxInformatics/mge-detect.git
 ```
 
-A bioconda package is planned; the draft recipe is in `recipes/prophound/`. Under pixi, prefix the commands below with `pixi run`.
+A bioconda package is planned; the draft recipe is in `recipes/prophound/`.
 
-## Quickstart
+### Check the install
+
+```bash
+prophound --version
+pixi run smoke        # runs the example genome end to end and checks its calls
+```
+
+## Usage
+
+### Quickstart
 
 ```bash
 prophound predict --input examples/hin_rd_kw20_region.fna --outdir example_out
@@ -44,36 +58,62 @@ The example is 220 kb of *Haemophilus influenzae* Rd KW20 holding its two geNoma
   2     hin_rd_kw20_region  56,749-76,926        20.2 kb  estimated  3/3 models
 ```
 
-`regions.tsv` holds the same table with a range for each edge. **[How to read your results](docs/interpreting-results.md)** explains every column, what the edges mean, and how to take a candidate to the lab.
+[`examples/README.md`](examples/README.md) walks through this output.
 
-**Boundaries.** Where an element has an att site (a direct repeat left at both ends by integration), `edges` is `att site` and the ends are exact to the base, with no database or gene calling. About 15% of known elements have one. Elsewhere `edges` is `estimated`: the model's estimate, moved to where the sequence's composition turns from host-like to element-like (median error about 2 kb on our test samples), with a range for each end that holds the true end about 90% of the time. Neither example element has an att site; the calls' ends are 1–4 kb from the elements' (58,837–73,073 and 119,962–154,275, 1-based), inside the ranges. [`examples/README.md`](examples/README.md) walks through the output, and `pixi run smoke` checks it.
+### A complete genome
 
-Other inputs:
+*E. coli* O157:H7 Sakai carries about 18 known prophages. prophound reads compressed input, so the NCBI file can be used as downloaded:
 
 ```bash
-prophound predict --input genome.gbk.gz --outdir out            # GenBank, EMBL, GFF3+FASTA; compressed is fine
-prophound predict --input genomes/ --outdir out                 # a batch: every genome in a directory
-prophound predict --input a.fna --input b.fna --outdir out      # or repeat --input, or --input-list FILE
-prophound predict --input mag.fna --outdir out --mode exploratory
+curl -O https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/008/865/GCF_000008865.2_ASM886v2/GCF_000008865.2_ASM886v2_genomic.fna.gz
+prophound predict --input GCF_000008865.2_ASM886v2_genomic.fna.gz --outdir sakai_out
 ```
 
-`prophound predict --help` lists every option; the advanced ones change thresholds, the ensemble or the call builder.
+This takes about a minute on an Apple M4 GPU and gives 27 Default candidates, several of them with att-site ends.
 
-## Modes
+### Input
 
-Each mode is priced in calls per genome, the follow-up budget. Figures are from the held-out test set: 150 complete RefSeq genomes from genera absent from training, 202 geNomad elements, scored once.
+`--input` takes FASTA, GenBank/RefSeq, EMBL, or GFF3 with an embedded `##FASTA` section (as Prokka and Bakta write), optionally gzip, bzip2 or xz compressed. The format is read from the content.
 
-| mode | rule | geNomad elements covered | calls per genome |
-|---|---|---|---|
-| `exploratory` | window score 0.90; every call kept | 0.965 | 32.4 |
-| **`default`** | 0.95; kept only if all three checkpoints make it | **0.960** (95% interval 0.924–0.980) | 11.0 |
-| `conservative` | 0.995; all three checkpoints | 0.901 | 4.9 |
+```bash
+prophound predict --input genome.gbk.gz --outdir out            # any supported format, compressed or not
+prophound predict --input genomes/ --outdir out                 # a batch: every genome in a directory
+prophound predict --input a.fna --input b.fna --outdir out      # or repeat --input
+prophound predict --input-list genomes.txt --outdir out         # or list paths in a file, one per line
+```
 
-"Covered" means calls cover at least half of an element (covered50). On the 70 held-out genomes with no geNomad element, Default still makes 6.8 calls per genome. That is the floor cost of a run.
+Contigs of 3–10 kb are scanned with their own thresholds, so draft assemblies and MAGs work as input. Contigs under 3 kb are never scanned, and the run reports how many there were.
 
-In Exploratory mode, start triage with `seed_support`: calls only one checkpoint makes are almost never known elements.
+### Modes
 
-## Outputs
+`--mode` sets how many candidates to make, that is, the follow-up budget:
+
+| mode | rule | when to use it |
+|---|---|---|
+| `exploratory` | window score 0.90; every call kept | discovery runs, where a missed element costs more than a wasted check; start triage with `support` |
+| **`default`** | 0.95; kept only if all three checkpoints make it | the recommended mode |
+| `conservative` | 0.995; all three checkpoints | a small follow-up budget |
+
+On a held-out test of 150 complete genomes these made about 32, 11 and 5 calls per genome. Recall and cost per mode are in [About prophound](docs/overview.md#modes-measured).
+
+### Common options
+
+| option | what it does |
+|---|---|
+| `--outdir DIR` | where outputs go (required). A directory that already holds outputs is refused. |
+| `--force` | replace the outputs already in `--outdir` |
+| `--mode MODE` | `exploratory`, `default` (the default) or `conservative` |
+| `--device DEV` | `auto` (the default: CUDA, then Apple MPS, then Intel XPU, then CPU), or `cuda`, `rocm`, `mps`, `xpu`, `cpu` |
+| `--write-region-fasta` | also write the called sequences to `regions.fna` |
+| `-q` / `-v` | quieter (warnings, errors and the summary) / more verbose (stage timings, full tracebacks) |
+
+`prophound predict --help` lists every option. The advanced ones change thresholds, the ensemble, the call builder and the boundary stages. They are described in [`docs/cli-and-packaging.md`](docs/cli-and-packaging.md).
+
+### Run time
+
+A GPU makes a large difference. A 5 Mb genome takes about 35 s on an Apple M4 GPU and about 45 min on its CPU, and a median 3.6 Mb genome about 27 s on an NVIDIA V100S. See [`docs/benchmarks.md`](docs/benchmarks.md).
+
+## Output
 
 | file | contents |
 |---|---|
@@ -86,53 +126,39 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 | `run_metadata.json` | settings, model and input checksums, versions, timing |
 | `regions.fna` | the called sequences (`--write-region-fasta`) |
 
-A batch writes one subdirectory per genome, plus combined calls and `batch_summary.tsv`. Every column is described in [`docs/output-files.md`](docs/output-files.md). An outdir that already holds outputs is refused unless `--force` is given.
+A batch writes one subdirectory per genome, plus combined calls and `batch_summary.tsv`. Every column is defined in [`docs/output-files.md`](docs/output-files.md).
 
-`rank` puts the candidates most like known prophages first, so a novel element can rank low. The scores behind it are not probabilities that a call is a prophage.
+### Reading the results
 
-## What has been measured
+- **Ends.** `edges` = `att site` means both ends sit on a direct repeat left by integration, exact to the base. `estimated` ends can be several kb off, and `regions.tsv` gives a range for each.
+- **Rank.** `rank` puts the candidates most like known prophages first, so a novel element can rank low. The scores behind it are not probabilities that a call is a prophage.
+- **Support.** `support` is how many of the three checkpoints make the call. In Exploratory mode, calls only one checkpoint makes are almost never known elements.
 
-Every figure, its interval and its source are in [`docs/release-text-0.1.0.md`](docs/release-text-0.1.0.md). Briefly:
+[How to read your results](docs/interpreting-results.md) explains every column, how far to trust each kind of end, and how to take a candidate to the lab.
 
-- **Agreement with geNomad, held out:** Default covers 0.960 of 202 elements (0.924–0.980). The test set was preregistered and scored once ([`docs/lockbox.md`](docs/lockbox.md)). Its lower bound is under 0.95, so 95% recall is not established.
-- **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.7–4.1× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.
-- **Alongside geNomad:** adding prophound Default to geNomad recovers 16 more curated LAMBDA prophages and loses none, at about 15 extra calls per genome. Twelve of the 16 come from two genomes.
-- **LAMBDA's own candidates:** prophound has a call on all 19 phages LAMBDA's reviewers judged likely but left out of its curated set, and covers at least half of 16 (0.75 above chance; 18 in the preregistered scoring, before the 0.1.0 boundary stages trimmed two calls). geNomad covers 15. Most of them are called by annotation tools too.
-- **Off-target calls** carry mobile-element features 3.1× as often as matched background, mostly conjugation and integrase/transposase genes rather than phage structural genes. Many look like other integrative elements, not missed prophages.
+## Documentation
 
-## What it does not claim
+| doc | what it covers |
+|---|---|
+| [About prophound](docs/overview.md) | how it works, what has been measured, what it does not claim, run time, development |
+| [How to read your results](docs/interpreting-results.md) | the researcher's guide to the outputs |
+| [Output files](docs/output-files.md) | every file and column |
+| [Release text](docs/release-text-0.1.0.md) | every figure with its interval, sample and source |
+| [Claims and evidence](docs/claims-and-evidence.md) | which claims the evidence supports, and how each was tested |
+| [Related tools](docs/related-tools.md) | neighbouring tools and how prophound differs |
+| [Benchmarks](docs/benchmarks.md) | run time, memory and cross-device agreement |
+| [Project principles](docs/project-principles.md) | the framing and working rules behind every decision |
+| [Research integrity](docs/research-integrity.md) | the methods audit and the held-out test design |
 
-- **No validated novel elements.** No call has been confirmed in the lab. Calls are candidates for follow-up.
-- **Not more accurate than** geNomad or any other tool. It finds more at a higher cost.
-- **Every agreement figure is with geNomad,** which also supplied the training labels. The model inherits its blind spots.
-- **Small elements:** recall under 10 kb is low (0.36 on implanted inoviruses at Default) and partly measured on synthetic data.
-- **Fragmented input:** contigs of 3–10 kb are scanned, and contigs under 3 kb never are. On MAG-like assemblies Default keeps 0.92–0.94 of its complete-genome recall, which does not beat geNomad.
-- **Several elements may fall under one call** (9% of held-out elements).
-- **Platforms:** results are verified on Apple M4 (CPU and GPU) and an NVIDIA V100S. Other platforms are expected to agree but are untested.
+The other files in `docs/` are the living record of each topic, from boundaries to training data.
 
-## Run time
+## Versioning
 
-On a MacBook Pro (Apple M4, 16 GB), Default mode:
-
-| input | time | memory |
-|---|---|---|
-| a 5 Mb genome, Apple GPU (picked automatically) | ~35 s | ~0.5 GB |
-| the same genome as a 374-contig assembly | ~19 s | ~0.5 GB |
-| a 5 Mb genome, CPU only | ~45 min | ~1.4 GB |
-
-A GPU makes a large difference. On an NVIDIA V100S a median 3.6 Mb genome takes ~27 s. Details: [`docs/benchmarks.md`](docs/benchmarks.md).
+prophound follows [Semantic Versioning 2.0.0](https://semver.org/). While it is in initial development (0.y.z), the command line, output files and defaults may change in any minor release. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Citation
 
-See [`CITATION.cff`](CITATION.cff). Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
-
-## Development
-
-Training and large-scale evaluation run on the University of Texas at San Antonio's HPC cluster (ARC). This repository holds the CLI, the packaging and the evaluation record.
-
-- `src/prophound/` is the package. The prophage detector is in `src/prophound/models/prophage/`, including the bundled model in `model/` and the dev-only evaluation scripts in `scripts/`.
-- `docs/` holds the living topic docs, and [`SESSIONS.md`](SESSIONS.md) indexes the work. [`CLAUDE.md`](CLAUDE.md) says where everything is documented.
-- `pixi run test` runs the fast tests, and `pixi run smoke` runs the example end to end.
+See [`CITATION.cff`](CITATION.cff).
 
 ## License and acknowledgements
 

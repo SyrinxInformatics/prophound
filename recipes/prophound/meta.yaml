@@ -1,4 +1,4 @@
-# Draft bioconda recipe for prophound (docs/release-checklist.md §5). To submit:
+# Draft bioconda recipe for prophound (docs/cli-and-packaging.md "Distribution"). To submit:
 # tag the release (v0.1.0), fill in the sha256 of the tag's GitHub archive
 # (`curl -sL <url> | shasum -a 256`), copy this directory into a fork of
 # bioconda-recipes as recipes/prophound/, and run `bioconda-utils lint` there.

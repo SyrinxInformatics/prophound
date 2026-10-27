@@ -79,3 +79,15 @@ Written after the genome list and truth existed (build `848536`, Status above) a
 - **Exploratory gains composition edges** (user decision 2026-10-23, `docs/att-boundaries.md` "Composition everywhere"): `composition.MODES` is all three modes, with the profile-divergence gate 0.005 in Exploratory (`MIN_JSD_EXPLORATORY`) and 0.01 in Default and Conservative. Edge ranges are 0.143 / 0.463 × call length in every mode. The scorer's run check now expects `boundary_refinement` = `fine_pass_then_att_then_composition` in all three modes (`lockbox_score.py` `BOUNDARY_STAGES`). Decided on the tuning, check, literature and LAMBDA samples, none of which shares a genus with this lockbox.
 - **`seed_support` is counted on the extent the vote saw** (user decision 2026-10-26, `docs/att-boundaries.md` "Split-piece support"). A reported column only: calls and coordinates are unchanged (12 of 12 sample × mode rebuilds identical). No endpoint uses `seed_support`.
 - **Execution.** `scripts/lockbox2_run.slurm` runs `prophound predict` from a `git archive` of the freeze commit, with the bundled model, instead of the ARC tree's `src/` as the first lockbox did: that tree predates the package layout. Its preflight checks every file of the archive against `analysis/lockbox2/frozen_md5.txt` (whose SHA-256 is in the launcher), the genome-list SHA-256, every FASTA, and that the example genome gives its expected calls on the V100 before any lockbox genome runs.
+
+### Amendment 2026-10-27: commit hashes after a history rewrite (no code change)
+
+History rewrite, before the first push. To keep three internal files off GitHub, they were stripped from the unpushed commits with `git filter-repo`; the 32 commits already on GitHub are unchanged. Every rewritten commit got a new hash, so the hashes cited above refer to the pre-rewrite history (kept in the local backup bundle). Code is unchanged: `git diff` of `src/` and `examples/` between each old and new commit is empty, so `frozen_md5.txt` and every MD5 list verify both. SLURM launchers and ARC paths (for example `prophound_0d71e2f`) keep the old names, because they record what ran. References in this doc to `docs/release-checklist.md`, `SESSIONS.md` and `CLAUDE.md` point to internal files that are not published; the rules they stated are in `docs/project-principles.md`. Map for the hashes this doc cites:
+
+| cited | now |
+|---|---|
+| `0d71e2f` | `1c08b0c` |
+| `382efba` | `f5b9e68` |
+| `ad5b28b` | `d62a3b9` |
+
+The freeze is `1c08b0c` (was `0d71e2f`). Run `851599` used the archive of `0d71e2f`, whose `src/` is identical.

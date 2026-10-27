@@ -2,7 +2,7 @@
 
 Written 2026-10-19. What a user should expect when they run prophound, measured on a current laptop (user, 2026-10-19: "this laptop has hardware that most other users will likely have similar or slightly more / less computing power, so users know what they are in for"). The cluster GPU figures are secondary: most users will not have a V100.
 
-The first run (2026-10-19) measured the code at `0a8abaa`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targeted speed. **The single-genome Apple GPU rows were re-run after it on 2026-10-20** ("Phase 3 speed work" below), and the release text quotes them. The batch row and the CPU figures are from the first run; Phase 3 leaves CPU time unchanged (profiled).
+The first run (2026-10-19) measured the code at `04a4d7d`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targeted speed. **The single-genome Apple GPU rows were re-run after it on 2026-10-20** ("Phase 3 speed work" below), and the release text quotes them. The batch row and the CPU figures are from the first run; Phase 3 leaves CPU time unchanged (profiled).
 
 ## The machine
 
@@ -14,7 +14,7 @@ The first run (2026-10-19) measured the code at `0a8abaa`: the lockbox code plus
 | OS | macOS 27.0.1, native arm64 (not Rosetta) |
 | power | mains (AC attached), otherwise idle |
 | software | torch 2.13.0 from conda-forge (pixi), Python 3.14, 4 torch CPU threads |
-| prophound | `0a8abaa`, Default mode, 3-checkpoint ensemble, shipped defaults |
+| prophound | `04a4d7d`, Default mode, 3-checkpoint ensemble, shipped defaults |
 
 ## Headline: Apple M4 GPU (`--device mps`)
 
@@ -42,7 +42,7 @@ So the GPU does most of the work, and encoding is the one cheap target. A vector
 
 ### Phase 3 speed work (2026-10-20)
 
-Two changes, both with byte-identical outputs (`docs/tech-debt-audit.md` Phase 3): a vectorised one-hot encoder, and one scoring pass that reads and encodes each window once and runs it through all three checkpoints. Before, every window was encoded once per checkpoint. Measured back to back on the same idle machine, timing the code before Phase 3 (`7e6d449`) and after it. Protocol as above; 1 warm-up plus 3 timed runs. `analysis/benchmarks/p3_{before,after}_{mps,mps_profile,cpu_profile}.json`.
+Two changes, both with byte-identical outputs (`docs/tech-debt-audit.md` Phase 3): a vectorised one-hot encoder, and one scoring pass that reads and encodes each window once and runs it through all three checkpoints. Before, every window was encoded once per checkpoint. Measured back to back on the same idle machine, timing the code before Phase 3 (`3525bc7`) and after it. Protocol as above; 1 warm-up plus 3 timed runs. `analysis/benchmarks/p3_{before,after}_{mps,mps_profile,cpu_profile}.json`.
 
 | | before | after | change |
 |---|---|---|---|
@@ -99,7 +99,7 @@ The 10 benchmark genomes are G5 genomes, so the G5 timings apply to exactly thes
 
 Caveats:
 - **Jaeger ran on CPU here** because its TensorFlow Metal plugin fails to load under TF 2.21 (`metadata/g5-comparators/pixi.toml`). So this is not Jaeger's best case on a Mac.
-- **geNomad was timed on different hardware** and with a 1.47 GB database, so its row is context, not a comparison. The G6 comparison needs both tools on one machine (`docs/release-checklist.md` §5).
+- **geNomad was timed on different hardware** and with a 1.47 GB database, so its row is context, not a comparison. The G6 comparison needs both tools on one machine (release text, "Not yet measured").
 - The Jaeger runs date from 2026-09-30/10-01, not today.
 
 ## Cross-device agreement

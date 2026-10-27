@@ -1,6 +1,6 @@
 # Archived prophage scripts
 
-Moved here on 2026-10-19 by the technical debt audit (`docs/tech-debt-audit.md` X1, user decision 2). Nothing in `docs/`, `CLAUDE.md`, a launcher, a test or another script refers to these files. Where they are mentioned at all, it is in the frozen `src/prophound/models/prophage/notes/`, which cite them by their old paths. They are kept for that record and are not maintained: some import modules or read paths that no longer exist.
+Moved here on 2026-10-19 by the technical debt audit (`docs/tech-debt-audit.md` X1, user decision 2). Nothing in `docs/`, a launcher, a test or another script refers to these files. Where they are mentioned at all, it is in the frozen `src/prophound/models/prophage/notes/`, which cite them by their old paths. They are kept for that record and are not maintained: some import modules or read paths that no longer exist.
 
 Old location: `src/prophound/models/prophage/<dir>/<file>`.
 

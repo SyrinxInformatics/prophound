@@ -56,7 +56,7 @@ import pandas as pd
 from evalkit import calls_file, covered_bp, load_genome_list, load_pred_regions, overlap, wilson
 
 MODES = ("default", "exploratory", "conservative")
-# Final-mode ensemble covered50 on the reused samples (docs/release-checklist.md,
+# Final-mode ensemble covered50 on the reused samples (the internal release checklist,
 # "Operating modes in plain language"; 822223 / 821361), for the optimism gap.
 REFERENCE = {
     "42": {"exploratory": 0.994, "default": 0.972, "conservative": 0.944},

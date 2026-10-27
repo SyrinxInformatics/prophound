@@ -1,6 +1,6 @@
 # CLI & Packaging
 
-Living doc — update in place, don't append a history here (that's `SESSIONS.md`'s job).
+Living doc, updated in place.
 
 ## Current CLI shape
 
@@ -98,7 +98,7 @@ Rationale (user, 2026-09-21): both builders stay first-class and are measured se
 
 Verified: a CLI run with three checkpoints and no other flags reproduces the sweep harness's `ensmax` variant coordinates exactly; single-checkpoint runs still record `ensemble: single`; `--region-builder strict` is unchanged.
 
-**Loose end**: `notes/V1_INFERENCE_CONTRACT.md`, `notes/V1_OUTPUT_FILES.md` and `notes/V1_OPERATING_MODES.md` describe the pre-2026-09-21 CLI — single `--checkpoint`, `strict` builder as default, no merging, no `ensemble` field in `run_metadata.json`. Those notes are a frozen historical snapshot and are deliberately not being edited (`CLAUDE.md`), but anyone reading them for the *current* contract will be misled. This doc is the current contract; if a release note or package description is ever generated from the `notes/` files, regenerate it from here instead.
+**Loose end**: `notes/V1_INFERENCE_CONTRACT.md`, `notes/V1_OUTPUT_FILES.md` and `notes/V1_OPERATING_MODES.md` describe the pre-2026-09-21 CLI — single `--checkpoint`, `strict` builder as default, no merging, no `ensemble` field in `run_metadata.json`. Those notes are a frozen historical snapshot and are deliberately not being edited (`docs/project-principles.md`), but anyone reading them for the *current* contract will be misled. This doc is the current contract; if a release note or package description is ever generated from the `notes/` files, regenerate it from here instead.
 
 ## Input robustness (2026-09-22)
 

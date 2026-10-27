@@ -2,7 +2,7 @@
 
 > **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
 
-Living doc, updated in place. Built 2026-09-28 from a web survey, with Jaeger's prophage code read directly from source (v1.26.5, released 2026-09-04). It is the source for the related-work and positioning parts of the planned GitHub write-up (`docs/release-checklist.md` §4). No journal publication is planned, so this repo write-up is the only place the positioning is argued.
+Living doc, updated in place. Built 2026-09-28 from a web survey, with Jaeger's prophage code read directly from source (v1.26.5, released 2026-09-04). It is the source for the related-work and positioning parts of the planned GitHub write-up (`docs/release-text-0.1.0.md`). No journal publication is planned, so this repo write-up is the only place the positioning is argued.
 
 ## Positioning (user direction, 2026-09-28)
 

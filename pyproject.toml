@@ -31,7 +31,7 @@ requires = ["hatchling"]
 
 # The research tree lives inside the package directory; keep it out of the
 # wheel and sdist (docs/tech-debt-audit.md P1). The bundled model config and
-# weights are added with packaging (docs/release-checklist.md §5).
+# weights are added with packaging (docs/cli-and-packaging.md "Distribution").
 [tool.hatch.build]
 exclude = [
     "src/prophound/models/prophage/analysis",

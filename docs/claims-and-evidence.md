@@ -2,7 +2,10 @@
 
 > **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
 
-Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the 0.1.0 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are in `docs/release-checklist.md`.
+> **Commit hashes** (added 2026-10-27). Hashes cited in this doc before 2026-10-27 refer to the history before a rewrite that kept internal files off GitHub. The code is unchanged. `382efba` is now `f5b9e68` and `ad5b28b` (`ad5b28ba…`) is now `d62a3b9` (`docs/lockbox2.md` "Amendment 2026-10-27").
+
+
+Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the 0.1.0 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are tracked in an internal checklist.
 
 ## The principle (user, 2026-09-28)
 
@@ -23,7 +26,7 @@ One ensemble run of prophound (all three modes) on LAMBDA's 39 clean genomes, sc
 | G1 | **Complement to geNomad** | geNomad ∪ prophound gains **more than +8** curated elements over geNomad alone (0.809, 123/152). +8 is the best existing pairing (PHASTER), at +3.9 calls/genome. | **Plausible**, most likely in Exploratory. It is the direct test of the concept. Report the extra calls/genome with it. |
 | G2 | **Sequence-only, at matched cost** | top-*k* calls per genome (k matched to ~3.5) reach covered50 **above 0.727** (best genomic LM, NTv2; Evo2 0.724) | **Plausible.** It is trained on integrated elements in host context, whereas the LMs trained on free phage genomes. |
 | G3 | **Overall curated recall** | covered50 **above 0.818** (PHASTER; PIDE 0.812, geNomad 0.809), with calls/genome | **Unlikely at Default**, because the model inherits geNomad's misses. Possible in Exploratory, at about 7× the calls/genome, and must be stated that way. |
-| G4 | **Footprint** (run-time data: the bundled weights-only model is 16.5 MB, against geNomad's DB at 1.47 GB unpacked, ~89×; the training checkpoints were 49.5 MB with optimizer state; see `docs/release-checklist.md`) | install size versus geNomad's database: `genomad_db_v1.9.tar.gz` is **842 MB compressed** (Zenodo 14886553; measure the unpacked size). Our side is 3 checkpoints plus the package. | **Likely.** It counts only alongside a G1–G3 recall figure, since a small tool that finds less is not better. |
+| G4 | **Footprint** (run-time data: the bundled weights-only model is 16.5 MB, against geNomad's DB at 1.47 GB unpacked, ~89×; the training checkpoints were 49.5 MB with optimizer state; see the release text, "Footprint") | install size versus geNomad's database: `genomad_db_v1.9.tar.gz` is **842 MB compressed** (Zenodo 14886553; measure the unpacked size). Our side is 3 checkpoints plus the package. | **Likely.** It counts only alongside a G1–G3 recall figure, since a small tool that finds less is not better. |
 
 ### Time-boxed: in the gate only if setup goes smoothly
 
@@ -266,9 +269,9 @@ Recall rises roughly with log d while added sequence rises roughly linearly. On 
 
 | axis | existing level (LAMBDA clean) | our reference point | reading |
 |---|---|---|---|
-| **Boundary precision** | median IoU of detected elements: geNomad **0.921**, PIDE 0.912, VIBRANT 0.885, PHASTER 0.831. IoU ≥ 0.5 on 0.72 / 0.76 / 0.68 / 0.70 of elements | against geNomad truth, our median IoU is about 0.69–0.74 (`docs/scientific-validity.md`) | **Probably worse.** Annotation tools snap edges to genes, tRNAs and integrases; ours come from 1 kb bins of the score track. State it as a known limitation. It is a real cost of skipping gene calling. |
+| **Boundary precision** | median IoU of detected elements: geNomad **0.921**, PIDE 0.912, VIBRANT 0.885, PHASTER 0.831. IoU ≥ 0.5 on 0.72 / 0.76 / 0.68 / 0.70 of elements | **Measured, 0.1.0 (2026-10-23):** Default median IoU 0.81 on LAMBDA (0.77 without composition edges), 0.81 on the tuning sample against geNomad; before the boundary stages about 0.69–0.74 | **Worse than the annotation tools, closer than before.** Annotation tools snap edges to genes, tRNAs and integrases. Ours come from a fine scoring pass, att direct repeats (base-exact where found, about one call in seven) and composition change-points (`docs/att-boundaries.md`). State it as a known limitation; it is a real cost of skipping gene calling. |
 | **Small elements (<10 kb)** | 18 of 154 clean LAMBDA elements | 5–8 kb covered50 0.857 on geNomad truth (n=7) | Known weakness, already in the limitations. |
-| **Calls/genome at the same recall** | 3.4–4.5 for most tools | Default 14.5, Conservative 9.4 | Costlier by design. Frame it as follow-up budget, never hide it. |
+| **Calls/genome at the same recall** | 3.4–4.5 for most tools | Default 14.7, Conservative 7.3 (0.1.0, LAMBDA; 14.5 and 9.4 at the 2026-09-28 check) | Costlier by design. Frame it as follow-up budget, never hide it. |
 
 ### Not in the gate (would cause delay)
 
@@ -289,9 +292,9 @@ This is the finding that most changes how results should be written up.
 | layer | what it measures | current number |
 |---|---|---|
 | **Agreement with geNomad** | how well the tool reproduces its label source on genomes held out from training | covered50 0.972 (0.949–0.994; ensemble, final Default, n=179). This is the **tuning sample**. **Held out (lockbox, 2026-10-19): 0.960 (0.924–0.980 Wilson; 0.929–0.984 bootstrap; n=202, 150 genomes) at 11.0 calls/genome** (`docs/lockbox.md` "Result") |
-| **Agreement with curated truth** | how well it finds prophages that experts annotated | **not yet measured**. geNomad itself reaches only **0.81** covered50 on LAMBDA's clean subset (below) |
+| **Agreement with curated truth** | how well it finds prophages that experts annotated | **Default 0.933** of 149 curated elements on LAMBDA's clean subset (genome bootstrap 0.874–0.983; 0.920 on the 34 genomes not in the corpus), at 14.7 calls/genome, against geNomad **0.822** on the same subset ("LAMBDA result" and the 2026-10-23 amendment below) |
 
-geNomad covers about 81% of expert-curated prophages. A tool that matches geNomad at 96% will therefore land somewhere near 80% on curated truth. The 0.961 figure measures agreement, not accuracy. **Publishing it alone would oversell the tool, and the release must report both layers.** Curated truth is the number that tells a user how much of what is really there the tool finds.
+When this section was written (2026-09-28), geNomad was estimated to cover about 81% of expert-curated prophages, so a tool matching geNomad at 96% was expected to land near 80% on curated truth. The corrected baseline puts geNomad at 0.822. prophound came out higher, at 0.933, because it calls much more sequence: per unit of cost it is level with geNomad (release text §2). The principle stands. **Agreement with geNomad measures agreement, not accuracy. Publishing it alone would oversell the tool, so the release reports both layers.** Curated truth is the number that tells a user how much of what is really there the tool finds.
 
 ## External curated benchmarks available now (checked 2026-09-28)
 
@@ -502,12 +505,22 @@ Each claim gives the evidence it needs, its status, and the strongest wording th
 
 | claim | evidence | wording allowed |
 |---|---|---|
-| Design concept: recall-first screen, candidates, modes priced in calls/genome, runs alongside annotation tools | the design; survey in `docs/related-tools.md` | "designed as". Not "first". Being recall-leaning is not unique: Philympics characterizes VirSorter, VirSorter2 and DBSCAN-SWA that way, and geNomad has `--conservative`/`--relaxed` presets. What is distinct is stating the recall target explicitly and pricing each mode in follow-up cost. |
-| No gene calling and no reference database at run time | code | plain statement |
-| Agreement with geNomad on held-out genomes, stratified by size | `docs/model-quality-baseline.md` | "agrees with geNomad on 97% of elements in a sample held out from training but used for tuning (covered50, CI)", replaced by the lockbox figure once scored, **never** "96% accurate" |
-| Robustness facts measured so far | RC exact; grid phase 1.7%; short-contig scan recovers covered 0.939 on shredded input; ambiguity `impute` | plain statements, with the numbers |
+| Design concept: recall-first screen, candidates, modes priced in calls/genome, runs alongside annotation tools | the design; survey in `docs/related-tools.md`, re-checked 2026-10-26 | "designed as". Not "first". No part is unique on its own: discovery framing (PhageBoost; geNomad's `--relaxed`, "to maximize discovery"), sensitivity settings (Jaeger `--sensitivity`, geNomad presets) and recall-leaning tools (VirSorter, VirSorter2, DBSCAN-SWA, per Philympics) all exist. What was not found in any tool of this style is the combination: an explicit recall target measured on a preregistered held-out set, and each mode priced in follow-up cost (`docs/related-tools.md` "Re-check, 2026-10-26"). |
+| No gene calling and no reference database at run time | code | plain statement. Boundary ingredients (att direct repeats, composition change-points) have prior art and are cited |
+| Agreement with geNomad on held-out genomes, stratified by size | first lockbox (scored 2026-10-19): Default 0.960 (0.924–0.980), pre-boundary defaults; the second lockbox (`851599`, running) scores 0.1.0 | "agrees with geNomad on X of held-out elements (covered50, interval)", with the second lockbox's figure; **never** "96% accurate"; "≥95%" only under the preregistered rule |
+| Robustness facts measured so far | RC: window scores exact, and the 0.1.0 pipeline symmetric on clean sequence up to ~100 bp of composition jitter, but not with ambiguity codes (`docs/scientific-validity.md` RC-3); grid phase 1.7%; short-contig scan recovers covered 0.939 on shredded input; ambiguity `impute` | plain statements, with the numbers, including the RC-3 limitation |
 
 ### Rung 2: improvement claims that need one new run
+
+**Outcomes (all measured; 0.1.0 figures from the 2026-10-23 re-score):**
+- **B1, curated recall:** 0.933 against 0.822 for geNomad, so the highest of the tools compared, at 1.7–4.1× their calls per genome. Per unit of cost, the paired intervals span zero.
+- **B1′, matched cost:** 0.792 against EVO2 4k's 0.785, cleared by one element. There is no paired separation.
+- **B2, complement:** +16 / −0 over geNomad, against a bar of +5, at +14.9 calls/genome.
+- **B3, fragmented input:** does not clear (G5 refuted; G5b ties geNomad).
+- **B4, ambiguity:** self-referential. At most 2 of 179 elements are lost up to 3,000 ppm.
+- **B5, footprint:** 16.5 MB against 1.47 GB.
+
+Release-text §2–§6 and "Footprint" carry the wording. The table below is the plan as written on 2026-09-28.
 
 | claim | run needed | wording by outcome |
 |---|---|---|
@@ -522,9 +535,10 @@ Each claim gives the evidence it needs, its status, and the strongest wording th
 
 | evidence | source |
 |---|---|
-| Off-target candidates are enriched for phage features | `821371` (item 1a) |
-| Where our off-truth calls land among LAMBDA's 292 classified candidates (LIKELY / POSSIBLE / WEAK phage, GI/ICE, UNLIKELY), clean subset | same run as B1, no extra compute |
-| Recovery of geNomad-negative elements | `821410` in-situ arm, `821391` |
+| Off-target candidates are enriched for mobile-element features: 3.09× over length-matched controls (2.45–4.12), mostly conjugation and integrase/transposase rather than phage structural genes | `821371` (item 1a); release text §8 (†) |
+| Where our off-truth calls land among LAMBDA's classified candidates: a call on all 19 LIKELY PHAGE candidates, covering at least half of 16 under 0.1.0 (preregistered scoring 18) | "LAMBDA candidates check" below; release text §9 |
+| Recovery of geNomad-negative elements: confident in-situ inoviruses, Default 7 of 10, Exploratory 10 of 10 | `821410` in-situ arm, `821391`; release text §8 |
+| Off-element att calls are mostly real integration sites: 0.495 of Default att calls off every known element have a core on a tRNA/tmRNA gene, against 0.045 for decoys and 0.004 at random | `docs/att-boundaries.md` "Are the att sites real?" (2026-10-27) |
 | Retrospective discovery | item 2d, not started |
 
 ### Not claimable in 0.1.0
@@ -553,12 +567,13 @@ Also, both done in the 2026-10 UI pass:
 
 ### Per-call information, so a user can triage candidates
 
-Today `regions.tsv` gives coordinates, `mean_prob`, `max_prob`, `boundary_kind`, `refine_status` and `n_pieces`. Checklist §4 lists evidence for triage as "flagged for later". Under this principle it is what makes exploratory calls usable. The minimum set:
-- **Rank** within the genome.
-- **Seed support** (3/3, 2/3, 1/3). Single-seed calls are 99% off-target (`docs/error-analysis.md`), so this is the most informative single column already available.
-- **Flags**: found by a short-contig scan, contains ambiguity codes, touches a contig edge, merged from pieces or possibly conflated.
-- **Size-class caveat**: element size classes with lower measured recall (sub-10 kb) are marked, with the recall figure in the docs.
-- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from data held out from tuning (the lockbox). This must be labelled as agreement with known elements, not as the probability the call is real.
+Under this principle, per-call evidence is what makes exploratory calls usable. The minimum set, with its status as of 2026-10-27 (`docs/output-files.md`):
+- **Rank** within the genome. **Done:** `rank` in `regions.tsv`, ordered by `max_prob` then `mean_prob`.
+- **Seed support** (3/3, 2/3, 1/3). Single-seed calls are 99% off-target (`docs/error-analysis.md`), so this is the most informative single column. **Done:** `support`, counted on the call the vote saw, so split pieces report their parent's support (fixed 2026-10-26).
+- **Boundary evidence.** **Done:** `edges` (`att site` or `estimated`), a range on every estimated end, and each end's source in `regions.detailed.tsv`.
+- **Flags**: found by a short-contig scan, contains ambiguity codes, touches a contig edge, merged from pieces or possibly conflated. **Done in part:** `note` flags calls that run off a contig end, carry 10% N or more, sit on a short contig, or have an unrefined edge. `refine_status` in `regions.detailed.tsv` marks split pieces. Ambiguity codes below 10% and possible conflation are not flagged per call.
+- **Size-class caveat**: element size classes with lower measured recall (sub-10 kb) are marked, with the recall figure in the docs. **Not done** per call; the docs carry it.
+- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from data held out from tuning (the lockbox). This must be labelled as agreement with known elements, not as the probability the call is real. **Not done.** The second lockbox could supply the bins after it is scored.
 
 ### An optional known-element overlay (proposal, user decision)
 
@@ -566,11 +581,11 @@ A `--known <regions.bed|genomad_provirus.tsv>` flag that labels each call **know
 
 ### Run report
 
-A short `summary.tsv` (or a block in `run_metadata.json`) with mode, number of calls, the candidate count if `--known` is used, contigs and bp skipped or short-scanned, ambiguity bases imputed, and the version and checkpoint checksums.
+A short `summary.tsv` (or a block in `run_metadata.json`) with mode, number of calls, the candidate count if `--known` is used, contigs and bp skipped or short-scanned, ambiguity bases imputed, and the version and checkpoint checksums. **Done, except the `--known` count** (2026-10-20): the terminal `[summary]` lines and `run_metadata.json` carry all of it, and a batch writes `batch_summary.tsv`. The `--known` overlay above is a proposal not taken up for 0.1.0.
 
 ### Determinism
 
-A golden `regions.tsv` on a fixed genome (checklist §6), plus a CPU / MPS / CUDA agreement check, so the published accuracy numbers can be reproduced on the user's hardware. **Status 2026-10-19 (`docs/benchmarks.md`):**
+A golden `regions.tsv` on a fixed genome (the release-day checks), plus a CPU / MPS / CUDA agreement check, so the published accuracy numbers can be reproduced on the user's hardware. **Status 2026-10-19 (`docs/benchmarks.md`):**
 - The check found MPS giving wrong scores (S10). It is fixed.
 - CPU and MPS now give identical calls on the 30 Phase 0 reference cases. Scores agree to 1.7e-5, against CUDA to 8e-6.
 - Outputs are not byte-identical across devices (float order). The release wording is "the same calls" on the verified devices: Apple M4 CPU and GPU, and NVIDIA V100S.
