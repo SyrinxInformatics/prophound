@@ -94,7 +94,7 @@ Contigs of 3–10 kb are scanned with their own thresholds, so draft assemblies 
 | **`default`** | 0.95; kept only if all three checkpoints make it | the recommended mode |
 | `conservative` | 0.995; all three checkpoints | a small follow-up budget |
 
-On a held-out test of 150 complete genomes these made about 32, 11 and 5 calls per genome. Recall and cost per mode are in [About prophound](docs/overview.md#modes-measured).
+On a held-out test of 150 complete genomes these made about 37, 12 and 5 calls per genome, and covered 0.98, 0.99 and 0.90 of the known elements. Recall and cost per mode are in [About prophound](docs/overview.md#modes-measured).
 
 ### Common options
 

@@ -13,13 +13,13 @@ The first release. Earlier development versions were called `mge-detect`.
 - A reverse-complement-symmetric CNN scores 10 kb windows (1 kb stride). The bundled model is an ensemble of three training replicates (`prophage_v2_pool`, weights only, SHA-256s in `model/manifest.json`), trained on geNomad 1.9.4 labels (DB 1.9).
 - Calls are built from the score track with no gene calling: a coverage rule, merging of fragments of large elements across score dips, and dropping calls that are at least half N.
 - Three modes, priced in calls per genome on 150 held-out genomes:
-  - Exploratory: seed threshold 0.90, every call kept, 32.4 calls per genome.
-  - Default: 0.95, kept only when all three checkpoints make the call, 11.0 calls per genome.
-  - Conservative: 0.995, all three checkpoints, 4.9 calls per genome.
+  - Exploratory: seed threshold 0.90, every call kept, 37.4 calls per genome.
+  - Default: 0.95, kept only when all three checkpoints make the call, 12.4 calls per genome. It covers 0.989 of known (geNomad) elements on those genomes (95% interval 0.962–0.997).
+  - Conservative: 0.995, all three checkpoints, 5.0 calls per genome.
 - Contigs of 3–10 kb are scanned with their own thresholds. Contigs under 3 kb are never scanned, and are reported.
 - A call within half a window of a contig end is extended to the end and flagged in `contig_edge`.
 - IUPAC ambiguity codes are replaced by fixed, reproducible bases (`--ambiguity-policy impute`). This changes nothing on sequence without them. The training-time encoding made two adjacent ambiguous bases drop a window's score to zero.
-- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off), and each edge is then moved to where the sequence's composition turns from host-like to element-like, which roughly halves the median edge error (`--composition-edges`; Exploratory accepts profiles that differ less). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, a 90% range for model edges. About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
+- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off), and each edge is then moved to where the sequence's composition turns from host-like to element-like, which roughly halves the median edge error (`--composition-edges`; Exploratory accepts profiles that differ less). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, and for model edges a range that held the true edge in about 78% of cases on held-out genomes (88–92% on the development samples). About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
 
 ### Input and output
 

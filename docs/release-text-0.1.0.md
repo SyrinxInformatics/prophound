@@ -1,6 +1,6 @@
 # prophound 0.1.0 — release text (DRAFT)
 
-> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). **2026-10-23: rewritten for the 0.1.0 boundary stages** (refinement on, att sites, composition edges with the 8 kb ceiling, edge ranges; `docs/att-boundaries.md`). Every figure measured on a sample with local tracks was re-scored with every 0.1.0 stage. The rest carry † (measured before the boundary stages; see "How to read"). The lockbox figures are the first lockbox's, which describe the pre-boundary defaults. They are replaced by the second lockbox's when it is scored (`docs/lockbox2.md`; marked ⟂2). **2026-10-27:** Exploratory composition edges and the novelty re-check (`docs/related-tools.md` "Re-check, 2026-10-26") folded in, and the defaults frozen for the second lockbox at `1c08b0c`. Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
+> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). **2026-10-23: rewritten for the 0.1.0 boundary stages** (refinement on, att sites, composition edges with the 8 kb ceiling, edge ranges; `docs/att-boundaries.md`). Every figure measured on a sample with local tracks was re-scored with every 0.1.0 stage. The rest carry † (measured before the boundary stages; see "How to read"). The lockbox figures are the first lockbox's, which describe the pre-boundary defaults. They are replaced by the second lockbox's when it is scored (`docs/lockbox2.md`; marked ⟂2). **2026-10-27:** Exploratory composition edges and the novelty re-check (`docs/related-tools.md` "Re-check, 2026-10-26") folded in, and the defaults frozen for the second lockbox at `1c08b0c`. **2026-10-27 (later): the second lockbox is scored** (`docs/lockbox2.md` "Result"), and its figures replace the first lockbox's wherever this text gave a held-out figure for the shipped pipeline (the ⟂2 markers are resolved). The first lockbox's figures stay only as the record of the pre-boundary defaults, marked †. Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
 
 ---
 
@@ -30,8 +30,8 @@ It rests on three design facts, each checked against the nearest tools:
 
 | sample | role | wording used |
 |---|---|---|
-| first lockbox: 150 genus-disjoint genomes, 202 elements | **held out from training and tuning**, preregistered, scored once, under the pre-boundary defaults | "held out" |
-| second lockbox: 150 further genus-disjoint genomes, 186 elements (`docs/lockbox2.md`) | held out from the boundary stages too; preregistered; frozen code `1c08b0c` running as `851599`, not scored | "held out" (⟂2) |
+| first lockbox: 150 genus-disjoint genomes, 202 elements | held out from training and tuning, preregistered, scored once, under the pre-boundary defaults: the record of those defaults † | "first lockbox" |
+| second lockbox: 150 further genus-disjoint genomes, 186 elements (`docs/lockbox2.md`) | **held out from training, tuning and the boundary stages**; preregistered; frozen at `1c08b0c`, run once (`851599`) and scored once on 2026-10-27 | "held out" |
 | 42 genomes / 179 elements | tuning: thresholds, merging, vote and modes were chosen on it | "tuning sample" |
 | 18 genomes / 52 elements | confirmation, but it informed earlier decisions | "a second, previously used sample" |
 | 20 genomes with no geNomad provirus | confirmation; in view for the vote decision | "geNomad-negative genomes" |
@@ -49,11 +49,13 @@ It rests on three design facts, each checked against the nearest tools:
 
 ### 1. Agreement with geNomad on held-out genomes
 
-⟂2 *The figures in this paragraph are the first lockbox's, scored on 2026-10-19 under the pre-boundary defaults (†). The second lockbox scores the shipped 0.1.0 pipeline and replaces them (`docs/lockbox2.md`). The first stays as the record of the earlier defaults.*
+**Default covered50 0.989 (184 of 186; Wilson 0.962–0.997; genome bootstrap 0.972–1.000), n = 186 elements in 73 of 150 genomes, at 12.4 calls per genome.** This is the second lockbox: genus-disjoint from training, from both earlier lockboxes and from every external set, preregistered, run once on the frozen 0.1.0 pipeline and scored once (`docs/lockbox2.md` "Result"). It is the primary endpoint.
+- **Other modes:** Exploratory 0.984 (Wilson 0.954–0.994; bootstrap 0.956–1.000) at 37.4 calls per genome, and Conservative 0.903 (0.852–0.938; 0.858–0.949) at 5.0.
+- **Covered (≥1 bp):** 1.000 / 0.989 / 0.925.
+- **Misses:** Default misses 2 elements in 2 genomes, a 6.1 kb and a 34.9 kb element, both with no Default call on them. Exploratory reaches both (0.85 and 0.32 covered).
+- **The first lockbox** (150 other genomes, 202 elements, scored 2026-10-19 under the pre-boundary defaults †) read 0.960 (0.924–0.980) at 11.0 calls per genome. It stays the record of those defaults (`docs/lockbox.md`). The two lockboxes are different genomes, so the difference is not an effect of the boundary stages.
 
-⟂ **Default covered50 0.960 (194 of 202; Wilson 0.924–0.980; genome bootstrap 0.929–0.984), n = 202 elements in 80 genomes, at 11.0 calls per genome.** Exploratory 0.965 (0.930–0.983 Wilson; 0.937–0.988 bootstrap) at 32.4, and Conservative 0.901 (0.852–0.935; 0.860–0.941) at 4.9. Lockbox, held out, preregistered primary endpoint. Covered (≥1 bp): 0.975 / 0.980 / 0.916. Default's 8 misses fall in 8 different genomes; 5 have no overlapping call and 3 are covered 18–39%.
-
-The lockbox is nearly novel to training by construction: median containment 0.003, with 6 of 202 elements at ≥0.5 (C5). It cannot speak below 10 kb (3 elements). Those rows are reported as n = 1, not as claims.
+Novelty to training was not measured on the second lockbox; on the first, median containment was 0.003, by the same genus-disjoint construction. The second lockbox cannot speak below 10 kb (4 elements): those rows are counts, not claims.
 
 For comparison, on the reused samples (Default, ensemble). Their covered50 is the same before and after the boundary stages (`docs/att-boundaries.md`). Calls per genome are the 0.1.0 pipeline's, slightly higher because refinement splits some calls:
 
@@ -61,12 +63,24 @@ For comparison, on the reused samples (Default, ensemble). Their covered50 is th
 |---|---|---|---|
 | tuning (42 / 179) | 0.972 | 0.949–0.994 (bootstrap †); 0.936–0.988 (Wilson) | 14.4 (14.2) |
 | second sample (18 / 52) | 1.000 | 0.931–1.000 (Wilson) | 13.6 (13.3) |
-| ⟂2 first lockbox (150 / 202) † | 0.960 | 0.929–0.984 (bootstrap); 0.924–0.980 (Wilson) | 11.0 |
-| ⟂2 first lockbox's gap to the 42 / the 18 | +0.012 / +0.040 | | |
+| **second lockbox (150 / 186), held out** | **0.989** | 0.972–1.000 (bootstrap); 0.962–0.997 (Wilson) | 12.4 |
+| reused sample minus second lockbox: the 42 / the 18 | −0.017 / +0.011 | | |
 
-- **≥95% is a point estimate on the reused samples, not an established floor.** The tuning sample's lower bound is 0.949. ⟂2 ⟂ **The first lockbox does not establish it:** its lower bound is 0.924 (Wilson) / 0.929 (bootstrap). By the rule fixed beforehand (≥95% only if the lockbox's lower bound is ≥0.95), the release gives the number and its interval, 0.960 (0.924–0.980), and does not say ≥95%. The optimism of the reused samples is small for Default: the lockbox reads 0.012 below the tuning sample, well inside either interval.
+- **≥95% is established held out, for Default.** By the rule fixed before scoring (≥95% only if the lockbox's Wilson lower bound is at least 0.95), the release may say it: the lower bound is 0.962. The claim is pooled over 186 elements, Default mode, against geNomad truth; it is agreement with geNomad, not accuracy (§2). Exploratory's lower bound, 0.954, also clears 0.95, but the rule was fixed for Default, the primary endpoint. Conservative's (0.852) does not.
+- **The reused samples were not optimistic for Default.** The lockbox reads 0.017 above the tuning sample and 0.011 below the 18, both well inside either interval. For Conservative the reused samples ran higher (+0.041 and +0.059), as on the first lockbox.
 - **Not carried by training look-alikes** †. On the tuning sample, the 137 elements with containment <0.1 read 0.964, and all five Default misses are in that bin (C5). Covered recall on clade-novel elements (MinHash, k = 21) is flat at 0.966–0.975 from ~3.5% out to ~20% nucleotide divergence, with the same four misses at every threshold. That was measured under the 2026-09-22 builder, at ≥1 bp (`docs/scientific-validity.md` 2a).
-- **By size, tuning sample, Default** † (Wilson intervals; `analysis/integrity/recall42.json`; the pooled figure is unchanged under 0.1.0, the strata were not re-tabulated). The ≥95%-per-stratum target is an engineering target; no stratum below 30 kb establishes it:
+- **By size, second lockbox, Default** (Wilson intervals; `analysis/lockbox2/results.json`). Below 10 kb n = 2 per stratum, reported as counts, not claims. Per stratum, ≥95% is an engineering target, and no stratum is large enough to establish it on its own:
+
+| stratum | n | covered50 | Wilson 95% |
+|---|---|---|---|
+| 5–8 kb | 2 | 1 of 2 | — |
+| 8–10 kb | 2 | 2 of 2 | — |
+| 10–15 kb | 26 | 1.000 | 0.871–1.000 |
+| 15–30 kb | 39 | 1.000 | 0.910–1.000 |
+| 30–60 kb | 94 | 0.989 | 0.942–0.998 |
+| 60 kb+ | 23 | 1.000 | 0.857–1.000 |
+
+- **By size, tuning sample, Default** † (Wilson intervals; `analysis/integrity/recall42.json`; the pooled figure is unchanged under 0.1.0, the strata were not re-tabulated):
 
 | stratum | n | covered50 | Wilson 95% |
 |---|---|---|---|
@@ -77,21 +91,9 @@ For comparison, on the reused samples (Default, ensemble). Their covered50 is th
 | 30–60 kb | 69 | 0.986 | 0.922–0.997 |
 | 60 kb+ | 21 | 1.000 | 0.845–1.000 |
 
-- ⟂2 **By size, first lockbox, Default** † (Wilson intervals; `analysis/lockbox/results.json`). Below 10 kb n = 1 per stratum, reported as counts, not claims:
+On the first lockbox, 15–30 kb was the weakest stratum (0.918, 4 of its 8 misses). On the second it is complete (39 of 39). Conservative is weakest there (0.821).
 
-| stratum | n | covered50 | Wilson 95% |
-|---|---|---|---|
-| <5 kb | 1 | 1 of 1 | — |
-| 5–8 kb | 1 | 1 of 1 | — |
-| 8–10 kb | 1 | 1 of 1 | — |
-| 10–15 kb | 18 | 1.000 | 0.824–1.000 |
-| 15–30 kb | 49 | 0.918 | 0.808–0.968 |
-| 30–60 kb | 99 | 0.970 | 0.915–0.990 |
-| 60 kb+ | 33 | 0.970 | 0.847–0.995 |
-
-15–30 kb is the weakest lockbox stratum (4 of the 8 misses); on the tuning sample it was the second weakest.
-
-Wording: *"agrees with geNomad on X of held-out elements (covered50, 95% interval Y–Z)"*. Never "X% accurate".
+Wording: *"on 150 held-out genomes, Default agrees with geNomad on 0.989 of known elements (covered50, 95% interval 0.962–0.997), so at least 95% held out"*. Never "X% accurate", and never "guarantees".
 
 ### 2. Recall on expert-curated truth (LAMBDA)
 
@@ -215,25 +217,26 @@ Each end of a call has one source, reported per call (`start_source`, `end_sourc
 2. **Att site** (all modes): an exact direct repeat (core ≤300 bp, at most 2 copies, E ≤ 1e-6) with one copy within 10 kb inside / 5 kb outside each end. Where found, the region runs from the first base of the left copy to the last of the right, and that end is reported as exact.
 3. **Composition** (every mode; Exploratory accepts profiles that differ less, divergence ≥ 0.005 against 0.01): the host-to-element tetranucleotide change-point inside the end's range, moved inward by at most min(15% of the call, 8 kb).
 
-The att rule, the composition gates and the range fractions were chosen on the tuning sample. They were checked on the second sample and the literature pilot (both used before for other decisions) and on LAMBDA (in view for the 8 kb ceiling). None of these is held out for the boundary stages. ⟂2 The second lockbox is.
+The att rule, the composition gates and the range fractions were chosen on the tuning sample. They were checked on the second sample and the literature pilot (both used before for other decisions) and on LAMBDA (in view for the 8 kb ceiling). None of these is held out for the boundary stages. The second lockbox is, and its preregistered boundary endpoints are in the last column.
 
-| Default | tuning (42) | second sample (18) | literature (7) | LAMBDA (39) |
-|---|---|---|---|---|
-| covered50, before → 0.1.0 | 0.972 → 0.972 | 1.000 → 1.000 | 0.912 → 0.912 | 0.933 → 0.933 |
-| median IoU, before → 0.1.0 | 0.672 → 0.812 | 0.666 → 0.821 | 0.502 → 0.724 | 0.810 (0.1.0) |
-| median end error, 0.1.0 | 2.1 kb | 2.1 kb | 1.8 kb | 1.9 kb |
-| ends within 1 kb, 0.1.0 | 33% | 32% | 36% | 40% |
-| range coverage, Default and Conservative ends (nominal 90%) | 0.901 | 0.897 | 0.900 | 0.870 |
+| Default | tuning (42) | second sample (18) | literature (7) | LAMBDA (39) | **second lockbox (150), held out** |
+|---|---|---|---|---|---|
+| covered50, before → 0.1.0 | 0.972 → 0.972 | 1.000 → 1.000 | 0.912 → 0.912 | 0.933 → 0.933 | 0.989 (0.1.0) |
+| median IoU, before → 0.1.0 | 0.672 → 0.812 | 0.666 → 0.821 | 0.502 → 0.724 | 0.810 (0.1.0) | 0.742 (0.1.0) |
+| median end error, 0.1.0 | 2.1 kb | 2.1 kb | 1.8 kb | 1.9 kb | not an endpoint |
+| ends within 1 kb, 0.1.0 | 33% | 32% | 36% | 40% | not an endpoint |
+| range coverage, Default and Conservative ends (fitted as 90%) | 0.901 | 0.897 | 0.900 | 0.870 | **0.780** (Default 0.782, Wilson 0.732–0.825) |
+| calls with an att end | | | | | 0.084 |
 
 Truth is geNomad's coordinates on the 42 and the 18, authors' coordinates on the literature pilot, and LAMBDA's curation on LAMBDA. Errors against geNomad include geNomad's own gene-edge imprecision. On the tuning sample, Default calls 17% fewer Mb (20.7 → 17.3) and 22% fewer Mb off every element (14.9 → 11.6).
 
 - **Att ends are base-exact where found, but rarely found.** Against authors' coordinates (literature pilot), att ends sat a median 22 bp away, 79% within 100 bp; most differences are exactly one core copy, a convention the core length in the output lets a user convert. Only 14–16% of calls on known elements get an att end, on all three samples. On the tuning sample, 85% of single-element calls have no exact repeat ≥16 bp near both of geNomad's edges, so this is a property of the genomes, not of the rule. From a decoy search on host sequence, an estimated 12–17% of Default att ends are chance repeats (Conservative 4–6%, Exploratory 27–32%). Against geNomad, att ends sit a median 0.5–0.7 kb away, which is geNomad's gene-edge imprecision.
 - **Att cores carry the integration signature, which the search never sees.** In Default, 0.577 of att calls (94 of 163, Wilson 0.500–0.650; four samples) have a core copy on a tRNA or tmRNA gene. Random placement would give 0.004, and host repeats passing the same rule give 0.045 (3 of 66). In 91 of the 94, only one copy lies on the gene, as integration leaves it, and the genes are the known hotspots (tRNA-Arg, -Met, -Leu, tmRNA). Att calls off every known element carry it at 0.495, so most are real integration sites geNomad does not call, of prophages or other integrative elements (`docs/att-boundaries.md` "Are the att sites real?"; analysis only, no genes in the pipeline). This is evidence about the set. A single att call without a tRNA can still be chance.
 - **Estimated ends are about 2 kb off (median), with a long tail.** Composition halved the median error (3.6 → 2.1 kb on the tuning sample). In Exploratory it takes the median from 3.7 to 2.0 kb (tuning) and cuts off-element bp by 12–17%, at the cost of one tuning-sample element (a partial detection just over 50%; 0.994 → 0.989), unchanged on the other three samples.
-- **Ranges.** An estimated end's range runs 0.143 × the call's length outward and 0.463 × inward in every mode, fitted as the 5th–95th percentiles on the tuning sample (Default and Conservative). Coverage on the other samples is 0.88–0.92 in every mode; on LAMBDA it is lower (Default 0.845, Exploratory 0.804). Median width is 21–26 kb, so the ranges are honest but wide. Ends nothing could move stay on the 1 kb grid; they are flagged in `note` and their ranges held less often. ⟂2 By the preregistered rule, the release calls them "90% ranges" only if the second lockbox's Default coverage interval includes 0.90 or lies above it.
+- **Ranges.** An estimated end's range runs 0.143 × the call's length outward and 0.463 × inward in every mode, fitted as the 5th–95th percentiles on the tuning sample (Default and Conservative). Coverage on the other samples is 0.88–0.92 in every mode; on LAMBDA it is lower (Default 0.845, Exploratory 0.804). Median width is 21–26 kb, so the ranges are honest but wide. Ends nothing could move stay on the 1 kb grid; they are flagged in `note` and their ranges held less often. **Held out they hold less: 0.782 of Default model edges on the second lockbox (237 of 303; Wilson 0.732–0.825), 0.765 in Exploratory and 0.777 in Conservative.** By the rule fixed before scoring they are therefore not called 90% ranges. The release states what they did: they held the true end in about 78% of cases on held-out genomes (88–92% on the development samples). The fractions were fitted on the tuning sample and are too narrow for new genera; widening them is a post-0.1.0 change.
 - **Costs.** Calls per genome rise 1–5% (refinement splits some calls). That lowers count-matched comparisons (§4) and part of the LAMBDA candidates figure (§9). Run time rises 10–23% on the M4 GPU (Default; CPU not yet measured; "Run time" below). On the literature pilot, Exploratory and Conservative each lose one element (a partial detection trimmed under 50%).
 
-Wording: *"boundaries are placed without genes: base-exact at an att site where one is found (about one call in seven on known elements), otherwise estimated to a median of about 2 kb, with a range on every estimated end"*. Not "base-exact boundaries" unqualified.
+Wording: *"boundaries are placed without genes: base-exact at an att site where one is found (about one call in seven on known elements), otherwise estimated to a median of about 2 kb, with a range on every estimated end that held the true end in about 78% of cases on held-out genomes"*. Not "base-exact boundaries" unqualified.
 
 ### 11. What each run reports
 
@@ -252,8 +255,9 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 |---|---|---|---|
 | rule | score 0.90, every call kept, flagged by `seed_support` | 0.95, all 3 checkpoints agree | 0.995, all 3 agree |
 | short contigs (3–10 kb) | 0.95 | 0.95 | 0.99 |
-| ⟂2 first lockbox covered50 / calls per genome † | 0.965 / 32.4 | 0.960 / 11.0 | 0.901 / 4.9 |
-| ⟂2 first lockbox, genomes with no geNomad element (70), calls per genome † | 24.4 | 6.8 | 2.5 |
+| **second lockbox covered50 / calls per genome (held out)** | 0.984 / 37.4 | **0.989 / 12.4** | 0.903 / 5.0 |
+| second lockbox, genomes with no geNomad element (77), calls per genome | 31.6 | 9.2 | 2.7 |
+| first lockbox covered50 / calls per genome (pre-boundary defaults) † | 0.965 / 32.4 | 0.960 / 11.0 | 0.901 / 4.9 |
 | tuning sample covered50 / calls per genome | 0.989 / 36.1 | 0.972 / 14.4 | 0.939 / 8.6 |
 | geNomad-negative genomes, calls per genome † | 27.1 (19.1–35.5) | 7.4 (4.7–10.2) | 2.45 (1.35–3.7) |
 | LAMBDA covered50 / calls per genome | 0.946 / 40.3 | 0.933 / 14.7 | 0.899 / 7.3 |
@@ -262,7 +266,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | median IoU, tuning sample | 0.812 | 0.812 | 0.838 |
 | ends from composition | yes (looser gate) | yes | yes |
 
-- **Exploratory** is for discovery runs: the most recall at about 2.5× Default's calls. Calls that only one checkpoint makes are 99% off-target relative to geNomad (`docs/error-analysis.md`), so `seed_support` is the first column to triage by.
+- **Exploratory** is for discovery runs: the widest coverage, at about 2.5–3× Default's calls. On the second lockbox it touched every element (covered 1.000), but its covered50 was one element below Default's (0.984 against 0.989). Its looser composition gate trimmed two partial detections under half (`docs/lockbox2.md` "Result"). Calls that only one checkpoint makes are 99% off-target relative to geNomad (`docs/error-analysis.md`), so `seed_support` is the first column to triage by.
 - **Default** is the recommended mode.
 - **Conservative** is for a small follow-up budget. It costs recall first on 10–15 kb elements (0.900 †) and small elements. On the tuning sample and the literature pilot, composition edges cost it one element each (0.944 → 0.939, 0.895 → 0.877): partial detections covered barely over 50%.
 
@@ -274,7 +278,8 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 - **No claim that it is more accurate than** geNomad, PHASTER or any tool. Per unit of called sequence it is not shown to be ahead of geNomad, PHASTER or PIDE, and at matched call counts it trails them (§2, §4).
 - **No comparative claim on fragmented input** (§6).
 - **No claim about the mechanism.** Composition alone does not explain the model, but which biology it uses is unmeasured (item 1b). Containment is nucleotide-level and cannot see protein homology.
-- **No ≥95% claim, pooled or per stratum.** ⟂2 The first lockbox's lower bound is 0.924, so ≥95% is not established (§1). No measured claim below 10 kb from geNomad truth.
+- **No ≥95% claim per size stratum, for Exploratory or Conservative, or against curated truth.** The held-out ≥95% claim is pooled, Default mode, and against geNomad (§1). No measured claim below 10 kb from geNomad truth.
+- **No claim that the edge ranges are 90% ranges.** Held out they held the true end in 78% of cases (§10).
 - **No claim of base-exact boundaries in general.** Ends are base-exact only at an att site, found on about one call in seven on known elements, and an att site can be a chance repeat (§10). Estimated ends carry ranges.
 - **No "first" and no "guarantee"**.
 
@@ -283,8 +288,8 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 - **Labels are geNomad-derived.** Training and every agreement figure use geNomad 1.9.4 with DB 1.9. The model inherits geNomad's misses, and agreement figures measure fidelity to it. geNomad's ~3.5 kb floor means geNomad truth holds almost no elements under 10 kb (3 of 202 in the lockbox). Of 89 confident inovirus loci in the corpus, geNomad labels 43 negative, median 5.6 kb (`docs/data-reliability.md`).
 - **Small elements** †. Real inoviruses implanted at model-independent sites are detected at **0.362** at Default (Wilson 0.317–0.409, n = 420; implants share 28 hosts, so the true interval is wider): 0.17 at 3–5 kb, 0.32 at 5–8 kb, 0.73 at 8–10 kb (C7). Evidence below 10 kb is partly synthetic and covers one phage family.
 - **Boundaries are still coarser than gene-based tools'** where no att site is found, which is most calls. Estimated ends are a median ~2 kb off, with a tail of partial detections that the wide ranges reflect. In the literature pilot, Default median IoU is 0.73 / 0.62 (test / val), against 0.89 / 0.71 for geNomad. On LAMBDA, Default reaches 0.81, and the annotation tools 0.83–0.92 (§10).
-- **Conflation.** Several elements may fall under one call. On the tuning sample, Default calls absorb 11 of 179 elements (6.1%) under 0.1.0, 13 before (refinement splits some). ⟂2 First lockbox †: 9 calls absorb 19 of 202 elements (9.4%), the same in every mode. Covered recall cannot see conflation, which is why conflated and absorbed counts are reported.
-- **Cost.** Default makes 14.4 calls per genome on the tuning sample and 14.7 on LAMBDA (⟂2 11.0 on the first lockbox †), against 3.6–8.4 for annotation tools on LAMBDA. On genomes with no geNomad provirus, it makes 7.4 per genome (4.7–10.2; first lockbox 6.8; both †), which is the floor cost.
+- **Conflation.** Several elements may fall under one call. On the tuning sample, Default calls absorb 11 of 179 elements (6.1%) under 0.1.0, 13 before (refinement splits some). On the second lockbox, 5 calls absorb 10 of 186 elements (5.4%), the same in every mode (first lockbox †: 19 of 202, 9.4%). Covered recall cannot see conflation, which is why conflated and absorbed counts are reported.
+- **Cost.** Default makes 14.4 calls per genome on the tuning sample and 14.7 on LAMBDA (12.4 on the second lockbox), against 3.6–8.4 for annotation tools on LAMBDA. On genomes with no geNomad provirus it makes 7.4 per genome on the 20 geNomad-negative genomes (4.7–10.2 †) and 9.2 on the second lockbox's 77, which is the floor cost.
 - **Short contigs** † under 3 kb are never scanned. Recall on 3–10 kb contigs falls with element size: on fully shredded input, 60 kb+ elements read 0.286 at covered50, against 0.905 on complete genomes (calibration run `818235`, before the final modes; `docs/adaptive-multiscale-detection.md` Part 4).
 - **Large internal N gaps** † cost recall: 6 of 179 elements at 20 kb.
 - **Calibration.** Mode thresholds are a user-facing trade-off between recall and cost, tuned on geNomad agreement. They are not probabilities that a call is real.
@@ -302,10 +307,10 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | the model uses more than composition | that it is not a GC detector | AUPRC ≤0.16 against 0.60 (1c) | **holds** at this budget (k ≤ 4, no ORF density) |
 | calls per genome is the right cost unit | how modes are priced | a product decision (user, 2026-09-21): wet-lab follow-up scales with calls | design choice, stated |
 | a random-rotation baseline is fair chance | §2's cost adjustment | rotation keeps each tool's call lengths, count and spacing; reproduces the original estimate (0.141 vs 0.144) | stated method; one choice among several |
-| the tuning sample's optimism is small | how far reused numbers transfer | lockbox gap to the 42 and 18 (Default): +0.012 and +0.040; Exploratory +0.029 / +0.035; Conservative +0.043 / +0.061 | **holds for Default and Exploratory; larger for Conservative.** Measured once, by the lockbox |
+| the tuning sample's optimism is small | how far reused numbers transfer | reused minus held out, second lockbox (the 42 / the 18): Default −0.017 / +0.011, Exploratory +0.010 / +0.016, Conservative +0.041 / +0.059 (first lockbox, Default: +0.012 / +0.040) | **holds for Default and Exploratory; larger for Conservative.** Measured by two lockboxes |
 | shreds approximate MAG input | §6 | uniform breakpoints; N50 not calibrated to a catalogue | **untested**; stated |
 | an exact direct repeat at both ends of a call marks the integration site | att ends replace the model's | decoy search: an estimated 12–17% of Default att ends are chance repeats; on author-curated elements, att ends match to a median 22 bp; independently, 0.58 of Default att cores sit on a tRNA/tmRNA gene against 0.004 at random and 0.045 for decoys (§10) | **holds for the set**; the chance share per call is stated, and the core is reported so a user can check it |
-| a composition change-point near an estimated end is the element's edge | estimated ends, every mode | median end error halves (3.6 → 2.1 kb, tuning); it fails when the call's middle is a different element, which the 8 kb inward ceiling limits (`docs/att-boundaries.md`) | **holds on the samples measured**; ⟂2 held-out test pending |
+| a composition change-point near an estimated end is the element's edge | estimated ends, every mode | median end error halves (3.6 → 2.1 kb, tuning); it fails when the call's middle is a different element, which the 8 kb inward ceiling limits (`docs/att-boundaries.md`) | **holds on the samples measured**; held out, estimated ends were bracketed less often (range coverage 0.78 against 0.88–0.92) |
 | one inovirus family stands in for small prophages | the small-element limitation | none: the corpus is mostly tailed phages | **untested**; stated as a limit |
 
 ## Footprint (G4, reported only alongside recall)

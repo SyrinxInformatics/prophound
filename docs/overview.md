@@ -16,27 +16,27 @@ A reverse-complement-symmetric CNN scores 10 kb windows along each contig, slidi
 
 **Boundaries.**
 - **Att site.** Where an element has an att site (a direct repeat left at both ends by integration), `edges` is `att site` and the ends are exact to the base, with no database or gene calling. About 15% of known elements have one. More than half of these att cores sit on a tRNA or tmRNA gene, the classic integration sites, which the search never looks at (`att-boundaries.md` "Are the att sites real?").
-- **Estimated.** Elsewhere `edges` is `estimated`: the model's estimate, moved to where the sequence's composition turns from host-like to element-like. The median error is about 2 kb on our test samples, and each end has a range that holds the true end about 90% of the time.
+- **Estimated.** Elsewhere `edges` is `estimated`: the model's estimate, moved to where the sequence's composition turns from host-like to element-like. The median error is about 2 kb on our test samples, and each end has a range. The ranges held the true end in 88–92% of cases on the development samples, but in about 78% on held-out genomes, so treat them as a guide, not a guarantee.
 
 Neither element in the bundled example has an att site. The calls' ends are 1–4 kb from the elements' (58,837–73,073 and 119,962–154,275, 1-based), inside the ranges. [`examples/README.md`](../examples/README.md) walks through the output.
 
 ## Modes, measured
 
-Each mode is priced in calls per genome, the follow-up budget. Figures are from the held-out test set: 150 complete RefSeq genomes from genera absent from training, 202 geNomad elements, scored once. They describe the defaults before the 0.1.0 boundary stages, and a second held-out test of the shipped pipeline replaces them ([`lockbox2.md`](lockbox2.md)).
+Each mode is priced in calls per genome, the follow-up budget. Figures are from the held-out test of the shipped pipeline: 150 complete RefSeq genomes from genera absent from training and from every earlier test set, 186 geNomad elements, preregistered and scored once ([`lockbox2.md`](lockbox2.md)).
 
 | mode | rule | geNomad elements covered | calls per genome |
 |---|---|---|---|
-| `exploratory` | window score 0.90; every call kept | 0.965 | 32.4 |
-| **`default`** | 0.95; kept only if all three checkpoints make it | **0.960** (95% interval 0.924–0.980) | 11.0 |
-| `conservative` | 0.995; all three checkpoints | 0.901 | 4.9 |
+| `exploratory` | window score 0.90; every call kept | 0.984 | 37.4 |
+| **`default`** | 0.95; kept only if all three checkpoints make it | **0.989** (95% interval 0.962–0.997) | 12.4 |
+| `conservative` | 0.995; all three checkpoints | 0.903 | 5.0 |
 
-"Covered" means calls cover at least half of an element (covered50). On the 70 held-out genomes with no geNomad element, Default still makes 6.8 calls per genome. That is the floor cost of a run.
+"Covered" means calls cover at least half of an element (covered50). On the 77 held-out genomes with no geNomad element, Default still makes 9.2 calls per genome. That is the floor cost of a run. Exploratory touches every known element (≥1 bp), but covers one fewer than Default by half, because its looser composition gate trims two partial detections.
 
 In Exploratory mode, start triage with `seed_support`: calls only one checkpoint makes are almost never known elements.
 
 ## What has been measured
 
-- **Agreement with geNomad, held out:** Default covers 0.960 of 202 elements (0.924–0.980). The test set was preregistered and scored once ([`lockbox.md`](lockbox.md)). Its lower bound is under 0.95, so 95% recall is not established.
+- **Agreement with geNomad, held out:** Default covers 0.989 of 186 elements (0.962–0.997). The test set was preregistered and scored once ([`lockbox2.md`](lockbox2.md)). Its lower bound is above 0.95, so, by the rule fixed in advance, at least 95% of known elements are covered held out. This is agreement with geNomad, not accuracy. An earlier test of the pre-boundary defaults, on 150 other genomes, read 0.960 (0.924–0.980; [`lockbox.md`](lockbox.md)).
 - **Expert-curated truth (LAMBDA, 39 genomes):** Default covers 0.933 of 149 curated prophages, against 0.82 for geNomad, PHASTER and PIDE. It makes 1.7–4.1× their calls per genome, though, and per unit of cost it is level with them: after adjusting for chance, its paired differences to all three span zero.
 - **Alongside geNomad:** adding prophound Default to geNomad recovers 16 more curated LAMBDA prophages and loses none, at about 15 extra calls per genome. Twelve of the 16 come from two genomes.
 - **LAMBDA's own candidates:** prophound has a call on all 19 phages LAMBDA's reviewers judged likely but left out of its curated set, and covers at least half of 16 (0.75 above chance; 18 in the preregistered scoring, before the 0.1.0 boundary stages trimmed two calls). geNomad covers 15. Most of them are called by annotation tools too.
@@ -49,7 +49,8 @@ In Exploratory mode, start triage with `seed_support`: calls only one checkpoint
 - **Every agreement figure is with geNomad,** which also supplied the training labels. The model inherits its blind spots.
 - **Small elements:** recall under 10 kb is low (0.36 on implanted inoviruses at Default) and partly measured on synthetic data.
 - **Fragmented input:** contigs of 3–10 kb are scanned, and contigs under 3 kb never are. On MAG-like assemblies Default keeps 0.92–0.94 of its complete-genome recall, which does not beat geNomad.
-- **Several elements may fall under one call** (9% of held-out elements).
+- **Several elements may fall under one call** (5% of held-out elements).
+- **Edge ranges are not 90% ranges:** held out, they held the true end in about 78% of cases.
 - **Strand symmetry:** on sequence with IUPAC ambiguity codes, a contig and its reverse complement can give slightly different calls ([`scientific-validity.md`](scientific-validity.md) RC-3).
 - **Platforms:** results are verified on Apple M4 (CPU and GPU) and an NVIDIA V100S. Other platforms are expected to agree but are untested.
 
