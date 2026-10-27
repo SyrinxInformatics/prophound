@@ -146,12 +146,25 @@ Written after the genome list and truth existed (build `848536`, Status above) a
 
 ### Amendment 2026-10-27: commit hashes after a history rewrite (no code change)
 
-History rewrite, before the first push. To keep three internal files off GitHub, they were stripped from the unpushed commits with `git filter-repo`; the 32 commits already on GitHub are unchanged. Every rewritten commit got a new hash, so the hashes cited above refer to the pre-rewrite history (kept in the local backup bundle). Code is unchanged: `git diff` of `src/` and `examples/` between each old and new commit is empty, so `frozen_md5.txt` and every MD5 list verify both. SLURM launchers and ARC paths (for example `prophound_0d71e2f`) keep the old names, because they record what ran. References in this doc to `docs/release-checklist.md`, `SESSIONS.md` and `CLAUDE.md` point to internal files that are not published; the rules they stated are in `docs/project-principles.md`. Map for the hashes this doc cites:
+History rewrite, before the first push. To keep three internal files off GitHub, they were stripped from the unpushed commits with `git filter-repo`; the 32 commits already on GitHub are unchanged. Every rewritten commit got a new hash, and another when the commits were then re-signed, so the hashes cited above refer to the pre-rewrite history (kept in the local backup bundle). The map gives the final, signed hashes. Code is unchanged: `git diff` of `src/` and `examples/` between each old and new commit is empty, so `frozen_md5.txt` and every MD5 list verify both. SLURM launchers and ARC paths (for example `prophound_0d71e2f`) keep the old names, because they record what ran. References in this doc to `docs/release-checklist.md`, `SESSIONS.md` and `CLAUDE.md` point to internal files that are not published; the rules they stated are in `docs/project-principles.md`. Map for the hashes this doc cites:
 
 | cited | now |
 |---|---|
-| `0d71e2f` | `1c08b0c` |
-| `382efba` | `f5b9e68` |
-| `ad5b28b` | `d62a3b9` |
+| `0d71e2f` | `24f6c44` |
+| `382efba` | `26880c3` |
+| `ad5b28b` | `09c7756` |
 
-The freeze is `1c08b0c` (was `0d71e2f`). Run `851599` used the archive of `0d71e2f`, whose `src/` is identical.
+The freeze is `24f6c44` (was `0d71e2f`). Run `851599` used the archive of `0d71e2f`, whose `src/` is identical.
+
+### Amendment 2026-10-27: help text and docstrings updated after scoring (no output change); the lockbox figure stands
+
+After the result, two hash-checked modules changed in text only:
+- `src/options.py`: the `--mode` help's call counts now read about 37 / 12 / 5 per genome, this lockbox's figures (they were about 32 / 11 / 5, the first lockbox's).
+- `src/att.py`: two docstrings no longer call the edge ranges "90%", since they held 0.78 here.
+
+Checks:
+- Removing docstrings leaves `att.py`'s syntax tree identical to the scored code's, and `options.py`'s differs only in that help string.
+- The fast tests (198) and the smoke test pass.
+- CPU reference matrix against `support_fix_cpu`, which ran the scored code: **running** (`analysis/refout/helptext_cpu`; it must be 30/30 identical).
+
+Nothing that produces a call changed, so the result above describes the shipped code.

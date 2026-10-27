@@ -2,7 +2,7 @@
 
 > **Sample roles** (`docs/research-integrity.md` C1, added 2026-09-29). In this doc, "held out" means held out from *training*. No sample here is held out from *tuning*. The 42-genome / 179-element sample is the **tuning sample**: thresholds, merging, the seed vote and the modes were chosen on it. The 18-genome / 52-element sample is **confirmation after use**: it chose the coverage builder, surfaced the ambiguity bug, and was in view for the 2026-09-29 mode decisions. Only the lockbox (`docs/lockbox.md`) is held out from both. Numbers below are as measured at the time and may predate the final modes (`docs/cli-and-packaging.md` "Seed vote per mode").
 
-> **Commit hashes** (added 2026-10-27). Hashes cited in this doc before 2026-10-27 refer to the history before a rewrite that kept internal files off GitHub. The code is unchanged. `382efba` is now `f5b9e68` and `ad5b28b` (`ad5b28ba…`) is now `d62a3b9` (`docs/lockbox2.md` "Amendment 2026-10-27").
+> **Commit hashes** (added 2026-10-27). Hashes cited in this doc before 2026-10-27 refer to the history before a rewrite that kept internal files off GitHub. The code is unchanged. `382efba` is now `26880c3` and `ad5b28b` (`ad5b28ba…`) is now `09c7756` (`docs/lockbox2.md` "Amendment 2026-10-27").
 
 
 Living doc, updated in place. Built 2026-09-28. It says which novelty and improvement claims the 0.1.0 write-up can make, what evidence each needs, and what the tool itself must do so that its exploratory outputs can be trusted. The positioning argument and related tools are in `docs/related-tools.md`. Release tasks are tracked in an internal checklist.
