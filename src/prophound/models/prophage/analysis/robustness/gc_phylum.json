@@ -1,0 +1,169 @@
+{
+ "pooled_calls_per_free_genome": 9.155844155844155,
+ "strata": {
+  "gc_bin": [
+   {
+    "stratum": "<40%",
+    "genomes": 36,
+    "elements": 60,
+    "covered50": 0.983,
+    "wilson": [
+     0.911,
+     0.997
+    ],
+    "calls_per_genome": 9.4,
+    "element_free_genomes": 20,
+    "calls_per_free_genome": 4.6,
+    "extra_calls": 275,
+    "no_signal_share": 0.611,
+    "warning": false
+   },
+   {
+    "stratum": "40-55%",
+    "genomes": 46,
+    "elements": 49,
+    "covered50": 0.98,
+    "wilson": [
+     0.893,
+     0.996
+    ],
+    "calls_per_genome": 14.2,
+    "element_free_genomes": 24,
+    "calls_per_free_genome": 11.0,
+    "extra_calls": 608,
+    "no_signal_share": 0.62,
+    "warning": false
+   },
+   {
+    "stratum": "55-65%",
+    "genomes": 37,
+    "elements": 54,
+    "covered50": 1.0,
+    "wilson": [
+     0.934,
+     1.0
+    ],
+    "calls_per_genome": 14.2,
+    "element_free_genomes": 13,
+    "calls_per_free_genome": 13.2,
+    "extra_calls": 471,
+    "no_signal_share": 0.599,
+    "warning": false
+   },
+   {
+    "stratum": ">65%",
+    "genomes": 31,
+    "elements": 23,
+    "covered50": 1.0,
+    "wilson": [
+     0.857,
+     1.0
+    ],
+    "calls_per_genome": 11.2,
+    "element_free_genomes": 20,
+    "calls_per_free_genome": 9.0,
+    "extra_calls": 325,
+    "no_signal_share": 0.551,
+    "warning": false
+   }
+  ],
+  "phylum_bin": [
+   {
+    "stratum": "Actinomycetota",
+    "genomes": 18,
+    "elements": 11,
+    "covered50": 1.0,
+    "wilson": [
+     0.741,
+     1.0
+    ],
+    "calls_per_genome": 10.6,
+    "element_free_genomes": 12,
+    "calls_per_free_genome": 7.3,
+    "extra_calls": 179,
+    "no_signal_share": 0.564,
+    "warning": false
+   },
+   {
+    "stratum": "Bacillota",
+    "genomes": 23,
+    "elements": 36,
+    "covered50": 1.0,
+    "wilson": [
+     0.904,
+     1.0
+    ],
+    "calls_per_genome": 16.8,
+    "element_free_genomes": 7,
+    "calls_per_free_genome": 11.0,
+    "extra_calls": 350,
+    "no_signal_share": 0.683,
+    "warning": false
+   },
+   {
+    "stratum": "Bacteroidota",
+    "genomes": 11,
+    "elements": 5,
+    "covered50": 1.0,
+    "wilson": [
+     0.566,
+     1.0
+    ],
+    "calls_per_genome": 6.9,
+    "element_free_genomes": 8,
+    "calls_per_free_genome": 5.8,
+    "extra_calls": 71,
+    "no_signal_share": 0.62,
+    "warning": false
+   },
+   {
+    "stratum": "Myxococcota",
+    "genomes": 8,
+    "elements": 3,
+    "covered50": 1.0,
+    "wilson": [
+     0.439,
+     1.0
+    ],
+    "calls_per_genome": 11.6,
+    "element_free_genomes": 7,
+    "calls_per_free_genome": 11.1,
+    "extra_calls": 91,
+    "no_signal_share": 0.341,
+    "warning": false
+   },
+   {
+    "stratum": "Pseudomonadota",
+    "genomes": 62,
+    "elements": 114,
+    "covered50": 0.982,
+    "wilson": [
+     0.938,
+     0.995
+    ],
+    "calls_per_genome": 12.3,
+    "element_free_genomes": 24,
+    "calls_per_free_genome": 7.6,
+    "extra_calls": 651,
+    "no_signal_share": 0.602,
+    "warning": false
+   },
+   {
+    "stratum": "other",
+    "genomes": 28,
+    "elements": 17,
+    "covered50": 1.0,
+    "wilson": [
+     0.816,
+     1.0
+    ],
+    "calls_per_genome": 12.6,
+    "element_free_genomes": 19,
+    "calls_per_free_genome": 12.3,
+    "extra_calls": 337,
+    "no_signal_share": 0.591,
+    "warning": false
+   }
+  ]
+ }
+}

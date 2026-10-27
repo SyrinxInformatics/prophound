@@ -1,0 +1,40 @@
+{
+ "summary": [
+  {
+   "kind": "chromosome",
+   "contigs": 152,
+   "with_call": 0.914,
+   "bp_called_share": 0.067,
+   "kb": 605478.557,
+   "mostly_called": 0.02,
+   "one_call_covers_most": 0.013,
+   "truth_elements": 176,
+   "median_kb": 3678.297
+  },
+  {
+   "kind": "plasmid",
+   "contigs": 91,
+   "with_call": 0.692,
+   "bp_called_share": 0.179,
+   "kb": 20330.38,
+   "mostly_called": 0.352,
+   "one_call_covers_most": 0.319,
+   "truth_elements": 7,
+   "median_kb": 85.274
+  },
+  {
+   "kind": "unclassified",
+   "contigs": 6,
+   "with_call": 0.833,
+   "bp_called_share": 0.055,
+   "kb": 14025.403,
+   "mostly_called": 0.0,
+   "one_call_covers_most": 0.0,
+   "truth_elements": 3,
+   "median_kb": 2463.611
+  }
+ ],
+ "plasmid_truth_elements": 7,
+ "plasmid_truth_covered50": 1.0,
+ "warning": true
+}
