@@ -1,0 +1,8 @@
+call_id	rank	genome_id	contig_id	start	end	boundary	start_lo	start_hi	end_lo	end_hi	n_windows	region_len_bp	mean_prob	max_prob	window_bp	refine_status	coarse_start	coarse_end	n_pieces	contig_edge	n_frac	seed_support	model_start	model_end	att_len	att_core	start_source	end_source
+prophound_1	3	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	45190	59830	model	43096	51968	53052	61924	95	14640	0.5715	0.999	10000	refined	41000	62000	1	none	0.0	3	43033	62000			composition	composition
+prophound_2	7	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	477950	487050	model	476649	482163	482837	488351	71	9100	0.519	0.9848	10000	refined	476000	489000	1	none	0.0	3	476000	489000			composition	composition
+prophound_3	6	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	743773	781598	model	738364	761286	764085	787007	171	37825	0.3304	0.9944	10000	split	743000	797000	2	none	0.0	3	743773	781598			fine	fine
+prophound_4	2	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	787638	794112	model	786712	790635	791115	795038	56	6474	0.4203	0.9998	10000	split	743000	797000	2	none	0.0	3	786250	795500			composition	composition
+prophound_5	4	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	800964	809834	model	799696	805071	805727	811102	58	8870	0.4147	0.9987	10000	refined	800000	814000	1	none	0.0	3	800000	809750			composition	composition
+prophound_6	5	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	924359	934490	model	922910	929050	929799	935939	62	10131	0.4867	0.9984	10000	refined	922000	939000	1	none	0.0	3	923750	934500			composition	composition
+prophound_7	1	GCF_052828685.1_ASM5282868v1_genomic	NZ_CM128255.1	994200	1077579	model	982277	1032804	1038975	1089502	339	83379	0.7756	1.0	10000	refined	994000	1074000	1	none	0.0	3	994200	1074000			fine	composition

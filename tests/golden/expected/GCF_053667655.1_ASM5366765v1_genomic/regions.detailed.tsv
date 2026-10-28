@@ -1,0 +1,9 @@
+call_id	rank	genome_id	contig_id	start	end	boundary	start_lo	start_hi	end_lo	end_hi	n_windows	region_len_bp	mean_prob	max_prob	window_bp	refine_status	coarse_start	coarse_end	n_pieces	contig_edge	n_frac	seed_support	model_start	model_end	att_len	att_core	start_source	end_source
+prophound_1	6	GCF_053667655.1_ASM5366765v1_genomic	NZ_CM132205.1	437003	470164	model	432261	452357	454810	474906	152	33161	0.3442	0.9849	10000	refined	436000	471000	1	none	0.0	3	437003	470164			fine	fine
+prophound_2	4	GCF_053667655.1_ASM5366765v1_genomic	NZ_CM132205.1	705288	713736	model	704080	709199	709825	714944	60	8448	0.4901	0.9965	10000	refined	703000	714000	1	none	0.0	3	703750	714000			composition	composition
+prophound_3	8	GCF_053667655.1_ASM5366765v1_genomic	NZ_CM132205.1	783000	825978	model	776854	802899	806079	832124	189	42978	0.4172	0.9679	10000	refined	783000	826000	1	none	0.0	3	783000	825446			coarse	composition
+prophound_4	3	GCF_053667655.1_ASM5366765v1_genomic	NZ_CM132205.1	841429	857000	model	839202	848638	849791	859227	85	15571	0.4929	0.9996	10000	refined	840000	857000	1	none	0.0	3	840724	857000			composition	coarse
+prophound_5	2	GCF_053667655.1_ASM5366765v1_genomic	NZ_CM132205.1	1098260	1100904	att	1098260	1098260	1100904	1100904	72	2644	0.5414	0.9998	10000	refined	1089000	1108000	1	none	0.0	3	1092000	1105250	40	CACTTGTTGCTTGACTGCTTGCGCTTTGCGCTGTTGCATT	att	att
+prophound_6	1	GCF_053667655.1_ASM5366765v1_genomic	NZ_JBSJXZ010000003.1	0	35516	model	0	0	35516	35516	123	35516	0.9939	1.0	10000	refined	0	35000	1	both	0.0	3	0	35516			contig_end	contig_end
+prophound_7	7	GCF_053667655.1_ASM5366765v1_genomic	NZ_JBSJXZ010000004.1	0	9179	model	0	0	9179	9179	9	9179	0.4986	0.9813	5000	short_contig	4000	9000	1	both	0.0	3	0	9179			contig_end	contig_end
+prophound_8	5	GCF_053667655.1_ASM5366765v1_genomic	NZ_JBSJXZ010000007.1	0	7685	model	0	0	7685	7685	6	7685	0.8495	0.9932	5000	short_contig	0	6000	1	both	0.0	3	0	7685			contig_end	contig_end
