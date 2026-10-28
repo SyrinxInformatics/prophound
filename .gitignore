@@ -252,3 +252,22 @@ src/prophound/models/prophage/analysis/spikein_siterule/insitu_truth.tsv
 src/prophound/models/prophage/analysis/short_contig_calib/*/
 # check 1 shuffled-genome null: per-genome runs (shuffle_null.{tsv,json} stay tracked)
 src/prophound/models/prophage/analysis/robustness/shuffle_null/
+# Sakai homology raw files (docs/sakai-candidates.md): BLAST XML of the invalid URL-API run, query FASTAs, predict runs;
+# the record is ncbi_blast_jobs.tsv and the scored nucleotide*/phage_homology* tables, which stay tracked
+src/prophound/models/prophage/analysis/sakai_novel/blast_*.xml
+src/prophound/models/prophage/analysis/sakai_novel/blast_*.tsv
+src/prophound/models/prophage/analysis/sakai_novel/blast_queries/
+src/prophound/models/prophage/analysis/sakai_novel/*.fna
+src/prophound/models/prophage/analysis/sakai_novel/default/
+src/prophound/models/prophage/analysis/sakai_novel/exploratory/
+src/prophound/models/prophage/analysis/sakai_novel/nt_local/
+# candidate homology raw files (docs/candidate-phage-homology.md): query FASTAs, proteins, raw DIAMOND hits, Jaeger runs;
+# v2_1/{regions,vog_classes}.tsv are identical to the tracked v2/ copies. PHASTEST results and scored tables stay tracked
+src/prophound/models/prophage/analysis/candidate_homology/*.fna
+src/prophound/models/prophage/analysis/candidate_homology/diamond*.tsv
+src/prophound/models/prophage/analysis/candidate_homology/jaeger/
+src/prophound/models/prophage/analysis/candidate_homology/v2*/proteins.faa
+src/prophound/models/prophage/analysis/candidate_homology/v2_1/regions.tsv
+src/prophound/models/prophage/analysis/candidate_homology/v2_1/vog_classes.tsv
+# robustness check 4 per-input runs (ood.{tsv,json} stay tracked)
+src/prophound/models/prophage/analysis/robustness/ood/
