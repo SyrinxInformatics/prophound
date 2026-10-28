@@ -357,7 +357,7 @@ Measured on a MacBook Pro (Apple M4, 16 GB). This is the kind of machine most us
 
 On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s with its G5 primary model and 56 s with `default`. It ran on CPU, because its TensorFlow Metal plugin does not load. geNomad took 342 s on a cluster CPU node (4 threads, different hardware). These are context, not a G6 claim.
 
-**Devices.** Calls were the same on Apple M4 CPU and GPU, and scores agree with an NVIDIA V100S to about 1e-5. Outputs are not byte-identical across devices, because floating-point order differs. A call can differ only where a score sits within about 1e-5 of a threshold. Across 45 test assemblies (134,070 windows), one internal decision differed between the Apple GPU and the V100S, and no released call did. Other platforms (x86 CPUs, other GPUs, Windows) are expected to agree but are untested.
+**Devices.** Calls were the same on Apple M4 CPU and GPU, and scores agree with an NVIDIA V100S to about 1e-5. Outputs are not byte-identical across devices, because floating-point order differs. A call can differ only where a score sits within about 1e-5 of a threshold. Across 45 test assemblies (134,070 windows), one internal decision differed between the Apple GPU and the V100S, and no released call did. A clean install on Linux, on an x86 CPU, gave the same calls as the V100S on the example and on one held-out genome (`docs/robustness-checks.md` check 5). Other platforms (other GPUs, Windows) are expected to agree but are untested.
 
 ## Not yet measured (blocks wording, not the release)
 
@@ -365,7 +365,7 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 - **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
 - **Installed-environment size** for both tools, once the bioconda package exists.
 - **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
-- **A shuffled-genome null** (the false-call rate on sequence with no biology), and the **Linux clean-install check** (`docs/robustness-checks.md` "Still to run").
+- **A shuffled-genome null** (the false-call rate on sequence with no biology; `docs/robustness-checks.md` "Still to run").
 
 ## Reproduction
 
