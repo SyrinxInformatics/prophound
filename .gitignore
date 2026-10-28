@@ -250,3 +250,5 @@ src/prophound/models/prophage/analysis/spikein_siterule/tracks_*/
 src/prophound/models/prophage/analysis/spikein_small/*_truth.tsv
 src/prophound/models/prophage/analysis/spikein_siterule/insitu_truth.tsv
 src/prophound/models/prophage/analysis/short_contig_calib/*/
+# check 1 shuffled-genome null: per-genome runs (shuffle_null.{tsv,json} stay tracked)
+src/prophound/models/prophage/analysis/robustness/shuffle_null/

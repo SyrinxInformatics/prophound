@@ -9,8 +9,13 @@
 #        <lockbox genome .fna> <its regions.detailed.tsv from 851599> <output dir> [device]
 set -euo pipefail
 PH=$1; PY=$2; EX=$3; EXPECTED=$4; LG=$5; LREF=$6; OUT=$7; DEV=${8:-auto}
+# resolve relative paths before the cd below (a bare command name is left to PATH)
+abs() { case $1 in /*) echo "$1";; */*) echo "$PWD/$1";; *) echo "$1";; esac; }
+PH=$(abs "$PH"); PY=$(abs "$PY"); EX=$(abs "$EX"); EXPECTED=$(abs "$EXPECTED"); LG=$(abs "$LG"); LREF=$(abs "$LREF"); OUT=$(abs "$OUT")
+for f in "$EX" "$EXPECTED" "$LG" "$LREF"; do [ -s "$f" ] || { echo "[check] FAIL: missing $f" >&2; exit 1; }; done
+VERSION=$("$PH" --version) || { echo "[check] FAIL: $PH --version did not run" >&2; exit 1; }
 mkdir -p "$OUT"; cd "$OUT"
-echo "[check] $("$PH" --version); device $DEV; $(uname -sm)"
+echo "[check] $VERSION; device $DEV; $(uname -sm)"
 "$PH" predict --input "$EX" --outdir "$OUT/example" --device "$DEV" -q --force
 "$PY" - "$OUT/example/regions.detailed.tsv" "$EXPECTED" <<'EOF'
 import sys, pandas as pd
