@@ -83,6 +83,7 @@ The mode sets how many candidates you get, which is the cost of following them u
 
 ## What a candidate does not tell you
 
+- **A high score is not evidence by itself.** On genomes shuffled so that no genes are left, prophound still makes calls, and on high-GC genomes it calls most of the shuffled sequence. On real bacterial genomes this does not happen. Still, the score may partly reflect how unlike ordinary host sequence a stretch is, not only phage features (untested). Look at what a candidate contains before acting on it.
 - **It is not proof.** No candidate has been confirmed in a lab by us. A candidate can be another kind of mobile element (an integrative conjugative element, a genomic island) or a false call.
 - **What prophound agrees with.** Its tests count agreement with geNomad, a widely used annotation tool that also supplied its training labels, plus a curated benchmark (LAMBDA). It inherits some of geNomad's blind spots.
 - **Small elements** (under about 10 kb) are often missed.

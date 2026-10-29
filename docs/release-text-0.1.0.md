@@ -312,6 +312,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 - **Short contigs** † under 3 kb are never scanned. Recall on 3–10 kb contigs falls with element size: on fully shredded input, 60 kb+ elements read 0.286 at covered50, against 0.905 on complete genomes (calibration run `818235`, before the final modes; `docs/adaptive-multiscale-detection.md` Part 4).
 - **Large internal N gaps** † cost recall: 6 of 179 elements at 20 kb.
 - **Input outside bacteria.** Human sequence is called heavily: 57% of a 10 Mb chr21 slice, at 1.9× the bacterial call rate. Yeast is near the bacterial rate. Three eukaryotic viruses get no calls. On archaea, two hyperthermophiles have more than a third of the genome called. Input should be bacterial, and archaeal calls are untested (`docs/robustness-checks.md` check 4).
+- **A high score is not specific to phage on unfamiliar sequence.** Each lockbox-2 genome was shuffled keeping its mono- and dinucleotide composition, which leaves no genes or biology. Default still calls **2.49 per Mb** (95% 2.37–2.62), more than the real genomes' 1.57 per Mb of no-signal candidates. So a candidate's score alone is not evidence of an element (preregistered reading). The effect depends on GC. Shuffled genomes under 40% GC are almost never called, while over 55% GC most of each shuffled genome is called, in calls hundreds of kb long; the same real genomes have about 5% called. On real bacterial genomes, calls do not depend on GC (check 2). This bears on unusual input, and on reading any one score as evidence (`docs/robustness-checks.md` check 1).
 - **Plasmids are often called whole.** On the second lockbox, 18% of plasmid sequence is called against 7% of chromosomal sequence, and a single call covers most of the replicon on 32% of plasmids. Such calls describe the replicon, not an element inside it. All 7 geNomad elements on plasmids are covered (`docs/robustness-checks.md` check 3).
 - **Calibration.** Mode thresholds are a user-facing trade-off between recall and cost, tuned on geNomad agreement. They are not probabilities that a call is real.
 - **Sample size.** Every external benchmark is small and dominated by a few element-rich genomes: LAMBDA 39 genomes, the literature pilot 7, G5b 9 (5 *Paracoccus*). Every interval is wide, and results are read through paired comparisons.
@@ -365,7 +366,6 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 - **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
 - **Installed-environment size** for both tools, once the bioconda package exists.
 - **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
-- **A shuffled-genome null** (the false-call rate on sequence with no biology; `docs/robustness-checks.md` "Still to run").
 
 ## Reproduction
 

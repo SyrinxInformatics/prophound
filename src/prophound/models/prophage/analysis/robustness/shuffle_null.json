@@ -1,0 +1,23 @@
+{
+ "genomes": 150,
+ "mb": 639.8,
+ "calls": 1595,
+ "calls_per_mb": 2.492832754178215,
+ "ci95": [
+  2.3719818628245823,
+  2.618245382435257
+ ],
+ "calls_per_genome_median": 6.0,
+ "calls_per_genome_max": 54,
+ "genomes_with_a_call": 133,
+ "share_bp_called": 0.4849498090396337,
+ "real_share_bp_called": 0.07039854566105347,
+ "genomes_over_half_called": 61,
+ "real_calls_per_mb": 2.911691173062078,
+ "real_offgenomad_per_mb": 2.6241167362164406,
+ "real_nosignal_per_mb_R": 1.5722819753625605,
+ "ratio_to_R": 1.5854870775347913,
+ "element_free_real_per_mb": 2.2075493635358066,
+ "reading": "at least 0.5 R",
+ "spearman_calls_per_mb_vs_gc": 0.3738825715889433
+}
