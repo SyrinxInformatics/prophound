@@ -10,7 +10,7 @@ The framing and the working rules the other docs cite. Living doc, updated in pl
 - **The recall target is a floor.** Recovering known elements means the tool does not miss what is already findable. It says nothing about novelty.
 - **Novelty is the biggest and most exposed claim, and nothing measured so far tests it** (`docs/scientific-validity.md`). The release makes no novelty claim (`docs/release-text-0.1.0.md`).
 
-**Exploratory mode favours recall** (2026-09-15). Its job is proposing potentially novel sequences that a person can confirm in the lab. A missed novel element cannot be recovered, while a false positive costs one wasted check. So recall comes before precision, and a checkpoint is not tuned for precision before the first release. The aim is a scientifically consistent baseline first, then a larger dataset and re-tuning (`docs/retraining-infrastructure.md`).
+**Exploratory mode favors recall** (2026-09-15). Its job is proposing potentially novel sequences that a person can confirm in the lab. A missed novel element cannot be recovered, while a false positive costs one wasted check. So recall comes before precision, and a checkpoint is not tuned for precision before the first release. The aim is a scientifically consistent baseline first, then a larger dataset and re-tuning (`docs/retraining-infrastructure.md`).
 
 ## Acceptance criterion
 

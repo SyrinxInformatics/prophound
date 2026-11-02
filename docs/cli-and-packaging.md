@@ -43,7 +43,7 @@ Console script: `[project.scripts] prophound = "prophound.cli:main"` in `pyproje
 `docs/tech-debt-audit.md` P1, exclude-only (user decision).
 - `[project] dependencies` now lists the runtime packages: torch, numpy, pandas, pyfaidx, tqdm, pyyaml and biopython (GenBank/EMBL/GFF3 input). Before this the wheel declared none. scikit-learn was dropped once inference stopped importing `train_prophage` (Phase 2); it stays a dev dependency for training.
 - Hatch excludes the research tree from the wheel and the sdist. The wheel went from ~28 MB to 60 KB of code, and is 15.5 MB with the bundled model (2026-10-20).
-- The sdist holds only `src/`, `tests/`, `examples/`, README, changelog, citation and licence files, so internal `docs/` stay out.
+- The sdist holds only `src/`, `tests/`, `examples/`, README, changelog, citation and license files, so internal `docs/` stay out.
 - `LICENSE` and `NOTICE` now ship: `license-files` had named a non-existent `LICENSE.txt`.
 - `ruff` is a dev dependency with a `[tool.ruff]` lint target.
 
@@ -178,7 +178,7 @@ From the 2026-09-28 audit against Seemann's recommendations (`docs/claims-and-ev
 - **Distribution**: the model will be bundled through **bioconda**; install and quickstart docs are written at the very end, not now.
 - **Short contigs**: `--short-contigs {skip,scan}` built 2026-09-24. Seed support (2026-09-28): ensemble runs add a `seed_support` column to `regions.tsv` (checkpoints whose own calls overlap the call; `docs/error-analysis.md`), a ranking signal only — no call changes. Refinement (2026-09-28): `--refine-threshold` defaults to 0.95 (was the mode's extend threshold), and the split gates to 4000 / 0.05 (were 2000 / 0.1), so the opt-in tight preset runs as measured; `tests/test_cli_defaults.py` keeps the two CLIs' defaults in sync. **Default `scan` since 2026-09-28** (user decision; `skip` reproduces older outputs). Calibrated per mode: Exploratory 0.95, Default 0.99, Conservative 0.998, at both 5 kb and 3 kb (`SHORT_CONTIG_THRESHOLDS`). An explicit `--short-contig-threshold` overrides them and is recorded as `calibrated: false`. `run_metadata.json` `short_contigs.thresholds` is now per scale (it replaces `threshold_seed`/`threshold_extend`). A warning is always printed. Design and calibration: `docs/adaptive-multiscale-detection.md` Part 4.
 - **Flagged for later evaluation** (not 0.1.0 blockers):
-  1. Per-call confidence or ranking for wet-lab prioritisation (today only raw mean/max probability, which per-genome thresholds would make non-comparable across genomes).
+  1. Per-call confidence or ranking for wet-lab prioritization (today only raw mean/max probability, which per-genome thresholds would make non-comparable across genomes).
   2. Recall claims must name their overlap rule. ≥1 bp credits grazes; see `docs/downstream-postprocessing.md` "Per-element dig" for covered50.
   3. The duplicated flag definitions in `cli.py` and `predict_genome.py` (kept so the top-level CLI parses without importing torch; checked equal, but a maintenance hazard).
 - CLI surface as of today: one subcommand (`predict`), 29 options, most of them research knobs; `--help` does not yet separate user-facing from experimental options.

@@ -367,7 +367,7 @@ The ensemble ran on all 39 chromosomes (exit 0, checkpoint SHA-256s verified) an
 **Caveats that set the wording:**
 - **Much of the raw margin is cost.** Default calls 9.8% of each chromosome, geNomad 3.5%. Rotating each tool's calls to random positions gives a chance covered50 of 0.144 for Default and 0.050 for geNomad. **Recall above chance is 0.787 against 0.772** (Conservative 0.808, PHASTER 0.771). Per unit of cost, prophound is level with the annotation tools. It does not beat them. *Reproduced 2026-10-16 with a checked-in script (`scripts/lambda_chance.py`, 1,000 rotations, `analysis/external_benchmarks/lambda/chance.json`). It gives chance 0.141 / 0.052, geNomad's fraction called 3.7% (not 3.5%), and above chance 0.792 against 0.770. Paired on the 37 shared genomes, Default minus geNomad is +0.018 (genome bootstrap −0.037 to +0.078). The original figures had no script behind them.*
 - **The gains are concentrated.** 12 of the 16 elements come from two genomes (Photorhabdus TTO1, 9; *P. aeruginosa* LESB61, 3), and only 5 genomes gain anything. Two are in the test-split EDL933.
-- **The gains are not training look-alikes.** All 16 have containment ≤0.16 against training positives, 13 of them <0.01. Elements under 10 kb favour prophound, but n = 13 overall and 8 not in the corpus.
+- **The gains are not training look-alikes.** All 16 have containment ≤0.16 against training positives, 13 of them <0.01. Elements under 10 kb favor prophound, but n = 13 overall and 8 not in the corpus.
 - The sample is 39 genomes, dominated by a few with many elements. Intervals overlap for every pairwise comparison except the paired one against geNomad.
 
 **Reading for the release:**
@@ -439,7 +439,7 @@ The three candidates only prophound covers are **all ones LAMBDA flags as novel*
 **Reading.**
 - **Supported, by the preregistered wording:** "prophound's calls recover 18 of the 19 phages LAMBDA's reviewers judged likely but its curated set lacks, above chance (0.84, 0.69–0.94), at 14 calls/genome. Cut to geNomad's call count, 16 of 19, against geNomad's 15."
 - **Supported, descriptively:** the three LIKELY phages it reaches that geNomad does not are all novel-flagged by LAMBDA. On novel-flagged LIKELY or POSSIBLE candidates it covers 0.67, against geNomad's 0.28. At geNomad's call count that is 0.44 against 0.28 *(post hoc; intervals overlap, so this is a lead, not a claim)*.
-- **Not supported:** that it reaches reviewed phages the annotation tools cannot. Most LIKELY candidates are called by geNomad, PIDE or PhageBoost. Nor anything about validated discovery: the classes are review judgements, and the candidates are only what LAMBDA's language models proposed.
+- **Not supported:** that it reaches reviewed phages the annotation tools cannot. Most LIKELY candidates are called by geNomad, PIDE or PhageBoost. Nor anything about validated discovery: the classes are review judgments, and the candidates are only what LAMBDA's language models proposed.
 
 ### Amendment 2026-10-23: LAMBDA and its candidates re-scored under the 0.1.0 pipeline
 
@@ -573,7 +573,7 @@ Under this principle, per-call evidence is what makes exploratory calls usable. 
 - **Boundary evidence.** **Done:** `edges` (`att site` or `estimated`), a range on every estimated end, and each end's source in `regions.detailed.tsv`.
 - **Flags**: found by a short-contig scan, contains ambiguity codes, touches a contig edge, merged from pieces or possibly conflated. **Done in part:** `note` flags calls that run off a contig end, carry 10% N or more, sit on a short contig, or have an unrefined edge. `refine_status` in `regions.detailed.tsv` marks split pieces. Ambiguity codes below 10% and possible conflation are not flagged per call.
 - **Size-class caveat**: element size classes with lower measured recall (sub-10 kb) are marked, with the recall figure in the docs. **Not done** per call; the docs carry it.
-- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from data held out from tuning (the lockbox). This must be labelled as agreement with known elements, not as the probability the call is real. **Not done.** The second lockbox could supply the bins after it is scored.
+- **Optional, calibrated**: an empirical "P(overlaps a known element)" per score/support bin, from data held out from tuning (the lockbox). This must be labeled as agreement with known elements, not as the probability the call is real. **Not done.** The second lockbox could supply the bins after it is scored.
 
 ### An optional known-element overlay (proposal, user decision)
 
@@ -596,7 +596,7 @@ A golden `regions.tsv` on a fixed genome (the release-day checks), plus a CPU / 
 ## Sources
 
 - LAMBDA: [paper](https://academic.oup.com/nargab/article/8/3/lqag103/8787816), [data and visualizer files](https://github.com/leannmlindsey/lambda-benchmark) (per-genome JSONs in `public/data/`), [code](https://github.com/leannmlindsey/LAMBDA)
-- Philympics: [paper](https://f1000research.com/articles/10-758), [framework and gold standard](https://github.com/linsalrob/ProphagePredictionComparisons) (`genbank/prophageCoords.tsv`; new tools are added as Snakemake rules, MIT licence)
+- Philympics: [paper](https://f1000research.com/articles/10-758), [framework and gold standard](https://github.com/linsalrob/ProphagePredictionComparisons) (`genbank/prophageCoords.tsv`; new tools are added as Snakemake rules, MIT license)
 - geNomad presets: [post-classification filtering](https://portal.nersc.gov/genomad/post_classification_filtering.html)
 - Metagenomic phage-tool benchmark (contig-length effects; prophage tools not evaluated on fragments): [Frontiers 2023](https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2023.1078760/full)
 - CLI usability: [Seemann 2013, *GigaScience*](https://pmc.ncbi.nlm.nih.gov/articles/PMC4076505/); [Bionitio](https://academic.oup.com/gigascience/article/8/9/giz109/5572530)

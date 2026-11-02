@@ -22,13 +22,13 @@ The run ends by listing the candidates, best first. `regions.tsv` holds them as 
 How to read it (the full guide is [`docs/interpreting-results.md`](../docs/interpreting-results.md)):
 
 - **Both elements are found, and nothing else is called.** Each call covers its whole element, so both count as found under covered50, the release's recall metric (at least half of an element's length covered).
-- **The ends are estimates** (`edges` = `estimated`): neither element has a findable att site, a direct repeat left at both ends by integration, which about 15% of known elements do. The model's score placed the ends first, and in Default mode each was then moved to where the sequence's composition changes from host-like to element-like. The ends are now 1–4 kb from geNomad's: `prophound_1` overshoots by 1.9 and 3.9 kb, and `prophound_2` sits 1.2 and 1.8 kb inside its element, still covering 91% of it. Before the composition step, both calls' ends overshot by up to 7.9 kb. The start and end ranges say where each true end probably lies (in about 78% of cases on held-out genomes), and here all four true ends fall inside them. Where an att site is found, `edges` is `att site` and the ends are exact to the base.
+- **The ends are estimates** (`edges` = `estimated`). Neither element has a findable att site (a direct repeat left at both ends by integration; about 15% of known elements have one). The model's score placed each end, and composition then moved it to where the sequence shifts from host-like to element-like. The ends are now 1–4 kb from geNomad's: `prophound_1` overshoots by 1.9 and 3.9 kb, and `prophound_2` sits 1.2 and 1.8 kb inside its element, still covering 91% of it (before the composition step, ends overshot by up to 7.9 kb). The ranges say where each true end probably lies, which held in about 78% of cases on held-out genomes; here all four true ends fall inside them.
 - **`support` 3/3** means all three bundled models make the call on their own. Default mode keeps only those. In Exploratory mode, calls with support 1/3 are the first to discount.
 - **`rank`** puts the call most like known prophages first. Here both score 1.0 at their best window, and `prophound_2` has the higher average.
 
 Files: `expected_regions.tsv` is `regions.tsv` from a CPU run, `expected_regions.detailed.tsv` is `regions.detailed.tsv` (every column, 0-based like BED), and `expected_calls.tsv` holds the columns the smoke test compares.
 
-On another device the window scores can differ in the last digits, because floating-point order differs. The calls are the same: CPU and Apple GPU agree here, and on all 30 reference cases (`docs/benchmarks.md`).
+On another device the window scores can differ in the last digits, because floating-point order differs. The calls are the same: CPU and Apple GPU agree here, and on all 30 reference cases ([`docs/benchmarks.md`](../docs/benchmarks.md)).
 
 ## Use it as a smoke test
 

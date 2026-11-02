@@ -1,37 +1,98 @@
 # prophound 0.1.0 — release text (DRAFT)
 
-> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, `docs/lockbox.md` "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). **2026-10-23: rewritten for the 0.1.0 boundary stages** (refinement on, att sites, composition edges with the 8 kb ceiling, edge ranges; `docs/att-boundaries.md`). Every figure measured on a sample with local tracks was re-scored with every 0.1.0 stage. The rest carry † (measured before the boundary stages; see "How to read"). The lockbox figures are the first lockbox's, which describe the pre-boundary defaults. They are replaced by the second lockbox's when it is scored (`docs/lockbox2.md`; marked ⟂2). **2026-10-27:** Exploratory composition edges and the novelty re-check (`docs/related-tools.md` "Re-check, 2026-10-26") folded in, and the defaults frozen for the second lockbox at `24f6c44`. **2026-10-27 (later): the second lockbox is scored** (`docs/lockbox2.md` "Result"), and its figures replace the first lockbox's wherever this text gave a held-out figure for the shipped pipeline (the ⟂2 markers are resolved). The first lockbox's figures stay only as the record of the pre-boundary defaults, marked †. Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows `docs/claims-and-evidence.md`'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".
+## What prophound is for
+
+prophound is an exploratory tool that looks at a bacterial genome and marks regions that look like integrated prophages: phage genomes sitting in the chromosome. Its job is to point a researcher at regions worth checking, including ones no database contains, so the lab can confirm or reject them. Every region it reports is a candidate for follow-up.
+
+## Why it is built this way
+
+- **Databases find what is already known.** Annotation tools such as geNomad and PHASTER recognize prophages by resemblance to known genes and proteins, so they can miss elements unlike anything cataloged. prophound reads DNA sequence directly and looks nothing up.
+- **A missed element cannot be recovered; an extra candidate costs one check.** So prophound aims to find nearly every known element and pays with extra candidates. The cost is stated as candidates per genome, and the user picks it with `--mode`.
+- **Calls outside known elements are where discovery would be.** Most will turn out to be nothing ("What the numbers say").
+- **It supplements annotation tools** with a second, different view of the genome.
+
+## How it works
+
+1. **Score.** A neural network scores 10 kb windows, 1 kb apart, for how prophage-like they look. Three separately trained copies score every window.
+2. **Call.** Runs of high-scoring windows become candidates. In the default mode all three copies must agree.
+3. **Place the ends.** Where a candidate is flanked by an att site (the repeat a phage leaves when it integrates), its ends sit exactly on it. Otherwise each end goes where the DNA's composition shifts from host-like to element-like, with a range.
+4. **Rank.** Candidates are listed best first.
+
+The network was trained on genomes whose prophages geNomad had labeled, so "prophage-like" means like what geNomad calls a prophage. It never sees geNomad's gene calls or databases, and prophound predicts no genes.
+
+## What the numbers say
+
+On 150 complete genomes from genera never used in training or tuning, tested once with the test fixed in advance:
+
+| | exploratory | **default** (recommended) | conservative |
+|---|---|---|---|
+| known prophages found (at least half covered) | 98% | **99%** | 90% |
+| candidates per genome | 37 | **12** | 5 |
+
+- **"Known" means called by geNomad,** which also supplied the training labels. These figures measure agreement with geNomad, which itself misses some prophages.
+- **On expert-curated prophages** (LAMBDA, 39 genomes), default finds 93%, and geNomad, PHASTER and PIDE about 82%. prophound makes 1.7–4.1 times as many calls, and allowing for that, it is not shown to be ahead.
+- **Next to geNomad,** it added 16 curated prophages and lost none, at about 15 extra candidates per genome (12 of the 16 from two genomes).
+- **Most extra candidates show nothing.** About 4 in 10 default calls outside known elements carry a mobile-element or phage signal, against 1 in 10 for random stretches of the same genomes.
+- **Run time:** under a minute for a 5 Mb genome on an Apple M4 laptop's GPU, in about half a GB of memory.
+
+Every head-to-head comparison is in [`tool-comparisons.md`](tool-comparisons.md).
+
+## How to read a run's output
+
+Start with `regions.tsv`: one row per candidate, best first, 1-based like genome browsers. [`interpreting-results.md`](interpreting-results.md) covers every column. In short:
+
+- **`rank`:** most like known prophages first, so a novel element may rank low. In a discovery run, read past the top.
+- **`edges`:** `att site` ends sit on an integration repeat and are exact to the base (about 1 call in 7 on known elements; a repeat can be chance). `estimated` ends are a median of about 2 kb off, with a range that held the true end about 78% of the time on held-out genomes.
+- **`support`:** how many of the three networks find the call. In exploratory mode, set aside the calls only one network makes first.
+- **Length:** under 10 kb, 71% of extra calls show no signal; at 60 kb and over, 37%. A long candidate may hold several elements.
+- **A score is not a probability** that a call is real.
+
+The guide's "Checking a candidate in the lab" suggests a first test for each kind of call, such as PCR across the junction for an att-site call.
+
+## When to be careful
+
+- **No candidate has been confirmed in the lab.** 0.1.0 claims no new elements.
+- **Input should be bacterial.** Over half of a 10 Mb stretch of human chromosome was called, and over a third of two archaeal genomes.
+- **A score alone is not evidence.** Shuffled genomes with no genes left still got calls, and above 55% GC most of the shuffled sequence was called.
+- **Plasmids are often called whole.** Such a call marks the replicon and locates nothing inside it.
+- **Small elements are often missed,** and contigs under 3 kb are never scanned.
 
 ---
 
-## What prophound is
+# The evidence
+
+Every claim below carries its number, *n*, interval, sample role and source. Read [How to read every number below](#how-to-read-every-number-below) first.
+
+## Positioning: what is distinct
 
 *prophound is a recall-first prophage screen. It localizes candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database at run time. It is tuned to recover already-known elements and returns everything else as candidates, at a follow-up cost the user chooses. It is designed to run alongside annotation-based tools and to surface what they may not call.*
 
-**Method in one line:** an exploratory, database-free prophage caller that learns directly from sequence, trained on geNomad-labelled genomes. It is a reverse-complement-symmetric CNN, scored over 10 kb windows by an ensemble of three training replicates. Regions are built from the score track with no gene calling. Their ends are then placed without genes too: a finer 5 kb scoring pass, then a direct-repeat (att site) search that gives base-exact ends where it finds a pair, and a host-to-element composition change-point for the rest (every mode; a looser gate in Exploratory). Every end carries its source and, where estimated, a range.
+**Method in one line:** an exploratory, database-free prophage caller that learns directly from sequence, trained on geNomad-labeled genomes. It is a reverse-complement-symmetric CNN, scored over 10 kb windows by an ensemble of three training replicates. Regions are built from the score track with no gene calling. Their ends are then placed without genes too: a finer 5 kb scoring pass, then a direct-repeat (att site) search that gives base-exact ends where it finds a pair, and a host-to-element composition change-point for the rest (every mode; a looser gate in Exploratory). Every end carries its source and, where estimated, a range.
 
-**What is distinct is the contract, not the method.** Database-free and nucleotide-level detection already exist (PhageBoost, PIDE, Jaeger, Seeker, LAMBDA's genomic language models; `docs/related-tools.md`). So do discovery framing (PhageBoost; geNomad's `--relaxed` preset, "to maximize discovery") and sensitivity settings (Jaeger's `--sensitivity`). What none of these tools was found to offer is the combination below. prophound's contract has four parts:
+**What is distinct is the contract, not the method.** Database-free and nucleotide-level detection already exist (PhageBoost, PIDE, Jaeger, Seeker, LAMBDA's genomic language models; [`docs/related-tools.md`](related-tools.md)). So do discovery framing (PhageBoost; geNomad's `--relaxed` preset, "to maximize discovery") and sensitivity settings (Jaeger's `--sensitivity`). What none of these tools was found to offer is the combination below. prophound's contract has four parts:
+
 1. a recall target on known elements, measured and reported with intervals;
 2. three modes, each priced in calls per genome (the follow-up cost), not in precision;
 3. output as candidates, not annotations;
 4. use alongside annotation tools.
 
 It rests on three design facts, each checked against the nearest tools:
+
 - **Host-context training.** It is trained on prophages in their host genomes. Jaeger and LAMBDA's models, the nearest nucleotide-level ones, train on free phage genomes, with Jaeger masking prophages out. Gene-based callers (geNomad's provirus model, PhageBoost) also learn from genes in host genomes, so the distinction is among sequence-level models.
-- **Gene-free boundaries.** Boundaries come from the score track, att direct repeats and sequence composition, never from genes. Jaeger snaps them with gene prediction. Neither ingredient is new: direct-repeat att searches go back to Phage_Finder (2006) and are in PhiSpy and DEPhT, and composition change-points have placed genomic-island edges since Alien_Hunter (2006). What is distinct is a packaged prophage caller that combines them with a model's score track and calls no genes anywhere (`docs/related-tools.md` "Prior art for the boundary stages").
+- **Gene-free boundaries.** Boundaries come from the score track, att direct repeats and sequence composition, never from genes. Jaeger snaps them with gene prediction. Neither ingredient is new: direct-repeat att searches go back to Phage_Finder (2006) and are in PhiSpy and DEPhT, and composition change-points have placed genomic-island edges since Alien_Hunter (2006). What is distinct is a packaged prophage caller that combines them with a model's score track and calls no genes anywhere ([`docs/related-tools.md`](related-tools.md) "Prior art for the boundary stages").
 - **Fragments scanned by default.** It scans contigs down to 3 kb. Jaeger's prophage mode scans contigs over 500 kb by default.
 
 ## How to read every number below
 
-- **Recall metric: covered50.** An element counts as found when calls cover at least 50% of its bp. ≥1 bp would credit grazes. Across the ≥1 / ≥25 / ≥50 / ≥75% cut-offs, every one orders the modes identically, and ≥75% costs only 1–3 points, so covered50 is not a flattering choice (`docs/research-integrity.md` C3).
+- **Recall metric: covered50.** An element counts as found when calls cover at least 50% of its bp. ≥1 bp would credit grazes. Across the ≥1 / ≥25 / ≥50 / ≥75% cut-offs, every one orders the modes identically, and ≥75% costs only 1–3 points, so covered50 is not a flattering choice ([`docs/research-integrity.md`](research-integrity.md) C3).
 - **Intervals.** 95%, by genome bootstrap (10,000 resamples), because elements within a genome are not independent. A Wilson interval is added where a bootstrap degenerates (an estimate of 1.000) or *n* is small.
 - **Cost: calls per genome.** It is the follow-up (wet-lab) budget. Precision against geNomad is not reported as accuracy. In a discovery tool, a call geNomad does not make is the intended output, not the error term.
-- **Sample roles** (C1). Each figure is labelled by the role of the sample it was measured on:
+- **Sample roles** (C1). Each figure is labeled by the role of the sample it was measured on:
 
 | sample | role | wording used |
 |---|---|---|
 | first lockbox: 150 genus-disjoint genomes, 202 elements | held out from training and tuning, preregistered, scored once, under the pre-boundary defaults: the record of those defaults † | "first lockbox" |
-| second lockbox: 150 further genus-disjoint genomes, 186 elements (`docs/lockbox2.md`) | **held out from training, tuning and the boundary stages**; preregistered; frozen at `24f6c44`, run once (`851599`) and scored once on 2026-10-27 | "held out" |
+| second lockbox: 150 further genus-disjoint genomes, 186 elements ([`docs/lockbox2.md`](lockbox2.md)) | **held out from training, tuning and the boundary stages**; preregistered; frozen at `24f6c44`, run once (`851599`) and scored once on 2026-10-27 | "held out" |
 | 42 genomes / 179 elements | tuning: thresholds, merging, vote and modes were chosen on it | "tuning sample" |
 | 18 genomes / 52 elements | confirmation, but it informed earlier decisions | "a second, previously used sample" |
 | 20 genomes with no geNomad provirus | confirmation; in view for the vote decision | "geNomad-negative genomes" |
@@ -40,24 +101,27 @@ It rests on three design facts, each checked against the nearest tools:
 | Philympics G5b: 9 genomes / 32 elements | external curated truth; preregistered | "G5b" |
 
 - **Pipeline version.** 0.1.0 adds three boundary stages after the region builder: refinement, att sites, and composition edges. They move ends and can split a call, so they change covered50, IoU and calls per genome. Unmarked figures were scored with every 0.1.0 stage. **†** marks a figure measured before them, on runs with no fine tracks to rebuild from (ARC runs, spike-ins, shreds). On every sample re-scored, the stages left Default covered50 unchanged and raised calls per genome by 1–5%, so † figures are expected to move little, but they were not re-measured.
-- **Two layers of accuracy.** Agreement with geNomad is not accuracy, because geNomad covers 0.822 of LAMBDA's curated prophages. Both layers are reported, each labelled as what it is.
+- **Two layers of accuracy.** Agreement with geNomad is not accuracy, because geNomad covers 0.822 of LAMBDA's curated prophages. Both layers are reported, each labeled as what it is.
 - **Novelty to training** is 21-mer containment of an element in training positives. It sees nucleotide similarity only, not protein homology.
 
 ---
 
 ## Claims
 
+The comparisons with other tools in §2–§6 and §9, plus the PHASTEST worked genomes and run time, are collected with their verdicts in [`docs/tool-comparisons.md`](tool-comparisons.md).
+
 ### 1. Agreement with geNomad on held-out genomes
 
-**Default covered50 0.989 (184 of 186; Wilson 0.962–0.997; genome bootstrap 0.972–1.000), n = 186 elements in 73 of 150 genomes, at 12.4 calls per genome.** This is the second lockbox: genus-disjoint from training, from both earlier lockboxes and from every external set, preregistered, run once on the frozen 0.1.0 pipeline and scored once (`docs/lockbox2.md` "Result"). It is the primary endpoint.
+**Default covered50 0.989 (184 of 186; Wilson 0.962–0.997; genome bootstrap 0.972–1.000), n = 186 elements in 73 of 150 genomes, at 12.4 calls per genome.** This is the second lockbox: genus-disjoint from training, from both earlier lockboxes and from every external set, preregistered, run once on the frozen 0.1.0 pipeline and scored once ([`docs/lockbox2.md`](lockbox2.md) "Result"). It is the primary endpoint.
+
 - **Other modes:** Exploratory 0.984 (Wilson 0.954–0.994; bootstrap 0.956–1.000) at 37.4 calls per genome, and Conservative 0.903 (0.852–0.938; 0.858–0.949) at 5.0.
 - **Covered (≥1 bp):** 1.000 / 0.989 / 0.925.
 - **Misses:** Default misses 2 elements in 2 genomes, a 6.1 kb and a 34.9 kb element, both with no Default call on them. Exploratory reaches both (0.85 and 0.32 covered).
-- **The first lockbox** (150 other genomes, 202 elements, scored 2026-10-19 under the pre-boundary defaults †) read 0.960 (0.924–0.980) at 11.0 calls per genome. It stays the record of those defaults (`docs/lockbox.md`). The two lockboxes are different genomes, so the difference is not an effect of the boundary stages.
+- **The first lockbox** (150 other genomes, 202 elements, scored 2026-10-19 under the pre-boundary defaults †) read 0.960 (0.924–0.980) at 11.0 calls per genome. It stays the record of those defaults ([`docs/lockbox.md`](lockbox.md)). The two lockboxes are different genomes, so the difference is not an effect of the boundary stages.
 
 Novelty to training was not measured on the second lockbox; on the first, median containment was 0.003, by the same genus-disjoint construction. The second lockbox cannot speak below 10 kb (4 elements): those rows are counts, not claims.
 
-For comparison, on the reused samples (Default, ensemble). Their covered50 is the same before and after the boundary stages (`docs/att-boundaries.md`). Calls per genome are the 0.1.0 pipeline's, slightly higher because refinement splits some calls:
+For comparison, on the reused samples (Default, ensemble). Their covered50 is the same before and after the boundary stages ([`docs/att-boundaries.md`](att-boundaries.md)). Calls per genome are the 0.1.0 pipeline's, slightly higher because refinement splits some calls:
 
 | sample | covered50 | 95% interval | calls/genome, 0.1.0 (before) |
 |---|---|---|---|
@@ -68,7 +132,7 @@ For comparison, on the reused samples (Default, ensemble). Their covered50 is th
 
 - **≥95% is established held out, for Default.** By the rule fixed before scoring (≥95% only if the lockbox's Wilson lower bound is at least 0.95), the release may say it: the lower bound is 0.962. The claim is pooled over 186 elements, Default mode, against geNomad truth; it is agreement with geNomad, not accuracy (§2). Exploratory's lower bound, 0.954, also clears 0.95, but the rule was fixed for Default, the primary endpoint. Conservative's (0.852) does not.
 - **The reused samples were not optimistic for Default.** The lockbox reads 0.017 above the tuning sample and 0.011 below the 18, both well inside either interval. For Conservative the reused samples ran higher (+0.041 and +0.059), as on the first lockbox.
-- **Not carried by training look-alikes** †. On the tuning sample, the 137 elements with containment <0.1 read 0.964, and all five Default misses are in that bin (C5). Covered recall on clade-novel elements (MinHash, k = 21) is flat at 0.966–0.975 from ~3.5% out to ~20% nucleotide divergence, with the same four misses at every threshold. That was measured under the 2026-09-22 builder, at ≥1 bp (`docs/scientific-validity.md` 2a).
+- **Not carried by training look-alikes** †. On the tuning sample, the 137 elements with containment <0.1 read 0.964, and all five Default misses are in that bin (C5). Covered recall on clade-novel elements (MinHash, k = 21) is flat at 0.966–0.975 from ~3.5% out to ~20% nucleotide divergence, with the same four misses at every threshold. That was measured under the 2026-09-22 builder, at ≥1 bp ([`docs/scientific-validity.md`](scientific-validity.md) 2a).
 - **By size, second lockbox, Default** (Wilson intervals; `analysis/lockbox2/results.json`). Below 10 kb n = 2 per stratum, reported as counts, not claims. Per stratum, ≥95% is an engineering target, and no stratum is large enough to establish it on its own:
 
 | stratum | n | covered50 | Wilson 95% |
@@ -97,7 +161,7 @@ Wording: *"on 150 held-out genomes, Default agrees with geNomad on 0.989 of know
 
 ### 2. Recall on expert-curated truth (LAMBDA)
 
-On LAMBDA's clean subset (no genome in train or val), Default covers **0.933** of 149 curated elements (genome bootstrap 0.874–0.983), at 14.7 calls/genome. The primary row, 34 genomes not in the corpus, reads **0.920** (113 elements; 0.859–0.983). For the published tools on the same subset, rescored with the same rule: geNomad 0.822, PHASTER 0.824, PIDE 0.824, best genomic LM (EVO2 4k) 0.785. The bars were fixed before the run (`docs/claims-and-evidence.md` "LAMBDA result"). Re-scored with every 0.1.0 stage from a refinement-on run of the same genomes (`analysis/external_benchmarks/lambda/scores_0.1.0.json`). Covered50 is unchanged in every mode (Exploratory 0.946, Conservative 0.899), and Default's median IoU is 0.81 (0.77 without composition edges). The 8 kb composition ceiling was chosen with LAMBDA in view (`docs/att-boundaries.md`), so for that setting LAMBDA is confirmation after use.
+On LAMBDA's clean subset (no genome in train or val), Default covers **0.933** of 149 curated elements (genome bootstrap 0.874–0.983), at 14.7 calls/genome. The primary row, 34 genomes not in the corpus, reads **0.920** (113 elements; 0.859–0.983). For the published tools on the same subset, rescored with the same rule: geNomad 0.822, PHASTER 0.824, PIDE 0.824, best genomic LM (EVO2 4k) 0.785. The bars were fixed before the run ([`docs/claims-and-evidence.md`](claims-and-evidence.md) "LAMBDA result"). Re-scored with every 0.1.0 stage from a refinement-on run of the same genomes (`analysis/external_benchmarks/lambda/scores_0.1.0.json`). Covered50 is unchanged in every mode (Exploratory 0.946, Conservative 0.899), and Default's median IoU is 0.81 (0.77 without composition edges). The 8 kb composition ceiling was chosen with LAMBDA in view ([`docs/att-boundaries.md`](att-boundaries.md)), so for that setting LAMBDA is confirmation after use.
 
 **It is costlier, and the cost explains much of the margin.** Default calls 7.9% of each chromosome (9.8% before the boundary stages), geNomad 3.7%. Rotating each tool's calls by a random offset per chromosome keeps their lengths, count and spacing. It gives chance covered50 of 0.111 for Default and 0.052 for geNomad (1,000 draws). Recall above chance is therefore **0.822 for Default against 0.770 for geNomad**, 0.772 for PHASTER and 0.776 for PIDE (0.792 for Default before the boundary stages: tighter ends cover less sequence at the same recall).
 
@@ -118,6 +182,7 @@ Wording: *"run alongside geNomad, prophound recovered 16 additional curated prop
 ### 4. Against sequence-only models at matched cost (G2)
 
 Exploratory's calls, ranked by score and cut to EVO2 4k's per-genome call count, reach **0.792 against EVO2 4k's 0.785**, so the preregistered bar (>0.785) is still cleared, by one element. It is reported with its limits:
+
 - at geNomad's call count it trails geNomad (0.801 vs 0.822);
 - at PHASTER's lower count it trails further (0.770 vs 0.824);
 - no paired interval separates it from EVO2 4k.
@@ -128,7 +193,7 @@ Wording: *"at matched follow-up cost, comparable to the best published genomic l
 
 ### 5. Literature-curated pilot, split by novelty and class
 
-There are 57 elements in 7 genomes, curated from the literature, with geNomad scored identically (`docs/final-benchmark.md`, C4 final, C5). **The pooled figure is flattered**, because 34 of the 57 elements are ≥50% contained in training. It is never quoted without the split:
+There are 57 elements in 7 genomes, curated from the literature, with geNomad scored identically ([`docs/final-benchmark.md`](final-benchmark.md), C4 final, C5). **The pooled figure is flattered**, because 34 of the 57 elements are ≥50% contained in training. It is never quoted without the split:
 
 | subset | n | Default | geNomad | note |
 |---|---|---|---|---|
@@ -162,7 +227,7 @@ Every row is † except the composition baseline, which is about the model, not 
 
 | property | result | n / source |
 |---|---|---|
-| reverse complement, 0.1.0 pipeline | on sequence without ambiguity codes: window scores agree to 2e-7, coarse calls and all 15 att calls identical, composition ends differ by a median 81 bp (90% within 158 bp), and 1 of 245 refinement splits differs. **With ambiguity codes, imputation is not strand-symmetric:** on EDL933 (1,182 ppm) 4 of 28 Default calls differ, one by 8 kb | 6 genomes × 2 modes; `scripts/rc_boundary_check.py`, `docs/scientific-validity.md` RC-3 |
+| reverse complement, 0.1.0 pipeline | on sequence without ambiguity codes: window scores agree to 2e-7, coarse calls and all 15 att calls identical, composition ends differ by a median 81 bp (90% within 158 bp), and 1 of 245 refinement splits differs. **With ambiguity codes, imputation is not strand-symmetric:** on EDL933 (1,182 ppm) 4 of 28 Default calls differ, one by 8 kb | 6 genomes × 2 modes; `scripts/rc_boundary_check.py`, [`docs/scientific-validity.md`](scientific-validity.md) RC-3 |
 | ambiguity codes (IUPAC, incl. N), `impute` default | ≤2 of 179 elements lost up to 3,000 ppm scattered codes; the old encoding lost 172 | `821396`, tuning sample |
 | long internal N gaps | a 20 kb gap costs 6 of 179 elements at Default. Calls ≥50% N are dropped, removing exactly the spurious gap calls with no recall change at ≤5 kb gaps | `822054`, `docs/release-scope-0.1.0.md` A.3 |
 | grid phase | 1.7% of elements phase-unstable; ~5% call-count spread | `816447` |
@@ -177,11 +242,13 @@ Earlier versions collapsed to zero on IUPAC codes (*E. coli* EDL933 at 1,182 ppm
 Every figure in this section is † (ARC runs). The boundary stages trim calls (8–12% less bp called), which could change which hallmark genes a call contains.
 
 **Candidates are enriched for mobile-element features, mostly not phage structural genes.**
+
 - On the tuning sample, Default off-target calls made by all three checkpoints carry an MGE hallmark at **52.1% (99/190), against 16.8% (96/570) for length-matched controls** drawn clear of geNomad elements. That is **3.09× (genome bootstrap 2.45–4.12; 38 genomes)**, and Fisher one-sided p = 2 × 10⁻²⁰. Fisher treats the controls as independent, so the bootstrap is the interval to quote. These calls were made under the interim pre-vote Default, and the unanimous group is the one the shipped vote keeps.
 - Calls only one or two checkpoints make are enriched 1.92× (1.46–2.78).
 - **The enrichment is conjugation (16%) and integrase/transposase (13%) more than phage structural genes (4%).** Many candidates look like ICEs and other integrative elements, not missed prophages.
 
 **Recovery beyond the labels: real inoviruses that geNomad labels negative.**
+
 - Default covers **7 of 10** confident in-situ loci (Wilson 0.397–0.892); Exploratory covers 10 of 10 (0.722–1.000).
 - These loci are not near-duplicates of training: median containment 0.001.
 - One phage family, n = 10.
@@ -190,7 +257,7 @@ Wording: *"off-target candidates are enriched for mobile-element features (3.1×
 
 ### 8b. What the extra calls are made of (second lockbox, preregistered)
 
-Every Default call on the second lockbox that touches no geNomad element (1,679 calls in 139 genomes) was sorted, by rules fixed before the data was pulled, into one bin. The same rules were applied to random host stretches of the same length (`docs/extra-calls.md`).
+Every Default call on the second lockbox that touches no geNomad element (1,679 calls in 139 genomes) was sorted, by rules fixed before the data was pulled, into one bin. The same rules were applied to random host stretches of the same length ([`docs/extra-calls.md`](extra-calls.md)).
 
 | bin | extra Default calls | random host stretches |
 |---|---|---|
@@ -200,7 +267,7 @@ Every Default call on the second lockbox that touches no geNomad element (1,679 
 | **no detectable signal** | **0.599** (0.565–0.633) | 0.884 |
 
 - **Most extra calls have no detectable signal.** This is the cost of the tool's recall, and users should expect it. The 0.60 is an upper bound on uninformative calls: annotation-based rules cannot tell a truly novel element from ordinary host sequence.
-- **The rest are not chance.** Mobile-element and phage signals are 3–7× as frequent as in host sequence of the same length, and the phage signal survives composition-matched controls (+0.024, 0.014–0.036; `docs/candidate-phage-homology.md`).
+- **The rest are not chance.** Mobile-element and phage signals are 3–7× as frequent as in host sequence of the same length, and the phage signal survives composition-matched controls (+0.024, 0.014–0.036; [`docs/candidate-phage-homology.md`](candidate-phage-homology.md)).
 - **Length is the best triage cue.** Calls under 10 kb show no signal 71% of the time, and calls of 60 kb and more 37% of the time (with 44% mobile-element and 13% phage-like signal).
 - **Exploratory's additional calls are close to background** (0.82 no signal, against 0.88).
 - **One recurring false-positive class:** ribosomal-protein operons, whose high expression gives them atypical composition. They are about 1% of the no-signal calls.
@@ -209,7 +276,7 @@ Wording: *"on held-out genomes, about 4 in 10 Default calls outside known elemen
 
 ### 9. LAMBDA's reviewed candidates outside its curated set (preregistered)
 
-LAMBDA's authors list regions their language models proposed, which reviewers graded but left out of the curated truth (`docs/claims-and-evidence.md` "LAMBDA candidates check", scored once on 2026-10-20, before the boundary stages). The preregistered result stands as scored. The 0.1.0 re-score is reported beside it (`scripts/lambda_candidates.py --genomes_dir`, `analysis/external_benchmarks/lambda/candidates_0.1.0.json`).
+LAMBDA's authors list regions their language models proposed, which reviewers graded but left out of the curated truth ([`docs/claims-and-evidence.md`](claims-and-evidence.md) "LAMBDA candidates check", scored once on 2026-10-20, before the boundary stages). The preregistered result stands as scored. The 0.1.0 re-score is reported beside it (`scripts/lambda_candidates.py --genomes_dir`, `analysis/external_benchmarks/lambda/candidates_0.1.0.json`).
 
 | LIKELY PHAGE candidates, 34 genomes not in the corpus (n = 19) | preregistered scoring † | 0.1.0 pipeline |
 |---|---|---|
@@ -226,11 +293,11 @@ LAMBDA's authors list regions their language models proposed, which reviewers gr
 - **The annotation tools reach most of them too.** geNomad covers 15 of 19, PIDE 0.789, PhageBoost 0.778. These are mostly phages the database tools call but the curators left out, not elements every tool missed.
 - It also covers more of what reviewers doubted (UNLIKELY PHAGE 0.55 under 0.1.0, 0.64 before, against geNomad's 0.36), which is the price of its call volume.
 
-Wording: *"prophound's calls overlap all 19 phages LAMBDA's reviewers judged likely but its curated set lacks, and cover at least half of 16 of them, above chance (0.75, 0.54–0.95), at 15 calls/genome. geNomad covers 15."* Not "phages the annotation tools cannot find", and not discovery: the grades are review judgements.
+Wording: *"prophound's calls overlap all 19 phages LAMBDA's reviewers judged likely but its curated set lacks, and cover at least half of 16 of them, above chance (0.75, 0.54–0.95), at 15 calls/genome. geNomad covers 15."* Not "phages the annotation tools cannot find", and not discovery: the grades are review judgments.
 
 ### 10. Boundaries: where each end comes from, and how far to trust it
 
-Each end of a call has one source, reported per call (`start_source`, `end_source`). The stages run in this order, and each keeps the previous one's end where it does not apply (`docs/att-boundaries.md`):
+Each end of a call has one source, reported per call (`start_source`, `end_source`). The stages run in this order, and each keeps the previous one's end where it does not apply ([`docs/att-boundaries.md`](att-boundaries.md)):
 
 1. **Refinement** (all modes): a 5 kb scoring pass at 250 bp steps moves the coarse 1 kb edge.
 2. **Att site** (all modes): an exact direct repeat (core ≤300 bp, at most 2 copies, E ≤ 1e-6) with one copy within 10 kb inside / 5 kb outside each end. Where found, the region runs from the first base of the left copy to the last of the right, and that end is reported as exact.
@@ -250,7 +317,7 @@ The att rule, the composition gates and the range fractions were chosen on the t
 Truth is geNomad's coordinates on the 42 and the 18, authors' coordinates on the literature pilot, and LAMBDA's curation on LAMBDA. Errors against geNomad include geNomad's own gene-edge imprecision. On the tuning sample, Default calls 17% fewer Mb (20.7 → 17.3) and 22% fewer Mb off every element (14.9 → 11.6).
 
 - **Att ends are base-exact where found, but rarely found.** Against authors' coordinates (literature pilot), att ends sat a median 22 bp away, 79% within 100 bp; most differences are exactly one core copy, a convention the core length in the output lets a user convert. Only 14–16% of calls on known elements get an att end, on all three samples. On the tuning sample, 85% of single-element calls have no exact repeat ≥16 bp near both of geNomad's edges, so this is a property of the genomes, not of the rule. From a decoy search on host sequence, an estimated 12–17% of Default att ends are chance repeats (Conservative 4–6%, Exploratory 27–32%). Against geNomad, att ends sit a median 0.5–0.7 kb away, which is geNomad's gene-edge imprecision.
-- **Att cores carry the integration signature, which the search never sees.** In Default, 0.577 of att calls (94 of 163, Wilson 0.500–0.650; four samples) have a core copy on a tRNA or tmRNA gene. Random placement would give 0.004, and host repeats passing the same rule give 0.045 (3 of 66). In 91 of the 94, only one copy lies on the gene, as integration leaves it, and the genes are the known hotspots (tRNA-Arg, -Met, -Leu, tmRNA). Att calls off every known element carry it at 0.495, so most are real integration sites geNomad does not call, of prophages or other integrative elements (`docs/att-boundaries.md` "Are the att sites real?"; analysis only, no genes in the pipeline). This is evidence about the set. A single att call without a tRNA can still be chance.
+- **Att cores carry the integration signature, which the search never sees.** In Default, 0.577 of att calls (94 of 163, Wilson 0.500–0.650; four samples) have a core copy on a tRNA or tmRNA gene. Random placement would give 0.004, and host repeats passing the same rule give 0.045 (3 of 66). In 91 of the 94, only one copy lies on the gene, as integration leaves it, and the genes are the known hotspots (tRNA-Arg, -Met, -Leu, tmRNA). Att calls off every known element carry it at 0.495, so most are real integration sites geNomad does not call, of prophages or other integrative elements ([`docs/att-boundaries.md`](att-boundaries.md) "Are the att sites real?"; analysis only, no genes in the pipeline). This is evidence about the set. A single att call without a tRNA can still be chance.
 - **Estimated ends are about 2 kb off (median), with a long tail.** Composition halved the median error (3.6 → 2.1 kb on the tuning sample). In Exploratory it takes the median from 3.7 to 2.0 kb (tuning) and cuts off-element bp by 12–17%, at the cost of one tuning-sample element (a partial detection just over 50%; 0.994 → 0.989), unchanged on the other three samples.
 - **Ranges.** An estimated end's range runs 0.143 × the call's length outward and 0.463 × inward in every mode, fitted as the 5th–95th percentiles on the tuning sample (Default and Conservative). Coverage on the other samples is 0.88–0.92 in every mode; on LAMBDA it is lower (Default 0.845, Exploratory 0.804). Median width is 21–26 kb, so the ranges are honest but wide. Ends nothing could move stay on the 1 kb grid; they are flagged in `note` and their ranges held less often. **Held out they hold less: 0.782 of Default model edges on the second lockbox (237 of 303; Wilson 0.732–0.825), 0.765 in Exploratory and 0.777 in Conservative.** By the rule fixed before scoring they are therefore not called 90% ranges. The release states what they did: they held the true end in about 78% of cases on held-out genomes (88–92% on the development samples). The fractions were fitted on the tuning sample and are too narrow for new genera; widening them is a post-0.1.0 change.
 - **Costs.** Calls per genome rise 1–5% (refinement splits some calls). That lowers count-matched comparisons (§4) and part of the LAMBDA candidates figure (§9). Run time rises 10–23% on the M4 GPU (Default; CPU not yet measured; "Run time" below). On the literature pilot, Exploratory and Conservative each lose one element (a partial detection trimmed under 50%).
@@ -262,7 +329,7 @@ Wording: *"boundaries are placed without genes: base-exact at an att site where 
 - **`regions.tsv`**, one row per candidate, ranked, with 1-based inclusive coordinates as genome browsers show them. Columns: `rank`, `call_id`, `contig`, `start`, `end`, `length_kb`, `edges` (`att site` or `estimated`), `start_range` and `end_range`, `support` (how many of the three checkpoints make the call) and `note`. The terminal prints the same list at the end of a run.
 - **`regions.detailed.tsv`** holds every column, 0-based half-open, for scripts. It includes each end's source, the model's own edges after refinement but before att and composition, the att core, scores and flags. BED and GFF3 versions are written alongside, and `regions.filtered.tsv` lists the candidates the seed vote or the N filter set aside, with the reason.
 - **Rank** is the call's highest window score, then its mean score. On the development samples this ordering put known elements first more often than the mean score alone, the earlier documented choice, or ranking att calls first. A truly novel element can therefore rank low.
-- **`docs/interpreting-results.md`** is the reading guide for researchers: what each column means, how far to trust each kind of end, and how candidates feed into lab checks. Every file and column is defined in `docs/output-files.md`.
+- **[`docs/interpreting-results.md`](interpreting-results.md)** is the reading guide for researchers: what each column means, how far to trust each kind of end, and how candidates feed into lab checks. Every file and column is defined in [`docs/output-files.md`](output-files.md).
 
 ---
 
@@ -285,7 +352,7 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | median IoU, tuning sample | 0.812 | 0.812 | 0.838 |
 | ends from composition | yes (looser gate) | yes | yes |
 
-- **Exploratory** is for discovery runs: the widest coverage, at about 2.5–3× Default's calls. On the second lockbox it touched every element (covered 1.000), but its covered50 was one element below Default's (0.984 against 0.989). Its looser composition gate trimmed two partial detections under half (`docs/lockbox2.md` "Result"). Calls that only one checkpoint makes are 99% off-target relative to geNomad (`docs/error-analysis.md`), so `seed_support` is the first column to triage by.
+- **Exploratory** is for discovery runs: the widest coverage, at about 2.5–3× Default's calls. On the second lockbox it touched every element (covered 1.000), but its covered50 was one element below Default's (0.984 against 0.989). Its looser composition gate trimmed two partial detections under half ([`docs/lockbox2.md`](lockbox2.md) "Result"). Calls that only one checkpoint makes are 99% off-target relative to geNomad ([`docs/error-analysis.md`](error-analysis.md)), so `seed_support` is the first column to triage by.
 - **Default** is the recommended mode.
 - **Conservative** is for a small follow-up budget. It costs recall first on 10–15 kb elements (0.900 †) and small elements. On the tuning sample and the literature pilot, composition edges cost it one element each (0.944 → 0.939, 0.895 → 0.877): partial detections covered barely over 50%.
 
@@ -304,16 +371,16 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 
 ## Limitations
 
-- **Labels are geNomad-derived.** Training and every agreement figure use geNomad 1.9.4 with DB 1.9. The model inherits geNomad's misses, and agreement figures measure fidelity to it. geNomad's ~3.5 kb floor means geNomad truth holds almost no elements under 10 kb (3 of 202 in the lockbox). Of 89 confident inovirus loci in the corpus, geNomad labels 43 negative, median 5.6 kb (`docs/data-reliability.md`).
+- **Labels are geNomad-derived.** Training and every agreement figure use geNomad 1.9.4 with DB 1.9. The model inherits geNomad's misses, and agreement figures measure fidelity to it. geNomad's ~3.5 kb floor means geNomad truth holds almost no elements under 10 kb (3 of 202 in the lockbox). Of 89 confident inovirus loci in the corpus, geNomad labels 43 negative, median 5.6 kb ([`docs/data-reliability.md`](data-reliability.md)).
 - **Small elements** †. Real inoviruses implanted at model-independent sites are detected at **0.362** at Default (Wilson 0.317–0.409, n = 420; implants share 28 hosts, so the true interval is wider): 0.17 at 3–5 kb, 0.32 at 5–8 kb, 0.73 at 8–10 kb (C7). Evidence below 10 kb is partly synthetic and covers one phage family.
 - **Boundaries are still coarser than gene-based tools'** where no att site is found, which is most calls. Estimated ends are a median ~2 kb off, with a tail of partial detections that the wide ranges reflect. In the literature pilot, Default median IoU is 0.73 / 0.62 (test / val), against 0.89 / 0.71 for geNomad. On LAMBDA, Default reaches 0.81, and the annotation tools 0.83–0.92 (§10).
 - **Conflation.** Several elements may fall under one call. On the tuning sample, Default calls absorb 11 of 179 elements (6.1%) under 0.1.0, 13 before (refinement splits some). On the second lockbox, 5 calls absorb 10 of 186 elements (5.4%), the same in every mode (first lockbox †: 19 of 202, 9.4%). Covered recall cannot see conflation, which is why conflated and absorbed counts are reported.
 - **Cost.** Default makes 14.4 calls per genome on the tuning sample and 14.7 on LAMBDA (12.4 on the second lockbox), against 3.6–8.4 for annotation tools on LAMBDA. On genomes with no geNomad provirus it makes 7.4 per genome on the 20 geNomad-negative genomes (4.7–10.2 †) and 9.2 on the second lockbox's 77, which is the floor cost.
-- **Short contigs** † under 3 kb are never scanned. Recall on 3–10 kb contigs falls with element size: on fully shredded input, 60 kb+ elements read 0.286 at covered50, against 0.905 on complete genomes (calibration run `818235`, before the final modes; `docs/adaptive-multiscale-detection.md` Part 4).
+- **Short contigs** † under 3 kb are never scanned. Recall on 3–10 kb contigs falls with element size: on fully shredded input, 60 kb+ elements read 0.286 at covered50, against 0.905 on complete genomes (calibration run `818235`, before the final modes; [`docs/adaptive-multiscale-detection.md`](adaptive-multiscale-detection.md) Part 4).
 - **Large internal N gaps** † cost recall: 6 of 179 elements at 20 kb.
-- **Input outside bacteria.** Human sequence is called heavily: 57% of a 10 Mb chr21 slice, at 1.9× the bacterial call rate. Yeast is near the bacterial rate. Three eukaryotic viruses get no calls. On archaea, two hyperthermophiles have more than a third of the genome called. Input should be bacterial, and archaeal calls are untested (`docs/robustness-checks.md` check 4).
-- **A high score is not specific to phage on unfamiliar sequence.** Each lockbox-2 genome was shuffled keeping its mono- and dinucleotide composition, which leaves no genes or biology. Default still calls **2.49 per Mb** (95% 2.37–2.62), more than the real genomes' 1.57 per Mb of no-signal candidates. So a candidate's score alone is not evidence of an element (preregistered reading). The effect depends on GC. Shuffled genomes under 40% GC are almost never called, while over 55% GC most of each shuffled genome is called, in calls hundreds of kb long; the same real genomes have about 5% called. On real bacterial genomes, calls do not depend on GC (check 2). This bears on unusual input, and on reading any one score as evidence (`docs/robustness-checks.md` check 1).
-- **Plasmids are often called whole.** On the second lockbox, 18% of plasmid sequence is called against 7% of chromosomal sequence, and a single call covers most of the replicon on 32% of plasmids. Such calls describe the replicon, not an element inside it. All 7 geNomad elements on plasmids are covered (`docs/robustness-checks.md` check 3).
+- **Input outside bacteria.** Human sequence is called heavily: 57% of a 10 Mb chr21 slice, at 1.9× the bacterial call rate. Yeast is near the bacterial rate. Three eukaryotic viruses get no calls. On archaea, two hyperthermophiles have more than a third of the genome called. Input should be bacterial, and archaeal calls are untested ([`docs/robustness-checks.md`](robustness-checks.md) check 4).
+- **A high score is not specific to phage on unfamiliar sequence.** Each lockbox-2 genome was shuffled keeping its mono- and dinucleotide composition, which leaves no genes or biology. Default still calls **2.49 per Mb** (95% 2.37–2.62), more than the real genomes' 1.57 per Mb of no-signal candidates. So a candidate's score alone is not evidence of an element (preregistered reading). The effect depends on GC. Shuffled genomes under 40% GC are almost never called, while over 55% GC most of each shuffled genome is called, in calls hundreds of kb long; the same real genomes have about 5% called. On real bacterial genomes, calls do not depend on GC (check 2). This bears on unusual input, and on reading any one score as evidence ([`docs/robustness-checks.md`](robustness-checks.md) check 1).
+- **Plasmids are often called whole.** On the second lockbox, 18% of plasmid sequence is called against 7% of chromosomal sequence, and a single call covers most of the replicon on 32% of plasmids. Such calls describe the replicon, not an element inside it. All 7 geNomad elements on plasmids are covered ([`docs/robustness-checks.md`](robustness-checks.md) check 3).
 - **Calibration.** Mode thresholds are a user-facing trade-off between recall and cost, tuned on geNomad agreement. They are not probabilities that a call is real.
 - **Sample size.** Every external benchmark is small and dominated by a few element-rich genomes: LAMBDA 39 genomes, the literature pilot 7, G5b 9 (5 *Paracoccus*). Every interval is wide, and results are read through paired comparisons.
 - **Shredding** uses uniform breakpoints. Real assemblies break at repeats, so the MAG-like conditions approximate MAGs rather than reproduce them.
@@ -330,9 +397,9 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | calls per genome is the right cost unit | how modes are priced | a product decision (user, 2026-09-21): wet-lab follow-up scales with calls | design choice, stated |
 | a random-rotation baseline is fair chance | §2's cost adjustment | rotation keeps each tool's call lengths, count and spacing; reproduces the original estimate (0.141 vs 0.144) | stated method; one choice among several |
 | the tuning sample's optimism is small | how far reused numbers transfer | reused minus held out, second lockbox (the 42 / the 18): Default −0.017 / +0.011, Exploratory +0.010 / +0.016, Conservative +0.041 / +0.059 (first lockbox, Default: +0.012 / +0.040) | **holds for Default and Exploratory; larger for Conservative.** Measured by two lockboxes |
-| shreds approximate MAG input | §6 | uniform breakpoints; N50 not calibrated to a catalogue | **untested**; stated |
+| shreds approximate MAG input | §6 | uniform breakpoints; N50 not calibrated to a catalog | **untested**; stated |
 | an exact direct repeat at both ends of a call marks the integration site | att ends replace the model's | decoy search: an estimated 12–17% of Default att ends are chance repeats; on author-curated elements, att ends match to a median 22 bp; independently, 0.58 of Default att cores sit on a tRNA/tmRNA gene against 0.004 at random and 0.045 for decoys (§10) | **holds for the set**; the chance share per call is stated, and the core is reported so a user can check it |
-| a composition change-point near an estimated end is the element's edge | estimated ends, every mode | median end error halves (3.6 → 2.1 kb, tuning); it fails when the call's middle is a different element, which the 8 kb inward ceiling limits (`docs/att-boundaries.md`) | **holds on the samples measured**; held out, estimated ends were bracketed less often (range coverage 0.78 against 0.88–0.92) |
+| a composition change-point near an estimated end is the element's edge | estimated ends, every mode | median end error halves (3.6 → 2.1 kb, tuning); it fails when the call's middle is a different element, which the 8 kb inward ceiling limits ([`docs/att-boundaries.md`](att-boundaries.md)) | **holds on the samples measured**; held out, estimated ends were bracketed less often (range coverage 0.78 against 0.88–0.92) |
 | one inovirus family stands in for small prophages | the small-element limitation | none: the corpus is mostly tailed phages | **untested**; stated as a limit |
 
 ## Footprint (G4, reported only alongside recall)
@@ -342,28 +409,27 @@ The ensemble with the shipped seed vote. Cost is calls per genome, the follow-up
 | prophound: the bundled model (3 weights-only checkpoints, config, manifest) | **16.5 MB** (16,500,331 bytes) | the package's `model/` directory, 2026-10-20 |
 | geNomad database v1.9 | **1.47 GB** unpacked (1,471,630,421 bytes); 842 MB compressed | `du -sb` on ARC, 2026-10-16; Zenodo 14886553 |
 
-prophound needs about 89× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The training checkpoints were 49.5 MB because they also held optimizer and RNG state. The bundled files hold the same weights, tensor for tensor, and give byte-identical outputs (`docs/lockbox.md`). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64).
+prophound needs about 89× less run-time data than geNomad. That matters only because it comes with the recall in §1–§3. A small tool that found less would not be better. The training checkpoints were 49.5 MB because they also held optimizer and RNG state. The bundled files hold the same weights, tensor for tensor, and give byte-identical outputs ([`docs/lockbox.md`](lockbox.md)). Installed-environment size is not compared yet: prophound's runtime environment is dominated by PyTorch (~381 MB on osx-arm64).
 
 ## Run time and hardware
 
-Measured on a MacBook Pro (Apple M4, 16 GB). This is the kind of machine most users will run it on, so it is the headline. Default mode, 3-checkpoint ensemble. The Apple GPU rows are the 2026-10-20 re-run after the Phase 3 speed work; the batch and CPU rows are from 2026-10-19 (`docs/benchmarks.md`). **Every row is †:** measured before refinement became a default. Refinement added 10–23% on the M4 GPU in Default (14.2 → 15.6 s at 2.2 Mb, 48.6 → 59.6 s at 7.2 Mb; `docs/att-boundaries.md`); CPU is expected to rise about 20% but has not been measured. The table is re-run with the 0.1.0 defaults before release.
+Measured on a MacBook Pro (Apple M4, 16 GB). This is the kind of machine most users will run it on, so it is the headline. Default mode, 3-checkpoint ensemble, the 0.1.0 code and defaults (timed 2026-11-02; [`docs/benchmarks.md`](benchmarks.md)). The boundary stages cost about a third more time than the code before them: on the same machine and genome, 47.6 s against 35.0 s.
 
 | | wall time | memory |
 |---|---|---|
-| typical 5 Mb complete genome, Apple GPU (`--device auto` picks it) | **~35 s** (33.5 s median, 4.97 Mb) | ~0.5 GB |
-| the same genome as a MAG-like assembly (374 contigs) | ~19 s | ~0.5 GB |
-| 10 genomes, 49 Mb | 7.4 min | ~0.6 GB |
+| typical 5 Mb complete genome, Apple GPU (`--device auto` picks it) | **under a minute** (47.6 s median, 4.97 Mb) | ~0.5 GB |
+| the same genome as a MAG-like assembly (374 contigs) | ~25 s | ~0.5 GB |
+| 10 genomes, 49 Mb | 7.2 min | ~0.5 GB |
 | typical 5 Mb genome, CPU only | **~45 min** (4.97 Mb, 2 runs: 45.0 min) | ~1.4 GB |
 | on an NVIDIA V100S (cluster) | ~27 s for a median 3.6 Mb genome (4.5 s + 6.1 s/Mb) | |
 
 On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s with its G5 primary model and 56 s with `default`. It ran on CPU, because its TensorFlow Metal plugin does not load. geNomad took 342 s on a cluster CPU node (4 threads, different hardware). These are context, not a G6 claim.
 
-**Devices.** Calls were the same on Apple M4 CPU and GPU, and scores agree with an NVIDIA V100S to about 1e-5. Outputs are not byte-identical across devices, because floating-point order differs. A call can differ only where a score sits within about 1e-5 of a threshold. Across 45 test assemblies (134,070 windows), one internal decision differed between the Apple GPU and the V100S, and no released call did. A clean install on Linux, on an x86 CPU, gave the same calls as the V100S on the example and on one held-out genome (`docs/robustness-checks.md` check 5). Other platforms (other GPUs, Windows) are expected to agree but are untested.
+**Devices.** Calls were the same on Apple M4 CPU and GPU, and scores agree with an NVIDIA V100S to about 1e-5. Outputs are not byte-identical across devices, because floating-point order differs. A call can differ only where a score sits within about 1e-5 of a threshold. Across 45 test assemblies (134,070 windows), one internal decision differed between the Apple GPU and the V100S, and no released call did. A clean install on Linux, on an x86 CPU, gave the same calls as the V100S on the example and on one held-out genome ([`docs/robustness-checks.md`](robustness-checks.md) check 5). Other platforms (other GPUs, Windows) are expected to agree but are untested.
 
 ## Not yet measured (blocks wording, not the release)
 
-- **CPU runtime (G6) against geNomad on one machine.** prophound's own hardware baseline is measured (above, `docs/benchmarks.md`). The G6 comparison still needs geNomad timed on the same machine; G5's geNomad timings came from ARC.
-- **The batch row after Phase 3.** The single-genome GPU rows were re-run on 2026-10-20; the 10-genome batch was not.
+- **CPU runtime (G6) against geNomad on one machine.** prophound's own hardware baseline is measured (above, [`docs/benchmarks.md`](benchmarks.md)). The G6 comparison still needs geNomad timed on the same machine; G5's geNomad timings came from ARC.
 - **Installed-environment size** for both tools, once the bioconda package exists.
 - **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
 
@@ -386,4 +452,8 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 | boundary stages (§10) | `scripts/boundary_eval.py`, `scripts/edge_composition.py` and the cap sweep | `analysis/att/*_pipeline.csv`, `analysis/att/composition_cap_sweep.csv` |
 | att cores on tRNA genes (§10) | `scripts/att_trna_check.py` (ARAGORN 1.2.41 via `pixi exec`) | `analysis/att/trna/att_trna.{summary,pairs}.tsv` |
 
-The training checkpoints' SHA-256s are in `docs/research-integrity.md` C8, and the defaults the first lockbox scored are frozen at `09c7756`. The 0.1.0 defaults scored by the second lockbox are frozen at `24f6c44` (`docs/lockbox2.md`). The bundled model's SHA-256s are in its `manifest.json`, mapped to the C8 hashes in `docs/lockbox.md`. Every figure above whose inputs are local is re-run by `scripts/reproduce_figures.sh` and checked against these outputs by `scripts/compare_figures.py`; all reproduce exactly (2026-10-20). The 0.1.0 re-scores (the last three rows) are not in that harness yet; their inputs are the local refinement-on runs in gitignored `arc_data/att_runs/`.
+The training checkpoints' SHA-256s are in [`docs/research-integrity.md`](research-integrity.md) C8, and the defaults the first lockbox scored are frozen at `09c7756`. The 0.1.0 defaults scored by the second lockbox are frozen at `24f6c44` ([`docs/lockbox2.md`](lockbox2.md)). The bundled model's SHA-256s are in its `manifest.json`, mapped to the C8 hashes in [`docs/lockbox.md`](lockbox.md). Every figure above whose inputs are local is re-run by `scripts/reproduce_figures.sh` and checked against these outputs by `scripts/compare_figures.py`; all reproduce exactly (2026-10-20). The 0.1.0 re-scores (the last three rows) are not in that harness yet; their inputs are the local refinement-on runs in gitignored `arc_data/att_runs/`.
+
+## Drafting history
+
+> **Draft, 2026-10-16; lockbox figures filled in 2026-10-19** from the one scoring of `841208` (`analysis/lockbox/results.json`, [`docs/lockbox.md`](lockbox.md) "Result"). **2026-10-20:** §9 (LAMBDA candidates, scored once) added, the footprint set to the bundled model, and the Phase 3 GPU timings in. Every lockbox figure below comes from that scoring. Nothing else changes when it lands, except wording the decision rule ties to it (marked ⟂). **2026-10-23: rewritten for the 0.1.0 boundary stages** (refinement on, att sites, composition edges with the 8 kb ceiling, edge ranges; [`docs/att-boundaries.md`](att-boundaries.md)). Every figure measured on a sample with local tracks was re-scored with every 0.1.0 stage. The rest carry † (measured before the boundary stages; see "How to read"). The lockbox figures are the first lockbox's, which describe the pre-boundary defaults. They are replaced by the second lockbox's when it is scored ([`docs/lockbox2.md`](lockbox2.md); marked ⟂2). **2026-10-27:** Exploratory composition edges and the novelty re-check ([`docs/related-tools.md`](related-tools.md) "Re-check, 2026-10-26") folded in, and the defaults frozen for the second lockbox at `24f6c44`. **2026-10-27 (later): the second lockbox is scored** ([`docs/lockbox2.md`](lockbox2.md) "Result"), and its figures replace the first lockbox's wherever this text gave a held-out figure for the shipped pipeline (the ⟂2 markers are resolved). The first lockbox's figures stay only as the record of the pre-boundary defaults, marked †. Rules for this text: every claim carries its number, *n*, interval, sample role and source. Wording follows [`docs/claims-and-evidence.md`](claims-and-evidence.md)'s ladder. No "first", no "guarantee", "may not call" rather than "do not call", and calls are "candidates for follow-up".

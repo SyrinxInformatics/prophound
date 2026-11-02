@@ -4,7 +4,7 @@ Written 2026-09-29 (user: "ensure we are working with integrity and good scienti
 
 **Status: reviewed by the user 2026-09-29.** Decisions:
 - **Run now:** C1, C2, C3 and C8.
-- **Literature truth (C4):** the agent lists every judgement-call row and runs the sensitivity analysis. The user reviews `scripts/literature_truth.tsv` before any pilot number enters the release text.
+- **Literature truth (C4):** the agent lists every judgment-call row and runs the sensitivity analysis. The user reviews `scripts/literature_truth.tsv` before any pilot number enters the release text.
 - **Lockbox (C9):** scored once, at freeze.
 - **ARC corrections (C5–C7):** all three, once the cheap fixes are in (clarified by the user the same day).
 
@@ -65,7 +65,7 @@ Ordered by how much each could mislead a reader of the release numbers.
 
 *Correction:* covered by F1's lockbox. Going forward, write the candidate set and the decision rule down before a sweep is run.
 
-### F3. Truth is the training labeller (serious, known)
+### F3. Truth is the training labeler (serious, known)
 
 *Guidance:* Kapoor L3 (the test distribution differs from the claim's distribution); Weber on gold standards; Philympics on the lack of curated truth for prophage callers.
 
@@ -96,12 +96,12 @@ Ordered by how much each could mislead a reader of the release numbers.
 *Guidance:* Weber (neutral benchmarking; "comparing one method with default parameters against another with extensive tuning makes for an unfair comparison").
 
 *What happened:*
-- **Tuning is asymmetric.** prophound's settings were tuned on geNomad-labelled data; geNomad ran at its defaults. That favours geNomad-agreement for us, which matters most where geNomad is the truth.
+- **Tuning is asymmetric.** prophound's settings were tuned on geNomad-labeled data; geNomad ran at its defaults. That favors geNomad-agreement for us, which matters most where geNomad is the truth.
 - **The agent built the literature truth.** The 11 `author_genes` rows are not hand-placed. `build_literature_truth.py` collects the genes whose author notes name the element (by regex), groups them into clusters split at gaps over 20 kb, and takes the largest cluster. *Corrected 2026-09-29: an earlier version of this finding called them hand-set after the EDL933 tracks were seen.* The risk is a rule that matches the wrong genes, not boundaries placed with the model's output in view.
 - **The gains sit in the least-defined class.** Five of the six recovered elements are remnants or prophage-like elements.
 
 *Correction:*
-- List every judgement-call truth row.
+- List every judgment-call truth row.
 - A sensitivity analysis with those rows excluded, and with remnants excluded.
 - The user (or a second curator) reviews `scripts/literature_truth.tsv` before its numbers enter the release text.
 
@@ -170,7 +170,7 @@ The analyses, their interpretation and the method changes are all proposed by th
 | C1 | Label every reported number by sample role; mark the 18 as "confirmation after use" | F1 | docs only |
 | C2 | Genome-level cluster bootstrap CIs for headline recall and calls/genome (42, 18, phage-free, literature) | F4 | local, offline |
 | C3 | Covered at 25/50/75% for the shipped modes | F9 | local, offline |
-| C4 | Literature-truth audit: list judgement-call rows; sensitivity excluding them and excluding remnants; user review of the truth file | F6 | local + user time |
+| C4 | Literature-truth audit: list judgment-call rows; sensitivity excluding them and excluding remnants; user review of the truth file | F6 | local + user time |
 | C5 | Element containment vs training positives for all eval sets; recall stratified by containment | F5 | ARC CPU |
 | C6 | Off-target annotation with an unconditioned control | F8 | ARC CPU |
 | C7 | Spike-in with a model-independent site rule | F7 | ARC GPU |
@@ -248,18 +248,18 @@ Coordinate classes of the 57 truth rows:
 |---|---|---|---|---|
 | all | 57 | 0.912 | 0.807 | +6 / −0; +0.105 (0.000 to +0.197) |
 | author coordinates only | 41 | 0.927 | 0.829 | +4 / −0; +0.098 (0.000 to +0.158) |
-| no gene-span judgement | 45 | 0.933 | 0.844 | +4 / −0; +0.089 (0.000 to +0.148) |
+| no gene-span judgment | 45 | 0.933 | 0.844 | +4 / −0; +0.089 (0.000 to +0.148) |
 | no remnants | 43 | 0.977 | 0.953 | +1 / −0; +0.023 (0.000 to +0.049) |
 | named prophages, author coordinates | 25 | 1.000 | 0.960 | +1 / −0; +0.040 (0.000 to +0.053) |
 
 - **The ensemble never loses an element geNomad covers**, in any subset.
-- **The advantage lives in remnants.** Remove them and it shrinks from 6 elements to 1 (Sakai Sp16). Two of the six gains (*B. subtilis* prophages 3 and 6) rest on gene-span judgement rows.
+- **The advantage lives in remnants.** Remove them and it shrinks from 6 elements to 1 (Sakai Sp16). Two of the six gains (*B. subtilis* prophages 3 and 6) rest on gene-span judgment rows.
 - **At Default, the genome-level interval includes zero in every subset.** The gains come from 2 of the 7 genomes, so "better than geNomad on curated truth" is not established by this pilot. Exploratory's all-rows difference (+8 / −0) is the only one whose interval excludes zero (+0.029 to +0.214).
 - **Verified 2026-09-29 against the raw AL009126 record** (NCBI efetch):
   - The two gains on gene-span rows reproduce the authors' own annotation exactly.
   - *B. subtilis* prophage 3: the "defective prophage 3" / "prophage region 3" genes run *ydzTc*…*ydjJ*, 651,977–675,857, identical to the truth row. The region includes the *bsuM*/*bsuR* restriction-modification genes.
   - *B. subtilis* prophage 6: the "(putative) defective prophage 6" genes run *yoaM*…*yobO*, 2,036,039–2,078,626, identical. It carries an Xre/cro repressor, phage proteins and a pre-neck appendage protein.
-  - The extraction is sound for these two. What remains a judgement is **class**: whether "defective prophage" regions count as prophage truth at all.
+  - The extraction is sound for these two. What remains a judgment is **class**: whether "defective prophage" regions count as prophage truth at all.
 - **User review of the 16 non-author-coordinate rows, 2026-09-29.** Of the 16, 12 are covered by both tools, 2 are missed by both, and only *B. subtilis* prophages 3 and 6 separate them (verified above). Decisions:
   - **Headline = class `prophage` only.** `cryptic_prophage`, `remnant` and the new `phage_derived` class are reported as separate rows.
   - **TLC and the R2/F2 pyocin move to `phage_derived`**: phage-derived, not prophages.
@@ -286,8 +286,8 @@ Coordinate classes of the 57 truth rows:
     - `prophage_v2_pool_r1` `3259673877ced18e79a92227f898b2009f69cfe82b692c59cb355d74dc27655f`
     - `prophage_v2_pool_r2` `7a50701a0be0f9cca87f000b428341e67d55242f77807321b3237ee73f31e59c`
     - `prophage_v2_pool_r3` `541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484`
-  - **geNomad software version 1.9.4**, read by the user on 2026-09-29 from the `mge_explorer` env (`genomad --version`), the env both the corpus labelling and the lockbox build use.
-  - **The corpus labels were made with the same versions** (confirmed by the user 2026-09-29, who ran the original labelling). Training, evaluation and lockbox truth all come from geNomad 1.9.4 with DB 1.9, so no version difference separates them.
+  - **geNomad software version 1.9.4**, read by the user on 2026-09-29 from the `mge_explorer` env (`genomad --version`), the env both the corpus labeling and the lockbox build use.
+  - **The corpus labels were made with the same versions** (confirmed by the user 2026-09-29, who ran the original labeling). Training, evaluation and lockbox truth all come from geNomad 1.9.4 with DB 1.9, so no version difference separates them.
 
 ### C6 — model-independent off-target controls (`822067`, 2026-09-29)
 
@@ -376,7 +376,7 @@ C5, C6 and C7 go to ARC now that the cheap fixes are in (user, 2026-09-29). Buil
 - **C7:** `small_element_spikein.py build --site_rule genomad`.
 - Launchers: `scripts/integrity_cpu.slurm` (C5 + C6), submitted as **`822067`**, and `scripts/spikein_siterule.slurm` (C7, GPU), submitted as **`822068`**.
 
-Both new options default to the old behaviour, so earlier results still reproduce. C8's version and checksum record goes in the same SSH call as the submission.
+Both new options default to the old behavior, so earlier results still reproduce. C8's version and checksum record goes in the same SSH call as the submission.
 
 ### C9 result — lockbox (`841208`, scored once 2026-10-19)
 

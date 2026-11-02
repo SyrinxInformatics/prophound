@@ -72,7 +72,7 @@ What none of them was found to do is the combination:
 | tool | model input | gene calling? | reference DB at run time? | how regions and boundaries are set | how it relates |
 |---|---|---|---|---|---|
 | **geNomad** `find-proviruses` | genes | yes | yes (marker profiles; MMseqs2 for integrases) | CRF over marker-gene specificity; edges extended to tRNAs (ARAGORN) and integrases | This tool's label source. Annotation-based. Tuned for precise calls. |
-| **Jaeger** (v1.26.5, 2026) | 2 kb nucleotide windows, six-frame translated, dilated CNN | **yes, for boundaries** (pyrodigal-gv); an annotation is optional | no (homology-free) | See "Jaeger in detail" | Nearest *method* neighbour. It localizes prophages, but only on contigs >500 kb by default and with gene-snapped edges. It trained on free phage versus host, with prophages masked. |
+| **Jaeger** (v1.26.5, 2026) | 2 kb nucleotide windows, six-frame translated, dilated CNN | **yes, for boundaries** (pyrodigal-gv); an annotation is optional | no (homology-free) | See "Jaeger in detail" | Nearest *method* neighbor. It localizes prophages, but only on contigs >500 kb by default and with gene-snapped edges. It trained on free phage versus host, with prophages masked. |
 | **LAMBDA** (2026 benchmark) | 2/4/8 kb windows, 9 genomic LMs (1 M–7 B params) | no | no | See "LAMBDA in detail" | **Closest pipeline**, but a research benchmark, not a tool. Its curated truth set is useful to us (below). |
 | **PhageBoost** | genes | yes (Pyrodigal) | **no** (gene features + XGBoost) | per-gene probability >0.9, ≥10 genes, allowed gaps, Parzen smoothing | **Closest in framing**: database-free, "discovery of novel prophages". Labels came from pVOG vs COG gene stretches. Needs gene calls, and has no recall target. |
 | **PIDE** (2025) | proteins | yes | no homology search; fine-tuned ESM-2 (650 M) | predicted phage ORFs clustered by gene density | Database-free, protein-level ML. Handles MAGs. |
@@ -109,7 +109,7 @@ What none of them was found to do is the combination:
 
 ### Philympics (2021)
 
-A community gold standard: 78 manually curated genomes with CDS-level `is_phage` tags, and a Snakemake framework that accepts new tools as rules (MIT licence). Published CDS-level results: PhiSpy has the best F1 (0.733; recall 0.731), VirSorter2 the highest recall (0.766, precision 0.399), and Seeker, the only nucleotide deep-learning tool included, F1 0.093. geNomad is not in it. Contributing prophound as a rule is a credible external route to publishing known accuracy. Genome overlap with our corpus, and the LAMBDA baseline computed from its published per-tool predictions, are in `docs/claims-and-evidence.md`.
+A community gold standard: 78 manually curated genomes with CDS-level `is_phage` tags, and a Snakemake framework that accepts new tools as rules (MIT license). Published CDS-level results: PhiSpy has the best F1 (0.733; recall 0.731), VirSorter2 the highest recall (0.766, precision 0.399), and Seeker, the only nucleotide deep-learning tool included, F1 0.093. geNomad is not in it. Contributing prophound as a rule is a credible external route to publishing known accuracy. Genome overlap with our corpus, and the LAMBDA baseline computed from its published per-tool predictions, are in `docs/claims-and-evidence.md`.
 
 ## Consequences for the write-up
 
