@@ -1,0 +1,249 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.2",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22806627)\t80%; charging; 1:13 remaining present: true",
+    "omp_num_threads": null,
+    "code_commit": "a9f1851ee5b9d918c1f3e38324e92e0ba6723ad4",
+    "code_dirty": true,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "mps",
+  "mode": "default",
+  "repeats": 1,
+  "warmup": false,
+  "inputs": {
+    "GCF_000027305.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000027305.1.fna",
+      "n_contigs": 1,
+      "bp": 1830138,
+      "runs": [
+        {
+          "wall_s": 16.07,
+          "peak_rss_mb": 484.2,
+          "n_windows": 1821,
+          "n_regions": 4,
+          "regions_sha256": "31b6154d9d8be1dbd4f50d439aecb9ea1b451762d3369e341a7f457046c20551",
+          "detailed_sha256": "c38c917b88886b11b4e127e1163f6d79c62c00775bb7fb93b3369d702e86e1aa",
+          "warmup": false
+        }
+      ],
+      "median_s": 16.07,
+      "min_s": 16.07,
+      "max_s": 16.07,
+      "median_s_per_mb": 8.78,
+      "median_peak_rss_mb": 484.2,
+      "regions_identical": true
+    },
+    "GCF_000007625.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000007625.1.fna",
+      "n_contigs": 1,
+      "bp": 2799251,
+      "runs": [
+        {
+          "wall_s": 29.82,
+          "peak_rss_mb": 519.0,
+          "n_windows": 2790,
+          "n_regions": 16,
+          "regions_sha256": "290e2f52f332ada4d8c67c99ebbe5aff5e08ea5330cd3a4ea6f330b629cf8603",
+          "detailed_sha256": "22fdde7b6fc699dd139010d0523e1ac8cf76de7d3cf7bf148a2d0c84f78a985a",
+          "warmup": false
+        }
+      ],
+      "median_s": 29.82,
+      "min_s": 29.82,
+      "max_s": 29.82,
+      "median_s_per_mb": 10.65,
+      "median_peak_rss_mb": 519.0,
+      "regions_identical": true
+    },
+    "GCA_013348785.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCA_013348785.1.fna",
+      "n_contigs": 1,
+      "bp": 3747033,
+      "runs": [
+        {
+          "wall_s": 31.86,
+          "peak_rss_mb": 519.8,
+          "n_windows": 3738,
+          "n_regions": 8,
+          "regions_sha256": "c289cbc6d66e810973faf6cc35016141f4e596a32b750b9b7b1a99d29d4707b0",
+          "detailed_sha256": "d1b6a98ac65d189788c5ea2b3f2646a9bcbd78602b1e48b1473902a83bf33907",
+          "warmup": false
+        }
+      ],
+      "median_s": 31.86,
+      "min_s": 31.86,
+      "max_s": 31.86,
+      "median_s_per_mb": 8.5,
+      "median_peak_rss_mb": 519.8,
+      "regions_identical": true
+    },
+    "GCF_000146165.2": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 48.58,
+          "peak_rss_mb": 507.9,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        }
+      ],
+      "median_s": 48.58,
+      "min_s": 48.58,
+      "max_s": 48.58,
+      "median_s_per_mb": 9.78,
+      "median_peak_rss_mb": 507.9,
+      "regions_identical": true
+    },
+    "GCA_017183835.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCA_017183835.1.fna",
+      "n_contigs": 1,
+      "bp": 5107403,
+      "runs": [
+        {
+          "wall_s": 42.35,
+          "peak_rss_mb": 506.9,
+          "n_windows": 5098,
+          "n_regions": 11,
+          "regions_sha256": "33917188ec12980914ee5fd15f34ec46ab9146cbb259389f73c8a2935a024172",
+          "detailed_sha256": "c5abf85829423e000f928ff06ed90263141b9dcf4ba149dd455957a41d775318",
+          "warmup": false
+        }
+      ],
+      "median_s": 42.35,
+      "min_s": 42.35,
+      "max_s": 42.35,
+      "median_s_per_mb": 8.29,
+      "median_peak_rss_mb": 506.9,
+      "regions_identical": true
+    },
+    "GCA_017189375.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCA_017189375.1.fna",
+      "n_contigs": 1,
+      "bp": 5120346,
+      "runs": [
+        {
+          "wall_s": 44.3,
+          "peak_rss_mb": 496.6,
+          "n_windows": 5111,
+          "n_regions": 13,
+          "regions_sha256": "d42da9694f7f4ac8518b8d200b13008be6c41aff10a119d05f07054b0a822848",
+          "detailed_sha256": "59680bd8d42caa0a0380aac076d233105a65864bfa9488907cd351a322a175ec",
+          "warmup": false
+        }
+      ],
+      "median_s": 44.3,
+      "min_s": 44.3,
+      "max_s": 44.3,
+      "median_s_per_mb": 8.65,
+      "median_peak_rss_mb": 496.6,
+      "regions_identical": true
+    },
+    "GCA_017190795.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCA_017190795.1.fna",
+      "n_contigs": 1,
+      "bp": 5352395,
+      "runs": [
+        {
+          "wall_s": 49.68,
+          "peak_rss_mb": 520.3,
+          "n_windows": 5343,
+          "n_regions": 20,
+          "regions_sha256": "3fdf3ce6b5c56a34d696027199c2531e586a78c5ca11ab26e77faaddfa4f8b5f",
+          "detailed_sha256": "b9fc0c4fa1e2ae83d3e433cf2151ad6cf2525b42c941dc5d244e3c4392859634",
+          "warmup": false
+        }
+      ],
+      "median_s": 49.68,
+      "min_s": 49.68,
+      "max_s": 49.68,
+      "median_s_per_mb": 9.28,
+      "median_peak_rss_mb": 520.3,
+      "regions_identical": true
+    },
+    "GCF_000226155.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000226155.1.fna",
+      "n_contigs": 1,
+      "bp": 6327754,
+      "runs": [
+        {
+          "wall_s": 50.19,
+          "peak_rss_mb": 504.6,
+          "n_windows": 6318,
+          "n_regions": 10,
+          "regions_sha256": "a7642458694314d3222ce6472464a6675a3472f8c3359b708c96a0dd92cdba9e",
+          "detailed_sha256": "70d580e11c6e3f2f21ddca54ada48ab27664c835b68206d1eb747d093934290d",
+          "warmup": false
+        }
+      ],
+      "median_s": 50.19,
+      "min_s": 50.19,
+      "max_s": 50.19,
+      "median_s_per_mb": 7.93,
+      "median_peak_rss_mb": 504.6,
+      "regions_identical": true
+    },
+    "GCF_000026645.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000026645.1.fna",
+      "n_contigs": 1,
+      "bp": 6601757,
+      "runs": [
+        {
+          "wall_s": 56.42,
+          "peak_rss_mb": 521.9,
+          "n_windows": 6592,
+          "n_regions": 13,
+          "regions_sha256": "400dba59b210d0bcfd937d1fd7dc12c05e52e26a354592130672d637cf8a6f21",
+          "detailed_sha256": "ba2d693ee5938087326d7156c3e864fb448265ee875b40d81ff5c8f1377a2c7b",
+          "warmup": false
+        }
+      ],
+      "median_s": 56.42,
+      "min_s": 56.42,
+      "max_s": 56.42,
+      "median_s_per_mb": 8.55,
+      "median_peak_rss_mb": 521.9,
+      "regions_identical": true
+    },
+    "GCF_000009625.1": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000009625.1.fna",
+      "n_contigs": 1,
+      "bp": 7036071,
+      "runs": [
+        {
+          "wall_s": 63.35,
+          "peak_rss_mb": 521.7,
+          "n_windows": 7027,
+          "n_regions": 22,
+          "regions_sha256": "08c0f5a57d76ad71bb06e5d94585de01595a3ea08cc130a696ef2f65e5162522",
+          "detailed_sha256": "ffdc90af7e441e0055def4a464d4a47e06c86b13bf62d0347b00eb7f3190e61b",
+          "warmup": false
+        }
+      ],
+      "median_s": 63.35,
+      "min_s": 63.35,
+      "max_s": 63.35,
+      "median_s_per_mb": 9.0,
+      "median_peak_rss_mb": 521.7,
+      "regions_identical": true
+    }
+  }
+}

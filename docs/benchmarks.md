@@ -2,7 +2,7 @@
 
 Written 2026-10-19. What a user should expect when they run prophound, measured on a current laptop (user, 2026-10-19: "this laptop has hardware that most other users will likely have similar or slightly more / less computing power, so users know what they are in for"). The cluster GPU figures are secondary: most users will not have a V100.
 
-The first run (2026-10-19) measured the code at `b4848b9`: the lockbox code plus the MPS pooling fix (`docs/tech-debt-audit.md` S10). Phase 3 of the refactor targeted speed. **The single-genome Apple GPU rows were re-run after it on 2026-10-20** ("Phase 3 speed work" below), and the release text quotes them. The batch row and the CPU figures are from the first run; Phase 3 leaves CPU time unchanged (profiled).
+**The 0.1.0 defaults were timed on 2026-11-02** ("Headline" below); everything after that section is the earlier record. The first run (2026-10-19) measured the code at `b4848b9`: the lockbox code plus the MPS pooling fix ([`docs/tech-debt-audit.md`](tech-debt-audit.md) S10). Phase 3 of the refactor targeted speed. **The single-genome Apple GPU rows were re-run after it on 2026-10-20** ("Phase 3 speed work" below), and the release text quotes them. The batch row and the CPU figures are from the first run; Phase 3 leaves CPU time unchanged (profiled).
 
 ## The machine
 
@@ -16,7 +16,26 @@ The first run (2026-10-19) measured the code at `b4848b9`: the lockbox code plus
 | software | torch 2.13.0 from conda-forge (pixi), Python 3.14, 4 torch CPU threads |
 | prophound | `b4848b9`, Default mode, 3-checkpoint ensemble, shipped defaults |
 
-## Headline: Apple M4 GPU (`--device mps`)
+## Headline: the 0.1.0 defaults (2026-11-02)
+
+Re-run on the code that ships (`a9f1851`; bundled model; Default mode), after every default was final. Same machine, on mains power, idle (load under 2). Inputs are the original G5 files, re-pulled from ARC and checked against `analysis/g5/input_md5.tsv` (all 11 match). Protocol as below. The GPU runs had a clean tree. The CPU runs record a dirty tree because this doc had uncommitted edits; no code had changed. Every repeat of an input wrote byte-identical `regions.tsv`. Raw results: `analysis/benchmarks/final_{mps,mps_batch,control_p3_mps,cpu}.json`.
+
+| input | size | median wall time (range) | per Mb | peak memory |
+|---|---|---|---|---|
+| typical complete genome (`GCF_000146165.2`), Apple GPU | 4.97 Mb, 1 contig | **47.6 s** (46.8–48.7) | 9.6 s | 497 MB |
+| the same genome as a MAG-like shred (`mag_s0`), Apple GPU | 4.95 Mb, 374 contigs | **25.2 s** (25.1–25.2) | 5.1 s | 545 MB |
+| 10 genomes spanning the corpus size range, Apple GPU (10 separate runs) | 1.8–7.0 Mb, 48.9 Mb total | **7.2 min** in total; median 46.4 s per genome | 8.85 s (fit: 3.4 s fixed + 8.15 s per Mb) | ≤522 MB |
+| typical complete genome, CPU only (2 runs, 4 threads) | 4.97 Mb | **62.0 min** (61.7 and 62.3) | 12.5 min | 1.14 GB |
+
+**In plain terms: under a minute for a typical 5 Mb bacterial genome on an Apple GPU, about 10 seconds per Mb, and about half a GB of memory.** A batch of 100 genomes of that size is roughly 80 minutes. **On CPU alone, about an hour per 5 Mb genome** (78× the GPU time), in a little over 1 GB.
+
+**Why it is slower than the 2026-10-20 figure (33.5 s).** A control run of the Phase 3 code (`49830e3`, training checkpoints, which hold the same weights) on the same genome, back to back today, took **35.0 s** (35.0–35.1; 20 calls, as on 2026-10-20). So the machine is about 4% slower today, and the 0.1.0 code costs about **36% more** than the Phase 3 code on the same machine. That is the boundary stages added since (refinement, att edges, composition edges). Refinement alone was measured at +10–23% ([`docs/att-boundaries.md`](att-boundaries.md)); the rest is presumably att and composition, not profiled. The batch reads about the same as the 2026-10-19 batch (7.4 min) only because that batch predates Phase 3's −22%.
+
+**CPU.** The CPU time rose by about the same share: 62.0 min against 45.0 min on 2026-10-19 (+38%), so the boundary stages scale with the forward pass on both devices. Peak memory fell from 1.37 to 1.14 GB. The CPU and GPU runs wrote byte-identical `regions.tsv`, `regions.detailed.tsv` and `regions.filtered.tsv` (21 calls); only the raw window scores in `windows.tsv` differ, at floating-point level.
+
+## Earlier measurement: Apple M4 GPU, before the boundary stages (2026-10-19/20)
+
+These rows are superseded by the 0.1.0 table above and kept as the record.
 
 Protocol: one warm-up run, then 3 timed runs per input, each a fresh `prophound predict` process. Wall time includes start-up and model loading; peak memory is the process's maximum resident set (`/usr/bin/time -l`). Every repeat wrote byte-identical `regions.tsv`. Scripts and raw results: `scripts/benchmark.py`, `analysis/benchmarks/mps_{typical,batch,profile}.json`.
 
@@ -38,11 +57,11 @@ Fragmented assemblies are faster per Mb than complete genomes. Fewer full 10 kb 
 | reading and one-hot encoding windows on the CPU (0.68 ms per window, done once per checkpoint, so 3×) | 10.2 s | 23% |
 | loading checkpoints, moving batches to the GPU | 0.2 s | <1% |
 
-So the GPU does most of the work, and encoding is the one cheap target. A vectorised encoder (13× faster on its own, `docs/tech-debt-audit.md` S9), run once rather than once per checkpoint, would save about 9 s, to roughly 34 s per 5 Mb genome. That is Phase 3.
+So the GPU does most of the work, and encoding is the one cheap target. A vectorized encoder (13× faster on its own, [`docs/tech-debt-audit.md`](tech-debt-audit.md) S9), run once rather than once per checkpoint, would save about 9 s, to roughly 34 s per 5 Mb genome. That is Phase 3.
 
 ### Phase 3 speed work (2026-10-20)
 
-Two changes, both with byte-identical outputs (`docs/tech-debt-audit.md` Phase 3): a vectorised one-hot encoder, and one scoring pass that reads and encodes each window once and runs it through all three checkpoints. Before, every window was encoded once per checkpoint. Measured back to back on the same idle machine, timing the code before Phase 3 (`f3d526e`) and after it. Protocol as above; 1 warm-up plus 3 timed runs. `analysis/benchmarks/p3_{before,after}_{mps,mps_profile,cpu_profile}.json`.
+Two changes, both with byte-identical outputs ([`docs/tech-debt-audit.md`](tech-debt-audit.md) Phase 3): a vectorized one-hot encoder, and one scoring pass that reads and encodes each window once and runs it through all three checkpoints. Before, every window was encoded once per checkpoint. Measured back to back on the same idle machine, timing the code before Phase 3 (`f3d526e`) and after it. Protocol as above; 1 warm-up plus 3 timed runs. `analysis/benchmarks/p3_{before,after}_{mps,mps_profile,cpu_profile}.json`.
 
 | | before | after | change |
 |---|---|---|---|
@@ -56,9 +75,9 @@ Every run before and after wrote the same `regions.tsv`. The forward pass is now
 
 **CPU (300-window profile, 4 threads):** the forward pass costs 186–193 ms per window per checkpoint, and encoding 0.1–0.7 ms. Encoding was about 0.3% of the CPU run time, so Phase 3 barely changes it: projected from the profile, a typical genome still takes about 45 minutes. The open CPU questions (pip's torch build with oneDNN, more threads) are untouched.
 
-## CPU only (`--device cpu`)
+## Earlier measurement: CPU only, before the boundary stages (2026-10-19)
 
-For users without an Apple Silicon or NVIDIA GPU. Protocol: 2 timed runs of the typical genome, no warm-up; a warm-up is small next to the run time.
+Superseded by the 0.1.0 table above and kept as the record. For users without an Apple Silicon or NVIDIA GPU. Protocol: 2 timed runs of the typical genome, no warm-up; a warm-up is small next to the run time.
 
 Measured 2026-10-19 evening on the same machine, idle and on mains power; code identical to the MPS run (`cpu_typical.json`).
 
@@ -69,6 +88,7 @@ Measured 2026-10-19 evening on the same machine, idle and on mains power; code i
 **In plain terms: on CPU alone, about 45 minutes for a typical 5 Mb genome, 62× slower than the same laptop's GPU, and about twice the memory.** Both runs wrote byte-identical `regions.tsv`. Against the MPS run, the 20 calls are identical (coordinates, `seed_support`, contig-edge flags), with scores within 6e-7. The first attempt (afternoon) was stopped at 16:00 before finishing, and nothing from it is used.
 
 Earlier measurement on the same machine, for scale: `GCF_000027305.1` (1.83 Mb) took 1,053 s, 17.6 minutes (about 9.6 minutes per Mb) on 4 threads. Two causes, neither fixed yet:
+
 - **The torch build.** The pixi/conda-forge build is generic arm64 with oneDNN off (`torch.backends.mkldnn.is_available()` is False).
 - **The model.** Its 10 kb convolutions run twice per window (forward and reverse complement), for three checkpoints. Measured in process: about 0.2 s per window per checkpoint on CPU.
 
@@ -88,16 +108,17 @@ The M4 GPU is about 1.45× slower per Mb than a V100S.
 
 ## Against other tools on the same genomes
 
-The 10 benchmark genomes are G5 genomes, so the G5 timings apply to exactly these inputs (`analysis/g5/{jaeger,genomad}_wall_seconds.tsv`, `docs/claims-and-evidence.md` "G5"). Medians over the 10:
+The 10 benchmark genomes are G5 genomes, so the G5 timings apply to exactly these inputs (`analysis/g5/{jaeger,genomad}_wall_seconds.tsv`, [`docs/claims-and-evidence.md`](claims-and-evidence.md) "G5"). Medians over the 10:
 
 | tool | hardware | median per genome (~5.1 Mb) |
 |---|---|---|
-| **prophound** (3 checkpoints, Default) | this M4, GPU | **46.5 s** |
+| **prophound** (3 checkpoints, Default) | this M4, GPU | **46.4 s** (0.1.0 defaults, 2026-11-02; 46.5 s on 2026-10-19 code) |
 | Jaeger 1.26.5, `57341_1.5M` (the G5 primary model) | this M4, CPU, 8 workers | 206.5 s |
 | Jaeger 1.26.5, `default` model | this M4, CPU, 8 workers | 55.5 s |
 | geNomad 1.9.4 | ARC CPU node, 4 threads (different hardware) | 342 s |
 
 Caveats:
+
 - **Jaeger ran on CPU here** because its TensorFlow Metal plugin fails to load under TF 2.21 (`metadata/g5-comparators/pixi.toml`). So this is not Jaeger's best case on a Mac.
 - **geNomad was timed on different hardware** and with a 1.47 GB database, so its row is context, not a comparison. The G6 comparison needs both tools on one machine (release text, "Not yet measured").
 - The Jaeger runs date from 2026-09-30/10-01, not today.
@@ -115,6 +136,7 @@ Caveats:
 A call can differ between devices only when a decision value lands within about 1e-5 of a threshold. At a margin of 1e-4 (6× the largest difference seen), 289 of 536,280 window scores in the 45 G5b runs sit near a threshold (0.90 / 0.95 / 0.99 / 0.995), as do 42 of 153,583 bin means near the 0.1 bridge gate. Most runs have a few such values. Whether any of them decides a call is the next measurement:
 
 **Measured 2026-10-19 (`scripts/cross_device_g5b.py`, `analysis/benchmarks/cross_device_g5b_mps.json`).** All 45 G5b runs (9 genomes: complete plus four shredded conditions; inputs MD5-identical to ARC's) were re-run on the M4 GPU and compared with the scores recorded on the V100S. The comparison covers 134,070 windows × 4 scores (ensemble and three checkpoints) and every bin mean.
+
 - **Largest score difference:** 1.9e-5.
 - **Decision flips:** one. Checkpoint 1 scored one window 0.98999995 on CUDA and 0.99000007 on MPS, 1.2e-7 either side of Conservative's 0.99 extend threshold. No bin mean flipped at the bridge gate.
 - **Effect of that flip:** rebuilding the calls from both tracks with the shipped builder and vote, it extends checkpoint 1's own Conservative call by 1 kb. **The released calls are identical in every mode**: a single checkpoint's call only votes, by overlap.
@@ -123,6 +145,7 @@ A call can differ between devices only when a decision value lands within about 
 So the calls are the same on all three verified devices, and the measured rate of even an internal decision differing is about 1 in 500,000 scores.
 
 **What can be said about other platforms.** Verified so far: Apple M4 CPU, Apple M4 GPU (MPS, after the fix) and NVIDIA V100S (CUDA). Not verified:
+
 - x86 CPUs (Intel and AMD, with MKL or oneDNN);
 - other NVIDIA generations;
 - AMD ROCm and Intel XPU;
@@ -142,7 +165,7 @@ The S10 bug shows why "it should be the same" is not evidence. Proposed coverage
 
 ## Re-running these
 
-```
+```bash
 pixi run python src/prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \
     --input typical=<genome.fna> --workdir <scratch> --out analysis/benchmarks/<name>.json
 pixi run python src/prophound/models/prophage/scripts/benchmark.py profile --code . --device mps \

@@ -320,7 +320,7 @@ Truth is geNomad's coordinates on the 42 and the 18, authors' coordinates on the
 - **Att cores carry the integration signature, which the search never sees.** In Default, 0.577 of att calls (94 of 163, Wilson 0.500–0.650; four samples) have a core copy on a tRNA or tmRNA gene. Random placement would give 0.004, and host repeats passing the same rule give 0.045 (3 of 66). In 91 of the 94, only one copy lies on the gene, as integration leaves it, and the genes are the known hotspots (tRNA-Arg, -Met, -Leu, tmRNA). Att calls off every known element carry it at 0.495, so most are real integration sites geNomad does not call, of prophages or other integrative elements ([`docs/att-boundaries.md`](att-boundaries.md) "Are the att sites real?"; analysis only, no genes in the pipeline). This is evidence about the set. A single att call without a tRNA can still be chance.
 - **Estimated ends are about 2 kb off (median), with a long tail.** Composition halved the median error (3.6 → 2.1 kb on the tuning sample). In Exploratory it takes the median from 3.7 to 2.0 kb (tuning) and cuts off-element bp by 12–17%, at the cost of one tuning-sample element (a partial detection just over 50%; 0.994 → 0.989), unchanged on the other three samples.
 - **Ranges.** An estimated end's range runs 0.143 × the call's length outward and 0.463 × inward in every mode, fitted as the 5th–95th percentiles on the tuning sample (Default and Conservative). Coverage on the other samples is 0.88–0.92 in every mode; on LAMBDA it is lower (Default 0.845, Exploratory 0.804). Median width is 21–26 kb, so the ranges are honest but wide. Ends nothing could move stay on the 1 kb grid; they are flagged in `note` and their ranges held less often. **Held out they hold less: 0.782 of Default model edges on the second lockbox (237 of 303; Wilson 0.732–0.825), 0.765 in Exploratory and 0.777 in Conservative.** By the rule fixed before scoring they are therefore not called 90% ranges. The release states what they did: they held the true end in about 78% of cases on held-out genomes (88–92% on the development samples). The fractions were fitted on the tuning sample and are too narrow for new genera; widening them is a post-0.1.0 change.
-- **Costs.** Calls per genome rise 1–5% (refinement splits some calls). That lowers count-matched comparisons (§4) and part of the LAMBDA candidates figure (§9). Run time rises 10–23% on the M4 GPU (Default; CPU not yet measured; "Run time" below). On the literature pilot, Exploratory and Conservative each lose one element (a partial detection trimmed under 50%).
+- **Costs.** Calls per genome rise 1–5% (refinement splits some calls). That lowers count-matched comparisons (§4) and part of the LAMBDA candidates figure (§9). Refinement alone raised run time 10–23% on the M4 GPU; all the boundary stages together add about 36% on the GPU and 38% on the CPU (Default; "Run time" below). On the literature pilot, Exploratory and Conservative each lose one element (a partial detection trimmed under 50%).
 
 Wording: *"boundaries are placed without genes: base-exact at an att site where one is found (about one call in seven on known elements), otherwise estimated to a median of about 2 kb, with a range on every estimated end that held the true end in about 78% of cases on held-out genomes"*. Not "base-exact boundaries" unqualified.
 
@@ -420,7 +420,7 @@ Measured on a MacBook Pro (Apple M4, 16 GB). This is the kind of machine most us
 | typical 5 Mb complete genome, Apple GPU (`--device auto` picks it) | **under a minute** (47.6 s median, 4.97 Mb) | ~0.5 GB |
 | the same genome as a MAG-like assembly (374 contigs) | ~25 s | ~0.5 GB |
 | 10 genomes, 49 Mb | 7.2 min | ~0.5 GB |
-| typical 5 Mb genome, CPU only | **~45 min** (4.97 Mb, 2 runs: 45.0 min) | ~1.4 GB |
+| typical 5 Mb genome, CPU only | **about an hour** (4.97 Mb, 2 runs: 62.0 min median) | ~1.1 GB |
 | on an NVIDIA V100S (cluster) | ~27 s for a median 3.6 Mb genome (4.5 s + 6.1 s/Mb) | |
 
 On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s with its G5 primary model and 56 s with `default`. It ran on CPU, because its TensorFlow Metal plugin does not load. geNomad took 342 s on a cluster CPU node (4 threads, different hardware). These are context, not a G6 claim.
@@ -431,7 +431,6 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 
 - **CPU runtime (G6) against geNomad on one machine.** prophound's own hardware baseline is measured (above, [`docs/benchmarks.md`](benchmarks.md)). The G6 comparison still needs geNomad timed on the same machine; G5's geNomad timings came from ARC.
 - **Installed-environment size** for both tools, once the bioconda package exists.
-- **Run time with the 0.1.0 defaults** on the M4 GPU and CPU (above).
 
 ## Reproduction
 

@@ -1,0 +1,60 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.2",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22806627)\t80%; AC attached; not charging present: true",
+    "omp_num_threads": null,
+    "code_commit": "a9f1851ee5b9d918c1f3e38324e92e0ba6723ad4",
+    "code_dirty": true,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "cpu",
+  "mode": "default",
+  "repeats": 2,
+  "warmup": false,
+  "inputs": {
+    "typical": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 3738.44,
+          "peak_rss_mb": 1125.6,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        },
+        {
+          "wall_s": 3700.39,
+          "peak_rss_mb": 1144.4,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        }
+      ],
+      "median_s": 3719.415,
+      "min_s": 3700.39,
+      "max_s": 3738.44,
+      "median_s_per_mb": 748.4,
+      "median_peak_rss_mb": 1135.0,
+      "regions_identical": true
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.2",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22806627)\t80%; AC attached; not charging present: true",
+    "omp_num_threads": null,
+    "code_commit": "a9f1851ee5b9d918c1f3e38324e92e0ba6723ad4",
+    "code_dirty": false,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "mps",
+  "mode": "default",
+  "repeats": 3,
+  "warmup": true,
+  "inputs": {
+    "typical": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 34.23,
+          "peak_rss_mb": 511.3,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "1834b5e577fc8cf13e7ee058c418717059baa5b79c3779b5cd55dca99ea97590",
+          "warmup": true
+        },
+        {
+          "wall_s": 34.97,
+          "peak_rss_mb": 510.8,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "1834b5e577fc8cf13e7ee058c418717059baa5b79c3779b5cd55dca99ea97590",
+          "warmup": false
+        },
+        {
+          "wall_s": 35.02,
+          "peak_rss_mb": 510.2,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "1834b5e577fc8cf13e7ee058c418717059baa5b79c3779b5cd55dca99ea97590",
+          "warmup": false
+        },
+        {
+          "wall_s": 35.07,
+          "peak_rss_mb": 511.6,
+          "n_windows": 4960,
+          "n_regions": 20,
+          "regions_sha256": "1834b5e577fc8cf13e7ee058c418717059baa5b79c3779b5cd55dca99ea97590",
+          "warmup": false
+        }
+      ],
+      "median_s": 35.02,
+      "min_s": 34.97,
+      "max_s": 35.07,
+      "median_s_per_mb": 7.05,
+      "median_peak_rss_mb": 510.8,
+      "regions_identical": true
+    }
+  }
+}

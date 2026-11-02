@@ -66,7 +66,7 @@ On a MacBook Pro (Apple M4, 16 GB), Default mode, the 0.1.0 defaults (timed 2026
 |---|---|---|
 | a 5 Mb genome, Apple GPU (picked automatically) | under a minute (~48 s) | ~0.5 GB |
 | the same genome as a 374-contig assembly | ~25 s | ~0.5 GB |
-| a 5 Mb genome, CPU only | ~45 min | ~1.4 GB |
+| a 5 Mb genome, CPU only | about an hour (~62 min) | ~1.1 GB |
 
 On an NVIDIA V100S a median 3.6 Mb genome takes ~27 s. Details: [`benchmarks.md`](benchmarks.md).
 

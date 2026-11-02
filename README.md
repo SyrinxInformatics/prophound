@@ -137,7 +137,7 @@ On a held-out test of 150 complete genomes these made about 37, 12 and 5 calls p
 
 ### Run time
 
-A 5 Mb genome takes under a minute (about 48 s) on an Apple M4 GPU and about 45 min on its CPU. A median 3.6 Mb genome takes about 27 s on an NVIDIA V100S. Details: [`docs/benchmarks.md`](docs/benchmarks.md).
+A 5 Mb genome takes under a minute (about 48 s) on an Apple M4 GPU and about an hour on its CPU. A median 3.6 Mb genome takes about 27 s on an NVIDIA V100S. Details: [`docs/benchmarks.md`](docs/benchmarks.md).
 
 ## Output
 

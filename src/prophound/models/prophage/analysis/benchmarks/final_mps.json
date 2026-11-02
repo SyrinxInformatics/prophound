@@ -1,0 +1,127 @@
+{
+  "machine": {
+    "machine": "arm64",
+    "python": "3.14.7",
+    "os": "macOS 27.2",
+    "model": "Mac16,1",
+    "chip": "Apple M4",
+    "cores": "10",
+    "performance_cores": "4",
+    "efficiency_cores": "6",
+    "memory_gb": 16.0,
+    "power": "Now drawing from 'AC Power'",
+    "battery": "-InternalBattery-0 (id=22806627)\t77%; charging; 0:56 remaining present: true",
+    "omp_num_threads": null,
+    "code_commit": "a9f1851ee5b9d918c1f3e38324e92e0ba6723ad4",
+    "code_dirty": false,
+    "torch": "2.13.0",
+    "threads": 4,
+    "mps": true,
+    "cuda": false,
+    "mkldnn": false
+  },
+  "device": "mps",
+  "mode": "default",
+  "repeats": 3,
+  "warmup": true,
+  "inputs": {
+    "typical": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/lambda/GCF_000146165.2.fna",
+      "n_contigs": 1,
+      "bp": 4969811,
+      "runs": [
+        {
+          "wall_s": 47.53,
+          "peak_rss_mb": 521.6,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": true
+        },
+        {
+          "wall_s": 46.76,
+          "peak_rss_mb": 497.4,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        },
+        {
+          "wall_s": 47.59,
+          "peak_rss_mb": 526.8,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        },
+        {
+          "wall_s": 48.68,
+          "peak_rss_mb": 495.8,
+          "n_windows": 4960,
+          "n_regions": 21,
+          "regions_sha256": "c949eeceef9237ce6b3e981c387306945fffb6b0fe34478a1503cca4a0f524ee",
+          "detailed_sha256": "1940faa507bad312bb87bd3a375daf0d6ff1dbae407709fd8456b5c6b9634806",
+          "warmup": false
+        }
+      ],
+      "median_s": 47.59,
+      "min_s": 46.76,
+      "max_s": 48.68,
+      "median_s_per_mb": 9.58,
+      "median_peak_rss_mb": 497.4,
+      "regions_identical": true
+    },
+    "shred": {
+      "path": "/Users/jacobalford/Desktop/Programs/mge-detect/arc_data/raw/g5_shreds/mag_s0/GCF_000146165.2.fna",
+      "n_contigs": 374,
+      "bp": 4945288,
+      "runs": [
+        {
+          "wall_s": 25.54,
+          "peak_rss_mb": 536.6,
+          "n_windows": 3026,
+          "n_regions": 23,
+          "regions_sha256": "2cf95788e9b01a2603d4fd526c35562f3bdfe42d5c8f0fb1069814c011f1a24a",
+          "detailed_sha256": "8aca82677fc4cecbbb04da845c680a0581f47573a708d02c1fffd7273e04fa2e",
+          "warmup": true
+        },
+        {
+          "wall_s": 25.21,
+          "peak_rss_mb": 544.8,
+          "n_windows": 3026,
+          "n_regions": 23,
+          "regions_sha256": "2cf95788e9b01a2603d4fd526c35562f3bdfe42d5c8f0fb1069814c011f1a24a",
+          "detailed_sha256": "8aca82677fc4cecbbb04da845c680a0581f47573a708d02c1fffd7273e04fa2e",
+          "warmup": false
+        },
+        {
+          "wall_s": 25.05,
+          "peak_rss_mb": 549.0,
+          "n_windows": 3026,
+          "n_regions": 23,
+          "regions_sha256": "2cf95788e9b01a2603d4fd526c35562f3bdfe42d5c8f0fb1069814c011f1a24a",
+          "detailed_sha256": "8aca82677fc4cecbbb04da845c680a0581f47573a708d02c1fffd7273e04fa2e",
+          "warmup": false
+        },
+        {
+          "wall_s": 25.16,
+          "peak_rss_mb": 522.0,
+          "n_windows": 3026,
+          "n_regions": 23,
+          "regions_sha256": "2cf95788e9b01a2603d4fd526c35562f3bdfe42d5c8f0fb1069814c011f1a24a",
+          "detailed_sha256": "8aca82677fc4cecbbb04da845c680a0581f47573a708d02c1fffd7273e04fa2e",
+          "warmup": false
+        }
+      ],
+      "median_s": 25.16,
+      "min_s": 25.05,
+      "max_s": 25.21,
+      "median_s_per_mb": 5.09,
+      "median_peak_rss_mb": 544.8,
+      "regions_identical": true
+    }
+  }
+}
