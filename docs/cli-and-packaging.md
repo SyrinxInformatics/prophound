@@ -120,7 +120,7 @@ Neither fired on 166 bacteria (including linear *Streptomyces* and *Borrelia* re
 ## Installation and packaging
 
 - **pixi** (development and the recommended local setup): `pixi install` builds the environment from `pyproject.toml` and `pixi.lock`; `pixi run prophound ...`, `pixi run test` and `pixi run smoke` run the command, the fast tests and the example end to end.
-- **pip**: `pip install git+https://github.com/SyrinxInformatics/mge-detect.git` into Python 3.11 or later. The runtime dependencies are torch, numpy, pandas, pyfaidx, tqdm, pyyaml and biopython.
+- **pip**: `pip install git+https://github.com/SyrinxInformatics/prophound.git` into Python 3.11 or later. The runtime dependencies are torch, numpy, pandas, pyfaidx, tqdm, pyyaml and biopython.
 - **The wheel** holds only the package code and the bundled model (about 15.5 MB). The evaluation scripts, their recorded outputs and the training configs are excluded. The sdist holds the package, tests, the example and the license files.
 - **Bioconda.** The recipe is [`bioconda/recipes/prophound/meta.yaml`](../bioconda/recipes/prophound/meta.yaml): noarch Python, built from the release's GitHub archive, with the model inside the package, so nothing else is downloaded. Its tests run `prophound --version`, `prophound predict --help` and the model's checksum verification. CI lints it with `bioconda-utils` and builds it.
 - **A conda environment file,** `metadata/conda/environment.yaml`, mirrors the pixi dependencies for users who prefer conda directly.

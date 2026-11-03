@@ -11,7 +11,7 @@ authors:
     email: ssolar5.dev@gmail.com
 version: 0.1.0
 license: Apache-2.0
-repository-code: "https://github.com/SyrinxInformatics/mge-detect"
+repository-code: "https://github.com/SyrinxInformatics/prophound"
 abstract: >-
   prophound localizes candidate integrated prophages directly from nucleotide
   sequence, with no gene calling or reference database at run time. A

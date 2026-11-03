@@ -8,7 +8,7 @@ What prophound is, how it works, what has been measured, and what it does not cl
 
 `prophound` is a recall-first prophage screen for bacterial genomes. It locates candidate integrated elements directly from nucleotide sequence, with no gene calling or reference database. It is tuned to recover known elements and returns everything else as candidates, at a follow-up cost the user chooses. It runs alongside annotation tools to surface what they may not call. [`related-tools.md`](related-tools.md) compares it with neighboring tools, and [`project-principles.md`](project-principles.md) gives the framing.
 
-The name is a prophage hound, and a homophone of "profound". The repository keeps the project's earlier name, `mge-detect`. Other mobile-element types may follow, hence the `models/prophage/` layout.
+The name is a prophage hound, and a homophone of "profound". The project was called `mge-detect` until 2026, and the repository took the new name for 0.1.0; links to the old name redirect. Other mobile-element types may follow, hence the `models/prophage/` layout.
 
 ## How it works
 

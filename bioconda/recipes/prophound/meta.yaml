@@ -13,7 +13,7 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/SyrinxInformatics/mge-detect/archive/refs/tags/v{{ version }}.tar.gz
+  url: https://github.com/SyrinxInformatics/prophound/archive/refs/tags/v{{ version }}.tar.gz
   sha256: REPLACE_WITH_SHA256_OF_THE_RELEASE_ARCHIVE
 
 build:
@@ -52,9 +52,9 @@ test:
     - python -c "from prophound.models.prophage.src.predict_genome import verify_bundled_model; verify_bundled_model()"
 
 about:
-  home: https://github.com/SyrinxInformatics/mge-detect
-  dev_url: https://github.com/SyrinxInformatics/mge-detect
-  doc_url: https://github.com/SyrinxInformatics/mge-detect/blob/main/README.md
+  home: https://github.com/SyrinxInformatics/prophound
+  dev_url: https://github.com/SyrinxInformatics/prophound
+  doc_url: https://github.com/SyrinxInformatics/prophound/blob/main/README.md
   license: Apache-2.0
   license_family: APACHE
   license_file:

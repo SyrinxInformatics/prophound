@@ -39,19 +39,19 @@ pixi --version
 ### Install prophound
 
 ```bash
-git clone https://github.com/SyrinxInformatics/mge-detect.git
-cd mge-detect
+git clone https://github.com/SyrinxInformatics/prophound.git
+cd prophound
 pixi install
 ```
 
 The model (three checkpoints, 16.5 MB) ships with the package, so there is nothing else to download.
 
-**NOTE:** under pixi, run every command below as `pixi run prophound ...` from the `mge-detect` directory, or open a shell in the environment first with `pixi shell`.
+**NOTE:** under pixi, run every command below as `pixi run prophound ...` from the `prophound` directory, or open a shell in the environment first with `pixi shell`.
 
 **With pip instead:** into an environment with Python 3.11 or later (PyTorch is installed from PyPI):
 
 ```bash
-pip install git+https://github.com/SyrinxInformatics/mge-detect.git
+pip install git+https://github.com/SyrinxInformatics/prophound.git
 ```
 
 ### Check the install
