@@ -31,7 +31,7 @@ RC-1  window scores are invariant when a sequence is replaced by its reverse
       later pooling change could break it, and `max` vs `mean` differ in how
       they preserve it).
 RC-2  (NOT IMPLEMENTED HERE -- needs a full genome run; measured by hand
-      2026-09-22, see docs/scientific-validity.md) a whole contig scored
+      2026-09-22) a whole contig scored
       forward and reverse-complemented should yield the same region calls,
       mirrored. This does not follow from RC-1: the window grid is anchored at
       position 0, so a contig whose length is not a multiple of the stride has

@@ -52,7 +52,7 @@ GMDENV=/home/$USER/.conda/envs/mge_explorer
 CONDS="complete mag_s0 mag_s1 mag_s2 draft_s0"
 mkdir -p analysis/_slurm_logs "$GMD"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$G/genome_list.txt" scripts/g5_score.py; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

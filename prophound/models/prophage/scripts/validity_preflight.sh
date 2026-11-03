@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Inventory the HPCC for the scientific-validity program (docs/scientific-validity.md).
+# Inventory the HPCC for the scientific-validity program (docs/research-integrity.md).
 # Read-only. Run on the login node, no SLURM needed:
 #   ssh pke835@arc.utsa.edu 'bash -s' < validity_preflight.sh   # (or push it and run it)
 # Purpose: find out what exists and what is installed BEFORE committing CPU/GPU

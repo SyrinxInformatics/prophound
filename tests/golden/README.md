@@ -1,6 +1,6 @@
 # Golden regression set
 
-Two small genomes from the second lockbox, with the `regions.tsv` and `regions.detailed.tsv` that prophound 0.1.0 makes on them (Default mode, CPU; made 2026-10-28, and every column matches the second lockbox's V100 run `851599`). Between them they exercise most of the call pipeline. The example genome (`examples/`) adds ambiguity codes.
+Two small genomes from the [held-out test](../../docs/lockbox2.md), with the `regions.tsv` and `regions.detailed.tsv` that prophound 0.1.0 makes on them (Default mode, CPU; every column matches the held-out test's run on a V100S GPU). Between them they exercise most of the call pipeline. The example genome (`examples/`) adds ambiguity codes.
 
 | genome | covers |
 |---|---|

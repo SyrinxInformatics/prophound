@@ -60,7 +60,7 @@ WORKERS=8; P=$(( ${SLURM_CPUS_PER_TASK:-8} / WORKERS )); [ "$P" -ge 1 ] || P=1
 mkdir -p analysis/_slurm_logs "$RAW"
 rm -f "$RAW/failures.txt" "$G/jaeger_failures.txt"   # per job; a retry must not inherit old failures
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$G/genome_list.txt" "$G/input_md5.tsv" scripts/g5_score.py; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

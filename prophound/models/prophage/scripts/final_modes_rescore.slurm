@@ -53,7 +53,7 @@ SR=analysis/spikein_siterule
 NG=analysis/ngap_dose
 mkdir -p analysis/_slurm_logs analysis/integrity
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 grep -q '"exploratory": 0.90' src/predict_genome.py \
   || { echo "PREFLIGHT FAIL: src/predict_genome.py lacks the final modes (not pushed?)" >&2; fail=1; }

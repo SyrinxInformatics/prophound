@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Robustness check 1, the shuffled-genome null (docs/robustness-checks.md).
+"""Robustness check 1, the shuffled-genome null (analysis/robustness/).
 
   prepare  check each lockbox-2 FASTA against its 851599 input_sha256, shuffle every contig with
            esl-shuffle -d, and check names, lengths and mono-/dinucleotide counts are unchanged

@@ -16,7 +16,7 @@
 # limitations under the License.
 """Shred genomes into short contigs to simulate a fragmented assembly.
 
-docs/adaptive-multiscale-detection.md Part 4: `--short-contigs scan` scores
+Short contigs (analysis/short_contig_calib/): `--short-contigs scan` scores
 contigs under 10 kb at 5 kb / 3 kb windows, whose thresholds cannot be borrowed
 from the 10 kb operating point (negatives drift up and per-window sensitivity
 falls as windows shrink). The eval corpus has almost no short contigs, so this

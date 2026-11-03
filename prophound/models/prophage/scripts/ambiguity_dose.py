@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Ambiguity dose-response (docs/release-scope-0.1.0.md A.3).
+"""Ambiguity dose-response (analysis/ambiguity_dose/).
 
 The corpus cannot measure how recall degrades with IUPAC ambiguity codes (3.7%
 of genomes carry any, at 4.7 ppm), so codes are spiked into clean genomes with

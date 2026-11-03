@@ -80,8 +80,38 @@ def test_shipped_paths_pass(path):
     assert check_commit.path_problems(path, local_repo=False) == []
 
 
-def test_local_repo_holds_markdown_only():
+def test_local_repo_holds_markdown_and_text_only():
     assert check_commit.path_problems("CLAUDE.md", local_repo=True) == []
     assert check_commit.path_problems("docs/release-checklist.md", local_repo=True) == []
+    assert check_commit.path_problems("prophound/models/prophage/notes/RESEARCH_NOTES.txt", local_repo=True) == []
     assert check_commit.path_problems("scripts/x.py", local_repo=True)
     assert check_commit.path_problems(".env", local_repo=True)
+
+
+def test_files_the_local_repo_tracks_are_refused_under_any_layout():
+    local_only = frozenset(check_commit.LOCAL_ONLY + ["docs/private.md", "prophound/models/prophage/notes/N.md"])
+    for path in ["docs/private.md", "prophound/models/prophage/notes/N.md",
+                 "src/prophound/models/prophage/notes/N.md", "src/mge_detect/models/prophage/notes/N.md"]:
+        assert check_commit.path_problems(path, local_repo=False, local_only=local_only), path
+    assert check_commit.path_problems("docs/benchmarks.md", local_repo=False, local_only=local_only) == []
+
+
+def test_local_repo_listing_ignores_the_hook_environment(tmp_path, monkeypatch):
+    """Inside `git commit`, GIT_INDEX_FILE names the main index; the .git-local listing must not use it."""
+    import subprocess
+
+    def run(*args, **kw):
+        subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True, **kw)
+
+    run("init", "-q")
+    (tmp_path / "public.md").write_text("x\n")
+    (tmp_path / "private.md").write_text("y\n")
+    run("add", "public.md")
+    run("--git-dir=.git-local", f"--work-tree={tmp_path}", "init", "-q")
+    run("--git-dir=.git-local", f"--work-tree={tmp_path}", "add", "private.md")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / ".git" / "index"))
+    monkeypatch.setenv("GIT_DIR", str(tmp_path / ".git"))
+    tracked = check_commit.local_only_paths()
+    assert "private.md" in tracked
+    assert "public.md" not in tracked

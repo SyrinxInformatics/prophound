@@ -20,7 +20,7 @@
 
 Consumes `analysis/clades/elements_clades.csv` (written by
 `cluster_prophage_elements.py` on the HPCC) and answers two questions locally,
-without retraining (docs/scientific-validity.md, item 2a):
+without retraining (analysis/clades/):
 
 1. `split` -- how leaky is the existing genome-level split at the clustering
    threshold (fraction of val/test elements sharing a clade with a train

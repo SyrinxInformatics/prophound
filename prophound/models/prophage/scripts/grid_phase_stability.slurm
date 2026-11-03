@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/scientific-validity.md "Input-robustness standing check", GRID-1: how often
+# Input robustness, window-grid phase: how often
 # do calls change when the inference window grid shifts? Locally, a 777 bp shift
 # turned 3 regions into 5 on one slice; this measures it over the held-out sample.
 # Submit from /work/$USER/mge_explorer/data_refactored:
@@ -48,7 +48,7 @@ mkdir -p analysis/_slurm_logs "$OUT"
 # the genome list had never been pushed, so `while read < $LIST` looped zero
 # times, and without this block the job still exited 0. Check every input.
 GENOMES=../raw/genomes        # NOT raw/genomes -- it is a sibling of
-                              # data_refactored, not inside it (docs/environment.md)
+                              # data_refactored, not inside it
 fail=0
 for f in "$LIST" "$ELEMENTS"; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

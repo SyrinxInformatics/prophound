@@ -49,7 +49,7 @@ SP=analysis/spikein_small
 REF=analysis/multiscale
 mkdir -p analysis/_slurm_logs
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in scripts/eval_sizestrat_elements.csv scripts/literature_truth.tsv scripts/mode_recheck.py \
          scripts/short_contig_vote_sweep.py scripts/short_contig_sweep.py scripts/shred_genomes.py \

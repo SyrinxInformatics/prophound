@@ -16,7 +16,7 @@
 # limitations under the License.
 """Adaptive max pooling must give the same values on every device.
 
-docs/tech-debt-audit.md S10: PyTorch's MPS kernel is wrong for lengths that are not
+PyTorch's MPS kernel (torch 2.13) is wrong for lengths that are not
 a multiple of the bin count, including every input shape the shipped model uses.
 """
 

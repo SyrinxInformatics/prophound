@@ -1,6 +1,6 @@
 # Output files
 
-What `prophound predict` writes, column by column. This is the current output contract (since the UI pass, step 2, 2026-10-20; the researcher table and `regions.detailed.tsv` since 2026-10-21). The frozen `notes/V1_OUTPUT_FILES.md` describes an older format. Update this file whenever an output changes. **How to read the results** is a separate guide for users: `docs/interpreting-results.md`.
+What `prophound predict` writes, file by file and column by column. This is the output contract: a change to any file or column is listed in the [changelog](../CHANGELOG.md). [How to read your results](interpreting-results.md) is the guide for researchers.
 
 **Coordinates.** `regions.tsv`, the researcher table, is **1-based, inclusive**, as GenBank, GFF3 and genome browsers show positions. Every other TSV and BED is **0-based, half-open** (`start` included, `end` excluded), as in BED. GFF3 and the FASTA headers are 1-based, inclusive, as those formats require. A call's 1-based `start` is its 0-based `start` + 1; `end` is the same number in both.
 
@@ -49,7 +49,7 @@ The researcher table (`src/report.py`): one row per call, **sorted by `rank`**, 
 
 | column | meaning |
 |---|---|
-| `rank` | 1 … N within the genome: `max_prob` (4 dp), ties broken by `mean_prob`, then position. On the tuning sample this ordered calls on known elements first better than `mean_prob` alone, in every mode, and it held on the check sample (`docs/att-boundaries.md` "Ranking") |
+| `rank` | 1 … N within the genome: `max_prob` (4 dp), ties broken by `mean_prob`, then position. On the tuning sample this ordered calls on known elements first better than `mean_prob` alone, in every mode, and it held on the confirmation sample |
 | `call_id` | as in `regions.detailed.tsv` (numbered by position) |
 | `contig` | the sequence ID (`contig_id` in the detailed table; the different name makes a script that expects 0-based `contig_id` fail instead of reading 1-based coordinates) |
 | `start`, `end` | 1-based, inclusive |
@@ -72,7 +72,7 @@ One row per call, sorted by contig (in input order), then by start. 0-based, hal
 | `genome_id` | the input file name without its extension (and without `.gz`/`.bz2`/`.xz`) |
 | `contig_id` | the sequence ID: the first word of the FASTA header, or the versioned accession (`VERSION`) of a GenBank/EMBL record |
 | `start`, `end` | the call, 0-based half-open. With `boundary` = `att`, from the first base of attL to the last base of attR (both copies of the att core inside); otherwise estimated edges (refinement, then composition; `start_source`/`end_source` say which) |
-| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are estimated, by the model's score and composition (docs/att-boundaries.md). The same values are `att site` and `estimated` in `regions.tsv`'s `edges` column and the terminal list; `att` and `model` are kept in this file and the GFF3, which scripts read |
+| `boundary` | `att`: both edges are an att site, a direct repeat with one copy at each edge left by integration, exact to the base. `model`: the edges are estimated, by the model's score and composition ([How to read your results](interpreting-results.md#the-edges)). The same values are `att site` and `estimated` in `regions.tsv`'s `edges` column and the terminal list; `att` and `model` are kept in this file and the GFF3, which scripts read |
 | `start_lo`, `start_hi`, `end_lo`, `end_hi` | where each true edge lies. Equal to the edge for an att edge and for an edge on a contig end. For a model edge, a range relative to the call's length L (fitted as a 90% range; it held 0.782 of Default edges on the held-out second lockbox), clipped to the contig: from 0.143·L outside to 0.463·L inside the reported edge, in every mode (fitted on Default and Conservative: coverage 0.898 tuning, 0.891 and 0.883 on two check samples; Exploratory 0.909 tuning, 0.907 and 0.886 on the check samples, 0.804 on LAMBDA). Most of each range is inward, because model edges more often overshoot |
 | `n_windows` | windows overlapping the model's call |
 | `region_len_bp` | `end − start` |
@@ -124,7 +124,7 @@ Scores are written at full precision, because offline scorers rebuild calls from
 | key | meaning |
 |---|---|
 | `prophound_version`, `run_name` | package version, and the checkpoint's training run name |
-| `bundled_model`, `config`, `checkpoint`, `checkpoint_sha256` | whether the bundled model ran; config and checkpoint paths, and each checkpoint's SHA-256 (the bundled ones are listed in `docs/lockbox.md`) |
+| `bundled_model`, `config`, `checkpoint`, `checkpoint_sha256` | whether the bundled model ran; config and checkpoint paths, and each checkpoint's SHA-256 (the bundled ones are listed in the model's `manifest.json`) |
 | `input_fasta`, `input_sha256`, `input` | the input as given, the SHA-256 of that file, and a summary (contigs, bp, ambiguity codes) |
 | `input_format` | detected `format` (`fasta`, `genbank`, `embl`, `gff3`), `compression`, `u_read_as_t` (RNA `U` bases read as `T`), and `contig_names` (GenBank/EMBL record name per contig ID, where they differ) |
 | `mode`, `threshold`, `seed_threshold`, `extend_threshold`, `ensemble` | the thresholds actually used |

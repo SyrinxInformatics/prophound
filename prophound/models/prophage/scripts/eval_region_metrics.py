@@ -17,7 +17,7 @@
 """Region-level recall/precision/boundary-error evaluation against geNomad.
 
 Reusable, checked-in version of the ad hoc script used for the 18-genome
-baseline evaluation in docs/model-quality-baseline.md (2026-09-08). Use this
+baseline evaluation (2026-09-08). Use this
 to evaluate any new checkpoint (e.g. prophage_v1_positional_clean,
 prophage_v1_positional_boundary) the same rigorous way, instead of trusting
 a handful of hand-picked genomes.
@@ -120,7 +120,7 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
         n_pred_matched += sum(pred_matched_flags)
 
         # Conflation: one call overlapping >=2 true regions. Covered recall is
-        # blind to it (docs/downstream-postprocessing.md "Conflation").
+        # blind to it, so it is counted here.
         for _, prow in pred_df.iterrows():
             k = int(sum(1 for _, trow in true_df.iterrows()
                         if trow["contig_id"] == prow["contig_id"]
@@ -192,7 +192,7 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
         _tr = pd.DataFrame(true_region_rows)
         # Detection recall: a true element that is fully inside a bigger call is
         # "covered" but loses its 1-1 match to a neighbour under greedy pairing.
-        # Merging (docs/gap-filling.md) trades the second for the first, so both
+        # Merging trades the second for the first, so both
         # are reported -- the acceptance criterion is about not missing elements.
         _cov = int((_tr.n_overlapping_pred > 0).sum())
         print(
@@ -200,8 +200,7 @@ def evaluate(genome_list: list, genomad_dir: Path, predict_dir: Path, label: str
             f"true regions overlapped by >=1 predicted region"
         )
         # covered50: >=50% of the element's bp under calls. Covered recall
-        # credits grazes -- a neighbour's overshoot clipping an element's edge
-        # (docs/downstream-postprocessing.md "Per-element dig").
+        # credits grazes -- a neighbour's overshoot clipping an element's edge.
         _c50 = int((_tr.covered_frac >= 0.5).sum())
         print(
             f"covered50 recall: {_c50 / len(_tr):.3f}  ({_c50}/{len(_tr)}) "

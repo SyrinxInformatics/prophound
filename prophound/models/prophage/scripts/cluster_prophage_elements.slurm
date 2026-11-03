@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/scientific-validity.md item 2a, stage 1: cluster geNomad-called elements
+# Clade novelty (analysis/clades/), stage 1: cluster geNomad-called elements
 # into clades so a clade-held-out split can be built. CPU only.
 # NOTHING IS RETRAINED HERE -- this job exists so the clade statistics can be
 # inspected before committing GPU days.

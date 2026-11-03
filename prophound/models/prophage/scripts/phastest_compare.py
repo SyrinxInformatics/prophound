@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """prophound against PHASTEST (and optionally geNomad) on one genome with author-curated
-prophages. docs/final-benchmark.md "PHASTEST comparisons".
+prophages (analysis/phastest_cmp/).
 
 Inputs: prophound's shipped `regions.detailed.tsv` per mode (0-based half-open), PHASTEST's
 API result JSON (its region table, 1-based inclusive), an optional geNomad provirus TSV

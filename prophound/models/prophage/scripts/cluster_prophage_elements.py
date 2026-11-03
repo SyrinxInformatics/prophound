@@ -18,7 +18,7 @@
 
 """Cluster prophage elements by sequence similarity, for clade-held-out splits.
 
-docs/scientific-validity.md item 2a -- the novelty experiment. The project's
+Clade novelty (analysis/clades/). The project's
 splits are by GENOME (make_splits.py), which is honest for "unseen genome" but
 does not test the product claim: a test genome's prophage may be a close
 homolog of a training prophage, so a model that memorised phage families would
@@ -52,7 +52,7 @@ import pandas as pd
 
 # Module scope on purpose: the HPCC login node cannot load miniconda, so a
 # missing library is only discoverable inside a job -- fail in seconds, not
-# after the sketch pass (docs/environment.md).
+# after the sketch pass.
 from pyfaidx import Fasta, IndexNotFoundError
 
 BASES = np.full(256, 255, dtype=np.uint8)

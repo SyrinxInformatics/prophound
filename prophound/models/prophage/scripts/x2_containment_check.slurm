@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# X2 check (docs/tech-debt-audit.md): re-run eval_containment.py with the evalkit-based scripts
+# Shared-code check: re-run eval_containment.py with the evalkit-based scripts
 # and compare its output byte for byte with the recorded analysis/integrity/containment.tsv.
 # The current src/ and the two scripts are pushed to x2_check/ (beside the frozen tree, which
 # stays untouched); the data paths are the original job's, so it runs from data_refactored/:

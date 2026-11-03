@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Check 8 (docs/robustness-checks.md): the non-prokaryote signals of src/domain.py on a labeled panel.
+"""The non-prokaryote warning (docs/cli-and-packaging.md): the signals of src/domain.py on a labeled panel.
 
 Run from the model directory:
   python scripts/domain_check_eval.py --out analysis/robustness/domain_check.tsv \\

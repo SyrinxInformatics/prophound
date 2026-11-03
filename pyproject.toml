@@ -30,7 +30,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 # The research tree lives inside the package directory; keep it out of the
-# wheel and sdist (docs/tech-debt-audit.md P1). The bundled model config and
+# wheel and sdist. The bundled model config and
 # weights are added with packaging (docs/cli-and-packaging.md "Distribution").
 [tool.hatch.build]
 exclude = [
@@ -48,8 +48,8 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["prophound"]
 
-# docs/ holds internal planning docs (the release checklist among them); keep
-# the sdist to code, tests, the example (the smoke test's input) and licence files.
+# Keep the sdist to code, tests, the example (the smoke test's input) and licence
+# files; the docs are read on GitHub.
 [tool.hatch.build.targets.sdist]
 only-include = ["prophound", "tests", "examples", "README.md", "CHANGELOG.md", "CITATION.cff", "LICENSE", "NOTICE",
                 "pyproject.toml"]
@@ -88,7 +88,7 @@ pyfaidx = ">=0.8,<1"
 tqdm = ">=4.66,<5"
 pyyaml = ">=6.0,<7"
 
-# Lint target for the whole codebase (docs/tech-debt-audit.md X5). Uppercase
+# Lint target for the whole codebase. Uppercase
 # locals (L for a length, G for a genome list) and torch's `functional as F`
 # are allowed; everything else in the selection is meant to pass.
 [tool.ruff]

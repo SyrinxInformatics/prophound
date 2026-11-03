@@ -16,7 +16,7 @@
 # limitations under the License.
 
 
-"""Compare region-level metrics across inference variants (docs/scientific-validity.md).
+"""Compare region-level metrics across inference variants.
 
 Consumes directories of `<genome>/regions.tsv` produced by `prophound predict`
 under different flags and reports, per variant, covered recall against geNomad

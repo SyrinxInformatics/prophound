@@ -1,8 +1,7 @@
 run_name: prophage_v1_positional_boundary_lowweight
 
 # Same as prophage_v1_positional_boundary.yaml, but with boundary_weight
-# lowered 10x (0.5 -> 0.05). Follow-up to the 807594 result (see
-# docs/model-reengineering.md): region precision dropped further with the
+# lowered 10x (0.5 -> 0.05). Follow-up to the 807594 result: region precision dropped further with the
 # boundary loss active (37.3%) than with pooling alone (51.8%, 807593), even
 # though the raw (pre-weight) boundary SmoothL1 loss was already small
 # (~0.002 by epoch 2, per 807594's training log) -- so boundary_weight=0.5
@@ -12,8 +11,7 @@ run_name: prophage_v1_positional_boundary_lowweight
 # between "boundary_weight itself is the lever to pull" vs. "the auxiliary
 # task changes shared-encoder behavior regardless of its loss weight" (the
 # latter would mean lowering boundary_weight further doesn't help and the
-# head should be shelved instead -- see docs/model-reengineering.md's
-# "Resume here" section for the decision this run is meant to inform).
+# head should be shelved instead).
 #
 # Everything else identical to prophage_v1_positional_boundary.yaml.
 

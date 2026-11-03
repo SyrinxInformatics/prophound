@@ -18,7 +18,7 @@
 
 """Audit where one-size-fits-all assumptions bite, across the diversity axes.
 
-`docs/adaptive-multiscale-detection.md`. Operates on already-scored output
+Operates on already-scored output
 (`<genome>/windows.tsv` + `regions.tsv`), so it costs no inference and can be
 re-run against any sweep directory.
 

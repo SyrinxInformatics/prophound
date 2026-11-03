@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Literature-curated prophage truth for the 0.1.0 pilot (docs/final-benchmark.md).
+"""Literature-curated prophage truth for the 0.1.0 pilot (analysis/litpilot/).
 
 Every element comes from the primary literature or from the original authors'
 own curation in the genome record, never from a detection tool. The basis is
@@ -43,7 +43,7 @@ the build checks that each source record is identical to the RefSeq contig
 flanks at each boundary so the evaluation can verify its own FASTAs.
 
 Inputs are downloaded by the caller into --src (NCBI GenBank records, RefSeq
-FASTA/GFF from NCBI Datasets, phage genomes); see docs/final-benchmark.md.
+FASTA/GFF from NCBI Datasets, phage genomes).
 
 Example:
   python scripts/build_literature_truth.py --src /tmp/lit --out scripts/literature_truth.tsv

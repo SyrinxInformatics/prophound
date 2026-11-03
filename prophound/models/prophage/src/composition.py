@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Composition edges: move an estimated edge to where the sequence turns from host-like
-to element-like (docs/att-boundaries.md "Composition edges").
+to element-like (docs/interpreting-results.md "The edges").
 
 Prophages usually differ from their host in base composition; Alien_Hunter's change-point
 step and CheckV's adjacent-window comparison use the same idea. For each `model` edge not
@@ -35,8 +35,8 @@ on a contig end, of a call at least MIN_CALL_BP long:
 Chosen on the tuning sample and checked on two others; shipped in Default and
 Conservative mode (user decision 2026-10-21), where it was recall-neutral (Default, all
 three samples) and roughly halved the median edge error, and in Exploratory mode with a
-looser gate (MIN_JSD_EXPLORATORY; user decision 2026-10-23, docs/att-boundaries.md
-"Composition everywhere"), where it cost one tuning-sample element for the same gain.
+looser gate (MIN_JSD_EXPLORATORY; user decision 2026-10-23, docs/release-text-0.1.0.md
+§10), where it cost one tuning-sample element for the same gain.
 """
 
 from __future__ import annotations

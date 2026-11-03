@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/scientific-validity.md item 1a: did the model learn "ambiguity code =>
+# Ambiguity codes (docs/cli-and-packaging.md "Input handling"): did the model learn "ambiguity code =>
 # not a prophage" from the training labels? CPU only, I/O bound.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/ambiguity_label_audit.slurm

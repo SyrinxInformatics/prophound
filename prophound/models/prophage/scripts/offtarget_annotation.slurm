@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/error-analysis.md: what are the off-target calls? Summarises geNomad's
+# What are the off-target calls? (analysis/offtarget/) Summarises geNomad's
 # per-gene annotations inside every call in analysis/offtarget/calls42.csv
 # (42-genome sample, ensemble, Default + Exploratory, with seed support) and in
 # length-matched random controls. CPU only; reads existing geNomad outputs.
@@ -44,7 +44,7 @@ GENOMES=../raw/genomes
 OUT=analysis/offtarget/annotation.json
 mkdir -p analysis/_slurm_logs analysis/offtarget
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$CALLS" "$ELEMENTS" scripts/offtarget_annotation.py; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

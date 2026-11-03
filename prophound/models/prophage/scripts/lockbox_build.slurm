@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/lockbox.md: build the locked test set. CPU only; no model is run here.
+# The first lockbox (analysis/lockbox/): build the locked test set. CPU only; no model is run here.
 #   1. fetch NCBI's current assembly_summary_refseq.txt (kept, with its SHA-256)
 #   2. select 150 genus-disjoint complete RefSeq bacterial genomes (seeded; never
 #      re-drawn once analysis/lockbox/lockbox_genome_list.txt exists)
@@ -47,11 +47,11 @@ GMD=../genomad_out_lockbox
 DB=/work/$USER/mge_explorer/genomad_db/genomad_db
 PYENV=/home/$USER/.conda/envs/mge_explorer_gpu
 GMDENV=/home/$USER/.conda/envs/mge_explorer
-N=150                           # ~220 geNomad elements at the corpus's 1.5 per genome (docs/lockbox.md)
+N=150                           # ~220 geNomad elements at the corpus's 1.5 per genome
 SEED=20260929
 mkdir -p analysis/_slurm_logs "$OUT" "$FNA" "$GMD"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in scripts/lockbox_select.py splits/train.txt splits/val.txt splits/test.txt; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Base-exact call boundaries from attL/attR direct repeats, prototyped offline
-(docs/att-boundaries.md).
+(analysis/att/; docs/release-text-0.1.0.md §10).
 
 Integration by site-specific recombination leaves the element between two
 copies of the att core, so a direct repeat with one copy near each edge of a

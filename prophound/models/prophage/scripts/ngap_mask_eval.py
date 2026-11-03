@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Offline test of masking long N runs (docs/release-scope-0.1.0.md A.3, user decision 2026-09-29).
+"""Offline test of masking long N runs (analysis/ngap_dose/; user decision 2026-09-29).
 
 822054 showed that `impute` turns long N gaps into random sequence the model then
 calls. Proposed fix, simulated here on 822054's tracks and gap files:

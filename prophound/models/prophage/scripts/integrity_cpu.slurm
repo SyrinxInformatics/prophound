@@ -46,7 +46,7 @@ CALLS=analysis/offtarget/calls42.csv
 INSITU=analysis/spikein_small/insitu_truth.tsv
 mkdir -p analysis/_slurm_logs analysis/integrity analysis/offtarget
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in scripts/eval_containment.py scripts/small_element_spikein.py scripts/offtarget_annotation.py \
          scripts/eval_sizestrat_elements.csv scripts/eval_confirm18_elements.csv scripts/literature_truth.tsv \

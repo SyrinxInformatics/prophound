@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/adaptive-multiscale-detection.md Parts 1+3, docs/downstream-postprocessing.md:
+# Fine refinement (analysis/multiscale/):
 # does the fine refinement pass (split + edge placement) fix conflation and the
 # small-element boundary problem without costing recall or undoing gap-filling?
 # Scores the held-out size-stratified sample once per (seed | ensemble) x fine
@@ -42,7 +42,7 @@ cd /work/$USER/mge_explorer/data_refactored
 LIST=scripts/eval_genome_list_sizestrat.txt
 ELEMENTS=scripts/eval_sizestrat_elements.csv
 OUT=analysis/multiscale
-GENOMES=../raw/genomes        # sibling of data_refactored, not inside it (docs/environment.md)
+GENOMES=../raw/genomes        # sibling of data_refactored, not inside it
 SCALES="3000 5000"
 mkdir -p analysis/_slurm_logs "$OUT"
 

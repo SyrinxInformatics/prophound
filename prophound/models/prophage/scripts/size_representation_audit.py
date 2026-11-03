@@ -18,7 +18,7 @@
 
 """Are small elements represented as positives in training, and at what dilution?
 
-`docs/release-scope-0.1.0.md` gating audit A.1. This is the central *model-side* diversity
+Small-element representation (analysis/size_representation/). This is the central *model-side* diversity
 question and it gates the retraining data design, so it runs before any training
 code is written.
 

@@ -50,7 +50,7 @@ declare -A SHA=(
   [r3]=541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484
 )
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$L/lambda_genomes.tsv" src/predict_genome.py src/io_checks.py; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

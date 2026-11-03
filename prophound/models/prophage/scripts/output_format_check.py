@@ -21,7 +21,7 @@ Compares two `reference_outputs.py run` directories, the old format (`a`) and th
 4 dp rounding. windows.tsv must be identical apart from the dropped fasta_path. BED, GFF3
 and FASTA must carry the same calls under call_id. The metadata may differ only in the
 declared keys. regions.filtered.tsv must hold exactly the calls the metadata counts as set
-aside. docs/tech-debt-audit.md, UI pass step 2.
+aside (docs/output-files.md).
 
   python output_format_check.py <old run dir> <new run dir> <inputs dir>
 """

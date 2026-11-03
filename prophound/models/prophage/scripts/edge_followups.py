@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Edges the fine pass leaves on the coarse edge ("stuck"), and what could place them
-(docs/att-boundaries.md "Unrefined edges").
+(analysis/att/).
 
 A refined model edge is stuck when the fine run at the refinement threshold reaches the
 coarse edge, so refinement (which only moves edges inward) leaves it there. Variants,

@@ -16,13 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/lockbox.md: run the frozen prophound on the locked test set. GPU. Run ONCE.
+# The first lockbox (analysis/lockbox/): run the frozen prophound on the locked test set. GPU. Run ONCE.
 # Each mode is a separate run of the shipped CLI (`--mode <m>`), so regions.tsv is
 # exactly what a user gets: seed vote, short-contig scan, edge snap and N-gap
 # filter included, with nothing rebuilt offline. Default also writes per-checkpoint
 # scores, for diagnostics only. Scoring is local and separate, also run once:
 # scripts/lockbox_score.py. The preflight refuses to run anything but the frozen
-# code (amendment 2026-10-16 in docs/lockbox.md), the C8 checkpoints and the
+# code (amendment 2026-10-16), the C8 checkpoints and the
 # preregistered genome list.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/lockbox_run.slurm
@@ -47,7 +47,7 @@ LIST=$LB/lockbox_genome_list.txt
 FNA=../raw/lockbox
 OUT=$LB/prophound
 MODES="default exploratory conservative"
-LIST_SHA=34f21b35b35188403c75a93c45939f5a0ae259bc31c9779a02b23ac3767d0eb7   # docs/lockbox.md Status
+LIST_SHA=34f21b35b35188403c75a93c45939f5a0ae259bc31c9779a02b23ac3767d0eb7   # the preregistered list
 mkdir -p analysis/_slurm_logs "$OUT"
 
 declare -A SHA=(   # docs/research-integrity.md C8
@@ -63,7 +63,7 @@ declare -A MD5=(   # frozen at ad5b28b; unchanged at e046579
   [src/model_rc_cnn.py]=cb95b3c89abc59426480efa5ec7fb720
 )
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 [ -s "$LIST" ] || { echo "PREFLIGHT FAIL: missing or empty $LIST" >&2; fail=1; }
 got=$(sha256sum "$LIST" 2>/dev/null | cut -d' ' -f1)

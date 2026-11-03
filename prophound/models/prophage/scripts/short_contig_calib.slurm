@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/adaptive-multiscale-detection.md Part 4: calibrate --short-contigs scan.
+# Short contigs (analysis/short_contig_calib/): calibrate --short-contigs scan.
 # Shreds the 42 held-out genomes into 3-10 kb contigs (a simulated fragmented
 # assembly), scores them at 5 kb / 3 kb windows with each seed and the ensemble,
 # then sweeps thresholds offline against the intact-genome 10 kb pipeline's
@@ -41,7 +41,7 @@ cd /work/$USER/mge_explorer/data_refactored
 
 LIST=scripts/eval_genome_list_sizestrat.txt
 ELEMENTS=scripts/eval_sizestrat_elements.csv
-GENOMES=../raw/genomes        # sibling of data_refactored, not inside it (docs/environment.md)
+GENOMES=../raw/genomes        # sibling of data_refactored, not inside it
 OUT=analysis/short_contig_calib
 REF=analysis/multiscale
 mkdir -p analysis/_slurm_logs "$OUT"

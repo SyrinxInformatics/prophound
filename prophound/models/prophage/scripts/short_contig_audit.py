@@ -35,9 +35,8 @@ Reports per genome and in aggregate:
   * the worst-affected genomes, which is where fragmented/MAG assemblies show up
 
 It also counts **IUPAC ambiguity codes** on the same pass, since it is the same
-scan and ambiguity is the other half of the input-quality axis (`docs/release-scope-0.1.0.md`
-gating audit A.2). Ambiguity codes collapse a window's score to zero
-(`docs/scientific-validity.md` "1a"), so how common they are across the corpus,
+scan and ambiguity is the other half of the input-quality axis. Ambiguity codes collapse a window's score to zero
+under the training-time encoding (docs/cli-and-packaging.md "Input handling"), so how common they are across the corpus,
 and at what per-genome rate, decides whether the encoding fix is a headline
 correctness issue or an edge case. Job `816446` could not answer this: only 3 of
 its 42 eval genomes carry any codes at all.
@@ -73,7 +72,7 @@ def contig_lengths(path: str, count_ambiguity: bool = False):
                 lens[k] = len(fa[k])
         return lens, n_amb, amb_contigs
     finally:
-        fa.close()  # one descriptor per genome otherwise leaks (docs/environment.md)
+        fa.close()  # one descriptor per genome otherwise leaks
 
 
 def read_bed_positives(bed_path: Path):

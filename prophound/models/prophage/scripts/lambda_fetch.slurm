@@ -44,7 +44,7 @@ L=analysis/external_benchmarks/lambda
 FNA=../raw/lambda                # sibling of raw/genomes, kept apart from the corpus
 mkdir -p analysis/_slurm_logs analysis/integrity "$FNA"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$L/lambda_genomes.tsv" "$L/lambda_truth_manifest.csv" scripts/eval_containment.py \
          scripts/small_element_spikein.py splits/train.txt; do

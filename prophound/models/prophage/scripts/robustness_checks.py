@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Robustness checks 2-4 (docs/robustness-checks.md), on the second lockbox and out-of-domain input.
+"""Robustness checks 2-4 (analysis/robustness/), on the second lockbox and out-of-domain input.
 
   gc_phylum  covered50, calls per genome and no-signal share by genome GC and by phylum
   plasmids   extrachromosomal against chromosomal contigs: calls, bp called, whole-replicon calls

@@ -18,7 +18,7 @@
 
 """Composition-only baseline: can GC/k-mer statistics alone match the CNN?
 
-docs/scientific-validity.md item 1c -- the cheapest falsification available.
+Composition-only baseline (analysis/composition_baseline/) -- the cheapest falsification available.
 The CNN reaches window-level val/test AUPRC 0.63-0.65. If a logistic regression
 on plain composition features lands near that, the CNN's advantage is not
 phage-specific signal and the project's framing has to change. If it lands well
@@ -52,7 +52,7 @@ import numpy as np
 import pandas as pd
 
 # Imported at module scope on purpose. The HPCC login node cannot load the
-# miniconda module at all ("available on the job nodes" -- docs/environment.md),
+# miniconda module at all ("available on the job nodes"),
 # so whether sklearn/pyfaidx exist in the env is only discoverable inside a job.
 # Import them here and the job dies in seconds with a clear error instead of
 # after ~an hour of featurization.
@@ -234,10 +234,10 @@ def main() -> None:
                            "auroc": float(roc_auc_score(yte, p))}
 
     # the number this whole script exists to be compared against
-    results["cnn_reference_auprc"] = "0.63-0.65 (docs/model-reengineering.md)"
+    results["cnn_reference_auprc"] = "0.63-0.65 (the CNN's window-level val/test AUPRC)"
     results["interpretation"] = (
         "If either baseline AUPRC approaches 0.63-0.65, composition alone explains "
-        "the CNN and docs/scientific-validity.md claim 2 fails. If both land well "
+        "the CNN. If both land well "
         "below, the CNN uses signal beyond nucleotide composition."
     )
     (out / "results.json").write_text(json.dumps(results, indent=2) + "\n")

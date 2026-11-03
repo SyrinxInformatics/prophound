@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Scores the lockbox once (docs/lockbox.md), from the shipped CLI's regions.tsv
+"""Scores the lockbox once (analysis/lockbox/, analysis/lockbox2/), from the shipped CLI's regions.tsv
 per mode (scripts/lockbox_run.slurm). Metric definitions are eval_region_metrics.py's
 own functions (covered bp, conflation), so the preregistered definitions are the
 code that produced every earlier figure.
@@ -56,8 +56,8 @@ import pandas as pd
 from evalkit import calls_file, covered_bp, load_genome_list, load_pred_regions, overlap, wilson
 
 MODES = ("default", "exploratory", "conservative")
-# Final-mode ensemble covered50 on the reused samples (the internal release checklist,
-# "Operating modes in plain language"; 822223 / 821361), for the optimism gap.
+# Final-mode ensemble covered50 on the reused samples (docs/release-text-0.1.0.md
+# "Operating modes"; 822223 / 821361), for the optimism gap.
 REFERENCE = {
     "42": {"exploratory": 0.994, "default": 0.972, "conservative": 0.944},
     "18": {"exploratory": 1.000, "default": 1.000, "conservative": 0.962},

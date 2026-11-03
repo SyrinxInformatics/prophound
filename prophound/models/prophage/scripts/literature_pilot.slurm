@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/final-benchmark.md, release checklist §3: literature-curated pilot.
+# Literature-curated pilot (analysis/litpilot/; docs/release-text-0.1.0.md §5).
 # Scores the 7 genomes in scripts/literature_truth.tsv (4 test, 3 val) with each
 # seed and the ensemble under shipped defaults, then scores every mode, the
 # per-genome permutation test and geNomad against the literature truth.
@@ -44,7 +44,7 @@ GENOMAD=../genomad_out
 OUT=analysis/litpilot
 mkdir -p analysis/_slurm_logs "$OUT"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$TRUTH" scripts/literature_pilot_eval.py scripts/mode_recheck.py scripts/compare_variants.py \
          scripts/refine_sweep.py src/predict_genome.py; do

@@ -16,7 +16,7 @@
 # limitations under the License.
 """Are att sites real? An independent check: do the att cores sit on tRNA/tmRNA genes?
 
-docs/att-boundaries.md "Are the att sites real?". Many temperate phages and other
+Are the att sites real? (analysis/att/). Many temperate phages and other
 integrative elements integrate into a tRNA or tmRNA gene: the core is the gene's 3' end, so
 one copy of it overlaps the gene. The att search never sees genes, so this signature is
 independent of how att pairs are chosen (analysis only; nothing here enters the pipeline).

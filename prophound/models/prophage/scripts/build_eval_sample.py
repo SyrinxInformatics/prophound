@@ -25,7 +25,7 @@ stratified by *genome* size, which left element sizes to chance: 1 of its 52
 regions is under 10 kb and 5 are under 15 kb. Every coverage-builder setting
 measured so far (`--region-builder coverage`, `--coverage-frac`, operating mode,
 replicate ensembling) was selected on that same 52-region set, so none of it is
-held out, and the claim in docs/multi-model-architecture.md that elements below
+held out, and the earlier claim that elements below
 ~10 kb are structurally uncallable has never been testable on it.
 
 This script selects a second sample that fixes both problems:
@@ -41,8 +41,8 @@ Note on what geNomad can and cannot supply (measured over all 3,970 elements in
 `genomad_out/`): the smallest call in the whole dataset is 3.50 kb, and only
 2.9% of elements are under 10 kb. A <5 kb stratum is empty in the held-out pool,
 so the smallest testable class here is 5-8 kb. Evaluating anything below that
-needs a different truth source (PHASTEST -- docs/data-reliability.md, or the
-literature-curated coordinates in docs/final-benchmark.md), not a larger sample.
+needs a different truth source (PHASTEST -- analysis/phastest_cmp/, or the
+literature-curated coordinates in analysis/litpilot/), not a larger sample.
 
 Selection is deterministic: scarce strata are taken whole, then genomes are
 added by a greedy rule that maximises elements contributed to still-unfilled

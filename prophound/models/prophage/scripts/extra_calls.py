@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""What prophound's extra calls are made of (docs/extra-calls.md), on the second lockbox.
+"""What prophound's extra calls are made of (analysis/extra_calls/; docs/release-text-0.1.0.md §8b), on the second lockbox.
 
 Every region (off-geNomad Default calls, Exploratory-only calls, length- and composition-matched
 host stretches) gets the multi-label signal table and one exclusive bin, in the preregistered

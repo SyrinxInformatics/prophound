@@ -170,7 +170,7 @@ class GenomeWindowDataset(Dataset):
         sequence = self.fasta[contig_id][start:end]
         if len(sequence) < self.window_len:
             # build_windows emits only full-length windows; padding with N could
-            # silently zero the score (docs/scientific-validity.md "1a"), so fail instead
+            # silently zero the score (docs/cli-and-packaging.md "Input handling"), so fail instead
             raise RuntimeError(
                 f"short window {contig_id}:{start}-{end} ({len(sequence)} < {self.window_len} bp); "
                 "padding with N would silently zero its score"
@@ -595,7 +595,7 @@ def run_predict(args: argparse.Namespace) -> None:
         _check_batch_outdir(Path(base.outdir), [genome_id_for(p) for p in paths], base.force)
     if opts.window_len != opts.trained_window_len:
         # the model accepts any length, but its scores on negatives rise as windows
-        # shrink, so the thresholds don't transfer (docs/adaptive-multiscale-detection.md)
+        # shrink, so the thresholds don't transfer
         log.warn(f"--window-len {opts.window_len:,} differs from the trained {opts.trained_window_len:,}; the "
                  f"mode thresholds were calibrated at {opts.trained_window_len:,} bp and are not validated "
                  "at this length.")
@@ -754,7 +754,7 @@ def input_workspace(outdir: Path):
 
 
 def warn_if_non_prokaryotic(fasta: str, contig_lengths: dict[str, int], log: Log) -> None:
-    """The check-8 warning (docs/robustness-checks.md): input with eukaryotic telomeres or over 17 Mb."""
+    """The non-prokaryote warning (docs/cli-and-packaging.md): input with eukaryotic telomeres or over 17 Mb."""
     w = TELOMERE_WINDOW
     fa = Fasta(fasta, as_raw=True, sequence_always_upper=True)
     try:
@@ -854,7 +854,7 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
 
 def boundaries(final: FinalCalls, fasta: str, contig_lengths: Dict[str, int], opts: PredictOptions) -> FinalCalls:
     """Att boundaries where found and an edge range for every call, kept and set aside
-    (docs/att-boundaries.md). n_frac is re-measured where att moved a call's edges."""
+    (docs/interpreting-results.md "The edges"). n_frac is re-measured where att moved a call's edges."""
     composition = uses_composition(opts.mode, opts.composition_edges)
     genome = Genome.from_fasta(fasta) if opts.att_search or composition else None
     calls = finish_boundaries(final.calls, genome, contig_lengths, opts.mode, opts.att_search, opts.composition_edges)

@@ -16,7 +16,7 @@
 # limitations under the License.
 
 
-"""Probability-saturation diagnostics for scored genomes (docs/scientific-validity.md item 1a).
+"""Probability-saturation diagnostics for scored genomes (docs/cli-and-packaging.md "Input handling").
 
 Separates two failure modes that both look like "a missed region" in the
 region tables but are mechanically different and need different fixes:

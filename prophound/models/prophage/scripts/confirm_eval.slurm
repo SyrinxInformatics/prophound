@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# the internal release checklist §3: independent confirmation of the shipped pipeline
+# Independent confirmation (analysis/confirm18/) of the shipped pipeline
 # on samples that played no part in tuning.
 #   - the original 18-genome / 52-element sample (eval_genome_list.txt): modes,
 #     short contigs (scan, now default), impute (now default; EDL933 is in it),
@@ -47,10 +47,10 @@ cd /work/$USER/mge_explorer/data_refactored
 LIST18=scripts/eval_genome_list.txt
 ELEMENTS18=scripts/eval_confirm18_elements.csv
 LISTPF=scripts/eval_phagefree_list.txt
-GENOMES=../raw/genomes        # sibling of data_refactored, not inside it (docs/environment.md)
+GENOMES=../raw/genomes        # sibling of data_refactored, not inside it
 mkdir -p analysis/_slurm_logs analysis/confirm18 analysis/phagefree
 
-# ---- preflight (docs/environment.md: 816440/816441, 817354) ----------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$LIST18" "$ELEMENTS18" "$LISTPF" src/predict_genome.py src/multiscale.py \
          scripts/refine_sweep.py scripts/compare_variants.py scripts/mode_recheck.py; do

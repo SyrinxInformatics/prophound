@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Scores the Sakai nucleotide (megablast) test as preregistered (docs/sakai-candidates.md).
+"""Scores the Sakai nucleotide (megablast) test as preregistered (analysis/sakai_novel/).
 
 Reads the per-region BLAST XML fetched by scripts/ncbi_blast_jobs.py. Per region: the fraction
 of its bases covered by the union of its hits (E <= 1e-10), and its longest alignment. A region

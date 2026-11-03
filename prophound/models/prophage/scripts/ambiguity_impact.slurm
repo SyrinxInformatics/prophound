@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/scientific-validity.md "1a": does fixing the ambiguity-code encoding change
+# Ambiguity codes (docs/cli-and-packaging.md "Input handling"): does fixing the ambiguity-code encoding change
 # the headline numbers? Scores the held-out size-stratified sample under all three
 # --ambiguity-policy values, three seeds each, and compares.
 # 'impute' is the in-distribution fix and the one expected to ship; 'uniform' is
@@ -51,7 +51,7 @@ mkdir -p analysis/_slurm_logs "$OUT"
 # the genome list had never been pushed, so `while read < $LIST` looped zero
 # times, and without this block the job still exited 0. Check every input.
 GENOMES=../raw/genomes        # NOT raw/genomes -- it is a sibling of
-                              # data_refactored, not inside it (docs/environment.md)
+                              # data_refactored, not inside it
 fail=0
 for f in "$LIST" "$ELEMENTS"; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

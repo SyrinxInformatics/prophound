@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Phage homology of off-tool candidates on held-out genomes (docs/candidate-phage-homology.md).
+"""Phage homology of off-tool candidates on held-out genomes (analysis/candidate_homology/).
 
   build  candidate, positive-control and negative-control regions from a run's calls and truth
   score  apply the preregistered protein call (scripts/sakai_phage_homology.py's rule) to DIAMOND

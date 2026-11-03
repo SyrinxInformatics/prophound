@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Clean-install check on Linux (ARC CPU; internal release checklist, robustness check 5).
+# Clean-install check on Linux (ARC CPU; docs/benchmarks.md "Cross-device agreement").
 # Makes a fresh conda env with only Python, installs the prophound wheel with pip (dependencies
 # from PyPI, as a user would), then runs clean_install_check.sh on the example and one
 # second-lockbox genome against its 851599 calls. The .out should end "[check] PASS".

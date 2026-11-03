@@ -72,7 +72,7 @@ def _close_gaps(
     A morphological closing of the per-bin `inside` mask: a run of outside bins is filled
     if it is at most `max_gap_bins` long and every bin in it is covered with a mean window
     probability of at least `bridge_prob`. This repairs large elements whose score dips
-    partway through (docs/gap-filling.md). `bridge_prob` is the guard against bridging two
+    partway through. `bridge_prob` is the guard against bridging two
     separate neighbouring elements; at 0 the merge is distance-only. Gaps at a contig end
     are never filled, and an uncovered bin never passes a `bridge_prob > 0` gate.
     """
@@ -146,7 +146,7 @@ def build_region_table_coverage(
     above `extend_threshold` (0 approaches the union of high windows, 1 the intersection).
     The model's score is spiky inside real elements, so requiring the mean of the covering
     windows instead drops sparse-signal elements and trims every call by about half a
-    window per side (docs/multi-model-architecture.md). With `max_gap_bp` > 0, runs separated
+    window per side. With `max_gap_bp` > 0, runs separated
     by a short gap are merged first (`_close_gaps`). A run of inside bins becomes a region if
     any bin in it is covered by a window at or above `seed_threshold`.
 
@@ -240,7 +240,7 @@ def build_region_table_coverage(
 def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame]) -> List[int]:
     """Per call, how many checkpoints make an overlapping call on their own.
 
-    docs/error-analysis.md: with the `max` ensemble any one seed can create a
+    With the `max` ensemble any one seed can create a
     call, and on the 42-genome sample calls only one of three seeds makes were
     99% off-target (152 of 154). Reported so users can rank calls; no call is
     dropped here.
@@ -259,8 +259,7 @@ def seed_support(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFrame])
 def vote_extent(regions_df: pd.DataFrame) -> pd.DataFrame:
     """The extent the seed vote was taken on: `coarse_start`/`coarse_end` for refined
     calls and split pieces, the call itself otherwise. Support counted on a piece alone
-    can read below the vote its parent call passed (docs/att-boundaries.md "Split-piece
-    support")."""
+    can read below the vote its parent call passed."""
     if "coarse_start" not in regions_df.columns or regions_df.empty:
         return regions_df
     has = regions_df["coarse_start"].notna().to_numpy()
@@ -272,7 +271,7 @@ def apply_seed_vote(regions_df: pd.DataFrame, per_seed_regions: List[pd.DataFram
                     min_support: int) -> Tuple[pd.DataFrame, int]:
     """Keep calls that at least `min_support` checkpoints make on their own.
 
-    The call-level vote of docs/error-analysis.md: extent comes from the
+    The call-level seed vote (docs/cli-and-packaging.md "Modes"): extent comes from the
     ensemble (`max`) call, the vote only decides whether it is kept. Returns the
     kept calls and the number dropped. min_support <= 1 keeps everything.
     """

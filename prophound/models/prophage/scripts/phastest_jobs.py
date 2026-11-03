@@ -23,7 +23,7 @@ rejected submission (HTTP error) without stopping, so a re-run retries only thos
 job's JSON (and its zip of region details) under --out, and can be re-run until every job is
 complete. Results also stay viewable at https://phastest.ca/submissions/<job_id>.
 
-API (docs/data-reliability.md): raw POST of the FASTA body to https://phastest.ca/phastest_api
+API: raw POST of the FASTA body to https://phastest.ca/phastest_api
 (`?contigs=1` for a multi-FASTA), then GET https://phastest.ca/phastest_api?acc=<job_id>.
 
   python scripts/phastest_jobs.py submit --genomes LIST --fasta_dir DIR --jobs JOBS.tsv

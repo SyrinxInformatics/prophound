@@ -42,7 +42,7 @@ MODE_MIN_SEED_SUPPORT = {
 
 AMBIGUITY_POLICIES = ("n-channel", "uniform", "impute")
 # The model's N channel is effectively untrained, so 'n-channel' can zero a window's
-# score; 'impute' keeps the input in distribution (docs/scientific-validity.md "1a").
+# score; 'impute' keeps the input in distribution (docs/cli-and-packaging.md "Input handling").
 DEFAULT_AMBIGUITY_POLICY = "impute"
 
 # Contigs shorter than --window-len are tiled with the largest scale that fits ('scan')
@@ -63,12 +63,12 @@ SHORT_CONTIG_THRESHOLDS = {
 ENSEMBLE_MODES = ("max", "mean")
 DEFAULT_ENSEMBLE = "max"
 # The coverage builder and fragment merging at the measured operating point
-# (docs/model-quality-baseline.md "Operating point").
+# (docs/cli-and-packaging.md "What a run does").
 DEFAULT_COVERAGE_FRAC = 0.1
 DEFAULT_MAX_GAP_BP = 50000      # 0 turns merging off
 DEFAULT_BRIDGE_PROB = 0.1
-# The fine refinement pass, on by default since 0.1.0 (docs/att-boundaries.md "The combined
-# pipeline"; the setting is from docs/downstream-postprocessing.md). 0 turns it off.
+# The fine refinement pass, on by default since 0.1.0 (docs/release-text-0.1.0.md §10).
+# 0 turns it off.
 DEFAULT_REFINE_WINDOW_LEN = 5000
 DEFAULT_REFINE_STRIDE = 250
 DEFAULT_REFINE_THRESHOLD = 0.6
@@ -78,7 +78,7 @@ DEFAULT_SPLIT_MIN_GAP_BP = 4000
 # Below DEFAULT_BRIDGE_PROB, so splitting cannot undo a merge.
 DEFAULT_SPLIT_MAX_PROB = 0.05
 # A call at least this fraction N is dropped: `impute` turns a scaffold gap into random
-# sequence, which can be called (docs/release-scope-0.1.0.md A.3).
+# sequence, which can be called (analysis/ngap_dose/).
 MAX_CALL_N_FRAC = 0.5
 # A call edge within this fraction of --window-len of a contig end moves onto the end:
 # an element cut by a breakpoint is only partly scored there
@@ -144,7 +144,7 @@ class PredictOptions:
     edge_alpha_ramp: tuple[int, int] | None
     split_min_gap_bp: int
     split_max_prob: float
-    att_search: bool = True         # att boundaries where found (docs/att-boundaries.md)
+    att_search: bool = True         # att boundaries where found (docs/interpreting-results.md)
     composition_edges: str = "auto"  # auto = on in every mode
     verbosity: int = 0              # -1 quiet, 0 normal, 1 verbose
     force: bool = False             # replace outputs already in outdir

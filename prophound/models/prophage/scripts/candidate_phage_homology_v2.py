@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Phage-homology test v2 (docs/candidate-phage-homology.md "Refined test, v2"). Offline.
+"""Phage-homology test v2 (analysis/candidate_homology/). Offline.
 
 Stages, each cached under --out so a re-run resumes:
   regions   v1's regions plus composition-matched negative controls (tetranucleotide

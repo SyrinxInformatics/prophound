@@ -14,8 +14,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Interval and test for the off-target hallmark enrichment (docs/error-analysis.md,
-docs/research-integrity.md C6, docs/release-text-0.1.0.md section 8). Per call group
+"""Interval and test for the off-target hallmark enrichment (analysis/offtarget/,
+docs/research-integrity.md "Off-target enrichment: controls", docs/release-text-0.1.0.md section 8). Per call group
 (Default, tuning sample), the hallmark rate against its length-matched controls
 drawn clear of geNomad elements: ratio with a 95% genome bootstrap (10,000
 resamples; calls and controls resampled together by genome), plus a one-sided

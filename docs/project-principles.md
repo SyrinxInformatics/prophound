@@ -1,43 +1,44 @@
 # Project principles
 
-The framing and the working rules the other docs cite. Living doc, updated in place. Each rule carries the date it was set; the user sets them, and later docs apply them.
+The framing behind prophound and the rules its development and evaluation follow. The other docs apply them.
 
-## Product framing
+## What prophound is for
 
-**prophound is a discovery tool** (2026-09-21). It is not designed for absolute precision, or to align reliably with existing databases. It is designed to be database-independent, and reliable enough that a region it flags which no database has is worth taking to the wet lab. Four things follow for how results are read:
-- **Off-target calls are the product, not the error term.** A tool that agreed perfectly with geNomad would score 100% precision and have no discovery value.
-- **Precision against geNomad is a cost proxy**, best expressed as calls per genome (the follow-up budget). It is not an accuracy figure, and headlining it as one would mislead.
-- **The recall target is a floor.** Recovering known elements means the tool does not miss what is already findable. It says nothing about novelty.
-- **Novelty is the biggest and most exposed claim, and nothing measured so far tests it** (`docs/scientific-validity.md`). The release makes no novelty claim (`docs/release-text-0.1.0.md`).
+**prophound is a discovery tool.** It is built to work without any database, and to be reliable enough that a region it flags which no database contains is worth taking to the lab. It is not built for maximum precision or for agreement with existing databases. Four things follow for how its results are read:
 
-**Exploratory mode favors recall** (2026-09-15). Its job is proposing potentially novel sequences that a person can confirm in the lab. A missed novel element cannot be recovered, while a false positive costs one wasted check. So recall comes before precision, and a checkpoint is not tuned for precision before the first release. The aim is a scientifically consistent baseline first, then a larger dataset and re-tuning (`docs/retraining-infrastructure.md`).
+- **Calls outside known elements are the product.** A tool that agreed perfectly with geNomad would score 100% precision and add nothing new. The extra calls are where anything new would be.
+- **Precision against geNomad is a cost, not an accuracy.** It is reported as candidates per genome, the follow-up budget a mode asks for. Read as accuracy, it would count every potential discovery as an error.
+- **The recall target is a floor.** Recovering known elements shows the tool does not miss what is already findable. It says nothing about whether it finds new ones.
+- **Novelty is untested.** It is the largest claim a tool like this could make, and no measurement so far tests it, so the release makes no novelty claim ([release text](release-text-0.1.0.md)).
 
-## Acceptance criterion
+**Exploratory mode puts recall first.** Its job is proposing candidates a person can confirm in the lab. A missed element cannot be recovered later, while a false candidate costs one check. So the first release establishes a consistent, well-measured baseline, without tuning the model for precision. Expanding the training data and re-tuning come after it.
 
-At least 95% region recall on known regions, with extra calls acceptable (2026-09-17). Recall is measured as covered50 against geNomad truth, and is reported with intervals and the sample's role (`docs/research-integrity.md`). Whether a held-out set establishes it is decided by a rule fixed in advance (`docs/lockbox.md`, `docs/lockbox2.md`).
+## The acceptance criterion
 
-## Method-change procedure
+**At least 95% of known prophage regions recovered, with extra calls acceptable.** Recovery is measured as covered50: calls cover at least half of an element. Truth is geNomad's calls on complete RefSeq genomes. Every figure is reported with its interval and with the role of its sample (tuning, confirmation or held out; see [Research integrity](research-integrity.md)). Whether a held-out test establishes the criterion is decided by a rule fixed before scoring ([the held-out test](lockbox2.md)).
 
-Before adopting a new or alternative method (2026-10-05), compare it against what ships and confirm it does not hurt. If it does, look for a hybrid or compromise first.
+## Changing a method
+
+A new or alternative method is adopted only after it is compared with what ships and shown not to hurt:
+
 1. **Measure it on the metrics that select it and on the costs those metrics cannot see.** Covered50 and false calls per Mb count elements and calls, not size, so also check:
-   - bp called and bp off-element;
-   - boundary IoU and calls per genome;
-   - complete-genome and phage-free regressions;
-   - every mode, on both the tuning and the check samples.
-2. **If anything gets worse, sweep for a compromise:** a smaller parameter, a narrower scope, or combining it with the existing path. Put the trade-off table to the user.
-3. **Never choose by an endpoint that cannot see the cost.** For example, covered50 rewards longer calls.
-4. **After implementing, confirm that the shipped code reproduces the measured variant on the same data.** Check every offline scorer that rebuilds calls, so the evaluation actually uses the new code.
+   - base pairs called, and base pairs called off known elements;
+   - boundary overlap (IoU) and candidates per genome;
+   - complete genomes and genomes with no prophage;
+   - every mode, on both the tuning and the confirmation samples.
+2. **If anything gets worse, look for a compromise first:** a smaller parameter, a narrower scope, or a combination with the existing path. The trade-off table decides.
+3. **Never choose by an endpoint that cannot see the cost.** Covered50, for example, rewards longer calls.
+4. **After implementing, confirm that the shipped code reproduces the measured variant on the same data,** including every offline scorer that rebuilds calls, so the evaluation measures the code that ships.
 
-Worked example: edge snap (`docs/claims-and-evidence.md` "Amendment 2026-10-05"). Any change to the hash-checked modules must also reproduce the CPU reference outputs byte for byte (`scripts/reference_outputs.py compare`) or explain each difference, and it gets a lockbox amendment.
+**The shipped modules are hash-checked.** A change to them must reproduce a fixed set of reference outputs byte for byte on CPU (`scripts/reference_outputs.py compare`: 30 cases covering every mode and option), or explain each difference. Each such change after a held-out test is recorded as an amendment to that test ([the held-out test](lockbox2.md), "Amendments").
 
 ## Standing checks
 
-- **Reverse complement and N regions** (2026-09-22). Every analysis considers the reverse complement, and the model and the pipeline after it must be resilient to N regions and ambiguity codes (`docs/scientific-validity.md` "Input-robustness standing check").
-- **Replicates** (2026-09-17). Three replicates per training-config change, each with its own `run_name` and seed. Single runs fall inside the seed variance (`docs/model-reengineering.md`).
-- **Local first** (2026-09-29). Small jobs run locally. The cluster is for large data, heavy compute and large downloads (`docs/environment.md`).
+- **Both strands, and gaps.** Every analysis considers the reverse complement. The model and the steps after it must cope with runs of N and with IUPAC ambiguity codes; `scripts/rc_n_resilience.py` asserts the window-level properties.
+- **Three replicates per training change,** each with its own seed. A single training run falls inside the spread between seeds.
+- **Small jobs run locally;** the computing cluster is for large data, heavy compute and large downloads.
 
-## Records
+## Records and wording
 
-- **Preregistrations are never edited.** Every change after one is written as a dated amendment (`docs/lockbox.md`, `docs/lockbox2.md`, the LAMBDA checks in `docs/claims-and-evidence.md`).
-- **`prophound/models/prophage/notes/` is a frozen historical snapshot** of the earlier development cycle. It is not edited, so where it conflicts with `docs/`, `docs/` is current.
-- **Wording** (`docs/claims-and-evidence.md`): never "first" and never "guarantee". Write "may not call" rather than "do not call", and call the output "candidates for follow-up".
+- **A preregistration is never edited.** Anything changed after it is written as a dated amendment beneath it, so a reader can check what was fixed in advance ([the held-out test](lockbox2.md); the LAMBDA checks in [Claims and evidence](claims-and-evidence.md)).
+- **Wording.** Never "first" and never "guarantee". Write "may not call" rather than "does not call", and call the output "candidates for follow-up". Agreement with geNomad is reported as agreement, not accuracy ([Claims and evidence](claims-and-evidence.md)).

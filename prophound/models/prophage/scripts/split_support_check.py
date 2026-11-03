@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""seed_support before and after the split-piece fix (docs/att-boundaries.md "Split-piece support").
+"""seed_support before and after the split-piece fix (docs/lockbox2.md, amendment 2026-10-26).
 
 Rebuilds every mode with the shipped pipeline on the four boundary samples, once with
 calls.vote_extent replaced by the identity (the old count, on the piece itself) and once

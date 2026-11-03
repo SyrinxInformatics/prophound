@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# the internal release checklist §3 / docs/release-scope-0.1.0.md: sub-10 kb recall with REAL small
+# Small elements (analysis/spikein_small/): sub-10 kb recall with REAL small
 # prophage-class elements, which geNomad truth cannot certify (its floor is 3.5 kb
 # and the corpus holds 2 elements below 5 kb).
 #   1. disjoint  drop candidates sharing 21-mers with any training positive or
@@ -57,7 +57,7 @@ SEQ=sequences
 OUT=analysis/spikein_small
 mkdir -p analysis/_slurm_logs "$OUT"
 
-# ---- preflight (docs/environment.md: 816440/816441, 817354) ----------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$CAND/candidates.tsv" "$CAND/candidates.fna" "$HOSTS" "$ELEMENTS" "$LOCI" \
          scripts/small_element_spikein.py scripts/mode_recheck.py scripts/refine_sweep.py \

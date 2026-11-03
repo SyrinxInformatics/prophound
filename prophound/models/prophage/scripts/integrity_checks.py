@@ -27,7 +27,7 @@
                the truth file: covered50 per run on all rows, without the
                coordinate classes that rest on a curation judgement, and
                without remnants; genome-bootstrap intervals throughout.
-  errortables  C8. Re-derives docs/error-analysis.md's scratchpad-only tables
+  errortables  C8. Re-derives the error analysis's scratchpad-only tables
                from the tracks: seed support of ensemble calls split by
                on/off-target, and the type II miss list with each missed
                element's maximum ensemble window score. Pre-vote Default

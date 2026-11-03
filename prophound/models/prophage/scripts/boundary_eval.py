@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Boundary pipeline variants, rebuilt offline from refinement-on runs (docs/att-boundaries.md).
+"""Boundary pipeline variants, rebuilt offline from refinement-on runs (analysis/att/).
 
 Input: a `predict --mode exploratory --write-seed-scores --refine-window-len ...` batch
 directory (<genome>/windows.tsv, fine_windows.tsv, run_metadata.json). Exploratory

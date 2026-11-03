@@ -6,7 +6,6 @@ run_name: prophage_v1_positional_clean
 # so pooling is the only deliberate difference -- unlike the original
 # prophage_v1_positional run, which also changed pos_weight (auto -> 20.0)
 # and amp (true -> false) at the same time, confounding the comparison.
-# See docs/model-quality-baseline.md (2026-09-08).
 #
 # init_mode: encoder_only is NOT a confound to remove -- it's mechanically
 # required. pool_bins=16 makes the head's first Linear layer expect an input

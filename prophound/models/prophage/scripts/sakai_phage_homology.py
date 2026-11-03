@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Scores the Sakai phage-homology tests exactly as preregistered (docs/sakai-candidates.md).
+"""Scores the Sakai phage-homology tests exactly as preregistered (analysis/sakai_novel/).
 
 Protein test (DIAMOND blastx against NCBI RefSeq viral proteins): per region, the fraction
 of its bases covered by hits, and the number of distinct loci (merged overlapping hit

@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Select the locked test set (docs/lockbox.md): genus-disjoint new genomes.
+"""Select the locked test set (docs/lockbox2.md): genus-disjoint new genomes.
 
   select    From NCBI's assembly_summary_refseq.txt, take bacterial RefSeq
             `Complete Genome` assemblies (latest version) whose genus is absent

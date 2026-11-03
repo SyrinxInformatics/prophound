@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Submit the scientific-validity analysis jobs (docs/scientific-validity.md).
+# Submit the scientific-validity analysis jobs (docs/research-integrity.md).
 #   ssh pke835@arc.utsa.edu 'bash /work/$USER/mge_explorer/data_refactored/scripts/validity_submit.sh'
 #
 # No conda here on purpose. The `miniconda` module is NOT available on the login
-# node ("This module is available on the job nodes" -- docs/environment.md), so
+# node ("This module is available on the job nodes"), so
 # the env cannot be inspected before submitting; both job scripts load it
 # themselves on the compute node. composition_baseline.py imports sklearn at
 # module scope so a missing library kills that job in seconds, not after an hour

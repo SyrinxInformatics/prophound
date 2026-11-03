@@ -62,7 +62,7 @@ export PYTHONPATH="$CODE/src"
 PREDICT=(python -c "from prophound.cli import main; main()" predict)
 mkdir -p analysis/_slurm_logs "$OUT"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 case "$FREEZE$MD5S_SHA" in *__*) echo "PREFLIGHT FAIL: freeze commit / manifest hash not filled in" >&2; exit 1;; esac
 [ -s "$LIST" ] || { echo "PREFLIGHT FAIL: missing or empty $LIST" >&2; fail=1; }

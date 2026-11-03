@@ -26,12 +26,14 @@ Checks, in the main repository:
   - secrets: private keys and the token formats of GitHub, AWS, Slack, OpenAI, Anthropic, Google,
     Hugging Face and GitLab, plus password/token/key assignments with a quoted literal;
   - credential files by name (.env, *.pem, *.key, id_rsa, .netrc, .pypirc, *.p12, ...);
-  - files that stay local: CLAUDE.md, SESSIONS.md, docs/release-checklist.md and .git-local/;
+  - files that stay local: CLAUDE.md, SESSIONS.md, docs/release-checklist.md, .git-local/ and every
+    file the local-only repository tracks (also under the package's earlier paths, for history);
   - files over 10 MB;
   - sequence data and model checkpoints outside the places that ship them;
   - OS, editor and cache files, and local data directories (arc_data/, .pixi/, runs/).
 
-In the local-only repository (.git-local), only Markdown files are allowed, and the secret check applies.
+In the local-only repository (.git-local), only Markdown and plain-text files are allowed, and the secret
+check applies.
 
 A line containing `check-commit: allow` is exempt from the secret patterns (for documented false
 positives). Install the hooks once per clone with `pixi run install-hooks`.
@@ -71,6 +73,9 @@ JUNK_NAMES = [".DS_Store", "Thumbs.db", "*.pyc", "*.pyo", "*.swp", "*.swo", "*~"
 JUNK_DIRS = ["__pycache__", ".ipynb_checkpoints", ".pytest_cache", ".ruff_cache", ".mypy_cache", ".idea", ".vscode"]
 LOCAL_ONLY = ["CLAUDE.md", "SESSIONS.md", "docs/release-checklist.md"]
 LOCAL_DATA_DIRS = ["arc_data", ".pixi", ".git-local"]
+# set by git for a hook, for the repository being committed to; cleared before reading .git-local
+REPO_ENV = {"GIT_DIR", "GIT_INDEX_FILE", "GIT_WORK_TREE", "GIT_PREFIX", "GIT_OBJECT_DIRECTORY",
+            "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR"}
 
 SEQUENCE = re.compile(
     r"\.(fna|fa|fasta|fas|ffn|faa|gb|gbk|gbff|embl|fastq|fq|sam|bam|cram|2bit)(\.gz|\.bz2|\.xz)?$", re.I)
@@ -89,17 +94,37 @@ def is_local_repo() -> bool:
     return os.path.basename(os.path.normpath(git("rev-parse", "--git-dir").decode().strip())) == ".git-local"
 
 
-def path_problems(path: str, local_repo: bool) -> list[str]:
+def local_only_paths() -> frozenset[str]:
+    """LOCAL_ONLY plus every file the local-only repository tracks, when this checkout has one."""
+    top = git("rev-parse", "--show-toplevel").decode().strip()
+    local_git = os.path.join(top, ".git-local")
+    tracked: list[str] = []
+    if os.path.isdir(local_git):
+        # A hook runs with GIT_INDEX_FILE (and often GIT_DIR) set for the repository being committed to;
+        # left in place, ls-files would list that repository's index instead of the local one.
+        env = {k: v for k, v in os.environ.items() if k not in REPO_ENV}
+        listing = subprocess.run(["git", f"--git-dir={local_git}", f"--work-tree={top}", "ls-files", "-z"],
+                                 capture_output=True, check=True, env=env).stdout
+        tracked = [raw.decode() for raw in filter(None, listing.split(b"\0"))]
+    return frozenset(LOCAL_ONLY + tracked)
+
+
+def current_path(path: str) -> str:
+    """A path under one of the package's earlier locations, as it is now."""
+    return re.sub(rf"^{PACKAGE_PREFIX}", "prophound/", path)
+
+
+def path_problems(path: str, local_repo: bool, local_only: frozenset[str] = frozenset(LOCAL_ONLY)) -> list[str]:
     name = os.path.basename(path)
     parts = path.split("/")
     out = []
     if any(fnmatch.fnmatch(name, pat) for pat in CREDENTIAL_NAMES):
         out.append("credential file name")
     if local_repo:
-        if not path.endswith(".md"):
-            out.append("the local-only repository holds Markdown files only")
+        if not path.endswith((".md", ".txt")):
+            out.append("the local-only repository holds Markdown and plain-text files only")
         return out
-    if path in LOCAL_ONLY:
+    if path in local_only or current_path(path) in local_only:
         out.append("local-only file (tracked in .git-local)")
     if any(fnmatch.fnmatch(name, pat) for pat in JUNK_NAMES) or any(p in JUNK_DIRS for p in parts[:-1]):
         out.append(JUNK)
@@ -171,6 +196,7 @@ def main() -> int:
     args = ap.parse_args()
 
     local_repo = is_local_repo()
+    local_only = frozenset() if local_repo else local_only_paths()
     if args.staged:
         blobs = blobs_staged()
     elif args.range:
@@ -180,7 +206,7 @@ def main() -> int:
 
     failures = []
     for path, sha in blobs:
-        problems = path_problems(path, local_repo)
+        problems = path_problems(path, local_repo, local_only)
         if git("cat-file", "-t", sha).strip() == b"blob":
             data = git("cat-file", "blob", sha)
             if not data:  # an empty OS or cache file carries nothing (an empty .Rhistory from 2025 is in history)

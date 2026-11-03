@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Inputs for the independent confirmation run (the internal release checklist §3).
+"""Inputs for the independent confirmation run (analysis/confirm18/).
 
 1. Element table for the original 18-genome sample (eval_genome_list.txt), in
    the same format as eval_sizestrat_elements.csv, from eval_genomad_truth/.

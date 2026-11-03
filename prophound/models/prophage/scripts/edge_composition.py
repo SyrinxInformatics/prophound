@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Composition change-points for estimated edges (docs/att-boundaries.md "Composition edges").
+"""Composition change-points for estimated edges (docs/interpreting-results.md "The edges").
 
 Prophages usually differ from their host in base composition. As in Alien_Hunter's
 change-point step and CheckV's adjacent-window comparison, an estimated edge is moved to

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/scientific-validity.md item 1c: can GC/k-mer composition alone match the
+# Composition-only baseline (analysis/composition_baseline/): can GC/k-mer composition alone match the
 # CNN's window-level AUPRC of 0.63-0.65? CPU only.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/composition_baseline.slurm

@@ -16,7 +16,7 @@
 # limitations under the License.
 """Offline sweep of the fine refinement pass across all four downstream problems.
 
-docs/downstream-postprocessing.md, docs/adaptive-multiscale-detection.md. Each
+Results: analysis/multiscale/. Each
 run directory holds `<genome>/windows.tsv` and `<genome>/fine_windows.tsv` from
 `predict_genome --refine-window-len W` (the score tracks); pass B's parameters
 are cheap, so they are swept here without re-scoring. Coarse calls are rebuilt

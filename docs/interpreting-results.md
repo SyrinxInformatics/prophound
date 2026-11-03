@@ -2,7 +2,7 @@
 
 prophound looks at a bacterial genome's DNA and marks regions that look like **integrated prophages**: phage genomes sitting in the chromosome. It uses no reference database and no gene annotation, so it can flag elements databases don't contain. Every region it reports is a **candidate to check**.
 
-This guide is for reading the results. Every file and column is defined in [`docs/output-files.md`](output-files.md).
+This guide is for reading the results. Every file and column is defined in [Output files](output-files.md).
 
 ## Start with `regions.tsv`
 
@@ -38,7 +38,7 @@ Most candidates have no att site. Their ends are placed in two steps:
 1. **The model's score** along the genome. It changes gradually over several kb around a real end, so it places an end only roughly, usually a few kb past the element.
 2. **The sequence's composition.** Prophages usually differ from their host in base composition, so each end is moved to where the sequence shifts from host-like to element-like, as tools for genomic islands do. This halved the typical error, to about **2 kb** (median), and lost no element in Default mode. Exploratory mode accepts smaller composition differences, so it moves ends more often, at the cost of one partially detected element in our tests.
 
-`start_range` and `end_range` say where the true ends lie. Each true end fell inside its range in **about 78% of cases on held-out genomes** (the second lockbox) and 87–91% on development samples, so an end outside its range does happen. The ranges are often 10–30 kb wide, mostly inside the region: the typical error is small, but a minority of ends are far off, mostly where only part of an element was detected. Two practical readings:
+`start_range` and `end_range` say where the true ends lie. Each true end fell inside its range in **about 78% of cases on held-out genomes** ([the held-out test](lockbox2.md)) and 87–91% on development samples, so an end outside its range does happen. The ranges are often 10–30 kb wide, mostly inside the region: the typical error is small, but a minority of ends are far off, mostly where only part of an element was detected. Two practical readings:
 
 - **Sequence almost certainly inside the element** lies between the upper end of `start_range` and the lower end of `end_range`.
 - **To be sure a primer pair or cloned fragment spans the whole element,** place it outside the lower end of `start_range` and the upper end of `end_range`.
@@ -69,7 +69,7 @@ On 150 held-out genomes, every Default candidate that touches no known element w
 - **Plasmids are often called whole.** On held-out genomes, a third of plasmids had one call covering most of the plasmid. Such a call describes the plasmid, which may itself be mobile, and locates nothing inside it. Check the contig before reading it as a prophage.
 - **A known false alarm:** clusters of ribosomal-protein genes, whose unusual composition can look element-like. Set aside a candidate made mostly of them.
 
-Details: [`docs/extra-calls.md`](extra-calls.md).
+Details, with the method and per-bin counts: [release text](release-text-0.1.0.md) §8b.
 
 ## Choosing a mode
 

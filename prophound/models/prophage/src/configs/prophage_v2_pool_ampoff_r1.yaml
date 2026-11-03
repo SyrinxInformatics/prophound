@@ -1,6 +1,6 @@
 # prophage_v2_pool_ampoff_r1: replicate 1/3 (seed 13) of the pooling-only config with
 # amp disabled -- the arm that separates the two levers confounded in the 2x3
-# prophage_v2 comparison (docs/model-reengineering.md).
+# prophage_v2 comparison.
 #
 # prophage_v2_pool      = pos_weight auto (70.98) + amp true
 # prophage_v2_pool_pw20 = pos_weight 20.0        + amp false
@@ -10,7 +10,6 @@
 # Also the first config to carry the 2026-09-20 defaults: amp false (AMP measured
 # at +1.1% wall-clock while discarding ~3% of batches to nan loss) and
 # num_workers 6 (up from 2, against #SBATCH -c 8; the job looks input-bound).
-# See docs/environment.md SLURM section.
 #
 # STAGED, DO NOT SUBMIT as of 2026-09-20. The region eval landed the same day and
 # killed the reason for this arm: pool and pw20 do not separate (recall +1.3 pts
@@ -18,7 +17,6 @@
 # so three replicates cannot resolve an amp effect bounded at ~0.005 window AUPRC.
 # Kept only as the template carrying the 2026-09-20 defaults (amp false,
 # num_workers 6) for whatever the next real config turns out to be.
-# See docs/model-reengineering.md "813733/813736 results".
 # Launcher: src/prophage_v2_replicates_gpu.slurm (BASE=prophage_v2_pool_ampoff).
 run_name: prophage_v2_pool_ampoff_r1
 

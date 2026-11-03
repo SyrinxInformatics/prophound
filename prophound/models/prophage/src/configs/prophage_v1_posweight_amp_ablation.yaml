@@ -7,7 +7,7 @@ run_name: prophage_v1_posweight_amp_ablation
 # pooling. Every other hyperparameter matches true v1's own config_snapshot.yaml
 # exactly, so pos_weight+amp are the only deliberate difference from v1.
 #
-# Background (see docs/model-reengineering.md's 2026-09-15 correction): every
+# Background (2026-09-15 correction): every
 # "v1 baseline" number this project has cited (76.9% recall / 70.2% precision)
 # was actually prophage_v1_positional (adaptive_max + pos_weight=20 + amp=false),
 # not true global_max v1. True v1 actually scores 82.7% recall / 38.7% precision.

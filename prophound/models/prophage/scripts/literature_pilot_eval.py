@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Literature-curated pilot (docs/final-benchmark.md, release checklist §3).
+"""Literature-curated pilot (analysis/litpilot/; docs/release-text-0.1.0.md §5).
 
 Scores calls against scripts/literature_truth.tsv, which is independent of
 geNomad. Literature lists are incomplete (geNomad finds elements they omit), so
@@ -25,7 +25,7 @@ the pipeline builds them (scripts/mode_recheck.py). Per element: covered
 fraction, covered (>=1 bp), covered50, best single-call IoU. Reported by split
 (test / val, never pooled), by class, and per genome.
 
-Permutation test per genome (docs/final-benchmark.md): the calls on each contig
+Permutation test per genome: the calls on each contig
 are rotated by one uniform random offset (circularly; this keeps their number,
 lengths and spacing) N times. Statistics: the number of covered50 elements and
 the mean best-match IoU. p = (1 + #null >= observed) / (1 + N); genomes are

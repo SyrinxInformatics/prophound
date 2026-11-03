@@ -55,7 +55,7 @@ N=150                           # as the first lockbox (docs/lockbox2.md "Sample
 SEED=20261021
 mkdir -p analysis/_slurm_logs "$OUT" "$FNA" "$GMD"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in scripts/lockbox_select.py splits/train.txt splits/val.txt splits/test.txt "$SUM" "$EXCL"; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

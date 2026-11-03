@@ -19,8 +19,7 @@
 
 """Downstream quick checks on already-scored windows.tsv files (no re-inference).
 
-Written 2026-09-17 for the error analysis in docs/model-quality-baseline.md and
-the design in docs/multi-model-architecture.md. Compares, on the 18-genome
+Written 2026-09-17 for the error analysis of the region builder. Compares, on the 18-genome
 eval set, the frozen `build_region_table` (intersection semantics: a 1 kb bin
 is in only if the MEAN of the ~10 windows covering it >= extend_threshold)
 against a coverage-fraction builder (bin is in if >= `frac` of its covering
@@ -58,7 +57,7 @@ MODES = {"conservative": (0.999, 0.99), "default": (0.995, 0.99), "exploratory":
 
 
 # The `strict` builder this comparison measures against. It was removed from predict_genome.py
-# on 2026-10-20 (docs/tech-debt-audit.md, decision 4) and is kept here verbatim so the
+# on 2026-10-20 and is kept here verbatim so the
 # comparison stays reproducible.
 def build_hysteresis_windows(
     prob_values: list[float],
@@ -225,7 +224,7 @@ def main() -> None:
     ap.add_argument("--genomad_dir", default=str(HERE / "eval_genomad_truth"))
     ap.add_argument("--fracs", default="0.01,0.1,0.3,0.5")
     ap.add_argument("--modes", default="default")
-    ap.add_argument("--gaps", default="", help="Fragment-merge sweep: comma-separated max gap sizes in bp (e.g. '5000,20000,50000'). Empty = no merge variants (docs/gap-filling.md).")
+    ap.add_argument("--gaps", default="", help="Fragment-merge sweep: comma-separated max gap sizes in bp (e.g. '5000,20000,50000'). Empty = no merge variants.")
     ap.add_argument("--bridges", default="0", help="With --gaps: comma-separated bridge_prob gates (mean covering-window prob required across the gap). 0 = distance-only merge.")
     ap.add_argument("--min_len", type=int, default=0, help="Also emit each variant filtered to regions >= this many bp (0 = off)")
     ap.add_argument("--strata", default="", help="Passed through to eval_region_metrics.py: kb breakpoints for per-size-class recall (e.g. '5,8,10,15,30,60').")

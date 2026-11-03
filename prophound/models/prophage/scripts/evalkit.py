@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Shared code for the offline scorers and analyses (docs/tech-debt-audit.md X2).
+"""Shared code for the offline scorers and analyses (each script used to carry its own copy).
 
 Every script imports measurement code from here, not from another script, so changing one
 analysis cannot silently change another's result. Scripts in one investigation may still
@@ -226,7 +226,7 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
     calls. With `with_filtered`, also returns the candidates a filter removed.
 
     Since 0.1.0 `predict` refines calls and places att boundaries by default
-    (docs/att-boundaries.md). `fine_tracks` ({genome: fine windows}, from refinement-on
+    (docs/cli-and-packaging.md "What a run does"). `fine_tracks` ({genome: fine windows}, from refinement-on
     runs) adds the refinement, and `genomes_dir` the att boundaries and edge ranges.
     Without `fine_tracks` a warning says the calls are the pre-refinement ones.
     `composition` is predict's --composition-edges (auto: Default and Conservative).
@@ -238,7 +238,7 @@ def shipped_calls(ens_tracks: dict, seed_tracks: list, mode: str, genomes_dir: s
         _warned_no_fasta = True
     if fine_tracks is None and not _warned_no_fine:
         print("[evalkit] no fine tracks: calls are rebuilt without the refinement pass, which predict runs "
-              "by default since 0.1.0 (docs/att-boundaries.md)", file=sys.stderr)
+              "by default since 0.1.0", file=sys.stderr)
         _warned_no_fine = True
     kept, removed = [], []
     for g, (w, wl) in ens_tracks.items():
@@ -368,7 +368,7 @@ def covered50(ev: pd.DataFrame, reg: pd.DataFrame) -> float:
 
     Covered recall (>= 1 bp) credits grazes -- a neighbouring call's overshoot
     clipping an element's edge. Both losses 817370's refinement showed were
-    grazes (docs/downstream-postprocessing.md "Per-element dig"), so every
+    grazes, so every
     variant is also scored on this graze-proof version.
     """
     ok = 0
@@ -455,7 +455,7 @@ def score_variant(ev: pd.DataFrame, reg: pd.DataFrame) -> dict:
     n_genomes = ev.accession.nunique()
     # Conflation: one call claiming several distinct elements. Covered recall is
     # blind to this by construction (3 elements under 1 call score 3/3), so it is
-    # reported explicitly -- see docs/downstream-postprocessing.md "Conflation".
+    # reported explicitly.
     conflated = {k: v for k, v in per_call.items() if len(v) >= 2}
     absorbed = sum(len(v) for v in conflated.values())
     n_covered = int(np.sum(covered))

@@ -17,8 +17,7 @@
 # limitations under the License.
 #
 # Job-array launcher for the 2026-09-17 replicate protocol: N replicates of one
-# base config, each with its own run_name/seed/runs dir (docs/environment.md,
-# docs/model-reengineering.md). One array task = one replicate.
+# base config, each with its own run_name/seed/runs dir. One array task = one replicate.
 #
 # Submit from /work/$USER/mge_explorer/data_refactored, once per base config:
 #   sbatch -J prophage_v2_pool      --export=ALL,BASE=prophage_v2_pool      src/prophage_v2_replicates_gpu.slurm
@@ -55,7 +54,7 @@ mkdir -p "runs/${RUN_NAME}/logs" "runs/${RUN_NAME}/checkpoints" "runs/${RUN_NAME
 
 # train_prophage.py's walltime guard reads SLURM_TIMELIMIT, which Slurm does not
 # export -- without this the guard never fires and the job is just SIGTERM'd at
-# the limit (812125/812131 both were). See docs/environment.md.
+# the limit (812125/812131 both were).
 export SLURM_TIMELIMIT="$(squeue -h -j "${SLURM_JOB_ID}" -o %l)"
 echo "SLURM_TIMELIMIT=${SLURM_TIMELIMIT}"
 

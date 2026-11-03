@@ -14,12 +14,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sub-10 kb spike-ins with real small prophage-class elements (release checklist §3).
+"""Sub-10 kb spike-ins with real small prophage-class elements (analysis/spikein_small/).
 
-geNomad truth cannot certify recall below 10 kb (docs/release-scope-0.1.0.md), so real
+geNomad truth cannot certify recall below 10 kb, so real
 small elements are implanted at known coordinates into genomes of the
-42-genome sample and scored through the full pipeline. docs/release-scope-0.1.0.md A.1
-constraints: prophage class (complete inovirus genomes, not IS elements), real
+42-genome sample and scored through the full pipeline (analysis/spikein_small/).
+Constraints: prophage class (complete inovirus genomes, not IS elements), real
 sequence, homology-disjoint from training.
 
   select    complete NCBI Inoviridae genomes within a size range, near-duplicates

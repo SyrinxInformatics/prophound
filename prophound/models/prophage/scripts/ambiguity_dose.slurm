@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/release-scope-0.1.0.md A.3: ambiguity dose-response. Spikes IUPAC codes into the
+# Ambiguity dose-response (analysis/ambiguity_dose/). Spikes IUPAC codes into the
 # 42-genome size-stratified sample (substitution only; truth unchanged) and
 # scores each condition with the shipped ensemble under n-channel (old) and
 # impute (default since 2026-09-24):
@@ -50,7 +50,7 @@ CONDITIONS="clean:0 scattered:10 scattered:100 scattered:300 scattered:1000 scat
 POLICIES="n-channel impute"
 mkdir -p analysis/_slurm_logs "$OUT"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$LIST" "$ELEMENTS" scripts/ambiguity_dose.py scripts/mode_recheck.py scripts/compare_variants.py \
          scripts/refine_sweep.py src/predict_genome.py; do

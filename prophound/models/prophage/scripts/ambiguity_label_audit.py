@@ -16,7 +16,7 @@
 # limitations under the License.
 
 
-"""Why does the model treat ambiguity codes as a hard negative? (docs/scientific-validity.md item 1a)
+"""Why does the model treat ambiguity codes as a hard negative? (docs/cli-and-packaging.md "Input handling")
 
 Local work on 2026-09-22 established that ambiguity codes (N and IUPAC codes,
 all of which route to the encoder's N channel) collapse the model's output:
@@ -38,8 +38,8 @@ Outputs `analysis/ambiguity_labels/results.json`:
     ambiguity code inside a real prophage
 
 Reads the FASTAs directly (the manifest stores coordinates, not sequence), so
-it is I/O bound; it opens each genome once and closes it (see the EMFILE
-incident in docs/environment.md).
+it is I/O bound; it opens each genome once and closes it (leaving them open
+once ran the job out of file descriptors).
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ AMBIG = None  # set in main from the complement of ACGT
 
 
 def open_fasta(path: str, retries: int = 5, wait_s: float = 2.0) -> Fasta:
-    """pyfaidx open tolerant of a concurrent .fai rewrite (docs/environment.md)."""
+    """pyfaidx open tolerant of a concurrent .fai rewrite."""
     for attempt in range(retries):
         try:
             return Fasta(path, as_raw=True, sequence_always_upper=True)

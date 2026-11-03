@@ -16,7 +16,7 @@
 # limitations under the License.
 """Call boundaries: att sites where the genome records them, ranges elsewhere.
 
-docs/att-boundaries.md. Integration by site-specific recombination leaves a
+docs/interpreting-results.md "The edges". Integration by site-specific recombination leaves a
 prophage between two copies of the att core (attL, attR), a direct repeat
 typically tens of bp long. When a call has such a pair, one copy near each edge,
 its boundaries are known to the base:

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Clean-install check (internal release checklist, robustness check 5): runs an installed prophound,
+# Clean-install check (docs/benchmarks.md "Cross-device agreement"): runs an installed prophound,
 # from outside the repository, on the example genome and on one second-lockbox genome, and
 # compares the calls with the expected ones (the example's expected_calls.tsv; the lockbox
 # genome's calls from the ARC V100 run 851599). Devices never agree byte for byte, only in calls.

@@ -23,7 +23,7 @@ half-open like BED.
 
 The rank orders calls by `max_prob`, ties broken by `mean_prob`: on the tuning
 sample this put calls on known elements first better than `mean_prob` alone, in
-every mode, and it held on the check sample (docs/att-boundaries.md "Ranking").
+every mode, and it held on the check sample (docs/interpreting-results.md "Rank and support").
 Ranking by resemblance to known prophages means a novel candidate can rank low.
 """
 

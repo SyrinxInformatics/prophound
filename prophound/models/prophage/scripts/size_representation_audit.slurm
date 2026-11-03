@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# docs/release-scope-0.1.0.md gating audit A.1: are small elements represented as positives
+# Small-element representation (analysis/size_representation/): are small elements represented as positives
 # in training, and at what dilution? Gates the retraining data design.
 # Submit from /work/$USER/mge_explorer/data_refactored:
 #   sbatch scripts/size_representation_audit.slurm

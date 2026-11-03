@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Call-level seed vote, re-measured offline (docs/error-analysis.md).
+"""Call-level seed vote, re-measured offline (docs/cli-and-packaging.md "Modes").
 
 For each seed threshold t, calls are rebuilt from the ensemble track and from
 each single-seed track with the shipped pipeline (mode_recheck.calls logic at

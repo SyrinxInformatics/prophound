@@ -44,7 +44,7 @@ conda activate /home/$USER/.conda/envs/mge_explorer_gpu
 cd /work/$USER/mge_explorer/data_refactored
 
 D=analysis/g5dev
-GENOMES=../raw/genomes           # sibling of data_refactored (docs/environment.md)
+GENOMES=../raw/genomes           # sibling of data_refactored
 SHR=../raw/g5dev_shreds
 OUT=$D/prophound
 LIST=$D/genome_list.txt
@@ -56,7 +56,7 @@ declare -A SHA=(
   [r3]=541cd72f1508ca35e2829b13eaf6818727db9cc53e55399c2ad467bba1199484
 )
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in scripts/eval_genome_list_sizestrat.txt scripts/eval_genome_list.txt scripts/shred_genomes.py \
          src/predict_genome.py; do

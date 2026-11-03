@@ -4,7 +4,7 @@ All notable changes to prophound are recorded here. The format follows [Keep a C
 
 prophound is in initial development (0.y.z). Until 1.0.0 the command line, output files and defaults may change in any minor release; 1.0.0 will mark the first interface we commit to keeping stable.
 
-## [0.1.0] — unreleased
+## [0.1.0] — 2026-11-03
 
 The first release. Earlier development versions were called `mge-detect`.
 
@@ -19,7 +19,7 @@ The first release. Earlier development versions were called `mge-detect`.
 - Contigs of 3–10 kb are scanned with their own thresholds. Contigs under 3 kb are never scanned, and are reported.
 - A call within half a window of a contig end is extended to the end and flagged in `contig_edge`.
 - IUPAC ambiguity codes are replaced by fixed, reproducible bases (`--ambiguity-policy impute`). This changes nothing on sequence without them. The training-time encoding made two adjacent ambiguous bases drop a window's score to zero.
-- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off), and each edge is then moved to where the sequence's composition turns from host-like to element-like, which roughly halves the median edge error (`--composition-edges`; Exploratory accepts profiles that differ less). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, and for model edges a range that held the true edge in about 78% of cases on held-out genomes (88–92% on the development samples). About 15% of known elements have a findable att site. `docs/att-boundaries.md`.
+- **Boundaries.** Where a call has an att site (a direct repeat with one copy at each edge, left by integration), its edges are those two copies, exact to the base (`boundary` = `att`). No database or gene calling is used. Elsewhere, a fine pass (5 kb windows on a 250 bp step) places the edges (`boundary` = `model`; `--refine-window-len 0` turns it off), and each edge is then moved to where the sequence's composition turns from host-like to element-like, which roughly halves the median edge error (`--composition-edges`; Exploratory accepts profiles that differ less). Every call gives a range for each edge (`start_lo` … `end_hi`): exact for att edges, and for model edges a range that held the true edge in about 78% of cases on held-out genomes (88–92% on the development samples). About 15% of known elements have a findable att site ([release text](docs/release-text-0.1.0.md) §10).
 
 ### Input and output
 

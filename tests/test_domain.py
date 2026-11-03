@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The non-prokaryote warning (src/domain.py, docs/robustness-checks.md check 8) and its override."""
+"""The non-prokaryote warning (src/domain.py, docs/cli-and-packaging.md) and its override."""
 
 import random
 

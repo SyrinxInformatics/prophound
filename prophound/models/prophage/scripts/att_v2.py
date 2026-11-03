@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Att search v2, DEPhT-style: short seeds, ungapped extension with mismatches, decoy-set
-threshold, model evidence instead of integrase proximity (docs/att-boundaries.md "Att v2").
+threshold, model evidence instead of integrase proximity (analysis/att/).
 
 The shipped search (src/att.py, v1) accepts only exact repeats >=16 bp strong enough to
 stand on their own statistically, and finds pairs at ~15% of known elements. DEPhT finds

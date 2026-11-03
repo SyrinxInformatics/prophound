@@ -16,7 +16,7 @@
 # limitations under the License.
 """Reference outputs for behaviour-preserving changes to the shipped CLI.
 
-docs/tech-debt-audit.md Phase 0. A refactor of the hash-checked modules keeps the
+CPU reference outputs. A refactor of the hash-checked modules keeps the
 lockbox figure only if every output stays the same, so this records what the
 current code writes for a matrix of inputs and options, and compares a later
 tree against it.
@@ -146,7 +146,7 @@ def gappy(region: str) -> str:
 
     One N run sits in flank, one ends inside the first element, so the N filter
     and imputation over a gap are both exercised. The scattered codes in the
-    second element are the EDL933 case (docs/scientific-validity.md "1a"), and the
+    second element are the EDL933 case (docs/cli-and-packaging.md "Input handling"), and the
     NN pair in it is the two-contiguous-codes case.
     """
     seq = list(region)

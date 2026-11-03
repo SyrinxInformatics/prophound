@@ -17,7 +17,7 @@
 """Sequence-only signals that an input genome is not prokaryotic (no genes, no database).
 
 prophound is trained on bacterial genomes; on eukaryotic sequence it calls large blocks
-(docs/robustness-checks.md check 4). These signals feed a command-line warning (check 8):
+(analysis/robustness/). These signals feed a command-line warning (docs/cli-and-packaging.md):
 
 - long-ORF coverage: the share of bases inside a stop-to-stop open reading frame of at least
   MIN_ORF_CODONS codons in any of six frames. Prokaryotic genomes are densely coding; most
@@ -27,7 +27,7 @@ prophound is trained on bacterial genomes; on eukaryotic sequence it calls large
   eukaryotic telomere repeat in tandem within TELOMERE_WINDOW bp of the end.
 - total length, GC, CpG observed/expected and the soft-masked (lowercase) share.
 
-The shipped warning uses two of them, chosen on a labeled panel (check 8): telomere repeats at
+The shipped warning uses two of them, chosen on a labeled panel (analysis/robustness/domain_check.tsv): telomere repeats at
 MIN_TELOMERE_ENDS or more contig ends, or more than MAX_PROKARYOTE_BP in total. On 166 bacteria and
 5 archaea neither fired; on 12 eukaryotes one or the other fired on 8.
 """
@@ -42,7 +42,7 @@ MIN_ORF_CODONS = 100
 TELOMERE_WINDOW = 500
 TELOMERE_MIN_CONTIG = 10_000
 SHUFFLE_SEED = 0
-# the warning rule (check 8): either signal flags the input
+# the warning rule: either signal flags the input
 MIN_TELOMERE_ENDS = 2
 MAX_PROKARYOTE_BP = 17_000_000  # the largest known prokaryotic genome is about 16 Mb
 
@@ -110,7 +110,7 @@ def _shuffled(codes: np.ndarray, rng: np.random.Generator) -> np.ndarray:
 
 
 def genome_signals(seqs: dict[str, str]) -> dict:
-    """The check-8 signals for one input genome, given its contigs (id -> sequence)."""
+    """The domain signals for one input genome, given its contigs (id -> sequence)."""
     rng = np.random.default_rng(SHUFFLE_SEED)
     total = valid = gc = cg = c_count = g_count = lower = 0
     orf_bp = shuf_bp = 0.0
@@ -155,7 +155,7 @@ def genome_signals(seqs: dict[str, str]) -> dict:
 
 
 def non_prokaryote_reasons(contigs) -> list[str]:
-    """Why an input looks non-prokaryotic, or [] (the check-8 rule).
+    """Why an input looks non-prokaryotic, or [] (the warning rule).
 
     `contigs` yields (length, first TELOMERE_WINDOW bp, last TELOMERE_WINDOW bp) per contig, so a
     caller reads only the contig ends.

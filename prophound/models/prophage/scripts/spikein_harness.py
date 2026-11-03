@@ -18,7 +18,7 @@
 
 """Synthetic spike-in harness: measure detection and delimitation at any element size.
 
-`docs/adaptive-multiscale-detection.md`. The corpus cannot answer "how small an
+The corpus cannot answer "how small an
 element can the pipeline resolve" -- geNomad's floor is 3.50 kb and only 2 of
 its 3,970 elements are below 5 kb -- so this builds the test cases instead:
 real element sequence of a chosen size, implanted at a known coordinate in
@@ -43,7 +43,7 @@ geNomad-called prophage regions of the donor genome.
 What it does NOT establish: the implant context is artificial (no integration
 site, no host adaptation, composition inherited from the donor), so it answers
 "what size can this pipeline resolve", not "does it find real IS elements".
-That needs `docs/final-benchmark.md` or an orthogonal database, held out.
+That needs curated truth or an orthogonal database, held out.
 
 Example:
   python scripts/spikein_harness.py \

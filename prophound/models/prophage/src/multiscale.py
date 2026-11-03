@@ -16,7 +16,7 @@
 # limitations under the License.
 """Fine-scale refinement of coarse region calls (pass B).
 
-docs/adaptive-multiscale-detection.md Parts 1 and 3; docs/downstream-postprocessing.md.
+docs/cli-and-packaging.md "What a run does".
 The coarse pass (10 kb windows, coverage builder, gap-fill merge) handles
 detection and fragmentation. This pass re-scores each coarse call +/- a margin
 at a finer window size and addresses the other three downstream problems:
@@ -34,7 +34,7 @@ at a finer window size and addresses the other three downstream problems:
     fine core -- neither failure mode can exceed its current bound.
     alpha may ramp with the piece's fine-core length (`alpha_ramp_bp`): the fine
     core suits small elements and the coarse edge large ones, so one global
-    value cannot serve both (docs/downstream-postprocessing.md "Per-element dig").
+    value cannot serve both.
   - recall: a coarse call with no fine support is kept unchanged and flagged,
     never dropped.
 

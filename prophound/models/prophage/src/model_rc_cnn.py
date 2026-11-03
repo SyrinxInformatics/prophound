@@ -48,7 +48,7 @@ class AdaptiveMaxPool1dMPSSafe(nn.AdaptiveMaxPool1d):
 
     On MPS, PyTorch's kernel returns wrong values for lengths that are not a
     multiple of the output size, including every input shape the shipped model
-    scores (torch 2.13; docs/tech-debt-audit.md S10). There the pooling is computed
+    scores (torch 2.13). There the pooling is computed
     by `adaptive_max_pool1d_by_bins`. Other devices keep the native kernel, so
     their outputs and gradients are unchanged.
     """

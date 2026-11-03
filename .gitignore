@@ -239,10 +239,10 @@ prophound/models/prophage/analysis/g5dev/prophound/*/*/
 
 # checkpoints and training outputs live on ARC; local copies only for the reference-output test
 prophound/models/prophage/runs/
-# Phase 0 reference outputs (docs/tech-debt-audit.md); local only, derived from gitignored genomes
+# CPU reference outputs (scripts/reference_outputs.py); local only, derived from gitignored genomes
 prophound/models/prophage/analysis/refout/
 
-# ARC data pulled to re-run the ARC-only figure scripts locally (docs/tech-debt-audit.md X2)
+# ARC data pulled to re-run the ARC-only figure scripts locally
 arc_data/
 prophound/models/prophage/analysis/litpilot/*/
 prophound/models/prophage/analysis/spikein_small/tracks_*/
@@ -252,7 +252,7 @@ prophound/models/prophage/analysis/spikein_siterule/insitu_truth.tsv
 prophound/models/prophage/analysis/short_contig_calib/*/
 # check 1 shuffled-genome null: per-genome runs (shuffle_null.{tsv,json} stay tracked)
 prophound/models/prophage/analysis/robustness/shuffle_null/
-# Sakai homology raw files (docs/sakai-candidates.md): BLAST XML of the invalid URL-API run, query FASTAs, predict runs;
+# Sakai homology raw files: BLAST XML of the invalid URL-API run, query FASTAs, predict runs;
 # the record is ncbi_blast_jobs.tsv and the scored nucleotide*/phage_homology* tables, which stay tracked
 prophound/models/prophage/analysis/sakai_novel/blast_*.xml
 prophound/models/prophage/analysis/sakai_novel/blast_*.tsv
@@ -261,7 +261,7 @@ prophound/models/prophage/analysis/sakai_novel/*.fna
 prophound/models/prophage/analysis/sakai_novel/default/
 prophound/models/prophage/analysis/sakai_novel/exploratory/
 prophound/models/prophage/analysis/sakai_novel/nt_local/
-# candidate homology raw files (docs/candidate-phage-homology.md): query FASTAs, proteins, raw DIAMOND hits, Jaeger runs;
+# candidate homology raw files: query FASTAs, proteins, raw DIAMOND hits, Jaeger runs;
 # v2_1/{regions,vog_classes}.tsv are identical to the tracked v2/ copies. PHASTEST results and scored tables stay tracked
 prophound/models/prophage/analysis/candidate_homology/*.fna
 prophound/models/prophage/analysis/candidate_homology/diamond*.tsv

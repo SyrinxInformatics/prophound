@@ -16,7 +16,7 @@
 # limitations under the License.
 """Descriptive comparison of call-keeping rules on fixed candidate pools (user, 2026-10-20).
 
-docs/error-analysis.md "Combined keep score vs the vote". Run from the repo root:
+A combined keep score against the seed vote. Run from the repo root:
   pixi run python prophound/models/prophage/scripts/keep_rule_compare.py \
       prophound/models/prophage/analysis/keep_rules/results.csv
 Tracks: the 42 (analysis/multiscale/*_3000), the 18 (analysis/confirm18) and the

@@ -16,7 +16,7 @@
 # limitations under the License.
 """Reverse-complement symmetry of the whole call pipeline, boundary stages included.
 
-Release text §7 and docs/scientific-validity.md "Input-robustness standing check": RC-1
+Release text §7 (analysis/rc_boundary/): RC-1
 (window scores) holds by construction, but whole-contig calls (RC-2) were last checked
 before refinement, att sites and composition edges existed. This runs the shipped
 `predict` on each genome and on its reverse complement and compares the calls.

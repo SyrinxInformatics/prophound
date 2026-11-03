@@ -57,7 +57,7 @@ def encode_window(sequence: str, policy: str = DEFAULT_AMBIGUITY_POLICY) -> torc
       seed taken from the window's own content, so a window always encodes the same way.
     - `n-channel`: the training-time encoding; the base sets the N channel. That channel
       is effectively untrained and dominates under max pooling, so two ambiguous bases can
-      take a window's score from 1 to 0 (docs/scientific-validity.md "1a").
+      take a window's score from 1 to 0 (docs/cli-and-packaging.md "Input handling").
     - `uniform`: 0.25 on each of A/C/G/T. Invents no base, but is itself out of distribution.
 
     All three are exact no-ops on ambiguity-free sequence.

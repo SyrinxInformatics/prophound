@@ -21,7 +21,7 @@ can only be read by unpickling arbitrary objects. This writes `{"model": state_d
 `torch.load(weights_only=True)` reads, a model-only config (`model.yaml`), and `manifest.json`
 with every file's SHA-256 and the SHA-256 of the checkpoint it came from. Each stripped file is
 read back and every tensor compared with the original before anything is reported done.
-docs/tech-debt-audit.md S8; the bundled model is made with:
+The bundled model is made with:
 
   python scripts/strip_checkpoint.py --name prophage_v2_pool --out src/../model \\
       runs/prophage_v2_pool_r1/checkpoints/best.pt runs/prophage_v2_pool_r2/checkpoints/best.pt \\

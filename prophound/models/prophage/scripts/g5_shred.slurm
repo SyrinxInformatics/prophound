@@ -49,7 +49,7 @@ SHR=${G5_SHR:-../raw/g5_shreds}   # sibling of raw/lambda, kept apart from the c
 N=$(grep -c . "$G/genome_list.txt")
 mkdir -p analysis/_slurm_logs "$SHR"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$G/genome_list.txt" "$G/input_md5.tsv" scripts/shred_genomes.py; do
   [ -s "$f" ] || { echo "PREFLIGHT FAIL: missing or empty $f" >&2; fail=1; }

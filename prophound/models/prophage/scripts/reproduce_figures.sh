@@ -22,7 +22,7 @@
 # Run from the model directory (prophound/models/prophage). The commands are the ones that
 # produced the figures in docs/release-text-0.1.0.md "Reproduction". Scripts whose inputs live only
 # on ARC (offtarget_annotation, small_element_spikein, literature_pilot, eval_containment) are not
-# here. docs/tech-debt-audit.md X2.
+# here.
 set -u
 O=$1; mkdir -p $O/{lockbox,g5,g5b,lambda,offtarget,integrity}
 P="pixi run --quiet python"
@@ -67,7 +67,7 @@ run ngap $P scripts/ambiguity_dose.py eval --elements scripts/eval_sizestrat_ele
   --gaps_dir analysis/ngap_dose/gaps --out $O/ngap/results_final.json
 
 # Figures whose inputs come from ARC (pulled to the repo-root arc_data/ and the analysis/ track
-# directories; docs/tech-debt-audit.md X2). Skipped when they are absent. On ARC, the in-situ genomes
+# directories). Skipped when they are absent. On ARC, the in-situ genomes
 # in spikein_siterule/tracks_* are absolute symlinks into spikein_small/tracks_*: pull with `tar -h`,
 # or repoint them, or that figure's in-situ numbers come out 0.
 ARC=${ARC_DATA:-../../../arc_data}

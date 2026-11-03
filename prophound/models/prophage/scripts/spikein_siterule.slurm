@@ -49,7 +49,7 @@ OLD=analysis/spikein_small                   # 821410
 OUT=analysis/spikein_siterule
 mkdir -p analysis/_slurm_logs "$OUT"
 
-# ---- preflight (docs/environment.md) ---------------------------------------
+# ---- preflight -------------------------------------------------------------
 fail=0
 for f in "$CAND/candidates_disjoint.tsv" "$CAND/candidates.fna" "$HOSTS" "$ELEMENTS" "$LOCI" \
          "$OLD/insitu_genomes.txt" scripts/small_element_spikein.py scripts/mode_recheck.py src/predict_genome.py; do

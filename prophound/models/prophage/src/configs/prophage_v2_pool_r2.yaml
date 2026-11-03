@@ -1,7 +1,6 @@
 # prophage_v2_pool_r2: replicate 2/3 (seed 14) of the pooling-only (807593 / prophage_v1_positional_clean) config.
 #
-# One of the 2x3 replicate runs decided 2026-09-17 (docs/model-reengineering.md,
-# docs/multi-model-architecture.md): both candidate base-model configs, three
+# One of the 2x3 replicate runs decided 2026-09-17: both candidate base-model configs, three
 # seeds each, distinct run_name per replicate so each gets its own runs/ dir
 # (the 812125/812131 duplicate submission shared one dir and overwrote itself).
 # Identical to prophage_v1_positional_clean.yaml except run_name, seed.

@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""What are the off-target calls? (docs/error-analysis.md)
+"""What are the off-target calls? (analysis/offtarget/)
 
 For every call in --calls, and for length-matched random control intervals on
 the same genome (clear of every call and every geNomad element), summarise the
@@ -28,7 +28,7 @@ genes geNomad's `annotate` step found inside it:
     plasmid_hallmark, annotation_conjscan, annotation_amr, marker)
 
 Functional terms come first because geNomad's markers partly restate the labels
-the model was trained on (docs/scientific-validity.md, item 1b caveat). Each
+the model was trained on. Each
 interval gets one first-match category. Groups compared: on-target calls,
 off-target calls by seed support, and controls. A category is evidence about
 what a call resembles, not proof of what it is.
