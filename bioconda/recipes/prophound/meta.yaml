@@ -1,9 +1,5 @@
-# Draft bioconda recipe for prophound (docs/cli-and-packaging.md "Distribution"). To submit:
-# tag the release (v0.1.0), fill in the sha256 of the tag's GitHub archive
-# (`curl -sL <url> | shasum -a 256`), copy this directory into a fork of
-# bioconda-recipes as recipes/prophound/, and run `bioconda-utils lint` there.
-# The bundled model (three 5.5 MB weights-only checkpoints) is inside the
-# package, so the recipe needs no separate download.
+# The bundled model (three 5.5 MB weights-only checkpoints) is inside the package, so the recipe
+# needs no separate download.
 {% set name = "prophound" %}
 {% set version = "0.1.0" %}
 {% set python_min = "3.11" %}
@@ -14,7 +10,7 @@ package:
 
 source:
   url: https://github.com/SyrinxInformatics/prophound/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: REPLACE_WITH_SHA256_OF_THE_RELEASE_ARCHIVE
+  sha256: 9e490993e8f22061d7ce721afa8b12184c0cc3e91594047aa886315188b9948c
 
 build:
   number: 0
