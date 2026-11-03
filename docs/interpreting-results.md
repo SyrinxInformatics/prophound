@@ -65,7 +65,7 @@ On 150 held-out genomes, every Default candidate that touches no known element w
 
 - **Expect most candidates outside known prophages to show no detectable signal.** That is the price of finding as much as possible. Some may still be real, since these checks only recognize what databases already know.
 - **Check long candidates first.** Under 10 kb, about 7 in 10 show no signal; at 60 kb or more, about 6 in 10 carry a mobile-element or phage signal.
-- **Input should be bacterial.** On human sequence, over half of a 10 Mb slice was called, often in large blocks. Archaeal genomes are untested, and on some a third or more of the genome is called. Remove host or eukaryotic contigs from a metagenome or assembly first.
+- **Input should be bacterial.** On human sequence, over half of a 10 Mb slice was called, often in large blocks. Archaeal genomes are untested, and on some a third or more of the genome is called. Remove host or eukaryotic contigs from a metagenome or assembly first. prophound warns when a whole input looks eukaryotic (telomere repeats at contig ends, or over 17 Mb), but it misses compact eukaryotic genomes and eukaryotic contigs mixed into an assembly.
 - **Plasmids are often called whole.** On held-out genomes, a third of plasmids had one call covering most of the plasmid. Such a call describes the plasmid, which may itself be mobile, and locates nothing inside it. Check the contig before reading it as a prophage.
 - **A known false alarm:** clusters of ribosomal-protein genes, whose unusual composition can look element-like. Set aside a candidate made mostly of them.
 

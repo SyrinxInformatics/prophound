@@ -190,3 +190,15 @@ Checks:
 - All four files' syntax trees are identical to the scored code's, so the compiled code is the same.
 - The fast tests (198), the smoke test, the golden set (calls identical on the Apple GPU) and the example (calls identical) pass.
 - The CPU reference matrix was not re-run: with identical syntax trees it cannot differ.
+
+#### Amendment 2026-11-03: a warning for non-prokaryotic input (stderr only); the lockbox figure stands
+
+After the result, the CLI gained a check for input that may not be prokaryotic (`docs/cli-and-packaging.md` "The non-prokaryote warning"; the panel is `analysis/robustness/domain_check.tsv`). It reads only contig lengths and contig ends. It prints a warning to stderr when eukaryotic telomere repeats sit at two or more contig ends or the input totals more than 17 Mb, and the run continues. `--no-domain-check` skips it.
+
+- `src/domain.py` is new. `src/predict_genome.py` calls it before the windows are built, and `src/options.py` adds the flag. Nothing that produces a call changed.
+
+Checks:
+
+- CPU reference matrix against `helptext_cpu`: **30 of 30 identical**, output files and stderr (`analysis/refout/domain_cpu`, 2026-11-02 18:54 to 2026-11-03 14:17, paused overnight). The warning fires on none of the test inputs. Besides the usual keys, the compare ignored the model, config and input paths, which name `src/prophound/` in the reference (the checkpoint hashes are equal), and the OS release (macOS 27.0 to 27.2).
+- **The matrix imported the main checkout, not the snapshot it was given.** Since the package moved to the repository root, `python -c` started from the root puts the checkout ahead of `PYTHONPATH`. The checkout held this change and differed from the snapshot only in comments and docstrings (the next amendment), so the result holds for this code. Earlier matrices are unaffected: before the move the root held no `prophound/`. `scripts/reference_outputs.py` and `scripts/benchmark.py` now run Python with `-P`, and the runner stops unless `prophound` imports from `--code`. Two cases re-run that way from the snapshot are identical.
+- The new tests (`tests/test_domain.py`) and the fast tests (243, on the tree with the next amendment's change) pass, and so does the smoke test. The golden set passes on CPU, byte for byte, on the same tree.

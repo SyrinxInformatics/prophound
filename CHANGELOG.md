@@ -26,6 +26,7 @@ The first release. Earlier development versions were called `mge-detect`.
 - Input can be FASTA, GenBank, EMBL or GFF3 with embedded sequence, optionally gzip, bzip2 or xz compressed. The format is read from the content.
 - Batch runs: repeat `--input`, give a directory, or use `--input-list`.
 - Outputs: `regions.tsv` (the candidates for a researcher: ranked, plain columns, 1-based), `regions.detailed.tsv` (every column, 0-based), `regions.bed`, `regions.gff3`, `windows.tsv` and `run_metadata.json`. The terminal lists the ranked candidates, and `docs/interpreting-results.md` explains how to read them. Calls a filter set aside go to `regions.filtered.tsv`, so a discovery user can recover them without a re-run. `regions.fna` is optional. The full contract is in `docs/output-files.md`.
+- A warning when the input may not be prokaryotic: eukaryotic telomere repeats at two or more contig ends, or more than 17 Mb in total. The run continues; `--no-domain-check` skips the check. On a test panel it fired on 8 of 12 eukaryotes and on none of 166 bacteria and 5 archaea.
 - An outdir that already holds outputs is refused unless `--force`, and outputs are written atomically.
 - Checkpoints load with `weights_only=True`. A full training checkpoint needs `--trust-checkpoint`.
 - Devices: CUDA, Apple MPS, Intel XPU or CPU, picked automatically.

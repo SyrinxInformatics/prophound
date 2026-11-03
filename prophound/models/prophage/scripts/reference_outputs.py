@@ -222,9 +222,15 @@ def cmd_run(args: argparse.Namespace) -> None:
     cases = [c for c in CASES if not args.only or c.name in args.only]
     manifest = {"code": str(code), "inputs": json.loads((inputs / "SHA256SUMS.json").read_text()),
                 "device": args.device, "threads": args.threads, "model": args.model, "cases": {}}
+    # -P: no current directory on sys.path, or a checkout with prophound/ at its root shadows --code
+    probe = subprocess.run([sys.executable, "-P", "-c", "import prophound.cli, torch; print(prophound.cli.__file__); "
+                            "print(torch.__version__)"], env=env, capture_output=True, text=True)
+    manifest["imported_from"], manifest["torch"] = probe.stdout.split()
+    if not Path(manifest["imported_from"]).resolve().is_relative_to(code):
+        raise SystemExit(f"prophound imports from {manifest['imported_from']}, not from --code {code}")
     for case in cases:
         outdir = out / case.name
-        cmd = [sys.executable, "-c", "from prophound.cli import main; main()", "predict",
+        cmd = [sys.executable, "-P", "-c", "from prophound.cli import main; main()", "predict",
                "--input", str(inputs / f"{case.input}.fna"), "--outdir", str(outdir),
                *model_args(code, args.model, case.checkpoints), "--device", args.device, *case.args]
         proc = subprocess.run(cmd, env=env, capture_output=True, text=True)
@@ -234,9 +240,6 @@ def cmd_run(args: argparse.Namespace) -> None:
                                         "checkpoints": list(case.checkpoints), "exit_code": proc.returncode,
                                         "messages": user_messages(proc.stderr, outdir, proc.returncode)}
         print(f"[run] {case.name}: exit {proc.returncode}", flush=True)
-    probe = subprocess.run([sys.executable, "-c", "import prophound.cli, torch; print(prophound.cli.__file__); "
-                            "print(torch.__version__)"], env=env, capture_output=True, text=True)
-    manifest["imported_from"], manifest["torch"] = probe.stdout.split()
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
 
@@ -324,7 +327,7 @@ def main() -> None:
     s = sub.add_parser("inputs")
     s.add_argument("--out", required=True)
     s = sub.add_parser("run")
-    s.add_argument("--code", required=True, help="source tree (repo root) whose src/ is imported")
+    s.add_argument("--code", required=True, help="source tree (repo root) whose prophound package is imported (either layout)")
     s.add_argument("--inputs", required=True)
     s.add_argument("--out", required=True)
     s.add_argument("--threads", type=int, default=4)

@@ -150,6 +150,7 @@ class PredictOptions:
     force: bool = False             # replace outputs already in outdir
     bundled_model: bool = False     # checkpoints are the ones shipped with the package
     trust_checkpoint: bool = False  # allow full (pickled) training checkpoints
+    domain_check: bool = True       # warn when the input looks non-prokaryotic (src/domain.py)
 
     @property
     def n_checkpoints(self) -> int:
@@ -230,6 +231,7 @@ class PredictOptions:
             verbosity=-1 if getattr(args, "quiet", False) else int(bool(getattr(args, "verbose", False))),
             force=bool(getattr(args, "force", False)),
             bundled_model=bundled, trust_checkpoint=bool(getattr(args, "trust_checkpoint", False)),
+            domain_check=not getattr(args, "no_domain_check", False),
         )
 
 
@@ -420,6 +422,14 @@ def add_predict_arguments(parser: argparse.ArgumentParser) -> None:
             "Contigs shorter than --window-len. scan (default) tiles each with 5 kb or 3 kb windows, "
             "whichever fits, at thresholds set to give the same false-call rate as full-length windows; "
             "skip leaves them unscanned. Contigs under 3 kb are never scanned. A warning reports them either way."
+        ),
+    )
+    advanced.add_argument(
+        "--no-domain-check", action="store_true",
+        help=(
+            "Skip the check for non-prokaryotic input. By default a warning is printed when the input has "
+            "eukaryotic telomere repeats at two or more contig ends or totals over 17 Mb (larger than any known "
+            "prokaryote; a metagenome can be too). The run continues either way."
         ),
     )
     advanced.add_argument(

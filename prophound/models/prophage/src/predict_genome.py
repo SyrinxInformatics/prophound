@@ -72,6 +72,7 @@ from .calls import (  # noqa: F401 -- re-exported: scripts and tests import thes
 )
 from .config import DataConfig, load_cfg  # noqa: F401 -- DataConfig is used by scripts/benchmark.py
 from .devices import resolve_device
+from .domain import TELOMERE_WINDOW, non_prokaryote_reasons
 from .encoding import collate_batch, encode_window, onehot_encode, stable_sigmoid  # noqa: F401 -- re-exported
 from .inputs import PreparedInput, genome_id_for, prepare_input
 from .io_checks import package_version, sha256, validate_fasta, write_bed, write_gff3, write_region_fasta
@@ -752,6 +753,22 @@ def input_workspace(outdir: Path):
             outdir.rmdir()
 
 
+def warn_if_non_prokaryotic(fasta: str, contig_lengths: dict[str, int], log: Log) -> None:
+    """The check-8 warning (docs/robustness-checks.md): input with eukaryotic telomeres or over 17 Mb."""
+    w = TELOMERE_WINDOW
+    fa = Fasta(fasta, as_raw=True, sequence_always_upper=True)
+    try:
+        reasons = non_prokaryote_reasons(
+            (n, fa[c][:w], fa[c][max(0, n - w):]) for c, n in contig_lengths.items())
+    finally:
+        fa.close()
+    if reasons:
+        log.warn("this input may not be a prokaryotic genome: " + "; ".join(reasons) + ". prophound is "
+                 "trained on bacteria and calls large parts of eukaryotic sequence, so remove eukaryotic "
+                 "contigs first. For a metagenome or several genomes in one file this can be ignored; "
+                 "--no-domain-check skips the check.")
+
+
 def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: PreparedInput,
                      started: float, started_utc: str) -> GenomeResult:
     """Everything after the input is ready: windows, scoring, calls and outputs."""
@@ -760,6 +777,8 @@ def predict_prepared(opts: PredictOptions, engine: Engine, log: Log, prepared: P
         log.warn(f"{_plural(prepared.u_as_t, 'U base')} read as T (RNA sequence?).")
     input_summary = validate_fasta(fasta, label=opts.input_fasta)
     contig_lengths = dict(iter_fasta_lengths(fasta))
+    if opts.domain_check:
+        warn_if_non_prokaryotic(fasta, contig_lengths, log)
     genome_id = prepared.genome_id
     windows_df = build_windows(fasta, genome_id, opts.window_len, opts.stride,
                                offset=opts.grid_offset, contig_lengths=contig_lengths)

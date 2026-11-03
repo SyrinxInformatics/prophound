@@ -77,7 +77,7 @@ def run_text(cmd: list[str]) -> str:
 
 def machine_info(code: Path, env: dict) -> dict:
     probe = subprocess.run(
-        [sys.executable, "-c", "import torch, json; print(json.dumps({'torch': torch.__version__, "
+        [sys.executable, "-P", "-c", "import torch, json; print(json.dumps({'torch': torch.__version__, "
          "'threads': torch.get_num_threads(), 'mps': torch.backends.mps.is_available(), "
          "'cuda': torch.cuda.is_available(), 'mkldnn': torch.backends.mkldnn.is_available()}))"],
         env=env, capture_output=True, text=True, check=True)
@@ -110,7 +110,7 @@ def fasta_bp(path: Path) -> tuple[int, int]:
 
 
 def timed_run(code_env: dict, fasta: Path, outdir: Path, device: str, mode: str, model_cli: list) -> dict:
-    cmd = ["/usr/bin/time", "-l", sys.executable, "-c", "from prophound.cli import main; main()", "predict",
+    cmd = ["/usr/bin/time", "-l", sys.executable, "-P", "-c", "from prophound.cli import main; main()", "predict",
            "--input", str(fasta), "--outdir", str(outdir), *model_cli, "--device", device, "--mode", mode]
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, env=code_env, capture_output=True, text=True)
