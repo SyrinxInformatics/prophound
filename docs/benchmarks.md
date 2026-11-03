@@ -22,7 +22,7 @@ The model's forward pass is nearly all of the time, so a GPU matters far more th
 | OS | macOS, native arm64 |
 | power | mains (AC attached), otherwise idle (load under 2) |
 | software | torch 2.13.0 from conda-forge (pixi), Python 3.14, 4 torch CPU threads |
-| prophound | 0.1.0 (`a9f1851`), Default mode, the bundled three-checkpoint model, every default |
+| prophound | 0.1.0 (`447294a`; the result files record it as `a9f1851`, its hash before a history rewrite), Default mode, the bundled three-checkpoint model, every default |
 
 ## How it was measured
 

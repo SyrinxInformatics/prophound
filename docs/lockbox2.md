@@ -207,3 +207,17 @@ Checks:
 - The fast tests (243) pass.
 - The smoke test and the golden set (CPU, byte for byte) pass. This is the same run as in the amendment above.
 - The CPU reference matrix was not re-run for this change: with identical syntax trees it cannot differ.
+
+#### Amendment 2026-11-03: commit hashes after a second history rewrite (no code change)
+
+Before the first push, the unpublished docs, the frozen notes and the model README were stripped from the unpushed commits with `git filter-repo`, and the commits were re-signed. The 32 commits already on GitHub are unchanged. Every rewritten commit has a new hash; 9 commits that touched only those files are gone, and none of them is cited here. Code is unchanged: each old commit and its new one differ only in the stripped files, so `frozen_md5.txt` and every MD5 list verify both. Launchers, ARC paths and recorded results (for example the `code_commit` in `analysis/benchmarks/`) keep the old hashes, because they record what ran. Map for the hashes cited in this doc and the release text:
+
+| cited (before 2026-10-27) | after 2026-10-27 | now |
+|---|---|---|
+| `0d71e2f` | `24f6c44` | `92a2c2a` |
+| `382efba` | `26880c3` | `6e61fee` |
+| `ad5b28b` | `09c7756` | `7a251c8` |
+| | `a9f1851` (benchmarks) | `447294a` |
+
+The lockbox 2 freeze is now `92a2c2a`.
+

@@ -146,6 +146,8 @@ Everything below this line was written before the result it governs, or is a dat
 
 > **Commit hashes** (added 2026-10-27). Hashes cited in this doc before 2026-10-27 refer to the history before a rewrite that kept internal files off GitHub. The code is unchanged. `382efba` is now `26880c3` and `ad5b28b` (`ad5b28ba…`) is now `09c7756` (`docs/lockbox2.md` "Amendment 2026-10-27").
 
+> **Commit hashes, again** (added 2026-11-03). A second rewrite before the first push kept the unpublished docs off GitHub, and changed the hashes once more. The code is unchanged. `26880c3` is now `6e61fee` and `09c7756` is now `7a251c8` (`docs/lockbox2.md` "Amendment 2026-11-03: commit hashes after a second history rewrite").
+
 ### Release gate: new, or measurably better (user, 2026-09-28)
 
 > "If this isn't doing anything new, it at least needs to be better."

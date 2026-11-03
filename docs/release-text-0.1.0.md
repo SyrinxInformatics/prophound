@@ -92,7 +92,7 @@ It rests on three design facts, each checked against the nearest tools:
 | sample | role | wording used |
 |---|---|---|
 | first lockbox: 150 genus-disjoint genomes, 202 elements | held out from training and tuning, preregistered, scored once, under the pre-boundary defaults: the record of those defaults † | "first lockbox" |
-| second lockbox: 150 further genus-disjoint genomes, 186 elements ([`docs/lockbox2.md`](lockbox2.md)) | **held out from training, tuning and the boundary stages**; preregistered; frozen at `24f6c44`, run once and scored once | "held out" |
+| second lockbox: 150 further genus-disjoint genomes, 186 elements ([`docs/lockbox2.md`](lockbox2.md)) | **held out from training, tuning and the boundary stages**; preregistered; frozen at `92a2c2a`, run once and scored once | "held out" |
 | 42 genomes / 179 elements | tuning: thresholds, merging, vote and modes were chosen on it | "tuning sample" |
 | 18 genomes / 52 elements | confirmation, but it informed earlier decisions | "a second, previously used sample" |
 | 20 genomes with no geNomad provirus | confirmation; in view for the vote decision | "geNomad-negative genomes" |
@@ -451,4 +451,4 @@ On the same 10 genomes and the same laptop, Jaeger 1.26.5 took a median of 207 s
 | boundary stages (§10) | `scripts/boundary_eval.py`, `scripts/edge_composition.py` and the cap sweep | `analysis/att/*_pipeline.csv`, `analysis/att/composition_cap_sweep.csv` |
 | att cores on tRNA genes (§10) | `scripts/att_trna_check.py` (ARAGORN 1.2.41 via `pixi exec`) | `analysis/att/trna/att_trna.{summary,pairs}.tsv` |
 
-The training checkpoints' SHA-256s are in [Research integrity](research-integrity.md#provenance). The defaults the first held-out test scored are frozen at `09c7756`, and the 0.1.0 defaults the second scored at `24f6c44` ([the held-out test](lockbox2.md)). The bundled model's SHA-256s are in its `manifest.json`. Every figure above whose inputs are in the repository is re-run by `scripts/reproduce_figures.sh` and checked by `scripts/compare_figures.py`, and all reproduce exactly. The 0.1.0 re-scores (the last three rows) use local runs of the refinement-on pipeline that are not in the repository, because they hold the input genomes.
+The training checkpoints' SHA-256s are in [Research integrity](research-integrity.md#provenance). The defaults the first held-out test scored are frozen at `7a251c8`, and the 0.1.0 defaults the second scored at `92a2c2a` ([the held-out test](lockbox2.md)). The bundled model's SHA-256s are in its `manifest.json`. Every figure above whose inputs are in the repository is re-run by `scripts/reproduce_figures.sh` and checked by `scripts/compare_figures.py`, and all reproduce exactly. The 0.1.0 re-scores (the last three rows) use local runs of the refinement-on pipeline that are not in the repository, because they hold the input genomes.
