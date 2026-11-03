@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  lint:
+    name: Pylint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+
+      - name: Analysing the code with pylint
+        run: |
+          pylint --disable=C,R,W prophound tests scripts archive
+
+  tests:
+    name: Tests and example
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+
+      - name: Fast tests
+        run: pytest -q tests
+
+      - name: The example end to end on CPU
+        run: pytest -q -m slow tests/test_example.py
+
+  guard:
+    name: Secrets and files that do not belong
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Commit guard over every tracked file
+        run: python3 scripts/check_commit.py --all
+
+      - name: Commit guard over every commit
+        run: python3 scripts/check_commit.py --range "HEAD"
+
+      - name: gitleaks over the full history
+        run: |
+          docker run --rm \
+            -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' \
+            -v "${{ github.workspace }}":/repo \
+            ghcr.io/gitleaks/gitleaks:latest \
+            git /repo --log-opts="--all" --redact --verbose
+
+  bioconda:
+    name: Bioconda Recipe Test
+    needs: [lint, tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Until a release is tagged, the recipe's source is the tag archive with a placeholder
+      # sha256, so CI builds the recipe from this checkout instead.
+      - name: Build from this checkout while the sha256 is a placeholder
+        run: |
+          python3 - <<'PY'
+          import pathlib, re
+          p = pathlib.Path("bioconda/recipes/prophound/meta.yaml")
+          s = p.read_text()
+          if "REPLACE_WITH_SHA256" in s:
+              s, n = re.subn(r"source:\n  url: [^\n]+\n  sha256: [^\n]+\n", "source:\n  path: ../../..\n", s)
+              assert n == 1, "source block not found"
+              p.write_text(s)
+              print("recipe source: this checkout")
+          PY
+
+      - name: Show bioconda-utils version
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}":/work \
+            -w /work/bioconda \
+            quay.io/bioconda/bioconda-utils-build-env:latest \
+            bioconda-utils --version
+
+      - name: Lint recipe (Bioconda style)
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}":/work \
+            -w /work/bioconda \
+            quay.io/bioconda/bioconda-utils-build-env:latest \
+            bioconda-utils lint recipes config.yml \
+              --packages prophound
+
+      - name: Build & test recipe
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}":/work \
+            -w /work/bioconda \
+            quay.io/bioconda/bioconda-utils-build-env:latest \
+            conda build recipes/prophound \
+              -c conda-forge -c bioconda \
+              --no-anaconda-upload

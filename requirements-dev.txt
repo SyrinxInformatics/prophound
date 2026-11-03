@@ -1,0 +1,9 @@
+# Development and CI tools. The runtime dependencies come from pyproject.toml (installed by `-e .`).
+# Install CPU-only torch first to keep this light:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements-dev.txt
+-e .
+pylint
+pytest>=9,<10
+scikit-learn
+scipy

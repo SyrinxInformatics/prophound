@@ -1,0 +1,5 @@
+# Channels ordered from highest to lowest priority, as in bioconda-recipes. Used by the CI
+# recipe check (`bioconda-utils lint recipes config.yml`), run from this directory.
+channels:
+  - conda-forge
+  - bioconda

@@ -66,6 +66,7 @@ CREDENTIAL_NAMES = [
     "id_rsa*", "id_dsa*", "id_ecdsa*", "id_ed25519*", ".netrc", "_netrc", ".pypirc",
     ".git-credentials", "credentials", "credentials.*", "*credentials.json", "secrets.*", ".htpasswd",
 ]
+JUNK = "OS, editor or cache file"
 JUNK_NAMES = [".DS_Store", "Thumbs.db", "*.pyc", "*.pyo", "*.swp", "*.swo", "*~", ".Rhistory", ".RData"]
 JUNK_DIRS = ["__pycache__", ".ipynb_checkpoints", ".pytest_cache", ".ruff_cache", ".mypy_cache", ".idea", ".vscode"]
 LOCAL_ONLY = ["CLAUDE.md", "SESSIONS.md", "docs/release-checklist.md"]
@@ -101,7 +102,7 @@ def path_problems(path: str, local_repo: bool) -> list[str]:
     if path in LOCAL_ONLY:
         out.append("local-only file (tracked in .git-local)")
     if any(fnmatch.fnmatch(name, pat) for pat in JUNK_NAMES) or any(p in JUNK_DIRS for p in parts[:-1]):
-        out.append("OS, editor or cache file")
+        out.append(JUNK)
     if parts[0] in LOCAL_DATA_DIRS or "runs" in parts[:-1]:
         out.append("local data directory")
     if SEQUENCE.search(path) and not SEQUENCE_OK.match(path):
@@ -181,7 +182,10 @@ def main() -> int:
     for path, sha in blobs:
         problems = path_problems(path, local_repo)
         if git("cat-file", "-t", sha).strip() == b"blob":
-            problems += content_problems(git("cat-file", "blob", sha))
+            data = git("cat-file", "blob", sha)
+            if not data:  # an empty OS or cache file carries nothing (an empty .Rhistory from 2025 is in history)
+                problems = [p for p in problems if p != JUNK]
+            problems += content_problems(data)
         failures += [f"  {path}: {p}" for p in problems]
 
     where = ".git-local" if local_repo else "main repository"
