@@ -35,7 +35,7 @@ ARAGORN 1.2.41 runs through `pixi exec` (bioconda), so the project environment i
 its output is cached in --out/aragorn/.
 
   python scripts/att_trna_check.py \\
-      --sample tune42 analysis/att/tune42 ../../../../arc_data/raw/genomes scripts/eval_sizestrat_elements.csv \\
+      --sample tune42 analysis/att/tune42 ../../../arc_data/raw/genomes scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/trna
 """
 

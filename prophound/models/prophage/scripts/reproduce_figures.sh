@@ -19,7 +19,7 @@
 # Re-run every figure script whose inputs are local, into OUT_DIR, then compare with the
 # recorded outputs:
 #   scripts/reproduce_figures.sh OUT_DIR && pixi run python scripts/compare_figures.py . OUT_DIR
-# Run from the model directory (src/prophound/models/prophage). The commands are the ones that
+# Run from the model directory (prophound/models/prophage). The commands are the ones that
 # produced the figures in docs/release-text-0.1.0.md "Reproduction". Scripts whose inputs live only
 # on ARC (offtarget_annotation, small_element_spikein, literature_pilot, eval_containment) are not
 # here. docs/tech-debt-audit.md X2.
@@ -70,7 +70,7 @@ run ngap $P scripts/ambiguity_dose.py eval --elements scripts/eval_sizestrat_ele
 # directories; docs/tech-debt-audit.md X2). Skipped when they are absent. On ARC, the in-situ genomes
 # in spikein_siterule/tracks_* are absolute symlinks into spikein_small/tracks_*: pull with `tar -h`,
 # or repoint them, or that figure's in-situ numbers come out 0.
-ARC=${ARC_DATA:-../../../../arc_data}
+ARC=${ARC_DATA:-../../../arc_data}
 if [ -d "$ARC/raw/genomes" ] && [ -d analysis/litpilot/ens ]; then
   mkdir -p $O/short_contig $O/litpilot $O/spikein_small $O/spikein_siterule
   run shortvote $P scripts/short_contig_vote_sweep.py --elements scripts/eval_sizestrat_elements.csv \

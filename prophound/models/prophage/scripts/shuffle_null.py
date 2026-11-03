@@ -21,9 +21,9 @@
   run      prophound predict (Default) on each shuffled genome; skips genomes already done
   score    calls per Mb on shuffled sequence against the real-genome comparators
 
-Run from src/prophound/models/prophage:
-  python scripts/shuffle_null.py prepare --fasta_dir ../../../../arc_data/lockbox2_fasta --out ../../../../arc_data/lockbox2_shuffled
-  python scripts/shuffle_null.py run --shuffled ../../../../arc_data/lockbox2_shuffled --runs analysis/robustness/shuffle_null
+Run from prophound/models/prophage:
+  python scripts/shuffle_null.py prepare --fasta_dir ../../../arc_data/lockbox2_fasta --out ../../../arc_data/lockbox2_shuffled
+  python scripts/shuffle_null.py run --shuffled ../../../arc_data/lockbox2_shuffled --runs analysis/robustness/shuffle_null
   python scripts/shuffle_null.py score --runs analysis/robustness/shuffle_null --out analysis/robustness
 """
 

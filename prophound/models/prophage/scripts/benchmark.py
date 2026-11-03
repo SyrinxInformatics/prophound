@@ -24,7 +24,7 @@
 
 The machine, OS, power source, torch build and code commit are recorded with every
 result. Run on a quiet machine, on mains power, from the repo root:
-  python src/prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \\
+  python prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \\
       --input typical=path.fna --out analysis/benchmarks/mps_timing.json
 """
 
@@ -53,11 +53,16 @@ MODELS = {
 }
 
 
+def package_parent(code: Path) -> Path:
+    """The directory holding `prophound/` in a code tree: the root, or `src/` in trees before 2026-11-02."""
+    return code / "src" if (code / "src" / "prophound").is_dir() else code
+
+
 def model_args(code: Path, model: str, ks=(1, 2, 3)) -> list[str]:
     """--config/--checkpoint for `model`; with training checkpoints, --trust-checkpoint when the code has it."""
     checkpoints, config = MODELS[model]
     args = ["--config", str(config), "--checkpoint", *(str(checkpoints[k - 1]) for k in ks)]
-    options = code / "src/prophound/models/prophage/src/options.py"
+    options = package_parent(code) / "prophound/models/prophage/src/options.py"
     if model == "training" and options.exists() and "--trust-checkpoint" in options.read_text():
         args.append("--trust-checkpoint")
     return args
@@ -88,7 +93,7 @@ def machine_info(code: Path, env: dict) -> dict:
         "power": power[0] if power else "", "battery": power[1].strip() if len(power) > 1 else "",
         "omp_num_threads": env.get("OMP_NUM_THREADS"),
         "code_commit": run_text(["git", "-C", str(code), "rev-parse", "HEAD"]),
-        "code_dirty": bool(run_text(["git", "-C", str(code), "status", "--porcelain", "--", "src"])),
+        "code_dirty": bool(run_text(["git", "-C", str(code), "status", "--porcelain", "--", "prophound", "src"])),
         **json.loads(probe.stdout),
     }
 
@@ -123,7 +128,7 @@ def timed_run(code_env: dict, fasta: Path, outdir: Path, device: str, mode: str,
 
 def cmd_timing(args: argparse.Namespace) -> None:
     code = Path(args.code).resolve()
-    env = {**os.environ, "PYTHONPATH": str(code / "src")}
+    env = {**os.environ, "PYTHONPATH": str(package_parent(code))}
     if args.threads:
         env["OMP_NUM_THREADS"] = str(args.threads)
     work = Path(args.workdir).resolve()
@@ -166,7 +171,7 @@ def sync(device) -> None:
 def cmd_profile(args: argparse.Namespace) -> None:
     """Time one input's coarse pass stage by stage, with the code from --code."""
     code = Path(args.code).resolve()
-    sys.path.insert(0, str(code / "src"))
+    sys.path.insert(0, str(package_parent(code)))
     import torch
     from torch.utils.data import DataLoader
 

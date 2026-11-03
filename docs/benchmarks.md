@@ -166,10 +166,10 @@ The S10 bug shows why "it should be the same" is not evidence. Proposed coverage
 ## Re-running these
 
 ```bash
-pixi run python src/prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \
+pixi run python prophound/models/prophage/scripts/benchmark.py timing --code . --device mps \
     --input typical=<genome.fna> --workdir <scratch> --out analysis/benchmarks/<name>.json
-pixi run python src/prophound/models/prophage/scripts/benchmark.py profile --code . --device mps \
+pixi run python prophound/models/prophage/scripts/benchmark.py profile --code . --device mps \
     --input <genome.fna> --out analysis/benchmarks/<name>_profile.json
 ```
 
-Needs the three checkpoints under `src/prophound/models/prophage/runs/` (gitignored). Run on a quiet machine on mains power. Every result records the machine, power source, torch build and code commit.
+Needs the three checkpoints under `prophound/models/prophage/runs/` (gitignored). Run on a quiet machine on mains power. Every result records the machine, power source, torch build and code commit.

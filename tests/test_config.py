@@ -24,7 +24,7 @@ import yaml
 
 from prophound.models.prophage.src.config import load_cfg
 
-CONFIGS = Path(__file__).resolve().parents[1] / "src/prophound/models/prophage/src/configs"
+CONFIGS = Path(__file__).resolve().parents[1] / "prophound/models/prophage/src/configs"
 
 
 def write(tmp_path, cfg):

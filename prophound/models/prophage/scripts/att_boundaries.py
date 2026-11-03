@@ -42,7 +42,7 @@ E <= e_max. m, n are the zone lengths and p = sum of squared base frequencies.
 
 Example:
   python scripts/att_boundaries.py run --tracks analysis/ngap_dose/impute__clean__0 \\
-      --genomes_dir ../../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
+      --genomes_dir ../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/tune42
   python scripts/att_boundaries.py score --run analysis/att/tune42 \\
       --elements scripts/eval_sizestrat_elements.csv --out analysis/att/tune42_sweep

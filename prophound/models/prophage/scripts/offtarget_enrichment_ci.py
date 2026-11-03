@@ -22,7 +22,7 @@ resamples; calls and controls resampled together by genome), plus a one-sided
 Fisher exact test. Fisher treats controls as independent, so the bootstrap is the
 interval to quote.
 
-Run from src/prophound/models/prophage:
+Run from prophound/models/prophage:
   python scripts/offtarget_enrichment_ci.py \\
       --annotation analysis/offtarget/annotation_ctrl_elements_only.csv \\
       --out analysis/offtarget/enrichment_ci.json

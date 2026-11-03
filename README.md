@@ -56,7 +56,7 @@ The model (three checkpoints, 16.5 MB) ships with the package, so there is nothi
 pip install git+https://github.com/SyrinxInformatics/mge-detect.git
 ```
 
-A bioconda package is planned; the draft recipe is in `recipes/prophound/`.
+A bioconda package is planned; the draft recipe is in [`bioconda/recipes/prophound/`](bioconda/recipes/prophound/meta.yaml).
 
 ### Check the install
 

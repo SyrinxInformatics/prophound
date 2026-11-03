@@ -19,7 +19,7 @@ DEFAULT_EDGE_SNAP_FRAC x the run's window length) against what was measured in
 development (a flat 5 kb, g5dev_eval.edge_snap), on the corpus shreds and the
 phage-free genomes. Freeze check, 2026-10-05; at 10 kb windows the two must agree.
 
-Run from src/prophound/models/prophage:
+Run from prophound/models/prophage:
   python scripts/g5dev_snap_check.py --out analysis/g5dev/snap_check.json
 """
 

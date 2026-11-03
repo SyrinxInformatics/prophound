@@ -20,7 +20,7 @@ Rebuilds every mode with the shipped pipeline on the four boundary samples, once
 calls.vote_extent replaced by the identity (the old count, on the piece itself) and once
 as shipped; asserts the coordinates are identical and prints, per sample and mode, how
 many calls change support and how many read below the mode's vote. Writes the changed
-calls to the given TSV. Run from src/prophound/models/prophage:
+calls to the given TSV. Run from prophound/models/prophage:
   python scripts/split_support_check.py analysis/att/split_support_fix.changed.tsv
 """
 import sys
@@ -32,9 +32,9 @@ sys.path.insert(0, "scripts")
 import evalkit as ek  # noqa: E402
 import prophound.models.prophage.src.calls as calls_mod  # noqa: E402
 
-RUNS = Path("../../../../arc_data/att_runs")
-SAMPLES = {"tune42": "../../../../arc_data/raw/genomes", "confirm18": "../../../../arc_data/ncbi_confirm18",
-           "lit7": "../../../../arc_data/raw/genomes", "lambda": "analysis/g5/fasta"}
+RUNS = Path("../../../arc_data/att_runs")
+SAMPLES = {"tune42": "../../../arc_data/raw/genomes", "confirm18": "../../../arc_data/ncbi_confirm18",
+           "lit7": "../../../arc_data/raw/genomes", "lambda": "analysis/g5/fasta"}
 VOTE = {"exploratory": 1, "default": 3, "conservative": 3}
 fixed_fn = calls_mod.vote_extent
 rows, detail = [], []

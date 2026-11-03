@@ -22,7 +22,7 @@
 
   python scripts/candidate_phage_homology.py build --runs analysis/lockbox2/prophound \\
       --elements analysis/lockbox2/lockbox_elements.csv --genome_list analysis/lockbox2/lockbox_genome_list.txt \\
-      --fasta_dir ../../../../arc_data/lockbox2_fasta --out analysis/candidate_homology
+      --fasta_dir ../../../arc_data/lockbox2_fasta --out analysis/candidate_homology
   diamond blastx ... -q <out>/regions.fna -o <out>/diamond.tsv   (settings in the doc)
   python scripts/candidate_phage_homology.py score --out analysis/candidate_homology
 """

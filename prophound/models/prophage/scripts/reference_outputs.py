@@ -30,7 +30,7 @@ tree against it.
 
 Run from the repo root. CPU is the binding check; MPS is allowed for quick iteration only if two
 MPS runs of the same tree are identical. Runs on different devices are never compared:
-  python src/prophound/models/prophage/scripts/reference_outputs.py inputs --out analysis_dir/inputs
+  python prophound/models/prophage/scripts/reference_outputs.py inputs --out analysis_dir/inputs
   python .../reference_outputs.py run --code /path/to/tree --inputs .../inputs --out .../ref_a
   python .../reference_outputs.py compare .../ref_a .../ref_b
 """
@@ -61,11 +61,16 @@ MODELS = {
 }
 
 
+def package_parent(code: Path) -> Path:
+    """The directory holding `prophound/` in a code tree: the root, or `src/` in trees before 2026-11-02."""
+    return code / "src" if (code / "src" / "prophound").is_dir() else code
+
+
 def model_args(code: Path, model: str, ks=(1, 2, 3)) -> list[str]:
     """--config/--checkpoint for `model`; with training checkpoints, --trust-checkpoint when the code has it."""
     checkpoints, config = MODELS[model]
     args = ["--config", str(config), "--checkpoint", *(str(checkpoints[k - 1]) for k in ks)]
-    options = code / "src/prophound/models/prophage/src/options.py"
+    options = package_parent(code) / "prophound/models/prophage/src/options.py"
     if model == "training" and options.exists() and "--trust-checkpoint" in options.read_text():
         args.append("--trust-checkpoint")
     return args
@@ -213,7 +218,7 @@ def cmd_run(args: argparse.Namespace) -> None:
     missing = [p for p in [*checkpoints, config] if not p.exists()]
     if missing:
         raise SystemExit(f"missing: {', '.join(map(str, missing))}")
-    env = {**os.environ, "PYTHONPATH": str(code / "src"), "OMP_NUM_THREADS": str(args.threads)}
+    env = {**os.environ, "PYTHONPATH": str(package_parent(code)), "OMP_NUM_THREADS": str(args.threads)}
     cases = [c for c in CASES if not args.only or c.name in args.only]
     manifest = {"code": str(code), "inputs": json.loads((inputs / "SHA256SUMS.json").read_text()),
                 "device": args.device, "threads": args.threads, "model": args.model, "cases": {}}

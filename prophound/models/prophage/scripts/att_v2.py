@@ -35,7 +35,7 @@ coordinates, core span). Subcommands:
 
 Example:
   python scripts/att_v2.py run --items analysis/att/tune42.items.tsv \\
-      --genomes_dir ../../../../arc_data/raw/genomes --out analysis/att/tune42
+      --genomes_dir ../../../arc_data/raw/genomes --out analysis/att/tune42
   python scripts/att_v2.py score --items analysis/att/tune42.items.tsv --v1 analysis/att/tune42 \\
       --v2 analysis/att/tune42.v2.tsv --elements scripts/eval_sizestrat_elements.csv --out analysis/att/tune42
 """

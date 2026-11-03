@@ -168,3 +168,12 @@ Checks:
 - CPU reference matrix against `support_fix_cpu`, which ran the scored code: **30 of 30 identical** (`analysis/refout/helptext_cpu`, 2026-10-27 12:52–14:52).
 
 Nothing that produces a call changed, so the result above describes the shipped code.
+
+### Amendment 2026-11-02: package moved to the repository root (no shipped file changed); the lockbox figure stands
+
+The repository layout now mirrors the user's GenomeProfiler repository: `src/prophound/` moved to `prophound/`, and the recipe to `bioconda/recipes/prophound/`. Paths above that start `src/prophound/` now start `prophound/`. The text above keeps them as written.
+
+- **No shipped file changed** in the move: all 50 files of the package code and model are pure renames, so every hash-checked module has the same MD5 as before. Only dev scripts were edited, for their paths.
+- The built wheel is byte-identical to the one before the move.
+- The fast tests (198), the smoke test and the golden set (calls identical on the Apple GPU) pass.
+- `scripts/lockbox2_run.slurm` and `analysis/lockbox2/frozen_md5.txt` still name `src/prophound/`, because they check the frozen code archive on ARC (`0d71e2f`), which has the old layout.

@@ -36,7 +36,7 @@ Before scoring, every run is checked: one regions.tsv and run_metadata.json per 
 and mode, the mode as named, edge snap at 0.5, impute, and one checkpoint-hash set.
 Nothing is dropped after scoring. An --out that already exists is never overwritten.
 
-Run from src/prophound/models/prophage, once:
+Run from prophound/models/prophage, once:
   python scripts/lockbox_score.py --elements analysis/lockbox/lockbox_elements.csv \\
       --genome_list analysis/lockbox/lockbox_genome_list.txt \\
       --run default=analysis/lockbox/prophound/default \\

@@ -20,10 +20,10 @@
   plasmids   extrachromosomal against chromosomal contigs: calls, bp called, whole-replicon calls
   ood        calls per Mb on out-of-domain inputs against the bacterial floor
 
-Run from src/prophound/models/prophage:
-  python scripts/robustness_checks.py gc_phylum --fasta_dir ../../../../arc_data/lockbox2_fasta --out analysis/robustness
-  python scripts/robustness_checks.py plasmids --fasta_dir ../../../../arc_data/lockbox2_fasta --out analysis/robustness
-  python scripts/robustness_checks.py ood --ood_runs analysis/robustness/ood --fasta_dir ../../../../arc_data/lockbox2_fasta --out analysis/robustness
+Run from prophound/models/prophage:
+  python scripts/robustness_checks.py gc_phylum --fasta_dir ../../../arc_data/lockbox2_fasta --out analysis/robustness
+  python scripts/robustness_checks.py plasmids --fasta_dir ../../../arc_data/lockbox2_fasta --out analysis/robustness
+  python scripts/robustness_checks.py ood --ood_runs analysis/robustness/ood --fasta_dir ../../../arc_data/lockbox2_fasta --out analysis/robustness
 """
 
 from __future__ import annotations

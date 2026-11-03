@@ -28,7 +28,7 @@ Everything after those comparisons is integer logic, so if no decision flips bet
 devices, every mode's calls are identical. Also reports the largest score difference.
 
 The local inputs must match the recorded MD5s (analysis/g5b/input_md5.tsv).
-Run from src/prophound/models/prophage:
+Run from prophound/models/prophage:
   python scripts/cross_device_g5b.py --device mps --workdir <scratch> \
       --out analysis/benchmarks/cross_device_g5b_mps.json
 """

@@ -19,7 +19,7 @@
 For each mode and snap distance d, MAG covered50 (three shred seeds pooled), total bp
 called, and bp called outside geNomad elements, on the 42 (tune) and 18 (check).
 Covered50 and false/Mb cannot see how much longer calls get; this does.
-Run from src/prophound/models/prophage:  python scripts/g5dev_es_distance.py
+Run from prophound/models/prophage:  python scripts/g5dev_es_distance.py
 """
 from pathlib import Path
 

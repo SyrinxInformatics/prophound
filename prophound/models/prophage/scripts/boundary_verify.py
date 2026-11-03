@@ -24,14 +24,14 @@
              `prophound predict` against the reference: coordinates, boundary and both
              edge sources must be identical
 
-Run from src/prophound/models/prophage. The 2026-10-21 check (`arc_data/att_verify2/run.sh`):
+Run from prophound/models/prophage. The 2026-10-21 check (`arc_data/att_verify2/run.sh`):
   python scripts/boundary_verify.py reference --out analysis/att/verify2_reference.tsv
   python scripts/boundary_verify.py compare --reference analysis/att/verify2_reference.tsv \\
-      --predict_dir ../../../../arc_data/att_verify2
+      --predict_dir ../../../arc_data/att_verify2
 The 2026-10-26 Exploratory check (`arc_data/att_verify3/run.sh`):
   python scripts/boundary_verify.py reference --plan exploratory --out analysis/att/verify3_reference.tsv
   python scripts/boundary_verify.py compare --support --reference analysis/att/verify3_reference.tsv \\
-      --predict_dir ../../../../arc_data/att_verify3
+      --predict_dir ../../../arc_data/att_verify3
 """
 
 from __future__ import annotations
@@ -45,9 +45,9 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import evalkit as ek  # noqa: E402
 
-RUNS = Path("../../../../arc_data/att_runs")
-GENOMES = {"tune42": "../../../../arc_data/raw/genomes", "confirm18": "../../../../arc_data/ncbi_confirm18",
-           "lit7": "../../../../arc_data/raw/genomes"}
+RUNS = Path("../../../arc_data/att_runs")
+GENOMES = {"tune42": "../../../arc_data/raw/genomes", "confirm18": "../../../arc_data/ncbi_confirm18",
+           "lit7": "../../../arc_data/raw/genomes"}
 PLANS = {  # sample -> modes
     "verify2": (("confirm18", ("default", "conservative")), ("lit7", ("default", "conservative")),
                 ("tune42", ("default",))),

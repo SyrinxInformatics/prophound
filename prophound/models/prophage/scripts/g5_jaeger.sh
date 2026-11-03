@@ -5,11 +5,11 @@
 # locally, both models (57341_1.5M primary, bundled `default` secondary), then
 # collects the calls into analysis/g5/jaeger_calls.tsv. Resumable. Inputs are
 # checked against analysis/g5/input_md5.tsv first, the same check ARC makes.
-# Run from src/prophound/models/prophage:
+# Run from prophound/models/prophage:
 #   bash scripts/g5_jaeger.sh
 set -uo pipefail
 G=analysis/g5
-ENV=../../../../metadata/g5-comparators
+ENV=../../../metadata/g5-comparators
 RAW=$G/raw/jaeger
 MODELS="57341_1.5M:jaeger_57341_1.5M_fragment:--fsize=3077 default:default:"   # amendment 2026-09-30
 CONDS="complete mag_s0 mag_s1 mag_s2 draft_s0"
@@ -44,7 +44,7 @@ for m in $MODELS; do
   done
 done
 
-pixi run --manifest-path ../../../../pyproject.toml python scripts/g5_score.py collect-jaeger --root "$RAW" --out "$G/jaeger_calls.tsv"
+pixi run --manifest-path ../../../pyproject.toml python scripts/g5_score.py collect-jaeger --root "$RAW" --out "$G/jaeger_calls.tsv"
 cp "$RAW/wall_seconds.tsv" "$G/jaeger_wall_seconds.tsv"
 [ -s "$RAW/failures.txt" ] && { echo "WARNING: $(wc -l < "$RAW/failures.txt") failed runs" >&2; exit 2; }
 echo "[done] $(date)"

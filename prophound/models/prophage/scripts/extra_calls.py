@@ -25,7 +25,7 @@ windows of that length), 4 no detectable signal. Shares carry 95% genome-bootstr
 The open look ranks gene descriptions and themes by enrichment over the length-matched stretches.
 
   python scripts/extra_calls.py --v21 analysis/candidate_homology/v2_1/scored.tsv \\
-      --genomad ../../../../arc_data/genomad_out_lockbox2 --fasta_dir ../../../../arc_data/lockbox2_fasta \\
+      --genomad ../../../arc_data/genomad_out_lockbox2 --fasta_dir ../../../arc_data/lockbox2_fasta \\
       --out analysis/extra_calls
 """
 

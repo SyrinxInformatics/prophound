@@ -19,7 +19,7 @@ Rebuilds prophound calls with the snap off and at the shipped 0.5 x window, then
 reports per condition and mode the elements whose coverage changed, covered50
 off -> on, and (Default) the sequence added, split on/off element. 2026-10-16.
 
-Run from src/prophound/models/prophage:
+Run from prophound/models/prophage:
   python scripts/g5b_snap_posthoc.py
 """
 

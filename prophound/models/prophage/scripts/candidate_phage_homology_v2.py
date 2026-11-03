@@ -27,7 +27,7 @@ Stages, each cached under --out so a re-run resumes:
   score     pass = at least 2 such genes; the preregistered endpoints with genome bootstraps
 
 Run with pyhmmer and pyrodigal available (not in prophound's own environment), from
-src/prophound/models/prophage:
+prophound/models/prophage:
   pixi exec -c conda-forge -c bioconda -s python=3.12 -s pyhmmer -s pyrodigal -s pandas -s numpy -- \\
       python scripts/candidate_phage_homology_v2.py --out analysis/candidate_homology/v2 ...
 """

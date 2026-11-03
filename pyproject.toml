@@ -34,24 +34,24 @@ requires = ["hatchling"]
 # weights are added with packaging (docs/cli-and-packaging.md "Distribution").
 [tool.hatch.build]
 exclude = [
-    "src/prophound/models/prophage/analysis",
-    "src/prophound/models/prophage/scripts",
-    "src/prophound/models/prophage/notes",
-    "src/prophound/models/prophage/splits",
-    "src/prophound/models/prophage/runs",
-    "src/prophound/models/prophage/summary.csv",
-    "src/prophound/models/prophage/README.md",
-    "src/prophound/models/prophage/src/configs",
+    "prophound/models/prophage/analysis",
+    "prophound/models/prophage/scripts",
+    "prophound/models/prophage/notes",
+    "prophound/models/prophage/splits",
+    "prophound/models/prophage/runs",
+    "prophound/models/prophage/summary.csv",
+    "prophound/models/prophage/README.md",
+    "prophound/models/prophage/src/configs",
     "*.slurm",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/prophound"]
+packages = ["prophound"]
 
 # docs/ holds internal planning docs (the release checklist among them); keep
 # the sdist to code, tests, the example (the smoke test's input) and licence files.
 [tool.hatch.build.targets.sdist]
-only-include = ["src", "tests", "examples", "README.md", "CHANGELOG.md", "CITATION.cff", "LICENSE", "NOTICE",
+only-include = ["prophound", "tests", "examples", "README.md", "CHANGELOG.md", "CITATION.cff", "LICENSE", "NOTICE",
                 "pyproject.toml"]
 
 [tool.pixi.workspace]
@@ -90,7 +90,7 @@ pyyaml = ">=6.0,<7"
 [tool.ruff]
 line-length = 120
 target-version = "py311"
-extend-exclude = ["archive", "src/prophound/models/prophage/notes"]
+extend-exclude = ["archive", "prophound/models/prophage/notes"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "B", "C4", "UP", "SIM", "I", "PIE", "C90", "N"]

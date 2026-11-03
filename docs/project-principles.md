@@ -39,5 +39,5 @@ Worked example: edge snap (`docs/claims-and-evidence.md` "Amendment 2026-10-05")
 ## Records
 
 - **Preregistrations are never edited.** Every change after one is written as a dated amendment (`docs/lockbox.md`, `docs/lockbox2.md`, the LAMBDA checks in `docs/claims-and-evidence.md`).
-- **`src/prophound/models/prophage/notes/` is a frozen historical snapshot** of the earlier development cycle. It is not edited, so where it conflicts with `docs/`, `docs/` is current.
+- **`prophound/models/prophage/notes/` is a frozen historical snapshot** of the earlier development cycle. It is not edited, so where it conflicts with `docs/`, `docs/` is current.
 - **Wording** (`docs/claims-and-evidence.md`): never "first" and never "guarantee". Write "may not call" rather than "do not call", and call the output "candidates for follow-up".

@@ -25,7 +25,7 @@ bootstrap (per-genome observed hits minus mean chance hits, 10,000 resamples). A
 LAMBDA's `genome_length` (the true length rounded up to 1 kb, plus 1 kb), which
 shifts chance by well under 1%.
 
-Run from src/prophound/models/prophage:
+Run from prophound/models/prophage:
   python scripts/lambda_chance.py --data analysis/external_benchmarks/lambda \\
       --prophound_run analysis/lambda/ens --out analysis/external_benchmarks/lambda/chance.json
 """

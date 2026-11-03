@@ -74,6 +74,6 @@ On an NVIDIA V100S a median 3.6 Mb genome takes ~27 s. Details: [`benchmarks.md`
 
 Training and large-scale evaluation run on the University of Texas at San Antonio's HPC cluster (ARC). This repository holds the CLI, the packaging and the evaluation record.
 
-- `src/prophound/` is the package. The prophage detector is in `src/prophound/models/prophage/`, with the bundled model in `model/` and dev-only evaluation scripts in `scripts/`.
+- `prophound/` is the package. The prophage detector is in `prophound/models/prophage/`, with the bundled model in `model/` and dev-only evaluation scripts in `scripts/`.
 - `docs/` holds the living topic docs; the [README's documentation list](../README.md#documentation) says what each covers. The project's working rules are in [`project-principles.md`](project-principles.md).
 - `pixi run test` runs the fast tests, and `pixi run smoke` runs the example end to end.

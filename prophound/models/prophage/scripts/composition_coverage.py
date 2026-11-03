@@ -27,9 +27,9 @@ why each estimated edge is or is not moved: contig end, call under MIN_CALL_BP, 
 under MIN_HOST_BP, profiles closer than MIN_JSD, change-point on the edge, moved, or moved
 to the inward ceiling.
 
-Example (from src/prophound/models/prophage):
-  python scripts/composition_coverage.py --sample tune42 ../../../../arc_data/att_runs/tune42 \\
-      ../../../../arc_data/raw/genomes scripts/eval_sizestrat_elements.csv \\
+Example (from prophound/models/prophage):
+  python scripts/composition_coverage.py --sample tune42 ../../../arc_data/att_runs/tune42 \\
+      ../../../arc_data/raw/genomes scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/composition_coverage
 """
 

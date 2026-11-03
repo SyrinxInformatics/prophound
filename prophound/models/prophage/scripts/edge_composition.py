@@ -35,7 +35,7 @@ metrics per gate setting, and the edges table.
 
 Example:
   python scripts/edge_composition.py --calls analysis/att/tune42_pipeline.calls.tsv \\
-      --genomes_dir ../../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
+      --genomes_dir ../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/tune42_comp
 """
 

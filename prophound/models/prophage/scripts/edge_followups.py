@@ -35,8 +35,8 @@ Input: Exploratory refinement-on runs (<genome>/windows.tsv with prob_ckpt1..3 a
 fine_windows.tsv), as for boundary_eval.py.
 
 Example:
-  python scripts/edge_followups.py --runs ../../../../arc_data/att_runs/tune42 \\
-      --genomes_dir ../../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
+  python scripts/edge_followups.py --runs ../../../arc_data/att_runs/tune42 \\
+      --genomes_dir ../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/tune42_edges
 """
 

@@ -35,8 +35,8 @@ refine+att calls with their coarse and refined coordinates, for calibrating and
 checking uncertainty ranges).
 
 Example:
-  python scripts/boundary_eval.py --runs ../../../../arc_data/att_runs/tune42 \\
-      --genomes_dir ../../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
+  python scripts/boundary_eval.py --runs ../../../arc_data/att_runs/tune42 \\
+      --genomes_dir ../../../arc_data/raw/genomes --elements scripts/eval_sizestrat_elements.csv \\
       --out analysis/att/tune42_pipeline
 """
 

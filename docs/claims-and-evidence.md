@@ -298,7 +298,7 @@ When this section was written (2026-09-28), geNomad was estimated to cover about
 
 ## External curated benchmarks available now (checked 2026-09-28)
 
-Two community gold standards exist. Their genome lists were matched against our corpus by assembly accession. Overlap tables: `src/prophound/models/prophage/analysis/external_benchmarks/`.
+Two community gold standards exist. Their genome lists were matched against our corpus by assembly accession. Overlap tables: `prophound/models/prophage/analysis/external_benchmarks/`.
 
 | benchmark | genomes | curated elements | not in our corpus | in our test split | in train/val (exclude) |
 |---|---|---|---|---|---|
