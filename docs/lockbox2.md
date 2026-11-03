@@ -210,7 +210,7 @@ Checks:
 
 #### Amendment 2026-11-03: commit hashes after a second history rewrite (no code change)
 
-Before the first push, the unpublished docs, the frozen notes and the model README were stripped from the unpushed commits with `git filter-repo`, and the commits were re-signed. The 32 commits already on GitHub are unchanged. Every rewritten commit has a new hash; 9 commits that touched only those files are gone, and none of them is cited here. Code is unchanged: each old commit and its new one differ only in the stripped files, so `frozen_md5.txt` and every MD5 list verify both. Launchers, ARC paths and recorded results (for example the `code_commit` in `analysis/benchmarks/`) keep the old hashes, because they record what ran. Map for the hashes cited in this doc and the release text:
+Before the first push, the unpublished docs, the frozen notes and the model README were stripped from the unpushed commits with `git filter-repo`, and the commits were re-signed. The commits already on GitHub are unchanged: the 32 up to `da23f67`, on which the rewritten history builds, and a README edit made there on 2026-02-02 (`3dc7e52`), merged in afterward. Every rewritten commit has a new hash; 9 commits that touched only those files are gone, and none of them is cited here. Code is unchanged: each old commit and its new one differ only in the stripped files, so `frozen_md5.txt` and every MD5 list verify both. Launchers, ARC paths and recorded results (for example the `code_commit` in `analysis/benchmarks/`) keep the old hashes, because they record what ran. Map for the hashes cited in this doc and the release text:
 
 | cited (before 2026-10-27) | after 2026-10-27 | now |
 |---|---|---|

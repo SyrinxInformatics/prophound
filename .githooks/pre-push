@@ -26,6 +26,11 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     if [ "$remote_sha" = "$zero" ]; then
         range="$local_sha --not --remotes"           # a new branch: everything not already on a remote
     else
+        if ! git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+            echo "[check-commit] refused: the remote is at $(echo "$remote_sha" | cut -c1-7), which this repository does not have. Fetch, then merge or rebase."
+            status=1
+            continue
+        fi
         range="$remote_sha..$local_sha"
     fi
     python3 "$check" --range "$range" || status=1
