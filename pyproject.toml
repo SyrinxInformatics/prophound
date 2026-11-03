@@ -66,6 +66,10 @@ prophound = "prophound"
 test = "pytest -q tests"
 # the example genome end to end (about 2 minutes on CPU, seconds on a GPU)
 smoke = "pytest -q -m slow tests/test_example.py"
+# the commit and push hooks in .githooks/ (scripts/check_commit.py); once per clone
+install-hooks = "git config core.hooksPath .githooks"
+# what CI checks: secrets and files that do not belong, over every tracked file
+check-commit = "python3 scripts/check_commit.py --all"
 
 [tool.pytest.ini_options]
 markers = ["slow: end-to-end runs of the model (run with -m slow, or `pixi run smoke`)"]

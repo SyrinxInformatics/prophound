@@ -271,3 +271,25 @@ prophound/models/prophage/analysis/candidate_homology/v2_1/regions.tsv
 prophound/models/prophage/analysis/candidate_homology/v2_1/vog_classes.tsv
 # robustness check 4 per-input runs (ood.{tsv,json} stay tracked)
 prophound/models/prophage/analysis/robustness/ood/
+
+# Secrets and credentials: never commit (scripts/check_commit.py also refuses them)
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+.netrc
+_netrc
+.git-credentials
+credentials
+credentials.*
+*credentials.json
+secrets.*
+.htpasswd
+.RData
