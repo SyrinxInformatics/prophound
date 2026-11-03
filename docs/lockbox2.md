@@ -177,3 +177,16 @@ The repository layout now mirrors the user's GenomeProfiler repository: `src/pro
 - The built wheel is byte-identical to the one before the move.
 - The fast tests (198), the smoke test and the golden set (calls identical on the Apple GPU) pass.
 - `scripts/lockbox2_run.slurm` and `analysis/lockbox2/frozen_md5.txt` still name `src/prophound/`, because they check the frozen code archive on ARC (`0d71e2f`), which has the old layout.
+
+### Amendment 2026-11-02: license headers and a pylint comment (comments only); the lockbox figure stands
+
+Every tracked code file now carries the Apache-2.0 license header. Four files on this lockbox's MD5 list changed, in comments only:
+
+- the three empty `__init__.py` files (`prophound/models/`, `models/prophage/`, `models/prophage/src/`) now hold the header and nothing else;
+- `src/att.py` has `# pylint: disable=unsubscriptable-object` on one line, a pylint false positive (`best` is checked for `None` on the same line).
+
+Checks:
+
+- All four files' syntax trees are identical to the scored code's, so the compiled code is the same.
+- The fast tests (198), the smoke test, the golden set (calls identical on the Apple GPU) and the example (calls identical) pass.
+- The CPU reference matrix was not re-run: with identical syntax trees it cannot differ.

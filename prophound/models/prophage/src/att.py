@@ -164,7 +164,7 @@ def find_att(genome: Genome, contig_id: str, s: int, e: int) -> dict | None:
         if evalue > MAX_EVALUE:
             continue
         key = (evalue, start, end)
-        if best is not None and key >= best[0]:
+        if best is not None and key >= best[0]:  # pylint: disable=unsubscriptable-object
             continue
         core = contig[start:start + length]
         if entropy_bits(core) < MIN_ENTROPY_BITS or genome.copies(core) > MAX_COPIES:
