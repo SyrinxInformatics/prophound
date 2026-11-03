@@ -127,7 +127,9 @@ jobs:
             bioconda-utils lint recipes config.yml \
               --packages prophound $LINT_EXCLUDE
 
-      - name: Build & test recipe
+      # --no-test: this image's old conda (Python 3.7) crashes solving the test environment on current
+      # conda-forge metadata. The recipe's tests run in bioconda's own CI on the pull request.
+      - name: Build recipe
         run: |
           docker run --rm \
             -v "${{ github.workspace }}":/work \
@@ -135,4 +137,5 @@ jobs:
             quay.io/bioconda/bioconda-utils-build-env:latest \
             conda build recipes/prophound \
               -c conda-forge -c bioconda \
-              --no-anaconda-upload
+              --no-anaconda-upload \
+              --no-test
