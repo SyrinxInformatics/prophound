@@ -90,15 +90,6 @@ The mode sets how many candidates you get, and so the cost of following them up.
 - **Fragmented assemblies.** Contigs under 3 kb are never scanned. A candidate running off a contig end (`note`) may continue on another contig.
 - **Adjacent prophages** can come out as one candidate.
 
-## Checking a candidate in the lab
-
-These are standard approaches, listed to show how prophound's outputs feed into them.
-
-- **Att-site candidates.** If the prophage can excise, PCR with primers just outside both ends (outside `start` and `end`) gives a short product from the empty host site (attB) in cells that lost it. Primers inside the element near each end, facing outward, give a product only from the circular excised phage (attP). Sequencing either product shows the core and confirms the boundary. Inducing the culture (for example with mitomycin C) raises the excised fraction.
-- **Estimated candidates.** Annotate the region first (genes, integrase, tRNA) to place the ends, then design junction primers as above. Primers placed from the ranges alone can miss.
-- **Long candidates** (roughly 60 kb or more) may hold several elements side by side. Before designing junction primers, look for a dip in the score track inside the call and for more than one integrase gene. If there are several elements, test each one's junctions.
-- **Any candidate.** Plot the score track around it (`windows.tsv`), look at its genes, and compare with annotation tools. A candidate none of them calls, carrying phage-like genes, is what prophound exists to surface.
-
 ## Other files
 
 | file | when you need it |
